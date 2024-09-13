@@ -1,0 +1,35 @@
+.form-check-input {
+    width: 20px;
+    height: 20px;
+}
+.select-column {
+    width: 100px;
+}
+.header-row {
+    background-color: rgb(210, 212, 203);
+}
+.btn-warning-custom {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #ffffff;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+.table-responsive {
+    max-width: 100%;
+    margin: auto;
+}
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+.button-group .btn {
+    margin-left: 10px;
+}
