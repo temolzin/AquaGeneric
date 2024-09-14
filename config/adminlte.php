@@ -349,7 +349,7 @@ return [
         ],
         [
             'text' => 'Localidades',
-            'url' => '/locations',
+            'url' => '/localities',
             'icon' => 'fas fa-fw fa-map-marker-alt',
              'can'  =>'viewLocation'
         ],

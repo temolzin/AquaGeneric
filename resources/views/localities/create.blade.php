@@ -81,15 +81,4 @@
     }
     reader.readAsDataURL(event.target.files[0]);
 }
-
-    function toggleResponsibleField() {
-        var statusSelect = document.getElementById('status');
-        var responsibleField = document.getElementById('responsible_field');
-
-        if (statusSelect.value == '0') {
-            responsibleField.style.display = 'block';
-        } else {
-            responsibleField.style.display = 'none';
-        }
-    }
 </script>
