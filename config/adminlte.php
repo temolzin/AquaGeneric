@@ -347,6 +347,12 @@ return [
             'icon' => 'fas fa-fw fa-money-bill-wave',
              'can'  =>'viewCost'
         ],
+        [
+            'text' => 'Localidades',
+            'url' => '/locations',
+            'icon' => 'fas fa-fw fa-map-marker-alt',
+             'can'  =>'viewLocation'
+        ],
     ],
     /*
     |--------------------------------------------------------------------------

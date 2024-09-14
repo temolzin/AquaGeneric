@@ -30,5 +30,13 @@ class UsersTableSeeder extends Seeder
             'phone' => '7798745677',
             'password' => Hash::make('12345'),
         ])->assignRole('secretariat');
+
+        User::create([
+            'name' => 'Juan',
+            'last_name' => 'Perez Garcia',
+            'email' => 'juan@gmail.com',
+            'phone' => '5512998832',
+            'password' => Hash::make('12345'),
+        ])->assignRole('Supervisor');
     }
 }
