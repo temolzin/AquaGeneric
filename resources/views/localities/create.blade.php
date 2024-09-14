@@ -73,12 +73,14 @@
 
 <script>
     function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function(){
-        var output = document.getElementById('photo-preview');
-        output.src = reader.result;
-        output.style.display = 'block';
+        var reader = new FileReader();
+
+        reader.onload = function() {
+            var output = document.getElementById('photo-preview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        }
+
+        reader.readAsDataURL(event.target.files[0]);
     }
-    reader.readAsDataURL(event.target.files[0]);
-}
 </script>
