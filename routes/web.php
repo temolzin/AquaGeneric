@@ -9,6 +9,7 @@ use App\Http\Controllers\CostController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LocalityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::resource('payments', PaymentController::class);
+
+    Route::get('/localities', [LocalityController::class, 'index'])->name('localities.index');
+    Route::resource('localities', LocalityController::class);
+
+    Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');
 
     Route::get('/getCustomerDebts', [PaymentController::class, 'getCustomerDebts'])->name('getCustomerDebts');
     
