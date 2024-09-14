@@ -12,15 +12,16 @@ class RolesAndPermissionsSeeder extends Seeder
     {
         $roleAdmin = Role::create(['name' => 'Admin']);
         $roleSecretariat = Role::create(['name' => 'secretariat']);
+        $roleSupervisor = Role::create(['name' => 'Supervisor']);
       
         Permission::create([
             'name' => 'viewUser',
             'description' => 'Permite ver los Usuario.'
-        ])->assignRole($roleAdmin);
+        ])->assignRole($roleSupervisor);
         Permission::create([
             'name' => 'viewRoles',
             'description' => 'Permite ver los Roles.'
-        ])->assignRole($roleAdmin);
+        ])->assignRole($roleSupervisor);
         Permission::create([
             'name' => 'viewCustomers',
             'description' => 'Permite ver los Usuarios.'
@@ -69,8 +70,18 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteCustomer',
             'description' => 'Permite ver los Costos.'
         ])->assignRole([$roleAdmin ]);
-        
+        Permission::create([
+            'name' => 'viewLocation',
+            'description' => 'Permite ver las localidades.'
+        ])->assignRole([$roleSupervisor ]);
+        Permission::create([
+            'name' => 'editLocation',
+            'description' => 'Permite editar las localidades.'
+        ])->assignRole([$roleSupervisor ]);
+        Permission::create([
+            'name' => 'deleteLocation',
+            'description' => 'Permite eliminar localidades.'
+        ])->assignRole([$roleSupervisor ]);
 
     }
 }
-
