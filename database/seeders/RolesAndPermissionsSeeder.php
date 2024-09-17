@@ -17,71 +17,71 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create([
             'name' => 'viewUser',
             'description' => 'Permite ver los Usuario.'
-        ])->assignRole($roleSupervisor);
+        ])->assignRole($roleAdmin);
         Permission::create([
             'name' => 'viewRoles',
             'description' => 'Permite ver los Roles.'
-        ])->assignRole($roleSupervisor);
+        ])->assignRole($roleAdmin);
         Permission::create([
             'name' => 'viewCustomers',
             'description' => 'Permite ver los Usuarios.'
-        ])->assignRole([$roleAdmin, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
         Permission::create([
             'name' => 'viewPayments',
             'description' => 'Permite ver los Pagos.'
-        ])->assignRole([$roleAdmin, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
         Permission::create([
             'name' => 'viewDebts',
             'description' => 'Permite ver las Deudas.'
-        ])->assignRole([$roleAdmin, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
         Permission::create([
             'name' => 'viewCost',
             'description' => 'Permite ver los Costos.'
-        ])->assignRole([$roleAdmin, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
         Permission::create([
             'name' => 'deleteCost',
             'description' => 'Permite eliminar los costos.'
-        ])->assignRole([$roleAdmin]);
+        ])->assignRole([$roleSupervisor]);
         Permission::create([
             'name' => 'editCost',
             'description' => 'Permite editar los costos.'
-        ])->assignRole([$roleAdmin]);
+        ])->assignRole([$roleSupervisor]);
         Permission::create([
             'name' => 'deletePayment',
             'description' => 'Permite editar los pagos.'
-        ])->assignRole([$roleAdmin]);
+        ])->assignRole([$roleSupervisor]);
         Permission::create([
             'name' => 'editPayment',
             'description' => 'Permite editar los pagos.'
-        ])->assignRole([$roleAdmin]);
+        ])->assignRole([$roleSupervisor]);
         Permission::create([
             'name' => 'deleteDebt',
             'description' => 'Permite eliminar deuda.'
-        ])->assignRole([$roleAdmin]);
+        ])->assignRole([$roleSupervisor]);
         Permission::create([
             'name' => 'editDebts',
             'description' => 'Permite ver los Costos.'
-        ])->assignRole([$roleAdmin ]);
+        ])->assignRole([$roleSupervisor]);
         Permission::create([
             'name' => 'editCustomer',
             'description' => 'Permite ver los Costos.'
-        ])->assignRole([$roleAdmin ]);
+        ])->assignRole([$roleSupervisor]);
         Permission::create([
             'name' => 'deleteCustomer',
             'description' => 'Permite ver los Costos.'
-        ])->assignRole([$roleAdmin ]);
+        ])->assignRole([$roleSupervisor]);
         Permission::create([
             'name' => 'viewLocation',
             'description' => 'Permite ver las localidades.'
-        ])->assignRole([$roleSupervisor ]);
+        ])->assignRole([$roleAdmin]);
         Permission::create([
             'name' => 'editLocation',
             'description' => 'Permite editar las localidades.'
-        ])->assignRole([$roleSupervisor ]);
+        ])->assignRole([$roleAdmin]);
         Permission::create([
             'name' => 'deleteLocation',
             'description' => 'Permite eliminar localidades.'
-        ])->assignRole([$roleSupervisor ]);
+        ])->assignRole([$roleAdmin]);
 
     }
 }
