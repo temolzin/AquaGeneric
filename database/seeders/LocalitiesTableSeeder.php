@@ -21,7 +21,6 @@ class LocalitiesTableSeeder extends Seeder
             'zip_code' => '55749',
             
         ]);
-
         
         Locality::create([
             'locality_name' => 'Ojo de Agua',

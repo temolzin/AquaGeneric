@@ -121,11 +121,23 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/dashboard/dashboard.css') }}">
+    <style>
+        .select2-container .select2-selection--single {
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+    </style>
 @stop
 
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        $(document).ready(function(){
+            $('#mySelect').select2({
+            });
+        });
+
         var ctx = document.getElementById('earningsChart').getContext('2d');
         var earningsChart = new Chart(ctx, {
             type: 'bar', 
