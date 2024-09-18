@@ -82,6 +82,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteLocation',
             'description' => 'Permite eliminar localidades.'
         ])->assignRole([$roleAdmin]);
-
+        Permission::create([
+            'name' => 'viewDashboardCards',
+            'description' => 'Permite ver las tarjetas de información en el dashboard.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::create([
+            'name' => 'viewLocalityCharts',
+            'description' => 'Permite ver las gráficas correspondientes a una localidad en el dashboard.'
+        ])->assignRole($roleAdmin);
     }
 }

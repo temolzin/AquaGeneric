@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Debt;
+use App\Models\Locality;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ class DashboardController extends Controller
 
         $authUser = Auth::user();
         $totalCustomers = Customer::count();
+        $localities = Locality::all();
 
         $customersWithDebts = Customer::whereHas('debts', function ($query) {
             $query->where('status', '!=', 'paid');
@@ -55,6 +57,7 @@ class DashboardController extends Controller
             'noDebtsForCurrentMonth' => $noDebtsForCurrentMonth,
             'months' => $months,
             'earningsPerMonth' => array_values($earningsPerMonth),
+            'localities' => $localities,
         ];
 
         return view('dashboard', compact('data', 'authUser'));
