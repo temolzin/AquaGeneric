@@ -82,6 +82,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteLocation',
             'description' => 'Permite eliminar localidades.'
         ])->assignRole([$roleAdmin]);
-
+        Permission::create([
+            'name' => 'selectLocality',
+            'description' => 'Permite seleccionar localidades.'
+        ])->assignRole([$roleSecretariat, $roleSupervisor]);
     }
 }

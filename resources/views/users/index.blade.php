@@ -30,6 +30,8 @@
                                             <th>NOMBRE</th>
                                             <th>TELEFONO</th>
                                             <th>EMAIL</th>
+                                            <th>ROL</th>
+                                            <th>LOCALIDAD</th>
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
@@ -55,6 +57,8 @@
                                                     <td>{{ $user->name }} {{ $user->last_name }}</td>
                                                     <td>{{ $user->phone }}</td>
                                                     <td>{{ $user->email }}</td>
+                                                    <td>{{ $user->roles->first()->name }}</td>
+                                                    <td>{{ $user->locality_id ? $user->locality->locality_name : 'Sin localidad' }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $user->id }}">
@@ -66,9 +70,6 @@
                                                             <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $user->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
-                                                            <a type="button" class="permiso btn btn-secondary mr-2" title="Asignar Rol" href="{{ route('users.edit', Crypt::encrypt($user->id)) }}">
-                                                                <i class="fa fa-key"></i>
-                                                            </a>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -123,6 +124,18 @@
                 window.location.href = "{{ route('users.index') }}";
             });
         }
+    });
+
+    $('#create').on('shown.bs.modal', function() {
+        $('.select2').select2({
+                dropdownParent: $('#create')
+        });
+    });
+
+    $('[id^="edit"]').on('shown.bs.modal', function() {
+        $(this).find('.select2').select2({
+            dropdownParent: $(this)
+        });
     });
 </script>
 @endsection

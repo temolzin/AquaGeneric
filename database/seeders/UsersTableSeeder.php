@@ -16,6 +16,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         User::create([
+            'locality_id' => null,
             'name' => 'Jose',
             'last_name' => 'Lopez Osorio',
             'email' => 'jose@gmail.com',
@@ -24,6 +25,7 @@ class UsersTableSeeder extends Seeder
         ])->assignRole('Admin');
 
         User::create([
+            'locality_id' => 2,
             'name' => 'Erika',
             'last_name' => 'Lopez perez',
             'email' => 'eri@gmail.com',
@@ -32,6 +34,7 @@ class UsersTableSeeder extends Seeder
         ])->assignRole('secretariat');
 
         User::create([
+            'locality_id' => 1,
             'name' => 'Juan',
             'last_name' => 'Perez Garcia',
             'email' => 'juan@gmail.com',
