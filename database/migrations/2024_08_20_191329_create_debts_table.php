@@ -17,7 +17,7 @@ class CreateDebtsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('locality_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('created_by');
             $table->date('start_date');
             $table->date('end_date');
             $table->decimal('amount', 10, 2);
@@ -28,7 +28,7 @@ class CreateDebtsTable extends Migration
         
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
         
     }
