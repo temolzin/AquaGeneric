@@ -16,4 +16,14 @@ class Cost extends Model
     ];
 
     public $timestamps = false;
+
+    public function locality()
+    {
+        return $this->belongsTo(Locality::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
