@@ -57,6 +57,31 @@
                                             <input type="email" class="form-control" name="emailUpdate" id="emailUpdate" value="{{ $user->email }}" required>
                                         </div>
                                     </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="roleUpdate" class="form-label">Rol (*)</label>
+                                            <select id="roleUpdate-{{ $user->id }}" class="form-control select2" name="roleUpdate" required onchange="toggleLocalityChange({{ $user->id }})">
+                                                @foreach($roles as $role)
+                                                    <option value="{{ $role->id }}" {{ $user->roles->contains($role->id) ? 'selected' : '' }} data-change-locality="{{ $role->hasPermissionTo('selectLocality') ? 'true' : 'false' }}">
+                                                        {{ $role->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6" id="localityContainer">
+                                        <div class="form-group">
+                                            <label for="localityUpdate" class="form-label">Localidad (*)</label>
+                                            <select id="localityUpdate-{{ $user->id }}" class="form-control select2" name="localityUpdate" required>
+                                                <option value="">Sin localidad</option>
+                                                @foreach($localities as $locality)
+                                                    <option value="{{ $locality->id }}" {{ $user->locality_id == $locality->id ? 'selected' : '' }}>
+                                                        {{ $locality->locality_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -71,6 +96,14 @@
     </div>
 </div>
 
+<style>
+    .select2-container .select2-selection--single {
+        height: 40px;
+        display: flex;
+        align-items: center;
+    }
+</style>
+
 <script>
     function previewImageEdit(event, id) {
         var input = event.target;
@@ -83,4 +116,28 @@
         };
         reader.readAsDataURL(input.files[0]);
     }
+
+    function toggleLocalityChange(userId) {
+        const roleSelect = document.getElementById('roleUpdate-' + userId);
+        const localitySelect = document.getElementById('localityUpdate-' + userId);
+
+        if (!roleSelect || !localitySelect) return;
+
+        const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+        const canSelectLocality = selectedOption.getAttribute('data-change-locality') === 'true';
+        localitySelect.disabled = !canSelectLocality;
+        if (!canSelectLocality) {
+            localitySelect.value = '';
+        }
+    }
+
+    function assignLocalityChangeEvent() {
+        document.querySelectorAll('[id^=roleUpdate-]').forEach((element) => {
+            const userId = element.id.split('-')[1];
+            toggleLocalityChange(userId);
+            element.addEventListener('change', () => toggleLocalityChange(userId));
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', assignLocalityChangeEvent);
 </script>
