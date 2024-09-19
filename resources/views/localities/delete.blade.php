@@ -13,7 +13,7 @@
                 @method('DELETE')
                 <div class="modal-body text-center text-danger">
                     ¿Estás seguro de eliminar la localidad <strong>{{ $locality->locality_name }}?</strong>
-                    Recuerda que todos los clientes y administradores relacionados a esa localidad se eliminarán
+                    Recuerda que todos los clientes y supervisores relacionados a esta localidad se eliminarán
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>

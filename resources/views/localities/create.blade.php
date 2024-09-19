@@ -73,23 +73,14 @@
 
 <script>
     function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function(){
-        var output = document.getElementById('photo-preview');
-        output.src = reader.result;
-        output.style.display = 'block';
-    }
-    reader.readAsDataURL(event.target.files[0]);
-}
+        var reader = new FileReader();
 
-    function toggleResponsibleField() {
-        var statusSelect = document.getElementById('status');
-        var responsibleField = document.getElementById('responsible_field');
-
-        if (statusSelect.value == '0') {
-            responsibleField.style.display = 'block';
-        } else {
-            responsibleField.style.display = 'none';
+        reader.onload = function() {
+            var output = document.getElementById('photo-preview');
+            output.src = reader.result;
+            output.style.display = 'block';
         }
+
+        reader.readAsDataURL(event.target.files[0]);
     }
 </script>

@@ -61,10 +61,10 @@
                                             <td>
                                                 @if ($locality->getFirstMediaUrl('localityGallery'))
                                                 <img src="{{$locality->getFirstMediaUrl('localityGallery') }}" alt="Foto de {{$locality->locality_name}}"
-                                                    style="width: 50px; height: 50px; border-radius: 50%;">
+                                                style="width: 50px; height: 50px; border-radius: 50%;">
                                             @else
-                                                <img src="{{ asset('img/userDefault.png') }}"
-                                                    style="width: 50px; height: 50px; border-radius: 50%;">
+                                                <img src="{{ asset('img/userDefault.png') }}" 
+                                                style="width: 50px; height: 50px; border-radius: 50%;">
                                             @endif
                                             </td>
                                             <td>{{$locality->locality_name}}</td>
