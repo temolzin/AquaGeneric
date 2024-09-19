@@ -22,7 +22,7 @@ class User extends Authenticatable implements HasMedia
      *
      * @var array<int, string>
      */
-    protected $fillable=['name','last_name','phone','email','password'];
+    protected $fillable=['locality_id','name','last_name','phone','email','password'];
     public $timestamps = false;
 
     /**
@@ -43,4 +43,9 @@ class User extends Authenticatable implements HasMedia
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function locality()
+    {
+        return $this->belongsTo(Locality::class, 'locality_id');
+    }
 }

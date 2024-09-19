@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Locality;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Crypt;
 
@@ -12,13 +13,15 @@ class UserController extends Controller
 {
     public function index()
     {
+        $roles = Role::all();
+        $localities = Locality::all();
         $users = User::all();
-        return view('users.index', compact('users'));
+        return view('users.index', compact('users', 'localities', 'roles'));
     }
 
     public function store(Request $request)
     {
-        $userData = $request->only(['name', 'last_name', 'email', 'phone']);
+        $userData = $request->only(['name', 'last_name', 'email', 'phone','locality_id']);
         $userData['password'] = bcrypt($request->input('password'));
 
         $user = User::create($userData);
@@ -26,6 +29,8 @@ class UserController extends Controller
         if ($request->hasFile('photo')) {
             $user->addMediaFromRequest('photo')->toMediaCollection('userGallery');
         }
+
+        $user->roles()->sync($request->roles);
 
         return redirect()->back()->with('success', 'Usuario creado exitosamente');
     }
@@ -40,8 +45,11 @@ class UserController extends Controller
             $user->last_name = $request->input('lastNameUpdate');
             $user->phone = $request->input('phoneUpdate');
             $user->email = $request->input('emailUpdate');
+            $user->locality_id = $request->input('localityUpdate');
 
             $user->save();
+
+            $user->roles()->sync($request->input('roleUpdate'));
 
             if ($request->hasFile('photo')) {
                 $user->clearMediaCollection('userGallery');
@@ -72,10 +80,4 @@ class UserController extends Controller
         return view('users.assignRole', compact('user', 'roles'));
     }
     
-
-    public function updateRole(Request $request, User $user)
-    {
-        $user->roles()->sync($request->roles);
-        return redirect()->route('users.index')->with('success', 'Roles asignados correctamente');
-    }
 }
