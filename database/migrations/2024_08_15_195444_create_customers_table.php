@@ -19,7 +19,7 @@ class CreateCustomersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('cost_id');
             $table->unsignedBigInteger('locality_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('created_by');
             $table->string('name');
             $table->string('last_name');
             $table->string('block');
@@ -41,7 +41,7 @@ class CreateCustomersTable extends Migration
           
             $table->foreign('cost_id')->references('id')->on('costs')->onDelete('cascade');
             $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
