@@ -28,51 +28,69 @@
                             </div>
                         </div>
                     </div>
-                    @if ($data['noDebtsForCurrentMonth'])
-                        <div class="alert alert-warning" role="alert">
-                            Ya ha iniciado un nuevo mes y no se han asignado deudas a los Usuarios para este periodo.
-                        </div>
-                    @endif
+                    @can('viewDashboardCards')
+                        @if ($data['noDebtsForCurrentMonth'])
+                            <div class="alert alert-warning" role="alert">
+                                Ya ha iniciado un nuevo mes y no se han asignado deudas a los Usuarios para este periodo.
+                            </div>
+                        @endif
 
-                    <div class="row">
-                        <div class="col-lg-4 col-xs-6">
-                            <div class="small-box bg-info">
-                                <div class="inner">
-                                    <h3>{{ $data['totalCustomers'] }}</h3>
-                                    <p>Total de Usuarios</p>
+                        <div class="row">
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ $data['totalCustomers'] }}</h3>
+                                        <p>Total de Usuarios</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <a href="{{ route('customers.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
-                                <div class="icon">
-                                    <i class="fas fa-users"></i>
+                            </div>
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="small-box bg-green">
+                                    <div class="inner">
+                                        <h3>{{ $data['customersWithoutDebts'] }}</h3>
+                                        <p>Usuarios al día</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <a href="{{ route('customers.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
-                                <a href="{{ route('customers.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+                            </div>
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="small-box bg-red">
+                                    <div class="inner">
+                                        <h3>{{ $data['customersWithDebts'] }}</h3>
+                                        <p>Usuarios con Deudas</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                    </div>
+                                    <a href="{{ route('debts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-xs-6">
-                            <div class="small-box bg-green">
-                                <div class="inner">
-                                    <h3>{{ $data['customersWithoutDebts'] }}</h3>
-                                    <p>Usuarios al día</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="fas fa-check-circle"></i>
-                                </div>
-                                <a href="{{ route('customers.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+                    @endcan
+
+                    @can('viewLocalityCharts')
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="locality_id" class="form-label">Seleccionar Localidad</label>
+                                <select id="mySelect" class="form-control select2" name="locality_id" required>
+                                    <option value="">Seleccione una localidad</option>
+                                    @foreach($data['localities'] as $locality)
+                                        <option value="{{ $locality->id }}" {{ old('locality_id') == $locality->id ? 'selected' : '' }}>
+                                            {{ $locality->id }} - {{ $locality->locality_name }} , {{ $locality->municipality }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-xs-6">
-                            <div class="small-box bg-red">
-                                <div class="inner">
-                                    <h3>{{ $data['customersWithDebts'] }}</h3>
-                                    <p>Usuarios con Deudas</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                </div>
-                                <a href="{{ route('debts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    
+                    @endcan
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="card">
@@ -103,11 +121,23 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/dashboard/dashboard.css') }}">
+    <style>
+        .select2-container .select2-selection--single {
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+    </style>
 @stop
 
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        $(document).ready(function(){
+            $('#mySelect').select2({
+            });
+        });
+
         var ctx = document.getElementById('earningsChart').getContext('2d');
         var earningsChart = new Chart(ctx, {
             type: 'bar', 

@@ -19,6 +19,16 @@ class Debt extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
+    public function locality()
+    {
+        return $this->belongsTo(Locality::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function payments()
     {
         return $this->hasMany(Payment::class, 'debt_id');
