@@ -63,6 +63,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/localities', [LocalityController::class, 'index'])->name('localities.index');
     Route::resource('localities', LocalityController::class);
     Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');
+    Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
 
     Route::get('/getCustomerDebts', [PaymentController::class, 'getCustomerDebts'])->name('getCustomerDebts');
     
