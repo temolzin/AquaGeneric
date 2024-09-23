@@ -15,7 +15,9 @@ class PaymentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Payment::with('debt.customer')->orderBy('id', 'desc');
+        $localityId = auth()->user()->locality_id;
+        $query = Payment::with('debt.customer')->orderBy('id', 'desc')
+            ->where('locality_id', $localityId);
 
         if ($request->filled('name')) {
             $query->whereHas('debt.customer', function ($q) use ($request) {
@@ -27,7 +29,7 @@ class PaymentController extends Controller
         if ($request->filled('period')) {
             $periodParts = explode('/', $request->period);
             $monthName = strtolower(trim($periodParts[0]));
-            $year = trim($periodParts[1]); // Year
+            $year = trim($periodParts[1]);
 
             $months = [
                 'enero' => 1,
@@ -59,16 +61,18 @@ class PaymentController extends Controller
         }
 
         $payments = $query->paginate(10);
-        $customers = Customer::all();
+        $customers = Customer::where('locality_id', $localityId)->get();
 
         return view('payments.index', compact('payments', 'customers'));
     }
 
     public function getCustomerDebts(Request $request)
     {
+        $localityId = auth()->user()->locality_id;
         $customerId = $request->input('customer_id');
         $debts = Debt::where('customer_id', $customerId)
             ->where('status', '!=', 'paid')
+            ->where('locality_id', $localityId)
             ->orderBy('start_date', 'asc')
             ->get()
             ->map(function ($debt) {
