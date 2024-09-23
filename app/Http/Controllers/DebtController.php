@@ -13,14 +13,18 @@ class DebtController extends Controller
     {
         $search = $request->input('search');
 
-        $customers = Customer::all();
+        $localityId = auth()->user()->locality_id;
+        $customers = Customer::where('locality_id', $localityId)->get();
 
         $debts = Debt::with('customer')
-            ->whereHas('customer', function ($query) use ($search) {
-                $query->where('id', 'like', "%{$search}%")
-                    ->orWhere('name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
-                    ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+        ->whereHas('customer', function ($query) use ($search, $localityId) {
+            $query->where('locality_id', $localityId)
+                ->where(function ($query) use ($search) {
+                    $query->where('id', 'like', "%{$search}%")
+                          ->orWhere('name', 'like', "%{$search}%")
+                          ->orWhere('last_name', 'like', "%{$search}%")
+                          ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+                });
             })
             ->where('status', '!=', 'paid')
             ->select('customer_id')

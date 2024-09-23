@@ -13,13 +13,14 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
-        $query = Customer::query();
-    
+        $authUser = auth()->user();
+        $query = Customer::where('locality_id', $authUser->locality_id);
+
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
         }
-    
+
         $customers = $query->paginate(10);
         $costs = Cost::all();
         return view('customers.index', compact('customers', 'costs'));

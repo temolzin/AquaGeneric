@@ -39,7 +39,7 @@
                             <div class="col-lg-4 col-xs-6">
                                 <div class="small-box bg-info">
                                     <div class="inner">
-                                        <h3>{{ $data['totalCustomers'] }}</h3>
+                                        <h3>{{ $data['customersByLocality'] }}</h3>
                                         <p>Total de Usuarios</p>
                                     </div>
                                     <div class="icon">

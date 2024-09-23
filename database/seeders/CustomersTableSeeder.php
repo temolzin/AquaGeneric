@@ -19,6 +19,8 @@ class CustomersTableSeeder extends Seeder
         $faker = Faker::create();
 
         $costIds = DB::table('costs')->pluck('id')->toArray();
+        $localityIds = DB::table('localities')->pluck('id')->toArray();
+        $userIds = DB::table('users')->pluck('id')->toArray();
 
         foreach (range(1, 150) as $index) {
             DB::table('customers')->insert([
@@ -40,6 +42,8 @@ class CustomersTableSeeder extends Seeder
                 'has_cistern' => $faker->boolean,
                 'has_cistern' => $faker->boolean,
                 'status' => $faker->boolean, 
+                'locality_id' => $faker->randomElement($localityIds),
+                'created_by' => $faker->randomElement($userIds),
             ]);
         }
     }
