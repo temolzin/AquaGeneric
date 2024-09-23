@@ -34,18 +34,6 @@ class DashboardController extends Controller
 
         $noDebtsForCurrentMonth = ($debtsThisMonth === 0);
 
-        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(payment_date) as month')
-            ->whereYear('payment_date', Carbon::now()->year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-
-        $earningsPerMonth = array_fill(1, 12, 0);
-
-        foreach ($monthlyEarnings as $earning) {
-            $earningsPerMonth[$earning->month] = $earning->total;
-        }
-
         $months = collect(range(1, 12))->map(function ($month) {
             return ucfirst(Carbon::create()->month($month)->locale('es')->monthName);
         });
@@ -56,7 +44,6 @@ class DashboardController extends Controller
             'customersWithoutDebts' => $customersWithoutDebts,
             'noDebtsForCurrentMonth' => $noDebtsForCurrentMonth,
             'months' => $months,
-            'earningsPerMonth' => array_values($earningsPerMonth),
             'localities' => $localities,
         ];
 
