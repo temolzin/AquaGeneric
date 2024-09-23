@@ -15,10 +15,15 @@ class CreateCostsTable extends Migration
     {
         Schema::create('costs', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('locality_id');
+            $table->unsignedBigInteger('created_by');
             $table->string('category');
             $table->decimal('price', 8, 2);
             $table->text('description')->nullable();
             $table->softDeletes();
+
+            $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

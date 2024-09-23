@@ -15,9 +15,9 @@ class PaymentController extends Controller
 {
     public function index(Request $request)
     {
-        $localityId = auth()->user()->locality_id;
+        $user = auth()->user();
         $query = Payment::with('debt.customer')->orderBy('id', 'desc')
-            ->where('locality_id', $localityId);
+            ->where('locality_id', $user->locality_id);
 
         if ($request->filled('name')) {
             $query->whereHas('debt.customer', function ($q) use ($request) {
@@ -61,18 +61,18 @@ class PaymentController extends Controller
         }
 
         $payments = $query->paginate(10);
-        $customers = Customer::where('locality_id', $localityId)->get();
+        $customers = Customer::where('locality_id', $user->locality_id)->get();
 
         return view('payments.index', compact('payments', 'customers'));
     }
 
     public function getCustomerDebts(Request $request)
     {
-        $localityId = auth()->user()->locality_id;
+        $user = auth()->user();
         $customerId = $request->input('customer_id');
         $debts = Debt::where('customer_id', $customerId)
             ->where('status', '!=', 'paid')
-            ->where('locality_id', $localityId)
+            ->where('locality_id', $user->locality_id)
             ->orderBy('start_date', 'asc')
             ->get()
             ->map(function ($debt) {
@@ -92,6 +92,7 @@ class PaymentController extends Controller
 
     public function store(Request $request)
     {
+        $user = auth()->user();
         $debt = Debt::findOrFail($request->debt_id);
 
         $remainingAmount = $debt->amount - $debt->debt_current;
@@ -102,6 +103,8 @@ class PaymentController extends Controller
         }
 
         Payment::create([
+            'locality_id' => $user->locality_id,
+            'created_by' => $user->id,
             'debt_id' => $request->debt_id,
             'amount' => $request->amount,
             'payment_date' => $request->payment_date,
