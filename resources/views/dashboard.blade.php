@@ -82,8 +82,8 @@
                                 <select id="mySelect" class="form-control select2" name="locality_id" required>
                                     <option value="">Seleccione una localidad</option>
                                     @foreach($data['localities'] as $locality)
-                                        <option value="{{ $locality->id }}" {{ old('locality_id') == $locality->id ? 'selected' : '' }}>
-                                            {{ $locality->id }} - {{ $locality->locality_name }} , {{ $locality->municipality }}
+                                        <option value="{{ $locality->id }}" data-name="{{ $locality->locality_name }}" data-municipality="{{ $locality->municipality }}" {{ old('locality_id') == $locality->id ? 'selected' : '' }}>
+                                            {{ $locality->locality_name }} , {{ $locality->municipality }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -95,7 +95,7 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Ganancias Mensuales</h3>
+                                    <h3 class="card-title">Ganancias Mensuales<span id="localityInfoMonthly"></h3>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="earningsChart" width="400" height="200"></canvas>
@@ -105,7 +105,7 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Ganancias Anuales por Mes</h3>
+                                    <h3 class="card-title">Ganancias Anuales por Mes<span id="localityInfoAnnual"></h3>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="annualEarningsChart" width="400" height="200"></canvas>
@@ -134,7 +134,41 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         $(document).ready(function(){
-            $('#mySelect').select2({
+            $('#mySelect').select2();
+
+            $('#mySelect').on('change', function(){
+                var localityId = $(this).val();
+                var selectedOption = $(this).find('option:selected');
+                var localityName = selectedOption.data('name');
+                var municipality = selectedOption.data('municipality');
+                if(localityId){
+                    $.ajax({
+                        url:"{{ route('locality.earnings') }}",
+                        type: 'GET',
+                        data: { locality_id: localityId},
+                        success: function(response){
+                            earningsChart.data.datasets[0].data = response.earningsPerMonth;
+                            earningsChart.update();
+
+                            annualEarningsChart.data.datasets[0].data = response.earningsPerMonth;
+                            annualEarningsChart.update();
+                        },
+                        error: function(xhr) {
+                            console.log('Error al obtener los datos de la localidad');
+                        }
+                    });
+                    $('#localityInfoMonthly').text(' de ' + localityName + ', ' + municipality);
+                    $('#localityInfoAnnual').text(' de ' + localityName + ', ' + municipality);
+                } else {
+                    earningsChart.data.datasets[0].data = Array(12).fill(0); 
+                    earningsChart.update();
+
+                    annualEarningsChart.data.datasets[0].data = Array(12).fill(0); 
+                    annualEarningsChart.update();
+
+                    $('#localityInfoMonthly').text('');
+                    $('#localityInfoAnnual').text('');
+                }
             });
         });
 
@@ -145,7 +179,6 @@
                 labels: @json($data['months']),
                 datasets: [{
                     label: 'Ganancias en $',
-                    data: @json($data['earningsPerMonth']),
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
@@ -167,7 +200,6 @@
                 labels: @json($data['months']),
                 datasets: [{
                     label: 'Ganancias Anuales en $',
-                    data: @json($data['earningsPerMonth']),
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 2

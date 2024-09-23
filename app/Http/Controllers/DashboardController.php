@@ -38,19 +38,6 @@ class DashboardController extends Controller
 
         $noDebtsForCurrentMonth = ($debtsThisMonth === 0);
 
-        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(payment_date) as month')
-            ->where('locality_id', $authUser->locality_id)
-            ->whereYear('payment_date', Carbon::now()->year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-
-        $earningsPerMonth = array_fill(1, 12, 0);
-
-        foreach ($monthlyEarnings as $earning) {
-            $earningsPerMonth[$earning->month] = $earning->total;
-        }
-
         $months = collect(range(1, 12))->map(function ($month) {
             return ucfirst(Carbon::create()->month($month)->locale('es')->monthName);
         });
@@ -61,10 +48,34 @@ class DashboardController extends Controller
             'customersWithoutDebts' => $customersWithoutDebts,
             'noDebtsForCurrentMonth' => $noDebtsForCurrentMonth,
             'months' => $months,
-            'earningsPerMonth' => array_values($earningsPerMonth),
             'localities' => $localities,
         ];
 
         return view('dashboard', compact('data', 'authUser'));
+    }
+
+    public function getEarningsByLocality(Request $request)
+    {
+        $localityId = $request->input('locality_id');
+
+        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(payment_date) as month')
+        ->where('locality_id', $localityId)
+        ->whereYear('payment_date', Carbon::now()->year)
+        ->groupBy('month')
+        ->orderBy('month')
+        ->get();
+
+        $earningsPerMonth = array_fill(1, 12, 0);
+
+        foreach ($monthlyEarnings as $earning) {
+            $earningsPerMonth[$earning->month] = $earning->total;
+        }
+
+        return response()->json([
+            'earningsPerMonth' => array_values($earningsPerMonth),
+            'months' => collect(range(1, 12))->map(function ($month) {
+                return ucfirst(Carbon::create()->month($month)->locale('es')->monthName);
+            })
+        ]);
     }
 }
