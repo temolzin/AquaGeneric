@@ -19,11 +19,15 @@ class DashboardController extends Controller
         $totalCustomers = Customer::count();
         $localities = Locality::all();
 
-        $customersWithDebts = Customer::whereHas('debts', function ($query) {
-            $query->where('status', '!=', 'paid');
-        })->count();
+        $customersByLocality = Customer::where('locality_id', $authUser->locality_id)->count();
 
-        $customersWithoutDebts = Customer::whereDoesntHave('debts', function ($query) {
+        $customersWithDebts = Customer::where('locality_id', $authUser->locality_id)
+        ->whereHas('debts', function ($query) {
+            $query->where('status', '!=', 'paid');
+        })
+        ->count();
+
+        $customersWithoutDebts = Customer::where('locality_id', $authUser->locality_id)->whereDoesntHave('debts', function ($query) {
             $query->where('status', '!=', 'paid');
         })->count();
 
@@ -39,7 +43,7 @@ class DashboardController extends Controller
         });
 
         $data = [
-            'totalCustomers' => $totalCustomers,
+            'customersByLocality' => $customersByLocality,
             'customersWithDebts' => $customersWithDebts,
             'customersWithoutDebts' => $customersWithoutDebts,
             'noDebtsForCurrentMonth' => $noDebtsForCurrentMonth,
