@@ -9,8 +9,8 @@ class CostController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $costs = Cost::where('locality_id', $user->locality_id)->get();
+        $authUser = auth()->user();
+        $costs = Cost::where('locality_id', $authUser->locality_id)->get();
         return view('costs.index', compact('costs'));
     }
 
@@ -21,13 +21,13 @@ class CostController extends Controller
 
     public function store(Request $request)
     {
-        $user = auth()->user();
+        $authUser = auth()->user();
 
         Cost::create(array_merge(
             $request->all(),
             [
-                'locality_id' => $user->locality_id,
-                'created_by' => $user->id
+                'locality_id' => $authUser->locality_id,
+                'created_by' => $authUser->id
             ]
         ));
 

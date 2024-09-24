@@ -37,10 +37,10 @@ class DebtController extends Controller
 
     public function store(Request $request)
     {
-        $user = auth()->user();
+        $authUser = auth()->user();
 
         $debtData = $request->all();
-        $debtData['created_by'] = $user->id;
+        $debtData['created_by'] = $authUser->id;
         
         $startMonth = $request->input('start_date');
         $endMonth = $request->input('end_date');
@@ -59,11 +59,11 @@ class DebtController extends Controller
             return redirect()->back()->with('error', 'El Usuario ya tiene una deuda en este rango de fechas.')->withInput();
         }
 
-        $user =auth()->user();
+        $authUser =auth()->user();
 
         Debt::create([
-            'locality_id' => $user -> locality_id,
-            'created_by' => $user -> id,
+            'locality_id' => $authUser -> locality_id,
+            'created_by' => $authUser -> id,
             'customer_id' => $request->input('customer_id'),
             'start_date' => $startDate->format('Y-m-d'),
             'end_date' => $endDate->format('Y-m-d'),
@@ -76,9 +76,9 @@ class DebtController extends Controller
 
     public function assignAll(Request $request)
     {
-        $user =auth()->user();
+        $authUser =auth()->user();
         $customers = Customer::with('cost')
-            ->where('locality_id', $user->locality_id)
+            ->where('locality_id', $authUser->locality_id)
             ->get();
 
         $startMonth = $request->input('start_date');
@@ -111,8 +111,8 @@ class DebtController extends Controller
 
             $allHaveDebt = false;
             Debt::create([
-                'locality_id' => $user->locality_id,
-                'created_by' => $user->id,
+                'locality_id' => $authUser->locality_id,
+                'created_by' => $authUser->id,
                 'customer_id' => $customer->id,
                 'start_date' => $startDate->format('Y-m-d'),
                 'end_date' => $endDate->format('Y-m-d'),

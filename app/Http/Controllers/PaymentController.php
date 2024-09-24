@@ -14,9 +14,9 @@ class PaymentController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
+        $authUser = auth()->user();
         $query = Payment::with('debt.customer')->orderBy('id', 'desc')
-            ->where('locality_id', $user->locality_id);
+            ->where('locality_id', $authUser->locality_id);
 
         if ($request->filled('name')) {
             $query->whereHas('debt.customer', function ($q) use ($request) {
@@ -60,18 +60,18 @@ class PaymentController extends Controller
         }
 
         $payments = $query->paginate(10);
-        $customers = Customer::where('locality_id', $user->locality_id)->get();
+        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
 
         return view('payments.index', compact('payments', 'customers'));
     }
 
     public function getCustomerDebts(Request $request)
     {
-        $user = auth()->user();
+        $authUser = auth()->user();
         $customerId = $request->input('customer_id');
         $debts = Debt::where('customer_id', $customerId)
             ->where('status', '!=', 'paid')
-            ->where('locality_id', $user->locality_id)
+            ->where('locality_id', $authUser->locality_id)
             ->orderBy('start_date', 'asc')
             ->get()
             ->map(function ($debt) {
@@ -91,11 +91,11 @@ class PaymentController extends Controller
 
     public function store(Request $request)
     {
-        $user = auth()->user();
+        $authUser = auth()->user();
         $debt = Debt::findOrFail($request->debt_id);
 
         $paymentData = $request->all();
-        $paymentData['created_by'] = $user->id;
+        $paymentData['created_by'] = $authUser->id;
 
         $remainingAmount = $debt->amount - $debt->debt_current;
 
@@ -105,8 +105,8 @@ class PaymentController extends Controller
         }
 
         Payment::create([
-            'locality_id' => $user->locality_id,
-            'created_by' => $user->id,
+            'locality_id' => $authUser->locality_id,
+            'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
             'amount' => $request->amount,
             'payment_date' => $request->payment_date,
