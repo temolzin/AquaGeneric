@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Locality;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Crypt;
 
@@ -79,5 +80,19 @@ class UserController extends Controller
         $roles = Role::all();
         return view('users.assignRole', compact('user', 'roles'));
     }
-    
+
+    public function updatePassword(Request $request, $id)
+    {
+        $user = User::find($id);
+        $newPassword = trim($request->input('updatePassword'));
+        $confirmPassword = trim($request->input('passwordConfirmation'));
+
+        if ($newPassword !== $confirmPassword) {
+            return redirect()->back()->withInput()->withErrors(['passwordConfirmation' => 'Las contraseñas no coinciden.']);
+        } else {
+            $user->password = bcrypt($newPassword);
+            $user->save();
+            return redirect()->route('users.index')->with('success', 'Contraseña actualizada correctamente.');
+        }
+    }
 }
