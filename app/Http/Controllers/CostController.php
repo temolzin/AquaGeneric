@@ -9,7 +9,7 @@ class CostController extends Controller
 {
     public function index()
     {
-        $user = auth()->user()->locality_id;
+        $user = auth()->user();
         $costs = Cost::where('locality_id', $user->locality_id)->get();
         return view('costs.index', compact('costs'));
     }

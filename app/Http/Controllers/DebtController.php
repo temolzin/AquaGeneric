@@ -16,7 +16,7 @@ class DebtController extends Controller
         $localityId = auth()->user()->locality_id;
         $customers = Customer::where('locality_id', $localityId)->get();
 
-        $debts = Debt::with('customer')
+        $debts = Debt::with('customer', 'creator')
         ->whereHas('customer', function ($query) use ($search, $localityId) {
             $query->where('locality_id', $localityId)
                 ->where(function ($query) use ($search) {
@@ -35,11 +35,13 @@ class DebtController extends Controller
         return view('debts.index', compact('debts', 'customers'));
     }
 
-
-
-
     public function store(Request $request)
     {
+        $user = auth()->user();
+
+        $debtData = $request->all();
+        $debtData['created_by'] = $user->id;
+        
         $startMonth = $request->input('start_date');
         $endMonth = $request->input('end_date');
 
@@ -60,7 +62,7 @@ class DebtController extends Controller
         $user =auth()->user();
 
         Debt::create([
-            'locality_id' => $user -> id,
+            'locality_id' => $user -> locality_id,
             'created_by' => $user -> id,
             'customer_id' => $request->input('customer_id'),
             'start_date' => $startDate->format('Y-m-d'),
@@ -125,7 +127,6 @@ class DebtController extends Controller
 
         return redirect()->back()->with('success', 'Deudas asignadas a todos los Usuarios.');
     }
-
 
     public function destroy($id, Request $request)
     {

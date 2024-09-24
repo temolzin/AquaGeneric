@@ -10,7 +10,6 @@ use Mpdf\Mpdf;
 
 class CustomerController extends Controller
 {
-
     public function index(Request $request)
     {
         $authUser = auth()->user();
@@ -22,13 +21,19 @@ class CustomerController extends Controller
         }
 
         $customers = $query->paginate(10);
-        $costs = Cost::all();
+        $costs = Cost::where('locality_id', $authUser->locality_id)->get();
         return view('customers.index', compact('customers', 'costs'));
     }
 
     public function store(Request $request)
     {
-        $customer = Customer::create($request->all());
+        $authUser = auth()->user();
+
+        $customerData = $request->all();
+        $customerData['locality_id'] = $authUser->locality_id;
+        $customerData['created_by'] = $authUser->id;
+
+        $customer = Customer::create($customerData);
 
         if ($request->hasFile('photo')) {
             $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
@@ -74,7 +79,6 @@ class CustomerController extends Controller
 
         return redirect()->back()->with('error', 'Usuario no encontrado.');
     }
-
 
     public function show($id)
     {

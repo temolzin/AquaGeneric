@@ -43,6 +43,12 @@
                                         <textarea disabled class="form-control">{{ $cost->description }}</textarea>
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Registrado por</label>
+                                        <input type="text" disabled class="form-control" value="{{ $cost->creator->name ?? 'Desconocido' }} {{ $cost->creator->last_name ?? '' }}" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

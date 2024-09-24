@@ -10,7 +10,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 
-
 class PaymentController extends Controller
 {
     public function index(Request $request)
@@ -95,6 +94,9 @@ class PaymentController extends Controller
         $user = auth()->user();
         $debt = Debt::findOrFail($request->debt_id);
 
+        $paymentData = $request->all();
+        $paymentData['created_by'] = $user->id;
+
         $remainingAmount = $debt->amount - $debt->debt_current;
 
         if ($request->amount > $remainingAmount) {
@@ -159,7 +161,6 @@ class PaymentController extends Controller
 
         return redirect()->route('payments.index')->with('success', 'Pago actualizado exitosamnete.');
     }
-
 
     public function destroy($id)
     {
@@ -240,5 +241,4 @@ class PaymentController extends Controller
 
         return $pdf->stream();
     }
-
 }
