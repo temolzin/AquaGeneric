@@ -31,7 +31,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'eri@gmail.com',
             'phone' => '7798745677',
             'password' => Hash::make('12345'),
-        ])->assignRole('secretariat');
+        ])->assignRole('Secretaria');
 
         User::create([
             'locality_id' => 1,
