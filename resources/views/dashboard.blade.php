@@ -179,7 +179,6 @@
                 labels: @json($data['months']),
                 datasets: [{
                     label: 'Ganancias en $',
-                    data: @json($data['earningsPerMonth']),
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
@@ -201,7 +200,6 @@
                 labels: @json($data['months']),
                 datasets: [{
                     label: 'Ganancias Anuales en $',
-                    data: @json($data['earningsPerMonth']),
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 2
