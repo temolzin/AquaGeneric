@@ -27,11 +27,11 @@ class UsersTableSeeder extends Seeder
         User::create([
             'locality_id' => 2,
             'name' => 'Erika',
-            'last_name' => 'Lopez perez',
+            'last_name' => 'Lopez Perez',
             'email' => 'eri@gmail.com',
             'phone' => '7798745677',
             'password' => Hash::make('12345'),
-        ])->assignRole('secretariat');
+        ])->assignRole('Secretaria');
 
         User::create([
             'locality_id' => 1,

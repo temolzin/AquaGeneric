@@ -15,27 +15,24 @@ class LocalitiesTableSeeder extends Seeder
     public function run()
     {
         Locality::create([
-            'locality_name' => 'Sierra Hermosa',
-            'municipality' => 'Tecámac',
-            'state' => 'Estado de México',
-            'zip_code' => '55749',
-            
+            'locality_name' => 'Smallville',
+            'municipality' => 'Smallville',
+            'state' => 'Kansas',
+            'zip_code' => '66002',
         ]);
         
         Locality::create([
-            'locality_name' => 'Ojo de Agua',
-            'municipality' => 'Tecámac',
-            'state' => 'Estado de México',
-            'zip_code' => '55770',
-            
+            'locality_name' => 'Springfield',
+            'municipality' => 'Springfield',
+            'state' => 'Oregon',
+            'zip_code' => '97477',
         ]);
 
         Locality::create([
-            'locality_name' => 'Viento Nuevo',
-            'municipality' => 'Ecatepec',
-            'state' => 'Estado de México',
-            'zip_code' => '55074',
-            
+            'locality_name' => 'Dunder Mifflin',
+            'municipality' => 'Scranton',
+            'state' => 'Pennsylvania',
+            'zip_code' => '18503',
         ]);
     }
 }
