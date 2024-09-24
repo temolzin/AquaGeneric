@@ -27,6 +27,19 @@ class DashboardController extends Controller
         })
         ->count();
 
+        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(payment_date) as month')
+        ->where('locality_id', $authUser->locality_id)
+        ->whereYear('payment_date', Carbon::now()->year)
+        ->groupBy('month')
+        ->orderBy('month')
+        ->get();
+
+        $earningsPerMonth = array_fill(1, 12, 0);
+
+        foreach ($monthlyEarnings as $earning) {
+            $earningsPerMonth[$earning->month] = $earning->total;
+        }
+
         $customersWithoutDebts = Customer::where('locality_id', $authUser->locality_id)->whereDoesntHave('debts', function ($query) {
             $query->where('status', '!=', 'paid');
         })->count();
@@ -48,6 +61,7 @@ class DashboardController extends Controller
             'customersWithoutDebts' => $customersWithoutDebts,
             'noDebtsForCurrentMonth' => $noDebtsForCurrentMonth,
             'months' => $months,
+            'earningsPerMonth' => array_values($earningsPerMonth),
             'localities' => $localities,
         ];
 
