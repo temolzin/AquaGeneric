@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Locality;
-use Illuminate\Contracts\Encryption\DecryptException;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Crypt;
 
