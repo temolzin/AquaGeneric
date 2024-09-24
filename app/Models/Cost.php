@@ -10,6 +10,8 @@ class Cost extends Model
     use HasFactory,  SoftDeletes;
 
     protected $fillable = [
+        'locality_id',
+        'created_by',
         'category',
         'price',
         'description',

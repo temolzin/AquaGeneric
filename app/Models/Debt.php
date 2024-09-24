@@ -10,7 +10,7 @@ class Debt extends Model
     use HasFactory , SoftDeletes;
 
     protected $fillable = [
-        'customer_id', 'start_date', 'end_date', 'amount', 'note'
+        'customer_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note'
     ];
     public $timestamps = false;
 
