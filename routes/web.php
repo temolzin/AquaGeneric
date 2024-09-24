@@ -68,6 +68,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/getCustomerDebts', [PaymentController::class, 'getCustomerDebts'])->name('getCustomerDebts');
     
     Route::post('/users/{user}/updateRole', [UserController::class, 'updateRole'])->name('users.updateRole');
+    Route::put('/users/{user}/updatePassword', [UserController::class, 'updatePassword'])->name('users.updatePassword');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('dashboard', DashboardController::class);
