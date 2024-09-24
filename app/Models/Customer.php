@@ -37,6 +37,8 @@ class Customer extends Model implements HasMedia
         'cost_id',
         'status',
         'responsible_name',
+        'locality_id',
+        'created_by',
     ];
 
     public $timestamps = false;
@@ -56,9 +58,9 @@ class Customer extends Model implements HasMedia
         return $this->belongsTo(Locality::class);
     }
 
-    public function user()
+    public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     protected static function boot()
@@ -72,5 +74,4 @@ class Customer extends Model implements HasMedia
             $user->debts()->delete();
         });
     }
-
 }

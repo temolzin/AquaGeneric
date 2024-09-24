@@ -133,6 +133,18 @@
                                         <input type="text" disabled class="form-control"  placeholder="Nombre de la persona responsable si el titular fallecio"value="{{ $customer->responsible_name }}" />
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Localidad</label>
+                                        <input type="text" disabled class="form-control" value="{{ $customer->locality->locality_name ?? 'Desconocido' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Registrado por</label>
+                                        <input type="text" disabled class="form-control" value="{{ $customer->creator->name ?? 'Desconocido' }} {{ $customer->creator->last_name ?? '' }}" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

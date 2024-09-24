@@ -74,7 +74,12 @@
                                         <textarea disabled class="form-control">{{ $customerDebt->note }}</textarea>
                                     </div>
                                 </div>
-                               
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Registrada por</label>
+                                        <input type="text" disabled class="form-control" value="{{ $customerDebt->creator->name ?? 'Desconocido' }} {{ $customerDebt->creator->last_name ?? '' }}" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

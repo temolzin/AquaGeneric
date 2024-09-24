@@ -33,9 +33,9 @@ class Payment extends Model
         return $this->belongsTo(Locality::class);
     }
 
-    public function user()
+    public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function customer()
