@@ -10,6 +10,7 @@ use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocalityController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,11 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 
 Route::group(['middleware' => ['auth']], function () {
+
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile/update', [ProfileController::class, 'profileUpdate'])->name('profile.update');
+    Route::post('/profile/editImage', [ProfileController::class, 'updateImage'])->name('profile.update.image');
+    Route::put('/profile/updatePassword', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::resource('users', UserController::class);

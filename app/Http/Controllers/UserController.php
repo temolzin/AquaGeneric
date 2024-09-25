@@ -13,9 +13,10 @@ class UserController extends Controller
 {
     public function index()
     {
+        $currentUserId = auth()->id();
         $roles = Role::all();
         $localities = Locality::all();
-        $users = User::all();
+        $users = User::where('id', '!=', $currentUserId)->get();
         return view('users.index', compact('users', 'localities', 'roles'));
     }
 

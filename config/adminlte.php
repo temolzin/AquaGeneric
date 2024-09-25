@@ -302,6 +302,12 @@ return [
             'topnav_right' => false,
         ],
         [
+            'text' => 'Perfil',
+            'url'  => '/profile',
+            'icon' => 'fas fa-fw fa-user',
+            'topnav_user' => true,
+        ],
+        [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
