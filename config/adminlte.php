@@ -458,6 +458,11 @@ return [
                     'asset' => true,
                     'location' => '//cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/datatables/datatable-language-es.js',
+                ],
             ],
         ],
         'Select2' => [

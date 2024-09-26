@@ -78,9 +78,6 @@
 <script>
     $(document).ready(function() {
         $('#roles').DataTable({
-            language: {
-                url: "{{ asset('lang/datatables/datatable-lang-es.json') }}"
-            },
             responsive: true,
             buttons: ['excel', 'pdf', 'print'],
             dom: 'Bfrtip',

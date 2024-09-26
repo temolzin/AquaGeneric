@@ -98,9 +98,6 @@
 
     $(document).ready(function() {
         $('#debts').DataTable({
-            language: {
-                url: "{{ asset('lang/datatables/datatable-lang-es.json') }}"
-            },
             responsive: true,
             paging: false,
             info: false,

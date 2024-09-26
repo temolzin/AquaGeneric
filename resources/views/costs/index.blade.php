@@ -82,9 +82,6 @@
 <script>
     $(document).ready(function() {
         $('#costs').DataTable({
-            language: {
-                url: "{{ asset('lang/datatables/datatable-lang-es.json') }}"
-            },
             responsive: true,
             buttons: ['excel', 'pdf', 'print'],
             dom: 'Bfrtip',
