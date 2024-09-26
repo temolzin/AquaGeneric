@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateLocalitiesTable extends Migration
 {
-    
     public function up()
     {
         Schema::create('localities', function (Blueprint $table) {
