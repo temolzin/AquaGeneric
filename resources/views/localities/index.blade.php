@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Localidades')
+@section('title', config('adminlte.title') . ' | Localidades')
 
 @section('content')
 <section class="content">
@@ -114,6 +114,9 @@
 <script>
     $(document).ready(function() {
         $('#localities').DataTable({
+            language: {
+                url: "{{ asset('lang/datatables/datatable-lang-es.json') }}"
+            },
             responsive: true,
             paging: false,
             info: false,

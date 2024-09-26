@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Pagos')
+@section('title', config('adminlte.title') . ' | Pagos')
 
 @section('content')
     <section class="content">
@@ -157,6 +157,9 @@ $(document).ready(function() {
     });
 
     $('#payments').DataTable({
+        language: {
+            url: "{{ asset('lang/datatables/datatable-lang-es.json') }}"
+        },
         responsive: true,
         paging: false,
         info: false,

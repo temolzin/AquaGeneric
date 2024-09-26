@@ -56,7 +56,7 @@
 <body>
 
     <div class="header">
-        <img src="img/gota.png"alt="Logo">
+        <img src="img/drop.png"alt="Logo">
         <h1>COMITÉ DEL SISTEMA DE AGUA POTABLE, SANTIAGO TOLMAN A.C</h1>
     </div>
     <div class="title">

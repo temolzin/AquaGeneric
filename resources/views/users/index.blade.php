@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Usuarios')
+@section('title', config('adminlte.title') . ' | Usuarios')
 
 @section('content')
 <section class="content">
@@ -99,6 +99,9 @@
 <script>
     $(document).ready(function() {
         $('#users').DataTable({
+            language: {
+                url: "{{ asset('lang/datatables/datatable-lang-es.json') }}"
+            },
             responsive: true,
             buttons: ['excel', 'pdf', 'print'],
             dom: 'Bfrtip',

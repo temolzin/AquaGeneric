@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Costos')
+@section('title', config('adminlte.title') . ' | Costos')
 
 @section('content')
 <section class="content">
@@ -82,6 +82,9 @@
 <script>
     $(document).ready(function() {
         $('#costs').DataTable({
+            language: {
+                url: "{{ asset('lang/datatables/datatable-lang-es.json') }}"
+            },
             responsive: true,
             buttons: ['excel', 'pdf', 'print'],
             dom: 'Bfrtip',
