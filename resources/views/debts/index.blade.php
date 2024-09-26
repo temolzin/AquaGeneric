@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Deudas')
+@section('title', config('adminlte.title') . ' | Deudas')
 
 @section('content')
 <section class="content">

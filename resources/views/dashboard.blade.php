@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dasboard')
+@section('title', config('adminlte.title') . ' | Panel')
 
 @section('content')
     <section class="content">

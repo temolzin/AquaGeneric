@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Roles')
+@section('title', config('adminlte.title') . ' | Roles')
 
 @section('content')
 <section class="content">
