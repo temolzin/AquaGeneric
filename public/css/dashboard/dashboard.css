@@ -5,6 +5,12 @@ img {
     margin-bottom: 5px;
 }
 
+.nav-item img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
 .head{
     background: #eae5e5;
      margin-top: 20px; 

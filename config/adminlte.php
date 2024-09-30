@@ -135,11 +135,11 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
-    'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
-    'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_header' => true,
+    'usermenu_header_class' => 'bg-light',
+    'usermenu_image' => true,
+    'usermenu_desc' => true,
+    'usermenu_profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -300,12 +300,6 @@ return [
             'type' => 'navbar-search',
             'text' => 'search',
             'topnav_right' => false,
-        ],
-        [
-            'text' => 'Perfil',
-            'url'  => '/profile',
-            'icon' => 'fas fa-fw fa-user',
-            'topnav_user' => true,
         ],
         [
             'type' => 'fullscreen-widget',
