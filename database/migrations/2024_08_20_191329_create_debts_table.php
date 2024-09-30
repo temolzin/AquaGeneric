@@ -24,6 +24,7 @@ class CreateDebtsTable extends Migration
             $table->decimal('debt_current', 8, 2)->default(0);
             $table->enum('status', ['pending', 'partial', 'paid'])->default('pending');
             $table->text('note')->nullable();
+            $table->timestamps();
             $table->softDeletes();
         
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');

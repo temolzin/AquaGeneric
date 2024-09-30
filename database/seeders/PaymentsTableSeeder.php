@@ -32,7 +32,9 @@ class PaymentsTableSeeder extends Seeder
                 'payment_date' => $paymentDate,
                 'locality_id' => $randomLocalityId,
                 'note' => 'Pago correspondiente a la deuda #' . $i . ' en localidad ' . $randomLocalityId,
-                'deleted_at' => null
+                'deleted_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
         DB::table('payments')->insert($payments);

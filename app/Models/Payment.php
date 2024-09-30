@@ -21,8 +21,6 @@ class Payment extends Model
         'note',
     ];
 
-    public $timestamps = false;
-
     public function debt()
     {
         return $this->belongsTo(Debt::class);

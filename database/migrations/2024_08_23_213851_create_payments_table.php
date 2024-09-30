@@ -21,6 +21,7 @@ class CreatePaymentsTable extends Migration
             $table->decimal('amount', 10, 2);
             $table->date('payment_date'); 
             $table->text('note')->nullable();
+            $table->timestamps();
             $table->softDeletes();
        
             $table->foreign('debt_id')->references('id')->on('debts')->onDelete('cascade');

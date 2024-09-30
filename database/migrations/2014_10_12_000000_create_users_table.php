@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('email');
             $table->string('phone')->nullable();
             $table->string('password');
+            $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');

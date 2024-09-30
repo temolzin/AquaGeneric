@@ -37,6 +37,7 @@ class CreateCustomersTable extends Migration
             $table->boolean('has_cistern');
             $table->boolean('status');
             $table->string('responsible_name')->nullable();
+            $table->timestamps();
             $table->softDeletes();
           
             $table->foreign('cost_id')->references('id')->on('costs')->onDelete('cascade');

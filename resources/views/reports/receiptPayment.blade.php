@@ -8,6 +8,11 @@
        @page {
             margin: 0;
         }
+
+        .title {
+            text-transform: uppercase;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -77,81 +82,59 @@
             </div>
             <div class="title">
                 <h2>COMITÉ DEL SISTEMA DE AGUA POTABLE
-                DE SANTIAGO TOLMAN A.C.
-                OTUMBA, MÉXICO</h2>
+                DE {{ $payment->locality->locality_name }} A.C.
+                {{ $payment->locality->municipality }}, {{ $payment->locality->state }}</h2>
             </div>
             <div class="logo">
             </div>
         </header>
-        <div class="recibo-container">
-            <table class="recibo-table">
-                
-                <tr>
-                    <td class="header">PAGO POR MES:</td>
-                    <td class="header">MZ: {{ $payment->debt->customer->block}}</td>
-                    <td class="header-cell">REGISTRO:    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="header">
-                        C: 
-                        @if ($payment->debt->customer->status == '0')
-                            {{ $payment->debt->customer->name ?? 'Desconocido' }} 
-                            {{ $payment->debt->customer->last_name ?? 'Desconocido' }} 
-                            (Pago realizado por: {{ $payment->debt->customer->responsible_name ?? 'Desconocido' }})
-                        @else
-                            {{ $payment->debt->customer->name ?? 'Desconocido' }} 
-                            {{ $payment->debt->customer->last_name ?? 'Desconocido' }}
-                        @endif
-                    </td>
-                    
-                    <td class="folio">FOLIO:</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="header">CON DOMICILIO: Calle. {{ $payment->debt->customer->street}}, # {{ $payment->debt->customer->interior_number ?? 'S/N'}}, Col. Santiago Tolman, Otumba</td>
-                    <td rowspan="2" class="header">{{ $payment->id }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="header">BUENO POR: $ {{ $payment->amount }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="header">CANTIDAD CON LETRA POR LOS SIGUIENTES CONCEPTOS:</td>
-                </tr>
-            </table>
-        </div>
-        <div class="recibo-container">
-            <p> PAGO POR CONSUMO DE AGUA POTABLE</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Mes</th>
-                        <th>Año</th>
-                        <th>Monto</th>
-                        <th>Observaciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($months as $month)
-                        <tr>
-                            <td>{{ $month['month'] }}</td>
-                            <td>{{ $month['year'] ?? '' }}</td>
-                            <td>{{ $month['amount'] ? '$' . number_format($month['amount'], 2) : '' }}</td>
-                            <td>{{ $month['note'] ?? '' }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        
-        @if($message)
-            <div class="recibo-footer">
-                <p>{{ $message }}</p>
+        <div class="card card-bg">
+            <div class="card-content">
+                <h2>Recibo de pago</h2>
             </div>
-        @endif
+        </div>
+        <table id="table_pago_dos">
+            <tr>
+                <td class="datos_pago_dos">
+                    <div>
+                        <p>Nombre del cliente: {{ $payment->debt->customer->name }} {{ $payment->debt->customer->last_name }}</p>
+                        <p>Dirección: {{ $payment->debt->customer->street }} #{{ $payment->debt->customer->interior_number }},  {{ $payment->debt->customer->block }}, {{ $payment->locality->zip_code }}, {{ $payment->locality->locality_name }}, {{ $payment->locality->municipality }}  </p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table id="table_pago_uno">
+            <tr>
+                <td class="datos_pago_uno">
+                    <div>
+                        <p>Folio: {{ $payment->id }}</p>
+                        <p>Fecha y hora del pago: {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }} a las {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->format('H:i') }} </label></p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table id="table_pago_tres">
+            <tr>
+                <td class="datos_pago_tres">
+                    <div>
+                        <p>Monto total del pago: ${{ $payment->amount }}</p>
+                        <p>Correspondiente a la deuda: {{ $payment->debt->id }}</p>
+                        <p>Fecha de la deuda: {{ \Carbon\Carbon::parse($payment->debt->start_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }}</p>
+                        <p>Fecha de vencimiento de la deuda: {{\Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY')}}</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="info_Eabajo">
+        <a class="text_infoE" href="https://www.rootheim.com/">AquaControl powered by Root Heim Company</a>
+    </div>
+
         <footer class="recibo-footer">  
-            <p>SANTIAGO TOLMAN A: {{ \Carbon\Carbon::parse($payment->payment_date)->locale('es')->isoFormat('D [de]MMMM [del] YYYY')}}</p>
+            <p>{{ $payment->locality->locality_name }} A: {{ \Carbon\Carbon::parse($payment->payment_date)->locale('es')->isoFormat('D [de]MMMM [del] YYYY')}}</p>
              <br><br> 
             _______________________________________________
-            <p>COMITE DEL SISTEMA DE AGUA POTABLE</p>
+            <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
         </footer>
         
     </div>

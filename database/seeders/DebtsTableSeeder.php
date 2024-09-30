@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
@@ -16,7 +17,7 @@ class DebtsTableSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-
+        $now = Carbon::now();
         $customerIds = DB::table('customers')->pluck('id')->toArray();
         $localitiesIds = DB::table('localities')->pluck('id')->toArray();
         $usersIds = DB::table('users')->pluck('id')->toArray();
@@ -33,6 +34,8 @@ class DebtsTableSeeder extends Seeder
                 'status' => $faker->randomElement(['pending', 'partial', 'paid']),
                 'note' => 'Deuda generada de prueba #' . $index,
                 'deleted_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
         }
     }

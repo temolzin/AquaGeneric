@@ -41,7 +41,6 @@ class Customer extends Model implements HasMedia
         'created_by',
     ];
 
-    public $timestamps = false;
 
     public function Cost()
     {
