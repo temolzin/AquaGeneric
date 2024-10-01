@@ -46,7 +46,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Fecha de Pago</label>
-                                        <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($payment->payment_date)->format('d-m-Y') }}" />
+                                        <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($payment->created_at)->format('d-m-Y') }}" />
                                     </div>
                                 </div>                                
                                 <div class="col-lg-12">

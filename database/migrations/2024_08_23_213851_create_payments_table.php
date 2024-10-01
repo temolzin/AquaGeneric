@@ -19,7 +19,6 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('created_by');
             $table->decimal('amount', 10, 2);
-            $table->date('payment_date'); 
             $table->text('note')->nullable();
             $table->timestamps();
             $table->softDeletes();

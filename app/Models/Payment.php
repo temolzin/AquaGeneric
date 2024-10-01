@@ -17,7 +17,6 @@ class Payment extends Model
         'created_by',
         'debt_id',
         'amount',
-        'payment_date',
         'note',
     ];
 

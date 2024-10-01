@@ -131,7 +131,7 @@
     </div>
 
         <footer class="recibo-footer">  
-            <p>{{ $payment->locality->locality_name }} A: {{ \Carbon\Carbon::parse($payment->payment_date)->locale('es')->isoFormat('D [de]MMMM [del] YYYY')}}</p>
+            <p>{{ $payment->locality->locality_name }} A: {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de]MMMM [del] YYYY')}}</p>
              <br><br> 
             _______________________________________________
             <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>

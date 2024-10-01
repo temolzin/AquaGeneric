@@ -109,7 +109,6 @@ class PaymentController extends Controller
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
             'amount' => $request->amount,
-            'payment_date' => $request->payment_date,
             'note' => $request->note,
         ]);
 
@@ -143,7 +142,6 @@ class PaymentController extends Controller
         $debt->debt_current -= $previousAmount;
         $payment->update([
             'amount' => $request->amount,
-            'payment_date' => $request->payment_date,
             'note' => $request->note,
         ]);
 
@@ -182,8 +180,8 @@ class PaymentController extends Controller
         $totalEarnings = 0;
 
         for ($month = 1; $month <= 12; $month++) {
-            $earnings = Payment::whereYear('payment_date', $year)
-                ->whereMonth('payment_date', $month)
+            $earnings = Payment::whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
                 ->sum('amount');
 
             $monthlyEarnings[$month] = $earnings;
