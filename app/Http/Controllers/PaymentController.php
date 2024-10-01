@@ -241,4 +241,25 @@ class PaymentController extends Controller
 
         return $pdf->stream();
     }
+
+    public function clientPaymentReport(Request $request){
+        $customerId = $request->input('customerId');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $customer = Customer::findOrFail($customerId);
+        $authUser = auth()->user();
+
+        $payments = Payment::whereHas('debt.customer', function ($query) use ($customerId) {
+            $query->where('id', $customerId);
+        })
+        ->whereBetween('payment_date', [$startDate, $endDate])
+        ->get();
+
+        $totalPayments = $payments->sum('amount');
+
+        $pdf = PDF::loadView('reports.clientPayments', compact('customer', 'startDate', 'endDate', 'payments', 'authUser', 'totalPayments'))
+        ->setPaper('A4', 'portrait');
+
+    return $pdf->stream('reporte_pagos_cliente.pdf');
+    }
 }

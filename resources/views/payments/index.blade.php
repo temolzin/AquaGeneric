@@ -12,6 +12,7 @@
                         <div class="row">
                             @include('payments.create')
                             @include('payments.annualEarnings')
+                            @include('payments.clientPayments')
                             <div class="col-lg-12 text-right">
                                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createPayment">
                                     <i class="fa fa-plus"></i> Registrar Pago
@@ -22,6 +23,10 @@
                                 <a type="button" class="btn btn-secondary" target="_blank" title="Customers" href="{{ route('report.current-customers') }}">
                                     <i class="fas fa-users"></i> Clientes al día
                                 </a>
+                                </button>
+                                <button type="button" class="btn bg-maroon" data-toggle="modal" data-target="#clientPayments">
+                                    <i class="fas fa-money-bill-wave"></i> Pagos por cliente
+                                </button>
                             </div>
                             <div class="clearfix"></div>
                             <div class="col-lg-8">
@@ -187,6 +192,12 @@ $(document).ready(function() {
             window.location.href = "{{ route('payments.index') }}";
         });
     }
+});
+
+$('#clientPayments').on('shown.bs.modal', function(){
+    $('.select2').select2({
+        dropdownParent: $('#clientPayments')
+    });
 });
 </script>
 @endsection

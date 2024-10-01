@@ -35,6 +35,7 @@ Route::get('/annual-earnings-report/{year}', [PaymentController::class, 'annualE
 Route::get('customers/pdfCustomers', [CustomerController::class, 'pdfCustomers'])->name('customers.pdfCustomers');
 Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
 Route::get('/customers-with-debts', [CustomerController::class, 'customersWithDebts'])->name('report.with-debts');
+Route::get('/client-payments', [PaymentController::class, 'clientPaymentReport'])->name('report.client-payments');
 
 
 Route::post('login', [LoginController::class, 'login']);
