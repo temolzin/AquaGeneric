@@ -27,9 +27,9 @@ class DashboardController extends Controller
         })
         ->count();
 
-        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(payment_date) as month')
+        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(created_at) as month')
         ->where('locality_id', $authUser->locality_id)
-        ->whereYear('payment_date', Carbon::now()->year)
+        ->whereYear('created_at', Carbon::now()->year)
         ->groupBy('month')
         ->orderBy('month')
         ->get();
@@ -72,9 +72,9 @@ class DashboardController extends Controller
     {
         $localityId = $request->input('locality_id');
 
-        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(payment_date) as month')
+        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(created_at) as month')
         ->where('locality_id', $localityId)
-        ->whereYear('payment_date', Carbon::now()->year)
+        ->whereYear('created_at', Carbon::now()->year)
         ->groupBy('month')
         ->orderBy('month')
         ->get();

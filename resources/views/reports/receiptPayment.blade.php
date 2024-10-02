@@ -5,155 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recibo de Agua</title>
     <style>
-       @page {
+        @page {
             margin: 0;
         }
+
         body {
             margin: 0;
             padding: 0;
-            background-color: #f0f8ff;
-            color: #0a072e;
+            background-image: url('img/receiptBackground.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             font-family: Arial, sans-serif;
         }
 
-        .recibo {
-            margin: 5;
-            padding: 10;
-        }
-        .recibo-header {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 0;
-            font-size: 9px;
+        .receipt {
+            max-width: 300px;
+            height: auto;
+            margin: auto;
+            padding: 10px;
         }
 
-        .recibo-table, table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 10px;
-            border-radius: 10px;
-            overflow: hidden; 
+        .receipt-header {
+            margin-top: 20px;
+            text-align: left;
+            margin-bottom: 10px; 
         }
 
-        .recibo-table td, th, td {
-            border: 2px solid #0e0c4f;
-            padding: 5px;
-            text-align: center;
-            font-size: 7px;
-            font-weight: bold;
+        .receipt-header img {
+            max-width: 50px;
         }
+
         .folio {
-            text-align: center;
+            color: black;
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-weight: bold;
+            padding: 30px;
+        }
+        
+        .folio p{
+            font-size: 13px;
         }
 
-        p{
+        .title {
+            text-transform: uppercase;
             text-align: center;
-            font-size: 7px;
-            font-weight: bold;
+            color: #107cfc;
+            font-size: 12px;
+            margin: 10px 0;
         }
 
-        .header-cell {
-            font-weight: bold;
+        .date {
+            text-align: center; 
+            font-size: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .info-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .customer-info, .debt-info, .payment-info {
+            padding-left: 55px;
+            margin: 11px auto;
+            display: inline-block;
             text-align: left;
+            font-size: 10px;
+            width: fit-content;
+            word-wrap: break-word;
         }
 
-        .recibo-table .header {
-            font-weight: bold;
-            text-align: left;
-        }
-
-        .recibo-footer {
+        .signature {
             text-align: center;
+            font-size: 8px;
+            margin-top: 20px;
+        }
+
+        h4 {
+            margin-bottom: 5px;
+            font-size: 10px;
+            text-decoration: underline;
+        }
+
+        p {
+            margin: 5px 0;
             font-size: 10px;
         }
 
+        .company-info {
+            text-align: center;
+            margin-top: 90px;
+            font-weight: bold;
+            font-size: 8px;
+        }
+
+        a {
+            font-weight: normal;
+            color: white;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
-    <div class="recibo">
-        <header class="recibo-header">
-            <div class="logo">
-            </div>
-            <div class="title">
-                <h2>COMITÉ DEL SISTEMA DE AGUA POTABLE
-                DE SANTIAGO TOLMAN A.C.
-                OTUMBA, MÉXICO</h2>
-            </div>
-            <div class="logo">
+    <div class="receipt">
+        <header class="receipt-header">           
+            @if ($payment->locality->hasMedia('localityGallery'))
+                <img src="{{ $payment->locality->getFirstMediaUrl('localityGallery') }}" alt="Logo de {{ $payment->locality->locality_name }}">
+            @else
+                <img src='img/userDefault.png' alt="Logo por defecto">
+            @endif
+            <div class="folio">
+                <p>FOLIO. {{ $payment->id }}</p>
             </div>
         </header>
-        <div class="recibo-container">
-            <table class="recibo-table">
-                
-                <tr>
-                    <td class="header">PAGO POR MES:</td>
-                    <td class="header">MZ: {{ $payment->debt->customer->block}}</td>
-                    <td class="header-cell">REGISTRO:    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="header">
-                        C: 
-                        @if ($payment->debt->customer->status == '0')
-                            {{ $payment->debt->customer->name ?? 'Desconocido' }} 
-                            {{ $payment->debt->customer->last_name ?? 'Desconocido' }} 
-                            (Pago realizado por: {{ $payment->debt->customer->responsible_name ?? 'Desconocido' }})
-                        @else
-                            {{ $payment->debt->customer->name ?? 'Desconocido' }} 
-                            {{ $payment->debt->customer->last_name ?? 'Desconocido' }}
-                        @endif
-                    </td>
-                    
-                    <td class="folio">FOLIO:</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="header">CON DOMICILIO: Calle. {{ $payment->debt->customer->street}}, # {{ $payment->debt->customer->interior_number ?? 'S/N'}}, Col. Santiago Tolman, Otumba</td>
-                    <td rowspan="2" class="header">{{ $payment->id }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="header">BUENO POR: $ {{ $payment->amount }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="header">CANTIDAD CON LETRA POR LOS SIGUIENTES CONCEPTOS:</td>
-                </tr>
-            </table>
+        <div class="title">
+            <h2>COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $payment->locality->locality_name }} A.C.</h2>
+            <p>{{ $payment->locality->municipality }}, {{ $payment->locality->state }}</p>
         </div>
-        <div class="recibo-container">
-            <p> PAGO POR CONSUMO DE AGUA POTABLE</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Mes</th>
-                        <th>Año</th>
-                        <th>Monto</th>
-                        <th>Observaciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($months as $month)
-                        <tr>
-                            <td>{{ $month['month'] }}</td>
-                            <td>{{ $month['year'] ?? '' }}</td>
-                            <td>{{ $month['amount'] ? '$' . number_format($month['amount'], 2) : '' }}</td>
-                            <td>{{ $month['note'] ?? '' }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="date">
+            <p>{{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }} a las {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->format('H:i') }}</p>
         </div>
-        
-        @if($message)
-            <div class="recibo-footer">
-                <p>{{ $message }}</p>
+        <div class="info-container">
+            <div class="customer-info">
+                <h4>Datos del cliente</h4>
+                <p>{{ $payment->debt->customer->name }} {{ $payment->debt->customer->last_name }}</p>
+                <p>{{ $payment->debt->customer->street }} #{{ $payment->debt->customer->interior_number }}, {{ $payment->debt->customer->block }}, {{$payment->locality->zip_code }}</p>
+                <p>{{ $payment->locality->locality_name }}, {{ $payment->locality->state }}</p>
             </div>
-        @endif
-        <footer class="recibo-footer">  
-            <p>SANTIAGO TOLMAN A: {{ \Carbon\Carbon::parse($payment->payment_date)->locale('es')->isoFormat('D [de]MMMM [del] YYYY')}}</p>
-             <br><br> 
-            _______________________________________________
-            <p>COMITE DEL SISTEMA DE AGUA POTABLE</p>
-        </footer>
-        
+            <div class="debt-info">
+                <h4>Datos de la deuda</h4>
+                <p>FOLIO. {{ $payment->debt->id }}</p>
+                <p>Fecha de la deuda: {{ \Carbon\Carbon::parse($payment->debt->start_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }}</p>
+                <p>Fecha de vencimiento: {{ \Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }}</p>
+            </div>
+            <div class="payment-info">
+                <p><strong>Monto total del pago: </strong>${{ $payment->amount }}</p>
+            </div>
+        </div>
     </div>
+    <div class="signature">  
+        <br><br><br>
+        _______________________________________________
+        <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
+    </div>
+    <footer class="company-info">
+        <a class="text_infoE" href="https://www.rootheim.com/"><strong>AquaControl</strong> powered by <strong>Root Heim Company</strong></a>
+        <img src="img/rootheim.png" width="12px">
+    </footer>
 </body>
 </html>

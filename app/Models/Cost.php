@@ -17,7 +17,6 @@ class Cost extends Model
         'description',
     ];
 
-    public $timestamps = false;
 
     public function locality()
     {

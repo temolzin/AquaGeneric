@@ -12,7 +12,6 @@ class Debt extends Model
     protected $fillable = [
         'customer_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note'
     ];
-    public $timestamps = false;
 
     public function customer()
     {

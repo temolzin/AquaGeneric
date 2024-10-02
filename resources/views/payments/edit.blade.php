@@ -30,7 +30,7 @@
                                         <div class="form-group text-right">
                                             <label for="payment_date_display" class="form-label">Fecha del Pago</label>
                                             <input type="text" class="form-control" id="payment_date_display" 
-                                                 value="{{ \Carbon\Carbon::parse($payment->payment_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}" readonly />
+                                                value="{{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}" readonly />
                                             <input type="hidden" name="payment_date" value="{{ date('Y-m-d') }}" />
                                         </div>
                                     </div>

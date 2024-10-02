@@ -21,5 +21,4 @@ class Locality extends Model implements HasMedia
         'zip_code'
     ];
 
-    public $timestamps = false;
 }

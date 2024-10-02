@@ -20,6 +20,7 @@ class CreateCostsTable extends Migration
             $table->string('category');
             $table->decimal('price', 8, 2);
             $table->text('description')->nullable();
+            $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');
