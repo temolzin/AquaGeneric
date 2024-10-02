@@ -260,6 +260,6 @@ class PaymentController extends Controller
         $pdf = PDF::loadView('reports.clientPayments', compact('customer', 'startDate', 'endDate', 'payments', 'authUser', 'totalPayments'))
         ->setPaper('A4', 'portrait');
 
-    return $pdf->stream('reporte_pagos_cliente.pdf');
+        return $pdf->stream('reporte_pagos_cliente.pdf');
     }
 }
