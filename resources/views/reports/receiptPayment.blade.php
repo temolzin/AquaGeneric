@@ -20,8 +20,8 @@
         }
 
         .receipt {
-            max-width: 300px; /* Mantiene el ancho del recibo */
-            height: auto; /* Permite que la altura sea automática */
+            max-width: 300px;
+            height: auto;
             margin: auto;
             padding: 10px;
         }
@@ -41,9 +41,12 @@
             position: absolute;
             top: 0;
             right: 0;
-            font-size: 10px;
-            font-weight: lighter;
+            font-weight: bold;
             padding: 30px;
+        }
+        
+        .folio p{
+            font-size: 13px;
         }
 
         .title {
@@ -79,13 +82,13 @@
         .signature {
             text-align: center;
             font-size: 8px;
-            margin-top: 20px; /* Aumentar espacio arriba */
+            margin-top: 20px;
         }
 
         h4 {
             margin-bottom: 5px;
             font-size: 10px;
-            text-decoration: underline; /* Añadir subrayado a los títulos */
+            text-decoration: underline;
         }
 
         p {
@@ -93,7 +96,7 @@
             font-size: 10px;
         }
 
-        .info_Eabajo {
+        .company-info {
             text-align: center;
             margin-top: 90px;
             font-weight: bold;
@@ -102,8 +105,8 @@
 
         a {
             font-weight: normal;
-            color: white; /* Color del texto */
-            text-decoration: none; /* Sin subrayado */
+            color: white;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -113,7 +116,7 @@
             @if ($payment->locality->hasMedia('localityGallery'))
                 <img src="{{ $payment->locality->getFirstMediaUrl('localityGallery') }}" alt="Logo de {{ $payment->locality->locality_name }}">
             @else
-                <img src='img/localityDefault.png' alt="Logo por defecto">
+                <img src='img/userDefault.png' alt="Logo por defecto">
             @endif
             <div class="folio">
                 <p>FOLIO. {{ $payment->id }}</p>
@@ -149,7 +152,7 @@
         _______________________________________________
         <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
     </div>
-    <footer class="info_Eabajo">
+    <footer class="company-info">
         <a class="text_infoE" href="https://www.rootheim.com/"><strong>AquaControl</strong> powered by <strong>Root Heim Company</strong></a>
         <img src="img/rootheim.png" width="12px">
     </footer>
