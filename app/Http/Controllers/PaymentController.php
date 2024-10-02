@@ -250,7 +250,7 @@ class PaymentController extends Controller
         $payments = Payment::whereHas('debt.customer', function ($query) use ($customerId) {
             $query->where('id', $customerId);
         })
-        ->whereBetween('payment_date', [$startDate, $endDate])
+        ->whereBetween('created_at', [$startDate, $endDate])
         ->get();
 
         $totalPayments = $payments->sum('amount');
