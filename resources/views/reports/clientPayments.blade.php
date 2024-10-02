@@ -253,7 +253,7 @@
                     @foreach ($payments as $payment)
                         <tr>
                             <td class="textcenter">{{ $payment->id }}</td>
-                            <td class="textcenter">{{ \Carbon\Carbon::parse($payment->payment_date)->translatedFormat('j \d\e F \d\e Y') }}</td>
+                            <td class="textcenter">{{ \Carbon\Carbon::parse($payment->created_at)->translatedFormat('j \d\e F \d\e Y') }}</td>
                             <td class="textcenter">$ {{ $payment->amount }}</td>
                         </tr>
                     @endforeach
