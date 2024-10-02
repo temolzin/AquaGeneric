@@ -6,6 +6,7 @@
     <title>Recibo de Agua</title>
     <style>
         @page {
+            size: A4;
             margin: 0;
         }
 
@@ -20,87 +21,90 @@
         }
 
         .receipt {
-            max-width: 300px;
-            height: auto;
             margin: auto;
-            padding: 10px;
+            padding: 20mm;
         }
 
         .receipt-header {
             margin-top: 20px;
             text-align: left;
-            margin-bottom: 10px; 
+            margin-bottom: 20px;
         }
 
         .receipt-header img {
-            max-width: 50px;
+            max-width: 115px;
         }
 
         .folio {
             color: black;
             position: absolute;
-            top: 0;
-            right: 0;
+            top: 30mm;
+            right: 20mm;
             font-weight: bold;
-            padding: 30px;
         }
-        
-        .folio p{
-            font-size: 13px;
+
+        .folio p {
+            font-size: 18px;
         }
 
         .title {
             text-transform: uppercase;
             text-align: center;
             color: #107cfc;
-            font-size: 12px;
+            font-size: 18px;
             margin: 10px 0;
         }
 
-        .date {
-            text-align: center; 
-            font-size: 10px;
-            margin-bottom: 10px;
+        .title p {
+            font-size: 15px;
         }
-        
+
+        .date {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .date p {
+            font-size: 15px;
+        }
+
         .info-container {
+            margin-top: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .customer-info, .debt-info, .payment-info {
-            padding-left: 55px;
+            padding-left: 150px;
             margin: 11px auto;
-            display: inline-block;
             text-align: left;
-            font-size: 10px;
             width: fit-content;
             word-wrap: break-word;
         }
 
         .signature {
             text-align: center;
-            font-size: 8px;
-            margin-top: 20px;
+            font-size: 12px;
+            margin-top: 10px;
         }
 
         h4 {
             margin-bottom: 5px;
-            font-size: 10px;
+            font-size: 16px;
             text-decoration: underline;
         }
 
         p {
             margin: 5px 0;
-            font-size: 10px;
+            font-size: 16px;
         }
 
         .company-info {
             text-align: center;
-            margin-top: 90px;
+            margin-top: 215px;
             font-weight: bold;
-            font-size: 8px;
+            font-size: 15px;
         }
 
         a {
@@ -147,14 +151,13 @@
             </div>
         </div>
     </div>
-    <div class="signature">  
-        <br><br><br>
+    <div class="signature">
         _______________________________________________
         <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
     </div>
     <footer class="company-info">
         <a class="text_infoE" href="https://www.rootheim.com/"><strong>AquaControl</strong> powered by <strong>Root Heim Company</strong></a>
-        <img src="img/rootheim.png" width="12px">
+        <img src="img/rootheim.png" width="18px">
     </footer>
 </body>
 </html>

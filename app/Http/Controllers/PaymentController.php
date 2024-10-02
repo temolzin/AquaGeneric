@@ -235,9 +235,9 @@ class PaymentController extends Controller
             : null;
 
         $pdf = PDF::loadView('reports.receiptPayment', compact('payment', 'months', 'message'))
-            ->setPaper([0, 0, 300, 500], 'portrait');
+            ->setPaper('A4', 'portrait');
 
-        return $pdf->stream();
+        return $pdf->stream('comprobante_de_pago.pdf');
     }
 
     public function clientPaymentReport(Request $request){
