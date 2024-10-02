@@ -161,7 +161,7 @@
                 margin-top: 20px;
                 padding: 10px;
                 position: absolute;
-                bottom: 20px; 
+                bottom: 5px;
                 left: 20px; 
                 right: 20px; 
             }
@@ -170,8 +170,7 @@
                 text-align: center;
                 font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
-                color: black;
-                text-shadow: #FFF;
+                color: white;
                 text-decoration: none;
                 display: inline-block;
             }
@@ -266,8 +265,8 @@
             </table>
         </div>
         <div class="info_Eabajo">
-            <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><img src="img/logo.png" width="15px" height="15px">&nbsp;<strong>AquaControl</strong></a><br>
-            <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
+            <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+            <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="15px" height="15px">
         </div>
     </body>
 </html>
