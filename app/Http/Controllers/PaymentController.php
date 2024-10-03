@@ -76,6 +76,7 @@ class PaymentController extends Controller
             ->get()
             ->map(function ($debt) {
                 $remainingAmount = $debt->amount - $debt->debt_current;
+                
                 return [
                     'id' => $debt->id,
                     'start_date' => $debt->start_date,
