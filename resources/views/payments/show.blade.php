@@ -48,17 +48,33 @@
                                         <label>Fecha de Pago</label>
                                         <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($payment->created_at)->format('d-m-Y') }}" />
                                     </div>
-                                </div>                                
-                                <div class="col-lg-12">
+                                </div>
+                                <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label>Nota del Pago</label>
-                                        <textarea disabled class="form-control">{{ $payment->note }}</textarea>
+                                        <label for="note" class="form-label">Método de Pago(*)</label>
+                                        @switch($payment->method)
+                                            @case('cash')
+                                                <input type="text" disabled class="form-control" value="Efectivo" />
+                                                @break
+                                            @case('card')
+                                                <input type="text" disabled class="form-control" value="Tarjeta" />
+                                                @break
+                                            @case('transfer')
+                                                <input type="text" disabled class="form-control" value="Transferencia" />
+                                                @break
+                                        @endswitch
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Registrado por</label>
+                                        <input type="text" disabled class="form-control" value="{{ $payment->creator->name ?? 'Desconocido' }} {{ $payment->creator->last_name ?? '' }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
-                                        <label>Registrado por</label>
-                                        <input type="text" disabled class="form-control" value="{{ $payment->creator->name ?? 'Desconocido' }} {{ $payment->creator->last_name ?? '' }}" />
+                                        <label>Nota del Pago</label>
+                                        <textarea disabled class="form-control">{{ $payment->note }}</textarea>
                                     </div>
                                 </div>
                             </div>

@@ -72,6 +72,17 @@
                                                 <input type="number" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="note" class="form-label">Método de Pago(*)</label>
+                                            <select id="mySelect" class="form-control select2" name="method" required>
+                                                <option value="">Selecciona un método de pago</option>
+                                                <option value="cash">Efectivo</option>
+                                                <option value="card">Tarjeta</option>
+                                                <option value="transfer">Transferencia</option>
+                                            </select>
+                                        </div>
                                     </div>                                
                                     <div class="col-lg-12">
                                         <div class="form-group">
