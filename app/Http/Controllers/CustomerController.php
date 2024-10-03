@@ -13,7 +13,7 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = Customer::where('locality_id', $authUser->locality_id);
+        $query = Customer::where('locality_id', $authUser->locality_id)->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->input('search');

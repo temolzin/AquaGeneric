@@ -10,7 +10,9 @@ class CostController extends Controller
     public function index()
     {
         $authUser = auth()->user();
-        $costs = Cost::where('locality_id', $authUser->locality_id)->get();
+        $costs = Cost::where('locality_id', $authUser->locality_id)
+        ->orderBy('created_at', 'desc')
+        ->get();
         return view('costs.index', compact('costs'));
     }
 
