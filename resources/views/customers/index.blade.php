@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', config('adminlte.title') . ' | Usuarios')
+@section('title', config('adminlte.title') . ' | Clientes')
 
 @section('content')
 <section class="content">
@@ -8,12 +8,12 @@
         <div class="col-md-12 col-sm-12 ">
             <div class="x_panel">
                 <div class="x_title">
-                    <h2>Usuarios</h2>
+                    <h2>Clientes</h2>
                     <div class="row">
                         <div class="col-lg-12 text-right">
-                            <div class="btn-group" role="group" aria-label="Acciones de Usuario">
+                            <div class="btn-group" role="group" aria-label="Acciones de Cliente">
                                 <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createCustomer">
-                                    <i class="fa fa-plus"></i> Registrar Usuario
+                                    <i class="fa fa-plus"></i> Registrar Cliente
                                 </button>
                                 <a type="button" class="btn btn-secondary" target="_blank" title="Customers" href="{{ route('customers.pdfCustomers') }}">
                                     <i class="fas fa-users"></i> Generar Lista

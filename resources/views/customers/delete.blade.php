@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-danger">
-                <h5 class="modal-title" id="exampleModalLabel">Eliminar usuario</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar cliente</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -12,7 +12,7 @@
                 @csrf
                 @method('DELETE')
                 <div class="modal-body text-center text-danger">
-                    ¿Estás seguro de eliminar al Usuario <strong>{{ $customer->name }}?</strong>
+                    ¿Estás seguro de eliminar al cliente <strong>{{ $customer->name }}?</strong>
                     Recuerda que si tiene deudas y pagos asociados se eliminaran
                 </div>
                 <div class="modal-footer">

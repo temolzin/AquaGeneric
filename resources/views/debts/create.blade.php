@@ -26,9 +26,9 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="customer_id" class="form-label">Usuario(*)</label>
+                                            <label for="customer_id" class="form-label">Cliente(*)</label>
                                             <select id="mySelect" class="form-control select2" name="customer_id" required>
-                                                <option value="">Seleccione un usuario</option>
+                                                <option value="">Seleccione un cliente</option>
                                                 @foreach($customers as $customer)
                                                     <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
                                                         {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}

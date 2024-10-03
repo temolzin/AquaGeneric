@@ -10,8 +10,9 @@
             <form id="clientPaymentForm" method="GET" action="{{ route('report.client-payments') }}">
                 <div class="modal-body">
                     <div class="form-group">
+                        <label for="customerId" class="form-label">Cliente(*)</label>
                         <select class="form-control select2" name="customerId" id="customerId" required>
-                            <option value="">Selecciona un usuario</option>
+                            <option value="">Selecciona un cliente</option>
                             @foreach($customers as $customer)
                                 <option value="{{ $customer->id }}">
                                     {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}

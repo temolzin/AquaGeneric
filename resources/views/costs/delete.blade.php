@@ -12,7 +12,7 @@
                 @method('DELETE')
                 <div class="modal-body text-center text-danger">
                     ¿Estás seguro de eliminar el costo <strong>{{ $cost->category }}?</strong>
-                    , recuerda que puede estar asociado a un usuario, si es el caso se quedara sin ningun costo?
+                    , recuerda que puede estar asociado a un cliente, si es el caso se quedara sin ningun costo?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
