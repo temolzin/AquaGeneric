@@ -16,6 +16,7 @@ class Payment extends Model
         'locality_id',
         'created_by',
         'debt_id',
+        'method',
         'amount',
         'note',
     ];

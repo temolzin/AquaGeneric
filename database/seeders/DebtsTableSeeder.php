@@ -12,9 +12,7 @@ class DebtsTableSeeder extends Seeder
     private const DEBT_COUNT = 100;
     private const MIN_AMOUNT = 100;
     private const MAX_AMOUNT = 1000;
-    private const MIN_DEBT_CURRENT = 0;
-    private const MAX_DEBT_CURRENT = 1000;
-    private const STATUS_OPTIONS = ['pending', 'partial', 'paid'];
+    private const DEBT_STATUSES = ['pending','partial','paid'];
 
     /**
      * Run the database seeds.
@@ -24,34 +22,54 @@ class DebtsTableSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        $customerIds = DB::table('customers')->pluck('id')->toArray();
-        $localitiesIds = DB::table('localities')->pluck('id')->toArray();
-        $usersIds = DB::table('users')->pluck('id')->toArray();
-        $createdAt = $faker->dateTimeBetween('-1 year', 'now');
-        $updatedAt = $createdAt;
+        $customers = DB::table('customers')->get();
+        $usersIds = DB::table('users')->pluck('id');
 
-        $startDate = Carbon::now()->subYear();
+        $startDate = Carbon::createFromDate(2024, 1, 1);
+        $endDate = Carbon::createFromDate(2024, 12, 31);
 
         foreach (range(1, self::DEBT_COUNT) as $index) {
-            $createdAt = $faker->dateTimeBetween('-1 year', 'now');
-            $startDate = Carbon::instance($createdAt)->subMonths($faker->numberBetween(1, 12));
-            $endDate = Carbon::instance($createdAt)->addMonths($faker->numberBetween(1, 12));
-            $updatedAt = $createdAt; 
+            $customer = $faker->randomElement($customers);
+            $createdAt = $faker->dateTimeBetween($startDate, $endDate);
+            $debtStartDate = $faker->dateTimeBetween($startDate, $endDate);
+            $debtDuration = $faker->numberBetween(1, 12);
+            $debtEndDate = Carbon::instance($debtStartDate)->addMonths($debtDuration);
+
+            if ($debtEndDate > $endDate) {
+                $debtEndDate = $endDate;
+            }
+
+            $amount = rand(self::MIN_AMOUNT, self::MAX_AMOUNT);
+            $paymentAmount = rand(0, $amount);
+            $debtCurrent = $amount - $paymentAmount;
+
+            $status = $this->determineDebtStatus($paymentAmount, $debtCurrent);
 
             DB::table('debts')->insert([
-                'customer_id' => $faker->randomElement($customerIds),
-                'locality_id' => $faker->randomElement($localitiesIds),
+                'customer_id' => $customer->id,
+                'locality_id' => $customer->locality_id,
                 'created_by' => $faker->randomElement($usersIds),
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'amount' => $faker->randomFloat(2, self::MIN_AMOUNT, self::MAX_AMOUNT),
-                'debt_current' => $faker->randomFloat(2, self::MIN_DEBT_CURRENT, self::MAX_DEBT_CURRENT),
-                'status' => $faker->randomElement(self::STATUS_OPTIONS),
+                'start_date' => $debtStartDate,
+                'end_date' => $debtEndDate,
+                'amount' => $amount,
+                'debt_current' => $debtCurrent,
+                'status' => $status,
                 'note' => 'Deuda generada de prueba #' . $index,
                 'deleted_at' => null,
                 'created_at' => $createdAt,
-                'updated_at' => $updatedAt,
+                'updated_at' => $createdAt,
             ]);
+        }
+    }
+
+    private function determineDebtStatus(int $paymentAmount, int $debtCurrent): string
+    {
+        if ($paymentAmount === 0) {
+            return self::DEBT_STATUSES[0];
+        } elseif ($debtCurrent > 0) {
+            return self::DEBT_STATUSES[1];
+        } else {
+            return self::DEBT_STATUSES[2];
         }
     }
 }

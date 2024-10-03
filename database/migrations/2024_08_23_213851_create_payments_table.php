@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreatePaymentsTable extends Migration
 {
+    private const PAYMENTS_METHODS = ['cash', 'card', 'transfer'];
     /**
      * Run the migrations.
      *
@@ -19,6 +20,7 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('created_by');
             $table->decimal('amount', 10, 2);
+            $table->enum('method', self::PAYMENTS_METHODS);
             $table->text('note')->nullable();
             $table->timestamps();
             $table->softDeletes();
