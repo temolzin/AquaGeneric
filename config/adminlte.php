@@ -324,7 +324,7 @@ return [
              'can'  =>'viewRoles'
         ],
         [
-            'text' => 'Usuarios',
+            'text' => 'Clientes',
             'url' => '/customers',
             'icon' => 'fas fa-fw fa-users',
              'can'  =>'viewCustomers'

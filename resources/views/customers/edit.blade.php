@@ -4,7 +4,7 @@
             <div class="card-warning">
                 <div class="card-header">
                     <div class="d-sm-flex align-items-center justify-content-between">
-                        <h4 class="card-title">Editar Usuario <small> &nbsp;(*) Campos requeridos</small></h4>
+                        <h4 class="card-title">Editar Cliente <small> &nbsp;(*) Campos requeridos</small></h4>
                         <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                 </div>
@@ -14,7 +14,7 @@
                     <div class="card-body">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
-                                <h3 class="card-title">Datos del Usuario</h3>
+                                <h3 class="card-title">Datos del Cliente</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fa fa-minus"></i>

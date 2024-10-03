@@ -99,17 +99,6 @@ class DebtController extends Controller
                 continue;
             }
 
-            $existingDebt = Debt::where('customer_id', $customer->id)
-                ->where(function ($query) use ($startDate, $endDate) {
-                    $query->where('start_date', '<=', $endDate->format('Y-m-d'))
-                        ->where('end_date', '>=', $startDate->format('Y-m-d'));
-                })
-                ->exists();
-
-            if ($existingDebt) {
-                continue;
-            }
-
             $allHaveDebt = false;
             Debt::create([
                 'locality_id' => $authUser->locality_id,

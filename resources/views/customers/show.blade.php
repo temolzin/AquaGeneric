@@ -4,7 +4,7 @@
             <div class="card-info">
                 <div class="card-header">
                     <div class="d-sm-flex align-items-center justify-content-between">
-                        <h4 class="card-title">Información del Usuario</h4>
+                        <h4 class="card-title">Información del Cliente</h4>
                         <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -17,7 +17,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group text-center">
                                         @if ($customer->getFirstMediaUrl('customerGallery'))
-                                            <img src="{{ $customer->getFirstMediaUrl('customerGallery') }}" alt="Foto del Usuario" class="img-fluid" 
+                                            <img src="{{ $customer->getFirstMediaUrl('customerGallery') }}" alt="Foto del Cliente" class="img-fluid" 
                                              style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                         @else
                                             <img src="{{ asset('img/userDefault.png') }}" alt="Foto del Usuario" class="img-fluid" 

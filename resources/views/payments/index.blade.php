@@ -35,7 +35,7 @@
                                         <span class="input-group-text">
                                             <i class="fas fa-search"></i>
                                         </span>
-                                        <input type="text" name="name" id="searchName" class="form-control" placeholder="Buscar por nombre de usuario" value="{{ request('name') }}">
+                                        <input type="text" name="name" id="searchName" class="form-control" placeholder="Buscar por nombre de cliente" value="{{ request('name') }}">
                                         <input type="text" name="period" id="searchPeriod" class="form-control" placeholder="Buscar por Fecha ejemplo: enero / 2024" value="{{ request('period') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary">Buscar</button>
@@ -53,7 +53,7 @@
                                         <thead>
                                             <tr>
                                                 <th>ID PAGO</th>
-                                                <th>USUARIO</th>
+                                                <th>CLIENTE</th>
                                                 <th>DEUDA</th>
                                                 <th>MONTO</th>
                                                 <th>OPCIONES</th>

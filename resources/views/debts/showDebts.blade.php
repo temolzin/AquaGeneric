@@ -4,7 +4,7 @@
             <div class="card-primary">
                 <div class="card-header">
                     <div class="d-sm-flex align-items-center justify-content-between">
-                        <h4 class="card-title">Información de Deudas del Usuario</h4>
+                        <h4 class="card-title">Información de Deudas del Cliente</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -16,13 +16,13 @@
                             <div class="row">
                                 <div class="col-lg-2">
                                     <div class="form-group">
-                                        <label>ID del Usuario</label>
+                                        <label>ID del Cliente</label>
                                         <input type="text" disabled class="form-control" value="{{ $debt->customer->id }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-10">
                                     <div class="form-group">
-                                        <label>Nombre del Usuario</label>
+                                        <label>Nombre del Cliente</label>
                                         <input type="text" disabled class="form-control" value="{{ $debt->customer->name }} {{ $debt->customer->last_name }}" />
                                     </div>
                                 </div>

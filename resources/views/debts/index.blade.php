@@ -47,7 +47,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>USUARIO</th>
+                                            <th>CLIENTE</th>
                                             <th>TOTAL DE LA DEUDA</th>
                                             <th>OPCIONES</th>
                                         </tr>
