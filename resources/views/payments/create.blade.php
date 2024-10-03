@@ -55,10 +55,10 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="suggested_amount" class="form-label" style="font-weight: bold; color: #555;">Monto Sugerido a Pagar</label>
+                                            <label for="suggested_amount" class="form-label" style="font-weight: bold; color: #555;">Saldo Pendiente</label>
                                             <div style="border-radius: 8px; background-color: #d2e0ca; padding: 10px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); display: flex; align-items: center;">
                                                 <i class="fas fa-money-bill-wave" style="margin-right: 8px; color: #28a745;"></i>
-                                                <p id="suggested_amount" class="form-control-static" style="margin: 0; font-size: 16px; color: #333;">Selecciona una deuda para ver el monto sugerido.</p>
+                                                <p id="suggested_amount" class="form-control-static" style="margin: 0; font-size: 16px; color: #333;">Selecciona una deuda para ver el saldo pendiente.</p>
                                             </div>
                                         </div>
                                     </div>                                                                       
@@ -69,7 +69,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
                                                 </div>
-                                                <input type="number" class="form-control" name="amount" placeholder="Ingresa el monto" required />
+                                                <input type="number" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
                                             </div>
                                         </div>
                                     </div>                                
