@@ -155,7 +155,8 @@ $(document).ready(function() {
         var remainingAmount = selectedOption.data('remaining-amount');
         
         if (remainingAmount !== undefined) {
-            $('#suggested_amount').text('Monto sugerido a pagar: $' + remainingAmount);
+            var roundedAmount = parseFloat(remainingAmount).toFixed(2);
+            $('#suggested_amount').text('Saldo pendiente: $' + roundedAmount);
         } else {
             $('#suggested_amount').text('');
         }
