@@ -30,10 +30,6 @@ class ProfileController extends Controller
 
     public function updateImage(Request $request)
     {
-        $request->validate([
-            'profileImage' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
         $user = User::find(Auth::id());
 
         if ($user->getFirstMedia('userGallery')) {
