@@ -16,10 +16,10 @@
                             <div class="row">
                                 <div class="col-lg-12 text-center">
                                     @if ($locality->getFirstMediaUrl('localityGallery'))
-                                        <img src="{{ $locality->getFirstMediaUrl('localityGallery') }}" alt="Foto de la localidad" class="img-fluid" 
+                                        <img src="{{ $locality->getFirstMediaUrl('localityGallery') }}" alt="Foto de la localidad" class="img-fluid"
                                         style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                     @else
-                                        <img src="{{ asset('img/userDefault.png') }}" alt="Foto de la localidad" class="img-fluid" 
+                                        <img src="{{ asset('img/localityDefault.png') }}" alt="Foto de la localidad" class="img-fluid"
                                         style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                     @endif
                                 </div>

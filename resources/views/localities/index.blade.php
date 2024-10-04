@@ -63,7 +63,7 @@
                                                 <img src="{{$locality->getFirstMediaUrl('localityGallery') }}" alt="Foto de {{$locality->locality_name}}"
                                                 style="width: 50px; height: 50px; border-radius: 50%;">
                                             @else
-                                                <img src="{{ asset('img/userDefault.png') }}" 
+                                                <img src="{{ asset('img/localityDefault.png') }}"
                                                 style="width: 50px; height: 50px; border-radius: 50%;">
                                             @endif
                                             </td>

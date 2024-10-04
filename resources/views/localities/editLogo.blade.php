@@ -27,7 +27,7 @@
                                         <div class="form-group text-center">
                                             <label for="photo-{{ $locality->id }}" class="form-label"></label>
                                             <div class="image-preview-container" style="display: flex; justify-content: center; margin-bottom: 10px;">
-                                                <img id="photo-preview-edit-{{ $locality->id }}" src="{{ $locality->getFirstMediaUrl('localityGallery') ? $locality->getFirstMediaUrl('localityGallery') : asset('img/userDefault.png') }}" 
+                                                <img id="photo-preview-edit-{{ $locality->id }}" src="{{ $locality->getFirstMediaUrl('localityGallery') ? $locality->getFirstMediaUrl('localityGallery') : asset('img/localityDefault.png') }}"
                                                 alt="Foto Actual" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                             </div>
                                             <input type="file" class="form-control" name="photo" id="photo-{{ $locality->id }}" onchange="previewImageEdit(event, {{ $locality->id }})">
