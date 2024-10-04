@@ -15,7 +15,7 @@ class Locality extends Model implements HasMedia
     use HasFactory, InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
-        'locality_name',
+        'name',
         'municipality',
         'state',
         'zip_code'

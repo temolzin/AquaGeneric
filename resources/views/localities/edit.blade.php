@@ -26,7 +26,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="localityNameUpdate" class="form-label">Nombre de la localidad(*)</label>
-                                            <input type="text" class="form-control" name="localityNameUpdate" id="localityNameUpdate" value="{{ $locality->locality_name }}" required>
+                                            <input type="text" class="form-control" name="localityNameUpdate" id="localityNameUpdate" value="{{ $locality->name }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

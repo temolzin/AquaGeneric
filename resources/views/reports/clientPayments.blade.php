@@ -203,7 +203,7 @@
         <div id="page_pdf">
             <div class="logo">
                 @if ($authUser->locality->hasMedia('localityGallery'))
-                    <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $authUser->locality->locality_name }}">
+                    <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $authUser->locality->name }}">
                 @else
                     <img src='img/localityDefault.png' alt="Default Photo">
                 @endif
@@ -212,7 +212,7 @@
                 <tr>
                     <td class="info_empresa">
                         <div>
-                            <p class="aqua_titulo"> COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->locality_name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
+                            <p class="aqua_titulo"> COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
                             </p><br>
                             <a class="link_Whats" href="https://wa.me/525623640302">WhatsApp: +52 56 2364 0302</a><br>
                             <a class="link_Email" href="mailto:info@rootheim.com">Email: info@rootheim.com</a>

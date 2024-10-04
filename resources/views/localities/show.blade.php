@@ -32,7 +32,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Nombre de la localidad</label>
-                                        <input type="text" disabled class="form-control" value="{{ $locality->locality_name }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $locality->name }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">

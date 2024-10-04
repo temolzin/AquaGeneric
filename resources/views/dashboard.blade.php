@@ -82,8 +82,8 @@
                                 <select id="mySelect" class="form-control select2" name="locality_id" required>
                                     <option value="">Seleccione una localidad</option>
                                     @foreach($data['localities'] as $locality)
-                                        <option value="{{ $locality->id }}" data-name="{{ $locality->locality_name }}" data-municipality="{{ $locality->municipality }}" {{ old('locality_id') == $locality->id ? 'selected' : '' }}>
-                                            {{ $locality->locality_name }} , {{ $locality->municipality }}
+                                        <option value="{{ $locality->id }}" data-name="{{ $locality->name }}" data-municipality="{{ $locality->municipality }}" {{ old('locality_id') == $locality->id ? 'selected' : '' }}>
+                                            {{ $locality->name }} , {{ $locality->municipality }}
                                         </option>
                                     @endforeach
                                 </select>

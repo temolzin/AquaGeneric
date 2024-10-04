@@ -14,7 +14,7 @@ class LocalityController extends Controller
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->whereRaw("CONCAT(locality_name, ' ', municipality, ' ', zip_code) LIKE ?", ["%{$search}%"]);
+            $query->whereRaw("CONCAT(name, ' ', municipality, ' ', zip_code) LIKE ?", ["%{$search}%"]);
         }
 
         $localities = $query->paginate(10);
@@ -42,7 +42,7 @@ class LocalityController extends Controller
     {
         $locality = Locality::find($id);
         if ($locality) {
-            $locality->locality_name = $request->input('localityNameUpdate');
+            $locality->name = $request->input('localityNameUpdate');
             $locality->municipality = $request->input('municipalityUpdate');
             $locality->state = $request->input('stateUpdate');
             $locality->zip_code = $request->input('zipCodeUpdate');

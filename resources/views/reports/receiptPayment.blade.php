@@ -127,16 +127,16 @@
     <div class="receipt">
         <header class="receipt-header">           
             @if ($payment->locality->hasMedia('localityGallery'))
-                <img src="{{ $payment->locality->getFirstMediaUrl('localityGallery') }}" alt="Logo de {{ $payment->locality->locality_name }}">
+                <img src="{{ $payment->locality->getFirstMediaUrl('localityGallery') }}" alt="Logo de {{ $payment->locality->name }}">
             @else
-                <img src='img/localityDefault.png' alt="Logo de {{ $payment->locality->locality_name }}">
+                <img src='img/localityDefault.png' alt="Logo de {{ $payment->locality->name }}">
             @endif
             <div class="folio">
                 <p>FOLIO. {{ $payment->id }}</p>
             </div>
         </header>
         <div class="title">
-            <h2>COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $payment->locality->locality_name }} A.C.</h2>
+            <h2>COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $payment->locality->name }} A.C.</h2>
             <p>{{ $payment->locality->municipality }}, {{ $payment->locality->state }}</p>
         </div>
         <div class="date">
@@ -147,7 +147,7 @@
                 <h4>Datos del cliente</h4>
                 <p>{{ $payment->debt->customer->name }} {{ $payment->debt->customer->last_name }}</p>
                 <p>{{ $payment->debt->customer->street }} #{{ $payment->debt->customer->interior_number }}, {{ $payment->debt->customer->block }}, {{$payment->locality->zip_code }}</p>
-                <p>{{ $payment->locality->locality_name }}, {{ $payment->locality->state }}</p>
+                <p>{{ $payment->locality->name }}, {{ $payment->locality->state }}</p>
             </div>
             <div class="debt-info">
                 <h4>Datos de la deuda</h4>
