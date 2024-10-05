@@ -95,7 +95,8 @@ class CustomerController extends Controller
 
     public function pdfCustomers()
     {
-        $customers = Customer::all();
+        $authUser = auth()->user();
+        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
         $pdf = PDF::loadView('customers.pdfCustomers', compact('customers'))
             ->setPaper('legal', 'landscape');
 
@@ -104,7 +105,9 @@ class CustomerController extends Controller
 
     public function reportCurrentCustomers()
     {
-        $customers = Customer::whereDoesntHave('debts', function ($query) {
+        $authUser = auth()->user();
+        $customers = Customer::where('locality_id', $authUser->locality_id)
+            ->whereDoesntHave('debts', function ($query) {
             $query->where('status', '!=', 'paid');
         })->get();
     
@@ -114,7 +117,9 @@ class CustomerController extends Controller
 
     public function customersWithDebts()
     {
-        $customers = Customer::whereHas('debts', function ($query) {
+        $authUser = auth()->user();
+        $customers = Customer::where('locality_id', $authUser->locality_id)
+            ->whereHas('debts', function ($query) {
             $query->where('status', '!=', 'paid');
         })->get();
 

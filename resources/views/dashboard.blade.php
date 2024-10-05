@@ -57,7 +57,7 @@
                                     <div class="icon">
                                         <i class="fas fa-check-circle"></i>
                                     </div>
-                                    <a href="{{ route('customers.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+                                    <a href="{{ route('report.current-customers') }}" class="small-box-footer" target="_blank">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-xs-6">
@@ -69,7 +69,7 @@
                                     <div class="icon">
                                         <i class="fas fa-exclamation-circle"></i>
                                     </div>
-                                    <a href="{{ route('debts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+                                    <a href="{{ route('report.with-debts') }}" class="small-box-footer" target="_blank">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                         </div>
