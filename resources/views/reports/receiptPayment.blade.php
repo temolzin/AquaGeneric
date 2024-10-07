@@ -23,8 +23,10 @@
         .receipt {
             margin: auto;
             padding: 20mm;
+            position: relative;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
-
         .receipt-header {
             margin-top: 20px;
             text-align: left;
@@ -32,7 +34,9 @@
         }
 
         .receipt-header img {
-            max-width: 115px;
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 50%;
         }
 
         .folio {
@@ -69,7 +73,7 @@
         }
 
         .info-container {
-            margin-top: 30px;
+            margin-top: 5px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -77,7 +81,7 @@
 
         .customer-info, .debt-info, .payment-info {
             padding-left: 150px;
-            margin: 11px auto;
+            margin: 11px;
             text-align: left;
             width: fit-content;
             word-wrap: break-word;
@@ -86,7 +90,25 @@
         .signature {
             text-align: center;
             font-size: 12px;
-            margin-top: 10px;
+            page-break-before: avoid;
+        }
+
+        .company-info {
+            text-align: center;
+            font-weight: bold;
+            font-size: 15px;
+            margin-top: 180px;
+            page-break-inside: avoid;
+        }
+
+        a.text_infoE, img.text_infoE {
+            display: inline-block;
+        }
+
+        a {
+            font-weight: normal;
+            color: white;
+            text-decoration: none;
         }
 
         h4 {
@@ -99,46 +121,33 @@
             margin: 5px 0;
             font-size: 16px;
         }
-
-        .company-info {
-            text-align: center;
-            margin-top: 215px;
-            font-weight: bold;
-            font-size: 15px;
-        }
-
-        a {
-            font-weight: normal;
-            color: white;
-            text-decoration: none;
-        }
     </style>
 </head>
 <body>
     <div class="receipt">
         <header class="receipt-header">           
             @if ($payment->locality->hasMedia('localityGallery'))
-                <img src="{{ $payment->locality->getFirstMediaUrl('localityGallery') }}" alt="Logo de {{ $payment->locality->locality_name }}">
+                <img src="{{ $payment->locality->getFirstMediaUrl('localityGallery') }}" alt="Logo de {{ $payment->locality->name }}">
             @else
-                <img src='img/userDefault.png' alt="Logo por defecto">
+                <img src='img/localityDefault.png' alt="Logo de {{ $payment->locality->name }}">
             @endif
             <div class="folio">
                 <p>FOLIO. {{ $payment->id }}</p>
             </div>
         </header>
         <div class="title">
-            <h2>COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $payment->locality->locality_name }} A.C.</h2>
+            <h2>COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $payment->locality->name }} A.C.</h2>
             <p>{{ $payment->locality->municipality }}, {{ $payment->locality->state }}</p>
         </div>
         <div class="date">
-            <p>{{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }} a las {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->format('H:i') }}</p>
+            <p>{{ \Carbon\Carbon::parse($payment->created_at)->setTimezone('America/Mexico_City')->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }} a las {{ \Carbon\Carbon::parse($payment->created_at)->setTimezone('America/Mexico_City')->locale('es')->format('H:i') }}</p>
         </div>
         <div class="info-container">
             <div class="customer-info">
                 <h4>Datos del cliente</h4>
                 <p>{{ $payment->debt->customer->name }} {{ $payment->debt->customer->last_name }}</p>
                 <p>{{ $payment->debt->customer->street }} #{{ $payment->debt->customer->interior_number }}, {{ $payment->debt->customer->block }}, {{$payment->locality->zip_code }}</p>
-                <p>{{ $payment->locality->locality_name }}, {{ $payment->locality->state }}</p>
+                <p>{{ $payment->locality->name }}, {{ $payment->locality->state }}</p>
             </div>
             <div class="debt-info">
                 <h4>Datos de la deuda</h4>
@@ -147,7 +156,21 @@
                 <p>Fecha de vencimiento: {{ \Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }}</p>
             </div>
             <div class="payment-info">
-                <p><strong>Monto total del pago: </strong>${{ $payment->amount }}</p>
+                <br>
+                <p><strong>Monto del pago: </strong>${{ $payment->amount }}</p>
+                <p>
+                    @switch($payment->method)
+                        @case('cash')
+                        <strong>Método de pago: </strong> Efectivo
+                            @break
+                        @case('card')
+                        <strong>Método de pago: </strong>Tarjeta
+                            @break
+                        @case('transfer')
+                        <strong>Método de pago: </strong>Transferencia
+                            @break
+                    @endswitch
+                </p>
             </div>
         </div>
     </div>
@@ -156,8 +179,10 @@
         <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
     </div>
     <footer class="company-info">
-        <a class="text_infoE" href="https://www.rootheim.com/"><strong>AquaControl</strong> powered by <strong>Root Heim Company</strong></a>
-        <img src="img/rootheim.png" width="18px">
+        <a class="text_infoE" href="https://www.rootheim.com/">
+            <strong>AquaControl</strong> powered by <strong>Root Heim Company</strong>
+            <img src="img/rootheim.png" width="18px">
+        </a>
     </footer>
 </body>
 </html>

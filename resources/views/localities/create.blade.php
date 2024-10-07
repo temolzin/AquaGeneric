@@ -35,8 +35,8 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="locality_name" class="form-label">Nombre de la localidad(*)</label>
-                                            <input type="text" class="form-control" id="locality_name" name="locality_name" placeholder="Ingresa nombre de la localidad" value="{{ old('locality_name') }}" required />
+                                            <label for="name" class="form-label">Nombre de la localidad(*)</label>
+                                            <input type="text" class="form-control" id="name" name="name" placeholder="Ingresa nombre de la localidad" value="{{ old('name') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

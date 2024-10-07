@@ -58,7 +58,7 @@
                                                     <td>{{ $user->phone }}</td>
                                                     <td>{{ $user->email }}</td>
                                                     <td>{{ $user->roles->first()->name }}</td>
-                                                    <td>{{ $user->locality_id ? $user->locality->locality_name : 'Sin localidad' }}</td>
+                                                    <td>{{ $user->locality_id ? $user->locality->name : 'Sin localidad' }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $user->id }}">

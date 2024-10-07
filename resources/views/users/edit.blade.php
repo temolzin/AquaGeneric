@@ -76,7 +76,7 @@
                                                 <option value="">Sin localidad</option>
                                                 @foreach($localities as $locality)
                                                     <option value="{{ $locality->id }}" {{ $user->locality_id == $locality->id ? 'selected' : '' }}>
-                                                        {{ $locality->locality_name }}
+                                                        {{ $locality->name }}
                                                     </option>
                                                 @endforeach
                                             </select>

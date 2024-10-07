@@ -10,7 +10,7 @@ class CreateLocalitiesTable extends Migration
     {
         Schema::create('localities', function (Blueprint $table) {
             $table->id();
-            $table->string('locality_name');
+            $table->string('name');
             $table->string('municipality');
             $table->string('state');
             $table->string('zip_code', 5);

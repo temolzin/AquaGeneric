@@ -15,21 +15,21 @@ class LocalitiesTableSeeder extends Seeder
     public function run()
     {
         Locality::create([
-            'locality_name' => 'Smallville',
+            'name' => 'Smallville',
             'municipality' => 'Smallville',
             'state' => 'Kansas',
             'zip_code' => '66002',
         ]);
         
         Locality::create([
-            'locality_name' => 'Springfield',
+            'name' => 'Springfield',
             'municipality' => 'Springfield',
             'state' => 'Oregon',
             'zip_code' => '97477',
         ]);
 
         Locality::create([
-            'locality_name' => 'Dunder Mifflin',
+            'name' => 'Dunder Mifflin',
             'municipality' => 'Scranton',
             'state' => 'Pennsylvania',
             'zip_code' => '18503',

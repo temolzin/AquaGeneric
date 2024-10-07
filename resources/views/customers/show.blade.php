@@ -136,7 +136,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Localidad</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->locality->locality_name ?? 'Desconocido' }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $customer->locality->name ?? 'Desconocido' }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
