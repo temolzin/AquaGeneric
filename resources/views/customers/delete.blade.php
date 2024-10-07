@@ -13,7 +13,6 @@
                 @method('DELETE')
                 <div class="modal-body text-center text-danger">
                     ¿Estás seguro de eliminar al cliente <strong>{{ $customer->name }}?</strong>
-                    Recuerda que si tiene deudas y pagos asociados se eliminaran
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>

@@ -67,9 +67,15 @@
                                                                     <i class="fas fa-eye"></i>
                                                                 </button>
                                                                 @can('deleteDebt')
-                                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $customerDebt->id }}">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
+                                                                    @if($customerDebt->hasDependencies() && $customerDebt->status !== 'paid')
+                                                                        <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="No se puede eliminar registro: Contiene dependencias." disabled>
+                                                                            <i class="fas fa-trash-alt"></i>
+                                                                        </button>
+                                                                    @else
+                                                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $customerDebt->id }}">
+                                                                            <i class="fas fa-trash-alt"></i>
+                                                                        </button>
+                                                                    @endif
                                                                 @endcan
                                                             </div>
                                                         </div>

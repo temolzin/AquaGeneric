@@ -70,9 +70,15 @@
                                                             <button type="button" class="btn btn-primary mr-2" data-toggle="modal" title="Editar Contraseña" data-target="#editPassword{{ $user->id }}">
                                                                 <i class="fas fa-lock"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $user->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
+                                                            @if($user->hasDependencies())
+                                                                <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="No se puede eliminar registro: Contiene dependencias." disabled>
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @else
+                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $user->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
                                                         </div>
                                                     </td>
                                                 </tr>

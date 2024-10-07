@@ -46,7 +46,12 @@ class Customer extends Model implements HasMedia
     {
         return $this->belongsTo(Cost::class);
     }
-   
+
+    public function hasDependencies()
+    {
+        return $this->debts()->exists();
+    }
+
     public function debts()
     {
         return $this->hasMany(Debt::class);

@@ -78,9 +78,15 @@
                                                     </button>
                                                     @endcan
                                                     @can('deleteCustomer')
-                                                    <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{$customer->id}}">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
+                                                        @if($customer->hasDependencies())
+                                                            <button type="button" class="btn btn-secondary mr-2" title="No se puede eliminar registro: Contiene dependencias." disabled>
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        @else
+                                                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{$customer->id}}">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        @endif
                                                     @endcan
                                                 </div>
                                             </td>

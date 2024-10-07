@@ -44,8 +44,33 @@ class User extends Authenticatable implements HasMedia
         'email_verified_at' => 'datetime',
     ];
 
+    public function hasDependencies()
+    {
+        return $this->locality()->exists() || $this->customers()->exists() || $this->costs()->exists() || $this->debts()->exists() || $this->payments()->exists();
+    }
+
     public function locality()
     {
         return $this->belongsTo(Locality::class, 'locality_id');
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(Customer::class, 'created_at');
+    }
+
+    public function costs()
+    {
+        return $this->hasMany(Cost::class, 'created_at');
+    }
+
+    public function debts()
+    {
+        return $this->hasMany(Debt::class, 'created_at');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'created_at');
     }
 }

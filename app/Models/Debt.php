@@ -13,6 +13,11 @@ class Debt extends Model
         'customer_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note'
     ];
 
+    public function hasDependencies()
+    {
+        return $this->payments()->exists();
+    }
+
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');

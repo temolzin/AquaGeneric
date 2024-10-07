@@ -82,9 +82,15 @@
                                                     <button type="button" class="btn btn-primary mr-2" data-toggle="modal" title="Actualizar Imagen" data-target="#editLogo{{$locality->id}}">
                                                         <i class="fas fa-image"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{$locality->id}}">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
+                                                    @if($locality->hasDependencies())
+                                                        <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="No se puede eliminar registro: Contiene dependencias." disabled>
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    @else
+                                                        <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{$locality->id}}">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    @endif
                                                 </div>
                                             </td>
                                             @include('localities.edit')

@@ -21,4 +21,23 @@ class Locality extends Model implements HasMedia
         'zip_code'
     ];
 
+    public function hasDependencies()
+    {
+        return $this->customers()->exists() || $this->users()->exists() || $this->costs()->exists();
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(Customer::class);
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function costs()
+    {
+        return $this->hasMany(Cost::class);
+    }
 }
