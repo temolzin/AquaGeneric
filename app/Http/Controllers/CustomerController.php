@@ -111,7 +111,7 @@ class CustomerController extends Controller
             $query->where('status', '!=', 'paid');
         })->get();
     
-        $pdf = Pdf::loadView('reports.reportCurrentCustomers', compact('customers'));
+        $pdf = Pdf::loadView('reports.reportCurrentCustomers', compact('customers', 'authUser'));
         return $pdf->stream('reporte_clientes_al_corriente.pdf');
     }
 
@@ -123,7 +123,8 @@ class CustomerController extends Controller
             $query->where('status', '!=', 'paid');
         })->get();
 
-        $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers'));
+        $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers', 'authUser'))
+        ->setPaper('A4', 'portrait');
         return $pdf->stream('reporte_clientes_con_deudas.pdf');
     }
 }
