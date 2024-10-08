@@ -170,7 +170,7 @@
                     <th class="textable">TOTAL DE LA DEUDA</th>
                 </tr>
             </thead>
-            <tbody id="detalle_clientes">'
+            <tbody id="detalle_clientes">
                 @foreach ($customers as $customer)
                     <tr>
                         <td class="textcenter">{{ $customer->id }}</td>
