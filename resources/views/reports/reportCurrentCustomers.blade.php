@@ -143,7 +143,7 @@
                 <td>
                     <div class="logo">
                         @if ($authUser->locality->hasMedia('localityGallery'))
-                            <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $authUser->locality->locality_name }}">
+                            <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $authUser->locality->name }}">
                         @else
                             <img src='img/localityDefault.png' alt="Default Photo">
                         @endif
@@ -152,7 +152,7 @@
                 <td class="info_empresa">
                     <div>
                         <p class="aqua_titulo">
-                            COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->locality_name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
+                            COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
                         </p>
                     </div>
                 </td>
