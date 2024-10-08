@@ -68,7 +68,7 @@
                                                                 </button>
                                                                 @can('deleteDebt')
                                                                     @if($customerDebt->hasDependencies() && $customerDebt->status !== 'paid')
-                                                                        <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="No se puede eliminar registro: Contiene dependencias." disabled>
+                                                                        <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
                                                                             <i class="fas fa-trash-alt"></i>
                                                                         </button>
                                                                     @else

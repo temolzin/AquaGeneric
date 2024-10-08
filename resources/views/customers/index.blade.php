@@ -79,7 +79,7 @@
                                                     @endcan
                                                     @can('deleteCustomer')
                                                         @if($customer->hasDependencies())
-                                                            <button type="button" class="btn btn-secondary mr-2" title="No se puede eliminar registro: Contiene dependencias." disabled>
+                                                            <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         @else
