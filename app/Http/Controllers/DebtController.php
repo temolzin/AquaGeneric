@@ -28,7 +28,7 @@ class DebtController extends Controller
             })
             ->where('status', '!=', 'paid')
             ->select('customer_id')
-            ->groupBy('customer_id')
+            ->groupBy('customer_id', 'created_at')
             ->orderBy('created_at', 'desc')
             ->selectRaw('SUM(amount) as total_amount')
             ->paginate(10);
