@@ -1,112 +1,214 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte Anual de Ganancias</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #020404;
-            margin: 5;
-            padding: 0;
-        }
-        .header {
-            background-color: #a3c0d9;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 5px solid #15304b;
-        }
-        .header img {
-            width: 80px;
-            height: auto;
-            vertical-align: middle;
-        }
-        .header h1 {
-            display: inline;
-            font-size: 12px;
-            margin: 0;
-            padding-left: 10px;
-        }
-       
-        h2 {
-            text-align: center;
-            font-size: 22px;
-            margin-bottom: 20px;
-            color: #343a40;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-        }
-        table, th, td {
-            border: 1px solid #dee2e6;
-        }
-        th, td {
-            padding: 12px;
-            text-align: center;
-            font-size: 16px;
-        }
-        th {
-            background-color: #6c757d;
-            color: white;
-        }
-        tfoot td {
-            font-weight: bold;
-            background-color: #343a40;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <img src="img/drop.png" alt="Logo">
-        <h1>COMITÉ DEL SISTEMA DE AGUA POTABLE, SANTIAGO TOLMAN A.C</h1>
-    </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reporte Anual de Ganancias</title>
+        <style>
+            html{
+                margin: 0;
+                padding: 15px;
+            }
 
-    <div class="container">
-        <h2>Reporte Anual de Ganancias del Año: {{ $year }}</h2>
-        <table>
-            <thead>
+            body{
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                background-image: url('img/backgroundReport.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+
+            #page_pdf {
+                margin-top: 10%;
+                margin: 40px;
+            }
+
+            .info_empresa {
+                width: 100%;
+                margin-top: 60px;
+                text-align: center;
+                align-content: stretch;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            .aqua_titulo {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 20pt;
+                font-weight: bold;
+                margin-right: 5px;
+                display: inline-block;
+                text-decoration: none;
+                color: #0B1C80;
+                text-transform: uppercase;
+            }
+
+            p, label, span, table {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 12pt;
+            }
+
+            .h2 {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 17pt;
+            }
+
+            .h3 {
+                font-weight: bold;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 15pt;
+                display: block;
+                color: #0B1C80;
+                text-align: left;
+                margin-bottom: 5px;
+            }
+
+            .textable {
+                text-align: center;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 12pt;
+                color: #FFF;
+            }
+
+            .textcenter {
+                padding: 5px;
+                background-color: #FFF;
+                text-align: center;
+                font-size: 12pt;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            #reporte_detalle {
+                border-collapse: collapse;
+                width: 100%;
+                margin-bottom: 150px;
+                page-break-inside: auto;
+            }
+
+            #reporte_detalle thead th {
+                background: #0B1C80;
+                color: #FFF;
+                padding: 5px;
+            }
+
+            #detalle_ganancias tr {
+                border-top: 1px solid #bfc9ff;
+            }
+
+            .info_Eabajo {
+                text-align: center;
+                margin-top: 20px;
+                padding: 10px;
+                position: absolute;
+                bottom: 5px;
+                left: 20px;
+                right: 20px;
+            }
+
+            .text_infoE {
+                text-align: center;
+                font-size: 12pt;
+                font-family: 'Montserrat', sans-serif;
+                color: white;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            #reporte_head {
+                justify-content: center;
+            }
+
+            #reporte_head .logo {
+                height: auto;
+                margin-left: 60px;
+            }
+
+            #reporte_head .logo img {
+                border-radius: 50%;
+                width: 120px;
+                height: 120px;
+            }
+
+            .total_payment{
+                    padding: 20px;
+                    font-size: 15pt;
+                    text-align: right;
+                    font-family: 'Montserrat', sans-serif;
+                    font-weight: bold;
+                }
+
+            .title {
+                color: #0B1C80;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 14pt;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="page_pdf">
+            <table id="reporte_head">
                 <tr>
-                    <th>Mes</th>
-                    <th>Ganancias</th>
+                    <td>
+                        <div class="logo">
+                            @if ($authUser->locality->hasMedia('localityGallery'))
+                                <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $authUser->locality->name }}">
+                            @else
+                                <img src='img/localityDefault.png' alt="Default Photo">
+                            @endif
+                        </div>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @php
-                    $months = [
-                        1 => 'Enero',
-                        2 => 'Febrero',
-                        3 => 'Marzo',
-                        4 => 'Abril',
-                        5 => 'Mayo',
-                        6 => 'Junio',
-                        7 => 'Julio',
-                        8 => 'Agosto',
-                        9 => 'Septiembre',
-                        10 => 'Octubre',
-                        11 => 'Noviembre',
-                        12 => 'Diciembre'
-                    ];
-                @endphp
-
-                @foreach($months as $monthNumber => $monthName)
+            </table>
+            <div class="info_empresa">
+                <p class="aqua_titulo">
+                    COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
+                </p>
+            </div>
+            <div class="title">
+                <h3>GANANCIAS DEL {{ $year }}</h3>
+            </div>
+            <table id="reporte_detalle">
+                <thead>
                     <tr>
-                        <td>{{ $monthName }}</td>
-                        <td>${{ number_format($monthlyEarnings[$monthNumber] ?? 0, 2) }}</td>
+                        <th class="textable">MES</th>
+                        <th class="textable">GANANCIA</th>
                     </tr>
-                @endforeach
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td>Total</td>
-                    <td>${{ number_format($totalEarnings, 2) }}</td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-</body>
+                </thead>
+                <tbody id="detalle_ganancias">'
+                    @php
+                        $months = [
+                            1 => 'Enero',
+                            2 => 'Febrero',
+                            3 => 'Marzo',
+                            4 => 'Abril',
+                            5 => 'Mayo',
+                            6 => 'Junio',
+                            7 => 'Julio',
+                            8 => 'Agosto',
+                            9 => 'Septiembre',
+                            10 => 'Octubre',
+                            11 => 'Noviembre',
+                            12 => 'Diciembre'
+                        ];
+                    @endphp
+                    @foreach ($months as $monthNumber => $monthName)
+                        <tr>
+                            <td class="textcenter">{{ $monthName }}</td>
+                            <td class="textcenter">${{ number_format($monthlyEarnings[$monthNumber] ?? 0, 2) }}</td>
+                        </tr>
+                    @endforeach
+                    <tr>
+                        <td colspan="1" class="total_payment"><strong>Total:</strong></td>
+                        <td class="textcenter"><strong>${{ number_format($totalEarnings, 2) }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="info_Eabajo">
+            <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+            <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="15px" height="15px">
+        </div>
+    </body>
 </html>

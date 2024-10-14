@@ -1,104 +1,210 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Customer List</title>
-    <style>
-        @page {
-            size: legal landscape;
-            margin: 20mm;
-        }
+    <head>
+        <title>Lista de Clientes</title>
+        <style>
+            html {
+                margin: 0;
+                padding: 15px;
+            }
 
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                background-image: url('img/customersBackgroundHorizontal.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
+            #page_pdf {
+                margin: 40px;
+            }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+            .info_empresa {
+                width: 85%;
+                text-align: center;
+                align-content: stretch;
+                font-family: 'Montserrat', sans-serif;
+            }
 
-        th, td {
-            border: 1px solid #000;
-            padding: 10px;
-            text-align: left;
-        }
+            .aqua_titulo {
+                padding-right: 80px;
+                padding-top: 60px;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 18pt;
+                font-weight: bold;
+                margin-right: 5px;
+                display: inline-block;
+                text-decoration: none;
+                color: #0B1C80;
+                text-transform: uppercase;
+            }
 
-        th {
-            background-color: #a4c5c7;
-            font-size: 10px;
-            font-weight: bold;
-        }
+            p, label, span, table {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 12pt;
+            }
 
-        td {
-            font-size: 12px;
-        }
+            .h2 {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 15pt;
+            }
 
-        @media print {
-            table {
+            .h3 {
+                font-weight: bold;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 13pt;
+                display: block;
+                color: #0B1C80;
+                text-align: left;
+                margin-bottom: 5px;
+            }
+
+            .textable {
+                text-align: center;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 10pt;
+                color: #FFF;
+            }
+
+            .textcenter {
+                background-color: #FFF;
+                text-align: center;
+                font-size: 9pt;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            #reporte_detalle {
+                border-collapse: collapse;
+                width: 100%;
+                margin-bottom: 150px;
                 page-break-inside: auto;
             }
-            tr {
-                page-break-inside: avoid;
-                page-break-after: auto;
+
+            #reporte_detalle thead th {
+                background: #0B1C80;
+                color: #FFF;
+                padding: 5px;
             }
-        }
-    </style>
-</head>
-<body>
-    <h1>COMITÉ DEL SISTEMA DE AGUA POTABLE, SANTIAGO TOLMAN A.C</h1>
-    <table id="customers" class="table table-striped display responsive nowrap">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>NOMBRE</th>
-                <th>MANZANA</th>
-                <th>CALLE</th>
-                <th># INTERIOR</th>
-                <th>ESTADO CIVIL</th>
-                <th>PAREJA</th>
-                <th>¿TIENE TOMA?</th>
-                <th>¿TIENE LOCAL?</th>
-                <th>¿VA AL CORRIENTE?</th>
-                <th>¿TIENE AGUA DE DIA Y NOCHE?</th>
-                <th>DIAS DE AGUA</th>
-                <th>¿CUENTA CON PRESION?</th>
-                <th>¿TIENE CISTERNA?</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if(count($customers) <= 0)
-            <tr>
-                <td colspan="13" style="text-align: center;">No hay resultados</td>
-            </tr>
-            @else
-            @foreach($customers as $customer)
-            <tr>
-                <td scope="row">{{ $customer->id }}</td>
-                <td class="name">{{ $customer->name }} {{ $customer->last_name }}</td>
-                <td>{{ $customer->block }}</td>
-                <td>{{ $customer->street }}</td>
-                <td>{{ $customer->interior_number }}</td>
-                <td>{{ $customer->marital_status ? 'Casado' : 'Soltero'}}</td>
-                <td>{{ $customer->partner_name }}</td>
-                <td>{{ $customer->has_water_connection ? 'Sí' : 'No' }}</td>
-                <td>{{ $customer->has_store ? 'Sí' : 'No' }}</td>
-                <td>{{ $customer->is_current ? 'Sí' : 'No' }}</td>
-                <td>{{ $customer->has_water_24_7 ? 'Sí' : 'No' }}</td>
-                <td>{{ $customer->water_days }}</td>
-                <td>{{ $customer->has_pressure ? 'Sí' : 'No' }}</td>
-                <td>{{ $customer->has_cistern ? 'Sí' : 'No' }}</td>
-            </tr>
-            @endforeach
-            @endif
-        </tbody>
-    </table>
-</body>
+
+            #detalle_clientes tr {
+                border-top: 1px solid #bfc9ff;
+            }
+
+            .info_Eabajo {
+                text-align: center;
+                margin-top: 22px;
+                padding: 10px;
+                position: absolute;
+                bottom: 1px;
+                left: 20px;
+                right: 20px;
+            }
+
+            .text_infoE {
+                text-align: center;
+                font-size: 10pt;
+                font-family: 'Montserrat', sans-serif;
+                color: white;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            #reporte_head {
+                justify-content: center;
+            }
+
+            #reporte_head .logo {
+                height: auto;
+                margin-left: 70px;
+                margin-top: 60px;
+            }
+
+            #reporte_head .logo img {
+                border-radius: 50%;
+                width: 100px;
+                height: 100px;
+            }
+
+            .title {
+                color: #0B1C80;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 12pt;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="page_pdf">
+            <table id="reporte_head">
+                <tr>
+                    <td>
+                        <div class="logo">
+                            @if ($authUser->locality->hasMedia('localityGallery'))
+                                <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $authUser->locality->name }}">
+                            @else
+                                <img src='img/localityDefault.png' alt="Default Photo">
+                            @endif
+                        </div>
+                    </td>
+                    <td class="info_empresa">
+                        <div>
+                            <p class="aqua_titulo">
+                                COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="title">
+                <h3>LISTA DE CLIENTES</h3>
+            </div>
+            <table id="reporte_detalle">
+                <thead>
+                    <tr>
+                        <th class="textable">ID</th>
+                        <th class="textable">NOMBRE</th>
+                        <th class="textable">MANZANA</th>
+                        <th class="textable">CALLE</th>
+                        <th class="textable"># INTERIOR</th>
+                        <th class="textable">ESTADO CIVIL</th>
+                        <th class="textable">PAREJA</th>
+                        <th class="textable">¿TIENE TOMA?</th>
+                        <th class="textable">¿TIENE LOCAL?</th>
+                        <th class="textable">¿VA AL CORRIENTE?</th>
+                        <th class="textable">¿TIENE AGUA DE DIA Y NOCHE?</th>
+                        <th class="textable">DIAS DE AGUA</th>
+                        <th class="textable">¿CUENTA CON PRESION?</th>
+                        <th class="textable">¿TIENE CISTERNA?</th>
+                    </tr>
+                </thead>
+                <tbody id="detalle_clientes">
+                    @foreach ($customers as $customer)
+                        <tr>
+                            <td class="textcenter">{{ $customer->id }}</td>
+                            <td class="textcenter">{{ $customer->name }} {{ $customer->last_name }}</td>
+                            <td class="textcenter">{{ $customer->block }}</td>
+                            <td class="textcenter">{{ $customer->street }}</td>
+                            <td class="textcenter">{{ $customer->interior_number }}</td>
+                            <td class="textcenter">{{ $customer->marital_status ? 'Casado' : 'Soltero'}}</td>
+                            <td class="textcenter">{{ $customer->partner_name }}</td>
+                            <td class="textcenter">{{ $customer->has_water_connection ? 'Sí' : 'No' }}</td>
+                            <td class="textcenter">{{ $customer->has_store ? 'Sí' : 'No' }}</td>
+                            <td class="textcenter">{{ $customer->is_current ? 'Sí' : 'No' }}</td>
+                            <td class="textcenter">{{ $customer->has_water_24_7 ? 'Sí' : 'No' }}</td>
+                            <td class="textcenter">{{ $customer->water_days }}</td>
+                            <td class="textcenter">{{ $customer->has_pressure ? 'Sí' : 'No' }}</td>
+                            <td class="textcenter">{{ $customer->has_cistern ? 'Sí' : 'No' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <div class="info_Eabajo">
+            <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+            <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="20px" height="15px">
+        </div>
+    </body>
 </html>
