@@ -40,7 +40,7 @@
                                 <div class="small-box bg-info">
                                     <div class="inner">
                                         <h3>{{ $data['customersByLocality'] }}</h3>
-                                        <p>Total de Usuarios</p>
+                                        <p>Total de Clientes</p>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-users"></i>
@@ -52,7 +52,7 @@
                                 <div class="small-box bg-green">
                                     <div class="inner">
                                         <h3>{{ $data['customersWithoutDebts'] }}</h3>
-                                        <p>Usuarios al día</p>
+                                        <p>Clientes al Día</p>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-check-circle"></i>
@@ -64,7 +64,7 @@
                                 <div class="small-box bg-red">
                                     <div class="inner">
                                         <h3>{{ $data['customersWithDebts'] }}</h3>
-                                        <p>Usuarios con Deudas</p>
+                                        <p>Clientes con Deudas</p>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-exclamation-circle"></i>
