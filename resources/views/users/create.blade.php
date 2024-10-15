@@ -67,8 +67,8 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="role" class="form-label">ROL(*)</label>
-                                            <select id="role_id" class="form-control select2" name="roles[]" required onchange="toggleLocalitySelect()">
+                                            <label for="role" class="form-label">Rol(*)</label>
+                                            <select id="role_id" class="form-control select2" name="roles[]" required onchange="toggleLocalitySelect()" required>
                                                 <option value="" data-select-locality="false">Selecciona el rol</option>
                                                 @foreach($roles as $role)
                                                 <option value="{{ $role->id }}" data-select-locality="{{ $role->hasPermissionTo('selectLocality') ? 'true' : 'false' }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
@@ -80,8 +80,8 @@
                                     </div>
                                     <div class="col-lg-6" id="localityContainer">
                                         <div class="form-group">
-                                            <label for="locality" class="form-label">LOCALIDAD(*)</label>
-                                            <select id="locality_id" class="form-control select2" name="locality_id">
+                                            <label for="locality" class="form-label">Localidad(*)</label>
+                                            <select id="locality_id" class="form-control select2" name="locality_id" required>
                                                 <option value="">Selecciona la localidad</option>
                                                 @foreach($localities as $locality)
                                                     <option value="{{ $locality->id }}" {{ old('locality_id') == $locality->id ? 'selected' : '' }}>
