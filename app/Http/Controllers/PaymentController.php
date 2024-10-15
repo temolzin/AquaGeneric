@@ -174,6 +174,7 @@ class PaymentController extends Controller
 
     public function annualEarningsReport($year)
     {
+        $authUser = auth()->user();
         $year = intval($year);
 
         $monthlyEarnings = [];
@@ -181,14 +182,16 @@ class PaymentController extends Controller
 
         for ($month = 1; $month <= 12; $month++) {
             $earnings = Payment::whereYear('created_at', $year)
-                ->whereMonth('created_at', $month)
-                ->sum('amount');
+            ->whereMonth('created_at', $month)
+            ->where('locality_id', $authUser->locality_id)
+            ->sum('amount');
 
             $monthlyEarnings[$month] = $earnings;
             $totalEarnings += $earnings;
         }
 
-        $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year'));
+        $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser'))
+            ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_earnings_' . $year . '.pdf');
     }
