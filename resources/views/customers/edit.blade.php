@@ -122,13 +122,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="occupantsNumberUpdate" class="form-label">Número de Ocupantes(*)</label>
-                                            <input type="number" class="form-control" name="occupantsNumberUpdate" id="occupantsNumberUpdate" value="{{ $customer->occupants_number }}" required>
+                                            <input type="number" min="1" class="form-control" name="occupantsNumberUpdate" id="occupantsNumberUpdate" value="{{ $customer->occupants_number }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="waterDaysUpdate" class="form-label">Días de Agua(*)</label>
-                                            <input type="number" class="form-control" name="waterDaysUpdate" id="waterDaysUpdate" value="{{ $customer->water_days }}" required>
+                                            <input type="number" min="0" class="form-control" name="waterDaysUpdate" id="waterDaysUpdate" value="{{ $customer->water_days }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

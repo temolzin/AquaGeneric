@@ -44,7 +44,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="amount" class="form-label">Monto del Pago(*)</label>
-                                            <input type="number" class="form-control" name="amount" id="amount" value="{{ $payment->amount }}" required>
+                                            <input type="number" min="1" class="form-control" name="amount" id="amount" value="{{ $payment->amount }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
