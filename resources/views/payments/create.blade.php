@@ -75,8 +75,8 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="note" class="form-label">Método de Pago(*)</label>
-                                            <select id="mySelect" class="form-control select2" name="method" required>
+                                            <label for="method" class="form-label">Método de Pago(*)</label>
+                                            <select id="method" class="form-control select2" name="method" required>
                                                 <option value="">Selecciona un método de pago</option>
                                                 <option value="cash">Efectivo</option>
                                                 <option value="card">Tarjeta</option>

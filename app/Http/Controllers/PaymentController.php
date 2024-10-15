@@ -108,6 +108,7 @@ class PaymentController extends Controller
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
+            'method' => $request->method,
             'amount' => $request->amount,
             'note' => $request->note,
         ]);
