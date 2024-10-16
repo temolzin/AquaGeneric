@@ -123,13 +123,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="occupants_number" class="form-label">Número de Ocupantes(*)</label>
-                                            <input type="number" class="form-control" id="occupants_number" name="occupants_number" placeholder="Ingresa número de ocupantes" value="{{ old('occupants_number') }}" required />
+                                            <input type="number" min="1" class="form-control" id="occupants_number" name="occupants_number" placeholder="Ingresa número de ocupantes" value="{{ old('occupants_number') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="water_days" class="form-label">Días de Agua(*)</label>
-                                            <input type="number" class="form-control" id="water_days" name="water_days" placeholder="Ingresa días de agua" value="{{ old('water_days') }}" required />
+                                            <input type="number" min="0" class="form-control" id="water_days" name="water_days" placeholder="Ingresa días de agua" value="{{ old('water_days') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

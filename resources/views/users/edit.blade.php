@@ -28,7 +28,7 @@
                                             <label for="photo-{{ $user->id }}" class="form-label"></label>
                                             <div class="image-preview-container" style="display: flex; justify-content: center; margin-bottom: 10px;">
                                                 <img id="photo-preview-edit-{{ $user->id }}" src="{{ $user->getFirstMediaUrl('userGallery') ? $user->getFirstMediaUrl('userGallery') : asset('img/userDefault.png') }}" 
-                                                  alt="Foto Actual" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
+                                                    alt="Foto Actual" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                             </div>
                                             <input type="file" class="form-control" name="photo" id="photo-{{ $user->id }}" onchange="previewImageEdit(event, {{ $user->id }})">
                                         </div>
@@ -53,14 +53,14 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="emailUpdate" class="form-label">Email (*)</label>
+                                            <label for="emailUpdate" class="form-label">Email(*)</label>
                                             <input type="email" class="form-control" name="emailUpdate" id="emailUpdate" value="{{ $user->email }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="roleUpdate" class="form-label">Rol (*)</label>
-                                            <select id="roleUpdate-{{ $user->id }}" class="form-control select2" name="roleUpdate" required onchange="toggleLocalityChange({{ $user->id }})">
+                                            <label for="roleUpdate" class="form-label">Rol(*)</label>
+                                            <select id="roleUpdate-{{ $user->id }}" class="form-control select2" name="roleUpdate" required onchange="toggleLocalityChange({{ $user->id }})" required>
                                                 @foreach($roles as $role)
                                                     <option value="{{ $role->id }}" {{ $user->roles->contains($role->id) ? 'selected' : '' }} data-change-locality="{{ $role->hasPermissionTo('selectLocality') ? 'true' : 'false' }}">
                                                         {{ $role->name }}
@@ -71,9 +71,9 @@
                                     </div>
                                     <div class="col-lg-6" id="localityContainer">
                                         <div class="form-group">
-                                            <label for="localityUpdate" class="form-label">Localidad (*)</label>
+                                            <label for="localityUpdate" class="form-label">Localidad(*)</label>
                                             <select id="localityUpdate-{{ $user->id }}" class="form-control select2" name="localityUpdate" required>
-                                                <option value="">Sin localidad</option>
+                                                <option value="">No aplica</option>
                                                 @foreach($localities as $locality)
                                                     <option value="{{ $locality->id }}" {{ $user->locality_id == $locality->id ? 'selected' : '' }}>
                                                         {{ $locality->name }}

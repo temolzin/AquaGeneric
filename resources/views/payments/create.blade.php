@@ -69,7 +69,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
                                                 </div>
-                                                <input type="number" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
+                                                <input type="number" min="1" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
                                             </div>
                                         </div>
                                     </div>
