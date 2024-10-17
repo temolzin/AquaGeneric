@@ -97,7 +97,7 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)->get();
-        $pdf = PDF::loadView('customers.pdfCustomers', compact('customers', 'authUser'))
+        $pdf = PDF::loadView('reports.pdfCustomers', compact('customers', 'authUser'))
             ->setPaper('A4', 'landscape');
 
         return $pdf->stream('customers.pdf');
