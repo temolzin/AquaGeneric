@@ -20,10 +20,10 @@
                                         <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
                                     </div>
                                     <input type="password" class="input form-control" name="oldPassword" id="oldPassword" placeholder="Ingresa contraseña anterior" required aria-label="oldPassword" aria-describedby="basic-addon1">
-                                    <div class="input-group-append" onclick="password_show_hide('oldPassword', 'show_eye_update', 'hide_eye_update');">
+                                    <div class="input-group-append" onclick="password_show_hide('oldPassword', 'show_eye_old', 'hide_eye_old');">
                                         <span class="input-group-text">
-                                            <i class="fas fa-eye" id="show_eye_update"></i>
-                                            <i class="fas fa-eye-slash d-none" id="hide_eye_update"></i>
+                                            <i class="fas fa-eye" id="show_eye_old"></i>
+                                            <i class="fas fa-eye-slash d-none" id="hide_eye_old"></i>
                                         </span>
                                     </div>
                                 </div>
@@ -37,10 +37,10 @@
                                         <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
                                     </div>
                                     <input type="password" class="input form-control" name="updatePassword" id="updatePassword" placeholder="Ingresa una nueva contraseña" required aria-label="updatePassword" aria-describedby="basic-addon1">
-                                    <div class="input-group-append" onclick="password_show_hide('updatePassword', 'show_eye_update', 'hide_eye_update');">
+                                    <div class="input-group-append" onclick="password_show_hide('updatePassword', 'show_eye_new', 'hide_eye_new');">
                                         <span class="input-group-text">
-                                            <i class="fas fa-eye" id="show_eye_update"></i>
-                                            <i class="fas fa-eye-slash d-none" id="hide_eye_update"></i>
+                                            <i class="fas fa-eye" id="show_eye_new"></i>
+                                            <i class="fas fa-eye-slash d-none" id="hide_eye_new"></i>
                                         </span>
                                     </div>
                                 </div>
