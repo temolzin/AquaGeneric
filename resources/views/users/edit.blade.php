@@ -48,7 +48,7 @@
                                     <div class="col-lg-5">
                                         <div class="form-group">
                                             <label for="phoneUpdate" class="form-label">Teléfono (*)</label>
-                                            <input type="text" class="form-control" name="phoneUpdate" id="phoneUpdate" value="{{ $user->phone }}" >
+                                            <input type="tel" pattern="^\d{10}$" class="form-control" name="phoneUpdate" id="phoneUpdate" title="Debe contener exactamente 10 dígitos" value="{{ $user->phone }}" >
                                         </div>
                                     </div>
                                     <div class="col-lg-12">

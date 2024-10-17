@@ -53,7 +53,7 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="phone" class="form-label">Teléfono(*)</label>
-                                            <input type="text" class="form-control" name="phone" placeholder="Ingresa número de teléfono" value="{{ old('phone') }}"/>
+                                            <input type="tel" pattern="^\d{10}$" class="form-control" name="phone" placeholder="Ingresa número de teléfono" title="Debe contener exactamente 10 dígitos" value="{{ old('phone') }}"/>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">

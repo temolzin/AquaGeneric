@@ -70,7 +70,7 @@
                                         Teléfono
                                     </label>
                                     <div class="col-sm-10">
-                                        <input type="tel" id="phoneUpdate" name="phoneUpdate"  class="form-control" placeholder="Teléfono" value="{{ $authUser->phone }}">
+                                        <input type="tel" pattern="^\d{10}$" id="phoneUpdate" name="phoneUpdate"  class="form-control" placeholder="Teléfono" title="Debe contener exactamente 10 dígitos" value="{{ $authUser->phone }}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
