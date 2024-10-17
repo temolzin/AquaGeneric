@@ -44,7 +44,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="zipCodeUpdate" class="form-label">Código Postal(*)</label>
-                                            <input type="text" class="form-control" name="zipCodeUpdate" id="zipCodeUpdate" value="{{ $locality->zip_code }}" required>
+                                            <input type="text" class="form-control" id="zipCodeUpdate" name="zipCodeUpdate" value="{{ $locality->zip_code }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
                                         </div>
                                     </div>
                                 </div>
