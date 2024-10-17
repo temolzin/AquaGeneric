@@ -4,6 +4,8 @@
 /storage/*.key
 /vendor
 !/vendor/jeroennoten/laravel-adminlte/resources/views/partials/navbar/menu-item-dropdown-user-menu.blade.php
+!/vendor/jeroennoten/laravel-adminlte/resources/lang/es/adminlte.php
+!/vendor/jeroennoten/laravel-adminlte/resources/views/auth/login.blade.php
 !/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/views/403.blade.php
 .env
 .env.backup
