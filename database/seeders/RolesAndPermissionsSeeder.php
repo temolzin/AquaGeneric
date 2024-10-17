@@ -71,15 +71,15 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite ver los Costos.'
         ])->assignRole([$roleSupervisor]);
         Permission::create([
-            'name' => 'viewLocation',
+            'name' => 'viewLocality',
             'description' => 'Permite ver las localidades.'
         ])->assignRole([$roleAdmin]);
         Permission::create([
-            'name' => 'editLocation',
+            'name' => 'editLocality',
             'description' => 'Permite editar las localidades.'
         ])->assignRole([$roleAdmin]);
         Permission::create([
-            'name' => 'deleteLocation',
+            'name' => 'deleteLocality',
             'description' => 'Permite eliminar localidades.'
         ])->assignRole([$roleAdmin]);
         Permission::create([

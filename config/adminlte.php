@@ -351,7 +351,7 @@ return [
             'text' => 'Localidades',
             'url' => '/localities',
             'icon' => 'fas fa-fw fa-map-marker-alt',
-             'can'  =>'viewLocation'
+             'can'  =>'viewLocality'
         ],
     ],
     /*

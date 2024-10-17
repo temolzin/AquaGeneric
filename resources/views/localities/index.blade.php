@@ -73,24 +73,30 @@
                                             <td>{{$locality->zip_code}}</td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
-                                                    <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{$locality->id}}">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{$locality->id}}">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary mr-2" data-toggle="modal" title="Actualizar Imagen" data-target="#editLogo{{$locality->id}}">
-                                                        <i class="fas fa-image"></i>
-                                                    </button>
-                                                    @if($locality->hasDependencies())
-                                                        <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
-                                                            <i class="fas fa-trash-alt"></i>
+                                                    @can('viewLocality')
+                                                        <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{$locality->id}}">
+                                                            <i class="fas fa-eye"></i>
                                                         </button>
-                                                    @else
-                                                        <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{$locality->id}}">
-                                                            <i class="fas fa-trash-alt"></i>
+                                                    @endcan
+                                                    @can('editLocality')
+                                                        <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{$locality->id}}">
+                                                            <i class="fas fa-edit"></i>
                                                         </button>
-                                                    @endif
+                                                        <button type="button" class="btn btn-primary mr-2" data-toggle="modal" title="Actualizar Imagen" data-target="#editLogo{{$locality->id}}">
+                                                            <i class="fas fa-image"></i>
+                                                        </button>
+                                                    @endcan
+                                                    @can('deleteLocality')
+                                                        @if($locality->hasDependencies())
+                                                            <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        @else
+                                                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{$locality->id}}">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        @endif
+                                                    @endcan
                                                 </div>
                                             </td>
                                             @include('localities.edit')
