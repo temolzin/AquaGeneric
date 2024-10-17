@@ -185,7 +185,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm({{ $customer->id }})">Cancelar</button>
                         <button type="submit" class="btn btn-warning">Actualizar</button>
                     </div>
                 </form>
@@ -218,5 +218,13 @@
             output.style.display = 'block';
         };
         reader.readAsDataURL(input.files[0]);
+    }
+
+    function resetForm(id) {
+        var form = document.getElementById('edit-customer-form-' + id);
+        form.reset();
+        var photoPreview = document.getElementById('photo-preview-edit-' + id);
+        var customerGalleryUrl = "{{ $customer->getFirstMediaUrl('customerGallery') ? $customer->getFirstMediaUrl('customerGallery') : asset('img/userDefault.png') }}";
+        photoPreview.src = customerGalleryUrl;
     }
 </script>

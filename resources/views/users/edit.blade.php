@@ -87,7 +87,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-button-{{ $user->id }}">Cancelar</button>
                         <button type="submit" class="btn btn-warning">Actualizar</button>
                     </div>
                 </form>
@@ -152,5 +152,20 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', assignLocalityChangeEvent);
+    function resetForm(userId) {
+        const form = document.getElementById('edit-user-form-' + userId);
+        form.reset();
+        const photoPreview = document.getElementById('photo-preview-edit-' + userId);
+        const defaultPhoto = "{{ asset('img/userDefault.png') }}";
+        const currentPhoto = "{{ $user->getFirstMediaUrl('userGallery') ? $user->getFirstMediaUrl('userGallery') : asset('img/userDefault.png') }}";
+        photoPreview.src = currentPhoto !== defaultPhoto ? currentPhoto : defaultPhoto;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        assignLocalityChangeEvent();
+        document.querySelectorAll('[id^=cancel-button-]').forEach((button) => {
+            const userId = button.id.split('-')[2];
+            button.addEventListener('click', () => resetForm(userId));
+        });
+    });
 </script>

@@ -55,7 +55,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
         Route::resource('customers', CustomerController::class);
         Route::get('/customers-with-debts', [CustomerController::class, 'customersWithDebts'])->name('report.with-debts');
-        Route::get('customers/pdfCustomers', [CustomerController::class, 'pdfCustomers'])->name('customers.pdfCustomers');
+        Route::get('/report/pdfCustomers', [CustomerController::class, 'pdfCustomers'])->name('customers.pdfCustomers');
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
     });
 

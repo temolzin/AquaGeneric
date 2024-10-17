@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm({{ $locality->id }})">Cancelar</button>
                         <button type="submit" class="btn btn-warning">Actualizar</button>
                     </div>
                 </form>
@@ -71,5 +71,15 @@
             output.style.display = 'block';
         };
         reader.readAsDataURL(input.files[0]);
+    }
+
+    function resetForm(id) {
+        var form = document.getElementById('edit-locality-form-' + id);
+        form.reset();
+        var output = document.getElementById('photo-preview-edit-' + id);
+        var defaultSrc = "{{ $locality->getFirstMediaUrl('localityGallery') ? $locality->getFirstMediaUrl('localityGallery') : asset('img/localityDefault.png') }}";
+        output.src = defaultSrc;
+        var fileInput = document.getElementById('photo-' + id);
+        fileInput.value = '';
     }
 </script>
