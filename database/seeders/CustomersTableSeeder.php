@@ -40,7 +40,6 @@ class CustomersTableSeeder extends Seeder
                 'water_days' => $faker->numberBetween(1, 7),
                 'has_water_pressure' => $faker->boolean,
                 'has_cistern' => $faker->boolean,
-                'has_cistern' => $faker->boolean,
                 'status' => $faker->boolean, 
                 'locality_id' => $faker->randomElement($localityIds),
                 'created_by' => $faker->randomElement($userIds),

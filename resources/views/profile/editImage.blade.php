@@ -35,8 +35,20 @@
 <script>
     function previewAndReplaceImage(event) {
         const currentProfileImage = document.getElementById('currentProfileImage');
-        const file = event.target.files[0];
-        const reader = new FileReader();
+        var input = event.target;
+        var file = input.files[0];
+        var reader = new FileReader();
+
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Por favor, sube un archivo de imagen',
+            confirmButtonText: 'Aceptar'
+            });
+            input.value = '';
+            return;
+        }
 
         reader.onload = function() {
             currentProfileImage.src = reader.result;

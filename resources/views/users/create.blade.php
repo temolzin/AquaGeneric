@@ -29,7 +29,7 @@
                                             <div class="image-preview-container" style="display: flex; justify-content: center; margin-top: 10px;">
                                                 <img id="photo-preview" src="#" alt="Vista previa de la foto" style="display: none; width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                             </div>
-                                            <input type="file" class="form-control" name="photo" id="photo" aria-describedby="photoHelp" onchange="previewImage(event)" />
+                                            <input type="file" accept="image/*" class="form-control" name="photo" id="photo" aria-describedby="photoHelp" onchange="previewImage(event)" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -53,7 +53,7 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="phone" class="form-label">Teléfono(*)</label>
-                                            <input type="text" class="form-control" name="phone" placeholder="Ingresa número de teléfono" value="{{ old('phone') }}"/>
+                                            <input type="tel" pattern="^\d{10}$" class="form-control" name="phone" placeholder="Ingresa número de teléfono" title="Debe contener exactamente 10 dígitos" value="{{ old('phone') }}"/>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -116,14 +116,27 @@
 <script>
     function previewImage(event) {
         var input = event.target;
+        var file = input.files[0];
         var reader = new FileReader();
+
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Por favor, sube un archivo de imagen',
+            confirmButtonText: 'Aceptar'
+            });
+            input.value = '';
+            return;
+        }
+
         reader.onload = function() {
             var dataURL = reader.result;
             var output = document.getElementById('photo-preview');
             output.src = dataURL;
             output.style.display = 'block';
         };
-        reader.readAsDataURL(input.files[0]);
+        reader.readAsDataURL(file);
     }
 
     function toggleLocalitySelect() {

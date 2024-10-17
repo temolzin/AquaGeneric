@@ -28,9 +28,9 @@
                                             <label for="photo-{{ $customer->id }}" class="form-label"></label>
                                             <div class="image-preview-container" style="display: flex; justify-content: center; margin-bottom: 10px;">
                                                 <img id="photo-preview-edit-{{ $customer->id }}" src="{{ $customer->getFirstMediaUrl('customerGallery') ? $customer->getFirstMediaUrl('customerGallery') : asset('img/userDefault.png') }}" 
-                                                  alt="Foto Actual" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
+                                                    alt="Foto Actual" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                             </div>
-                                            <input type="file" class="form-control" name="photo" id="photo-{{ $customer->id }}" onchange="previewImageEdit(event, {{ $customer->id }})">
+                                            <input type="file" accept="image/*" class="form-control" name="photo" id="photo-{{ $customer->id }}" onchange="previewImageEdit(event, {{ $customer->id }})">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -197,7 +197,20 @@
 <script>
     function previewImageEdit(event, id) {
         var input = event.target;
+        var file = input.files[0];
         var reader = new FileReader();
+
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Por favor, sube un archivo de imagen',
+            confirmButtonText: 'Aceptar'
+            });
+            input.value = '';
+            return;
+        }
+
         reader.onload = function() {
             var dataURL = reader.result;
             var output = document.getElementById('photo-preview-edit-' + id);
