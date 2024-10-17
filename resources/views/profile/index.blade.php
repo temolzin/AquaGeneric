@@ -46,7 +46,7 @@
                             <h3 class="card-title">Editar perfil</h3>
                         </div>
                         <div class="card-body" id="userUpdateInformation" name="userUpdateInformation" style="display: none">
-                            <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="form-horizontal">
+                            <form id="updateForm" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="form-horizontal">
                                 @csrf
                                 @method('PUT')
                                 <div class="form-group row">
@@ -154,6 +154,7 @@
             $('#cancelUpdate').click(function() {
                 $('#userUpdateInformation').hide();
                 $('#userInformation').show();
+                $('#updateForm')[0].reset();
             });
 
             var successMessage = "{{ session('success') }}";

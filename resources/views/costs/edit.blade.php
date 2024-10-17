@@ -5,12 +5,12 @@
                 <div class="card-header">
                     <div class="d-sm-flex align-items-center justify-content-between">
                         <h4 class="card-title">Actualizar Costo <small> &nbsp;(*) Campos requeridos</small></h4>
-                        <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close" onclick="resetForm()">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('costs.update', $cost->id) }}" method="post" enctype="multipart/form-data">
+                <form id="editCostForm{{ $cost->id }}" action="{{ route('costs.update', $cost->id) }}" method="post" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="card-body">
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm()">Cerrar</button>
                         <button type="submit" class="btn btn-warning">Actualizar</button>
                     </div>
                 </form>
@@ -61,3 +61,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    function resetForm() {
+        document.getElementById('editCostForm{{ $cost->id }}').reset();
+    }
+</script>

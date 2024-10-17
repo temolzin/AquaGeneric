@@ -68,7 +68,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm()">Cancelar</button>
                         <button type="submit" class="btn btn-warning">Actualizar</button>
                     </div>
                 </form>
@@ -91,5 +91,9 @@
             showEye.classList.remove("d-none");
             hideEye.classList.add("d-none");
         }
+    }
+
+    function resetForm() {
+        document.getElementById('edit-user-form').reset();
     }
 </script>

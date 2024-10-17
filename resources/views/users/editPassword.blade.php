@@ -61,7 +61,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearInputs('{{ $user->id }}')">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Actualizar</button>
                     </div>
                 </form>
@@ -95,5 +95,10 @@
             showEye.classList.remove("d-none");
             hideEye.classList.add("d-none");
         }
+    }
+
+    function clearInputs(userId) {
+        document.getElementById('updatePassword' + userId).value = '';
+        document.getElementById('passwordConfirmation' + userId).value = '';
     }
 </script>

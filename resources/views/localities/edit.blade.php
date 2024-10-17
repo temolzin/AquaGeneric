@@ -52,7 +52,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-button-{{ $locality->id }}">Cancelar</button>
                         <button type="submit" class="btn btn-warning">Actualizar</button>
                     </div>
                 </form>
@@ -60,3 +60,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('cancel-button-{{ $locality->id }}').addEventListener('click', function() {
+        document.getElementById('edit-locality-form-{{ $locality->id }}').reset();
+    });
+</script>
