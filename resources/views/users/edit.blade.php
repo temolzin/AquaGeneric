@@ -30,7 +30,7 @@
                                                 <img id="photo-preview-edit-{{ $user->id }}" src="{{ $user->getFirstMediaUrl('userGallery') ? $user->getFirstMediaUrl('userGallery') : asset('img/userDefault.png') }}" 
                                                     alt="Foto Actual" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                             </div>
-                                            <input type="file" class="form-control" name="photo" id="photo-{{ $user->id }}" onchange="previewImageEdit(event, {{ $user->id }})">
+                                            <input type="file" accept="image/*" class="form-control" name="photo" id="photo-{{ $user->id }}" onchange="previewImageEdit(event, {{ $user->id }})">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -107,14 +107,27 @@
 <script>
     function previewImageEdit(event, id) {
         var input = event.target;
+        var file = input.files[0];
         var reader = new FileReader();
+
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Por favor, sube un archivo de imagen',
+            confirmButtonText: 'Aceptar'
+            });
+            input.value = '';
+            return;
+        }
+
         reader.onload = function() {
             var dataURL = reader.result;
             var output = document.getElementById('photo-preview-edit-' + id);
             output.src = dataURL;
             output.style.display = 'block';
         };
-        reader.readAsDataURL(input.files[0]);
+        reader.readAsDataURL(file);
     }
 
     function toggleLocalityChange(userId) {
