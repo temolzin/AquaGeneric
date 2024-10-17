@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Locality;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 
 
 class UserController extends Controller
@@ -88,11 +89,13 @@ class UserController extends Controller
         $confirmPassword = trim($request->input('passwordConfirmation'));
 
         if ($newPassword !== $confirmPassword) {
-            return redirect()->back()->withInput()->withErrors(['passwordConfirmation' => 'Las contraseñas no coinciden.']);
-        } else {
-            $user->password = bcrypt($newPassword);
-            $user->save();
-            return redirect()->route('users.index')->with('success', 'Contraseña actualizada correctamente.');
+            return redirect()->back()->with('error', 'La nueva contraseña y la confirmación no coinciden.');
         }
+
+        $user->password = Hash::make($newPassword);
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', 'Contraseña actualizada correctamente.');
+
     }
 }
