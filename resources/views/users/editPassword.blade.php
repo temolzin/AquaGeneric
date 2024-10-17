@@ -53,9 +53,6 @@
                                             </span>
                                         </div>
                                     </div>
-                                    @if ($errors->has('passwordConfirmation'))
-                                        <span class="text-danger">{{ $errors->first('passwordConfirmation') }}</span>
-                                    @endif
                                 </div>
                             </div>
                         </div>

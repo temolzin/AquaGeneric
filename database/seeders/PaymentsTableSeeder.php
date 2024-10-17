@@ -26,10 +26,13 @@ class PaymentsTableSeeder extends Seeder
         for ($i = 1; $i <= self::PAYMENT_COUNT; $i++) {
             $debt = DB::table('debts')->find($faker->randomElement($debtIds));
 
+            $maxPaymentAmount = $debt->debt_current;
+            $amount = rand(self::MIN_AMOUNT, min(self::MAX_AMOUNT, $maxPaymentAmount));
+
             $createdAt = $this->getRandomCreatedAt();
             $updatedAt = $createdAt;
 
-            $payments[] = $this->createPayment($debt, $userIds, $faker, $createdAt, $updatedAt);
+            $payments[] = $this->createPayment($debt, $userIds, $faker, $amount, $createdAt, $updatedAt);
         }
 
         DB::table('payments')->insert($payments);
@@ -41,12 +44,12 @@ class PaymentsTableSeeder extends Seeder
             ->addDays(rand(0, self::MAX_DAYS_SUBTRACT));
     }
 
-    private function createPayment($debt, array $userIds, $faker, Carbon $createdAt, Carbon $updatedAt): array
+    private function createPayment($debt, array $userIds, $faker, int $amount, Carbon $createdAt, Carbon $updatedAt): array
     {
         return [
             'debt_id' => $debt->id,
             'created_by' => $userIds[array_rand($userIds)],
-            'amount' => rand(self::MIN_AMOUNT, self::MAX_AMOUNT),
+            'amount' => $amount,
             'locality_id' => $debt->locality_id,
             'method' => $faker->randomElement(self::PAYMENTS_METHODS),
             'note' => 'Pago correspondiente a la deuda #' . $debt->id . ' en localidad ' . $debt->locality_id,

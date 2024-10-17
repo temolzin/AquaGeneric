@@ -83,7 +83,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/annual-earnings-report/{year}', [PaymentController::class, 'annualEarningsReport']);
     });
 
-    Route::group(['middleware' => ['can:viewLocation']], function () {
+    Route::group(['middleware' => ['can:viewLocality']], function () {
         Route::get('/localities', [LocalityController::class, 'index'])->name('localities.index');
         Route::resource('localities', LocalityController::class);
         Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');

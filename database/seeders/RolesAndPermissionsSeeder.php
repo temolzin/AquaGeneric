@@ -67,16 +67,16 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite eliminar los Clientes.'
         ])->assignRole([$roleSupervisor]);
         Permission::create([
-            'name' => 'viewLocation',
-            'description' => 'Permite ver las Localidades.'
+            'name' => 'viewLocality',
+            'description' => 'Permite ver las localidades.'
         ])->assignRole([$roleAdmin]);
         Permission::create([
-            'name' => 'editLocation',
-            'description' => 'Permite editar las Localidades.'
+            'name' => 'editLocality',
+            'description' => 'Permite editar las localidades.'
         ])->assignRole([$roleAdmin]);
         Permission::create([
-            'name' => 'deleteLocation',
-            'description' => 'Permite eliminar Localidades.'
+            'name' => 'deleteLocality',
+            'description' => 'Permite eliminar localidades.'
         ])->assignRole([$roleAdmin]);
         Permission::create([
             'name' => 'selectLocality',

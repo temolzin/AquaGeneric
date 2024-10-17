@@ -28,14 +28,15 @@
             box-sizing: border-box;
         }
         .receipt-header {
+            height: auto;
             margin-top: 20px;
             text-align: left;
             margin-bottom: 20px;
         }
 
         .receipt-header img {
-            max-width: 120px;
-            max-height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
         }
 
@@ -145,7 +146,11 @@
         <div class="info-container">
             <div class="customer-info">
                 <h4>Datos del cliente</h4>
-                <p>{{ $payment->debt->customer->name }} {{ $payment->debt->customer->last_name }}</p>
+                @if ($payment->debt->customer->responsible_name)
+                    <p>{{ $payment->debt->customer->responsible_name }}</p>
+                @else
+                    <p>{{ $payment->debt->customer->name }} {{ $payment->debt->customer->last_name }}</p>
+                @endif
                 <p>{{ $payment->debt->customer->street }} #{{ $payment->debt->customer->interior_number }}, {{ $payment->debt->customer->block }}, {{$payment->locality->zip_code }}</p>
                 <p>{{ $payment->locality->name }}, {{ $payment->locality->state }}</p>
             </div>
