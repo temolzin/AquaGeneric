@@ -54,7 +54,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="zip_code" class="form-label">Código Postal(*)</label>
-                                            <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Ingresa el código postal de la localidad" value="{{ old('zip_code') }}" required />
+                                            <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Ingresa el código postal de la localidad" value="{{ old('zip_code') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
                                         </div>
                                     </div>                                              
                                 </div>

@@ -12,8 +12,8 @@
                 @csrf
                 @method('DELETE')
                 <div class="modal-body text-center text-danger">
-                    ¿Estás seguro de eliminar la deuda del periodo <strong>{{ strftime('%d de %B de %Y', strtotime($customerDebt->start_date)) }} - {{ strftime('%d de %B de %Y', strtotime($customerDebt->end_date)) }} ?</strong>
-                    Recuerda que si tiene pagos asociados las deuda se eliminaran.
+                    ¿Estás seguro de eliminar la deuda del periodo <strong>{{ \Carbon\Carbon::parse($customerDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [de] YYYY') }} - {{ \Carbon\Carbon::parse($customerDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [de] YYYY') }} ?</strong>
+                    Recuerda que si la deuda tiene pagos asociados se eliminaran.
                 </div>
                 <input type="hidden" name="modal_id" value="view{{ $debt->customer->id }}">
                 <div class="modal-footer">

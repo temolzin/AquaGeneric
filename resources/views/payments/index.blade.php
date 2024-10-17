@@ -178,8 +178,6 @@ $(document).ready(function() {
             title: 'Éxito',
             text: successMessage,
             confirmButtonText: 'Aceptar'
-        }).then((result) => {
-            window.location.href = "{{ route('payments.index') }}";
         });
     }
 
@@ -189,8 +187,6 @@ $(document).ready(function() {
             title: 'Error',
             text: errorMessage,
             confirmButtonText: 'Aceptar'
-        }).then((result) => {
-            window.location.href = "{{ route('payments.index') }}";
         });
     }
 });
