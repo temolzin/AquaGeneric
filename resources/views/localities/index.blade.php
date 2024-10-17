@@ -131,30 +131,27 @@
             info: false,
             searching: false
         });
+
         var successMessage = "{{ session('success') }}";
-    var errorMessage = "{{ session('error') }}";
+        var errorMessage = "{{ session('error') }}";
 
-    if (successMessage) {
-        Swal.fire({
-            icon: 'success',
-            title: 'Éxito',
-            text: successMessage,
-            confirmButtonText: 'Aceptar'
-        }).then((result) => {
-            window.location.href = "{{ route('localities.index') }}";
-        });
-    }
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: successMessage,
+                confirmButtonText: 'Aceptar'
+            });
+        }
 
-    if (errorMessage) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: errorMessage,
-            confirmButtonText: 'Aceptar'
-        }).then((result) => {
-            window.location.href = "{{ route('localities.index') }}";
-        });
-    }
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonText: 'Aceptar'
+            });
+        }
     });
 </script>
 @endsection

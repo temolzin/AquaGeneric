@@ -165,8 +165,6 @@
                     title: 'Éxito',
                     text: successMessage,
                     confirmButtonText: 'Aceptar'
-                }).then((result) => {
-                    window.location.href = "{{ route('profile.index') }}";
                 });
             }
 
@@ -176,8 +174,6 @@
                     title: 'Error',
                     text: errorMessage,
                     confirmButtonText: 'Aceptar'
-                }).then((result) => {
-                    window.location.href = "{{ route('profile.index') }}";
                 });
             }
         });
