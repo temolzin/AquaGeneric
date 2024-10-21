@@ -3,11 +3,11 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
-use App\Models\Connection;
+use App\Models\WaterConnection;
+use Illuminate\Support\Facades\DB;
 
-class ConnectionsTableSeeder extends Seeder
+class WaterConnectionsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -24,7 +24,7 @@ class ConnectionsTableSeeder extends Seeder
         $users = DB::table('users')->pluck('id');
 
         foreach ($customers as $customerId) {
-            Connection::create([
+            WaterConnection::create([
                 'customer_id' => $customerId,
                 'locality_id' => $faker->randomElement($localities),
                 'cost_id' => $faker->randomElement($costs),
@@ -38,7 +38,7 @@ class ConnectionsTableSeeder extends Seeder
             ]);
 
             if ($faker->boolean(30)) {
-                Connection::create([
+                WaterConnection::create([
                     'customer_id' => $customerId,
                     'locality_id' => $faker->randomElement($localities),
                     'cost_id' => $faker->randomElement($costs),

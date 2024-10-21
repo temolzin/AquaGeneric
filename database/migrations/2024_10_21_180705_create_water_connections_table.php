@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateConnectionsTable extends Migration
+class CreateWaterConnectionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateConnectionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('connections', function (Blueprint $table) {
+        Schema::create('water_connections', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('locality_id');
@@ -42,6 +42,6 @@ class CreateConnectionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('connections');
+        Schema::dropIfExists('water_connections');
     }
 }
