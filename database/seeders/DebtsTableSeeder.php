@@ -22,14 +22,15 @@ class DebtsTableSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        $customers = DB::table('customers')->get();
+        $waterConnectionIds = DB::table('water_connections')->pluck('id')->toArray();
         $usersIds = DB::table('users')->pluck('id');
 
         $startDate = Carbon::createFromDate(2024, 1, 1);
         $endDate = Carbon::createFromDate(2024, 12, 31);
 
         foreach (range(1, self::DEBT_COUNT) as $index) {
-            $customer = $faker->randomElement($customers);
+            $waterConnectionId = $faker->randomElement($waterConnectionIds);
+            $waterConnection = DB::table('water_connections')->find($waterConnectionId);
             $createdAt = $faker->dateTimeBetween($startDate, $endDate);
             $debtStartDate = $faker->dateTimeBetween($startDate, $endDate);
             $debtDuration = $faker->numberBetween(1, 12);
@@ -46,8 +47,8 @@ class DebtsTableSeeder extends Seeder
             $status = $this->determineDebtStatus($paymentAmount, $debtCurrent);
 
             DB::table('debts')->insert([
-                'customer_id' => $customer->id,
-                'locality_id' => $customer->locality_id,
+                'water_connection_id' => $waterConnection->id,
+                'locality_id' => $waterConnection->locality_id,
                 'created_by' => $faker->randomElement($usersIds),
                 'start_date' => $debtStartDate,
                 'end_date' => $debtEndDate,

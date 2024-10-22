@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersTableSeeder::class);
         $this->call(CostsTableSeeder::class);
         $this->call(CustomersTableSeeder::class);
+        $this->call(WaterConnectionsTableSeeder::class);
         $this->call(DebtsTableSeeder::class);
         $this->call(PaymentsTableSeeder::class);
-        $this->call(WaterConnectionsTableSeeder::class);
     }
 }

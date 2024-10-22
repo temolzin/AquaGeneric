@@ -26,13 +26,19 @@ class PaymentsTableSeeder extends Seeder
         for ($i = 1; $i <= self::PAYMENT_COUNT; $i++) {
             $debt = DB::table('debts')->find($faker->randomElement($debtIds));
 
-            $maxPaymentAmount = $debt->debt_current;
-            $amount = rand(self::MIN_AMOUNT, min(self::MAX_AMOUNT, $maxPaymentAmount));
+            if ($debt) {
+                $waterConnection = DB::table('water_connections')->where('id', $debt->water_connection_id)->first();
 
-            $createdAt = $this->getRandomCreatedAt();
-            $updatedAt = $createdAt;
+                if ($waterConnection) {
+                    $maxPaymentAmount = $debt->debt_current;
+                    $amount = rand(self::MIN_AMOUNT, min(self::MAX_AMOUNT, $maxPaymentAmount));
 
-            $payments[] = $this->createPayment($debt, $userIds, $faker, $amount, $createdAt, $updatedAt);
+                    $createdAt = $this->getRandomCreatedAt();
+                    $updatedAt = $createdAt;
+
+                    $payments[] = $this->createPayment($debt, $userIds, $faker, $amount, $createdAt, $updatedAt, $waterConnection->customer_id);
+                }
+            }
         }
 
         DB::table('payments')->insert($payments);
@@ -44,9 +50,10 @@ class PaymentsTableSeeder extends Seeder
             ->addDays(rand(0, self::MAX_DAYS_SUBTRACT));
     }
 
-    private function createPayment($debt, array $userIds, $faker, int $amount, Carbon $createdAt, Carbon $updatedAt): array
+    private function createPayment($debt, array $userIds, $faker, int $amount, Carbon $createdAt, Carbon $updatedAt, int $customerId): array
     {
         return [
+            'customer_id' => $customerId,
             'debt_id' => $debt->id,
             'created_by' => $userIds[array_rand($userIds)],
             'amount' => $amount,
