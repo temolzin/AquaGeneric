@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WaterConnectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('dashboard', DashboardController::class);
+
+    Route::get('/waterConnections', [WaterConnectionController::class, 'index'])->name('connections.index');
+    Route::resource('waterConnections', WaterConnectionController::class);
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile/update', [ProfileController::class, 'profileUpdate'])->name('profile.update');

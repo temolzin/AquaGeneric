@@ -10,6 +10,8 @@ class WaterConnection extends Model
     use HasFactory,  SoftDeletes;
 
     protected $fillable = [
+        'locality_id',
+        'created_by',
         'customer_id',
         'cost_id',
         'name',
