@@ -49,7 +49,12 @@ class Customer extends Model implements HasMedia
 
     public function hasDependencies()
     {
-        return $this->debts()->exists();
+        return $this->waterConnections()->whereHas('debts')->exists();
+    }
+
+    public function waterConnections()
+    {
+        return $this->hasMany(WaterConnection::class);
     }
 
     public function debts()
@@ -71,11 +76,11 @@ class Customer extends Model implements HasMedia
     {
         parent::boot();
 
-        static::deleting(function ($user) {
-            $user->debts->each(function ($debt) {
-                $debt->payments()->delete();
+        static::deleting(function ($customer) {
+            $customer->waterConnections()->each(function ($waterConnection) {
+                $waterConnection->debts()->delete();
             });
-            $user->debts()->delete();
+            $customer->waterConnections()->delete();
         });
     }
 }

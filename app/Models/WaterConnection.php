@@ -39,4 +39,9 @@ class WaterConnection extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function debts()
+    {
+        return $this->hasMany(Debt::class);
+    }
 }

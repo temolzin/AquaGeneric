@@ -107,7 +107,7 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)
-            ->whereDoesntHave('debts', function ($query) {
+            ->whereDoesntHave('waterConnections.debts', function ($query) {
             $query->where('status', '!=', 'paid');
         })->get();
     
@@ -119,7 +119,7 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)
-            ->whereHas('debts', function ($query) {
+            ->whereHas('waterConnections.debts', function ($query) {
             $query->where('status', '!=', 'paid');
         })->get();
 
