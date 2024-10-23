@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WaterConnectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,4 +91,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
     });
 
+    Route::group(['middleware' => ['can:viewWaterConnection']], function () {
+        Route::get('/waterConnections', [WaterConnectionController::class, 'index'])->name('connections.index');
+        Route::resource('waterConnections', WaterConnectionController::class);
+    });
 });

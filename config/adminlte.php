@@ -315,43 +315,49 @@ return [
             'text' => 'Usuarios',
             'url' => '/users',
             'icon' => 'fas fa-fw fa-user',
-             'can'  =>'viewUser'
+            'can'  =>'viewUser'
         ],
         [
             'text' => 'Roles',
             'url' => '/roles',
             'icon' => 'fas fa-fw fa-user-shield',
-             'can'  =>'viewRoles'
+            'can'  =>'viewRoles'
         ],
         [
             'text' => 'Clientes',
             'url' => '/customers',
             'icon' => 'fas fa-fw fa-users',
-             'can'  =>'viewCustomers'
+            'can'  =>'viewCustomers'
         ],
         [
             'text' => 'Pagos',
             'url' => '/payments',
             'icon' => 'fas fa-fw fa-dollar-sign',
-             'can'  =>'viewPayments'
+            'can'  =>'viewPayments'
         ],
         [
             'text' => 'Deudas',
             'url' => '/debts',
             'icon' => 'fas fa-fw fa-credit-card',
-             'can'  =>'viewDebts'
+            'can'  =>'viewDebts'
         ],
         [
             'text' => 'Costos',
             'url' => '/costs',
             'icon' => 'fas fa-fw fa-money-bill-wave',
-             'can'  =>'viewCost'
+            'can'  =>'viewCost'
         ],
         [
             'text' => 'Localidades',
             'url' => '/localities',
             'icon' => 'fas fa-fw fa-map-marker-alt',
-             'can'  =>'viewLocality'
+            'can'  =>'viewLocality'
+        ],
+        [
+            'text' => 'Tomas de Agua',
+            'url' => '/waterConnections',
+            'icon' => 'fas fa-fw fa-water',
+            'can'  =>'viewWaterConnection'
         ],
     ],
     /*

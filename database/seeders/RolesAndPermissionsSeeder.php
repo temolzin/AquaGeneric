@@ -39,6 +39,18 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite ver los Costos.'
         ])->assignRole([$roleSupervisor, $roleSecretariat ]);
         Permission::create([
+            'name' => 'viewWaterConnection',
+            'description' => 'Permite ver las Tomas de Agua.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        Permission::create([
+            'name' => 'deleteWaterConnection',
+            'description' => 'Permite eliminar las Tomas de Agua.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::create([
+            'name' => 'editWaterConnection',
+            'description' => 'Permite editar las Tomas de Agua.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::create([
             'name' => 'deleteCost',
             'description' => 'Permite eliminar los Costos.'
         ])->assignRole([$roleSupervisor]);
