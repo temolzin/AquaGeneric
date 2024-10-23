@@ -40,9 +40,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('dashboard', DashboardController::class);
 
-    Route::get('/waterConnections', [WaterConnectionController::class, 'index'])->name('connections.index');
-    Route::resource('waterConnections', WaterConnectionController::class);
-
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile/update', [ProfileController::class, 'profileUpdate'])->name('profile.update');
     Route::post('/profile/editImage', [ProfileController::class, 'updateImage'])->name('profile.update.image');
@@ -94,4 +91,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
     });
 
+    Route::group(['middleware' => ['can:viewWaterConnection']], function () {
+        Route::get('/waterConnections', [WaterConnectionController::class, 'index'])->name('connections.index');
+        Route::resource('waterConnections', WaterConnectionController::class);
+    });
 });
