@@ -60,15 +60,21 @@
                                                     @endif
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
+                                                            @can('viewWaterConnection')
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $connection->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
+                                                            @endcan
+                                                            @can('editWaterConnection')
                                                             <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $connection->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
+                                                            @endcan
+                                                            @can('deleteWaterConnection')
                                                             <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $connection->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
+                                                            @endcan
                                                         </div>
                                                     </td>
                                                 </tr>
