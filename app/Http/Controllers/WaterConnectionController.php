@@ -35,6 +35,11 @@ class WaterConnectionController extends Controller
         $authUser = auth()->user();
 
         $waterConnectionData = $request->all();
+
+        if ($request->has('all_days')) {
+            $waterConnectionData['water_days'] = 7;
+        }
+
         $waterConnectionData['locality_id'] = $authUser->locality_id;
         $waterConnectionData['created_by'] = $authUser->id;
 
@@ -57,7 +62,7 @@ class WaterConnectionController extends Controller
             $connection->customer_id = $request->input('customerIdUpdate');
             $connection->type = $request->input('typeUpdate');
             $connection->occupants_number = $request->input('occupantsNumberUpdate');
-            $connection->water_days = $request->input('waterDaysUpdate');
+            $connection->water_days = $request->has('all_days_update') ? 7 : $request->input('waterDaysUpdate');
             $connection->has_water_pressure = $request->input('hasWaterPressureUpdate');
             $connection->has_cistern = $request->input('hasCisternUpdate');
             $connection->cost_id = $request->input('costIdUpdate');
@@ -68,7 +73,7 @@ class WaterConnectionController extends Controller
         }
 
         return redirect()->back()->with('error', 'Usuario no encontrado.');
-    }
+}
 
     public function destroy($id)
     {

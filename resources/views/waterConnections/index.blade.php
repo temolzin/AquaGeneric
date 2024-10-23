@@ -19,7 +19,7 @@
                     <div class="clearfix"></div>
                 </div>
                 <form method="GET" action="{{ route('waterConnections.index') }}" class="my-3">
-                    <div class="input-group">
+                    <div class="input-group w-50">
                         <input type="text" name="search" class="form-control" placeholder="Buscar por id, nombre, propietario" value="{{ request('search') }}">
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-primary">Buscar</button>

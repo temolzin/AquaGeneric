@@ -51,7 +51,17 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="waterDaysUpdate" class="form-label">Días de Agua(*)</label>
-                                            <input type="number" min="0" class="form-control" name="waterDaysUpdate" id="waterDaysUpdate" value="{{ $connection->water_days }}" required>
+                                            <div class="input-group">
+                                                <input type="number" min="0" class="form-control" name="waterDaysUpdate" id="waterDaysUpdate" value="{{ $connection->water_days }}" required>
+                                                <div class="input-group-append">
+                                                    <div class="form-check ml-3">
+                                                        <input class="form-check-input" type="checkbox" id="all_days_update" name="all_days_update" {{ $connection->water_days == 7 ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="all_days_update">
+                                                            Todos los días
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -102,8 +112,23 @@
 </div>
 
 <script>
-    function resetForm(id) {
-        var form = document.getElementById('edit-waterConnection-form-' + id);
-        form.reset();
-    }
+    document.getElementById('all_days_update').addEventListener('change', function() {
+        const waterDaysInput = document.getElementById('waterDaysUpdate');
+        if (this.checked) {
+            waterDaysInput.value = 7;
+            waterDaysInput.setAttribute('disabled', 'disabled');
+        } else {
+            waterDaysInput.removeAttribute('disabled');
+            waterDaysInput.value = '';
+        }
+    });
+
+    window.onload = function() {
+        const allDaysCheckbox = document.getElementById('all_days_update');
+        const waterDaysInput = document.getElementById('waterDaysUpdate');
+        if (allDaysCheckbox.checked) {
+            waterDaysInput.value = 7;
+            waterDaysInput.setAttribute('disabled', 'disabled');
+        }
+    };
 </script>

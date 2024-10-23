@@ -55,7 +55,17 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="water_days" class="form-label">Días de Agua(*)</label>
-                                            <input type="number" min="0" class="form-control" id="water_days" name="water_days" placeholder="Ingresa días de agua" value="{{ old('water_days') }}" required />
+                                            <div class="input-group">
+                                                <input type="number" min="0" max="7" class="form-control" id="water_days" name="water_days" placeholder="Ingresa días de agua" value="{{ old('water_days') }}" required />
+                                                <div class="input-group-append">
+                                                    <div class="form-check ml-3">
+                                                        <input class="form-check-input" type="checkbox" id="all_days" name="all_days">
+                                                        <label class="form-check-label" for="all_days">
+                                                            Todos los días
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -112,3 +122,16 @@
         align-items: center;
     }
 </style>
+
+<script>
+    document.getElementById('all_days').addEventListener('change', function() {
+        const waterDaysInput = document.getElementById('water_days');
+        if (this.checked) {
+            waterDaysInput.value = 7;
+            waterDaysInput.setAttribute('disabled', 'disabled');t
+        } else {
+            waterDaysInput.removeAttribute('disabled');
+            waterDaysInput.value = '';
+        }
+    });
+</script>
