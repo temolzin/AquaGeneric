@@ -18,20 +18,20 @@
                                     <div class="form-group text-center">
                                         @if ($customer->getFirstMediaUrl('customerGallery'))
                                             <img src="{{ $customer->getFirstMediaUrl('customerGallery') }}" alt="Foto del Cliente" class="img-fluid" 
-                                             style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
+                                            style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                         @else
                                             <img src="{{ asset('img/userDefault.png') }}" alt="Foto del Usuario" class="img-fluid" 
                                             style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                         @endif
                                     </div>
                                 </div>
-                                <div class="col-lg-2">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>ID</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->id }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-10">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Nombre</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->name }} {{ $customer->last_name }}" />
@@ -49,79 +49,19 @@
                                         <input type="text" disabled class="form-control" value="{{ $customer->street }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-3">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Número Interior</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->interior_number }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Estado Civil</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->marital_status ? 'Casado' : 'Soltero' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-5">
-                                    <div class="form-group">
-                                        <label>Nombre del Pareja</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->partner_name }}" />
-                                    </div>
-                                </div>
                                 <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>¿Tiene Toma de Agua?</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->has_water_connection ? 'Sí' : 'No' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>¿Tiene Local?</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->has_store ? 'Sí' : 'No' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>¿Está al Día?</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->has_all_payments ? 'Sí' : 'No' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>¿Tiene Agua Día y Noche?</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->has_water_day_night ? 'Día si noche no' : 'Noche si día no' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Número de Ocupantes</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->occupants_number }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Días de Agua</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->water_days }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>¿Tiene Presión de Agua?</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->has_water_pressure ? 'Día si noche no' : 'Noche si día no' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>¿Tiene Cisterna?</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->has_cistern ? 'Sí' : 'No' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Costo</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->cost->category ?? 'NULL' }} - {{ $customer->cost->price ?? 'null'}}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label>Status</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->status ? 'Con vida' : 'Fallecido' }}" />

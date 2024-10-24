@@ -43,7 +43,6 @@
                                             <th>ID</th>
                                             <th>FOTO</th>
                                             <th>NOMBRE</th>
-                                            <th>TIENE TOMA</th>
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
@@ -66,7 +65,6 @@
                                             @endif
                                             </td>
                                             <td>{{$customer->name}} {{$customer->last_name}}</td>
-                                            <td>{{ $customer->has_water_connection ? 'SI' : 'NO' }}</td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
                                                     <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{$customer->id}}">
