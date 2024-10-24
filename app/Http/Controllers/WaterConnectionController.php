@@ -36,9 +36,9 @@ class WaterConnectionController extends Controller
 
         $waterConnectionData = $request->all();
 
-        if ($request->has('all_days')) {
-            $waterConnectionData['water_days'] = 7;
-        }
+        $waterConnectionData['water_days'] = json_encode(
+            $request->has('all_days') ? 'all' : $request->input('days', [])
+        );
 
         $waterConnectionData['locality_id'] = $authUser->locality_id;
         $waterConnectionData['created_by'] = $authUser->id;
@@ -57,23 +57,30 @@ class WaterConnectionController extends Controller
     public function update(Request $request, $id)
     {
         $connection = WaterConnection::find($id);
-        if ($connection) {
-            $connection->name = $request->input('nameUpdate');
-            $connection->customer_id = $request->input('customerIdUpdate');
-            $connection->type = $request->input('typeUpdate');
-            $connection->occupants_number = $request->input('occupantsNumberUpdate');
-            $connection->water_days = $request->has('all_days_update') ? 7 : $request->input('waterDaysUpdate');
-            $connection->has_water_pressure = $request->input('hasWaterPressureUpdate');
-            $connection->has_cistern = $request->input('hasCisternUpdate');
-            $connection->cost_id = $request->input('costIdUpdate');
 
-            $connection->save();
-
-            return redirect()->route('waterConnections.index')->with('success', 'Usuario actualizado correctamente.');
+        if (!$connection) {
+            return redirect()->back()->with('error', 'Usuario no encontrado.');
         }
 
-        return redirect()->back()->with('error', 'Usuario no encontrado.');
-}
+        $connection->name = $request->input('nameUpdate');
+        $connection->customer_id = $request->input('customerIdUpdate');
+        $connection->type = $request->input('typeUpdate');
+        $connection->occupants_number = $request->input('occupantsNumberUpdate');
+
+        $connection->water_days = json_encode(
+            $request->has('all_days_update')
+                ? 'all'
+                : $request->input('days_update', [])
+        );
+
+        $connection->has_water_pressure = $request->input('hasWaterPressureUpdate');
+        $connection->has_cistern = $request->input('hasCisternUpdate');
+        $connection->cost_id = $request->input('costIdUpdate');
+
+        $connection->save();
+
+        return redirect()->route('waterConnections.index')->with('success', 'Usuario actualizado correctamente.');
+    }
 
     public function destroy($id)
     {

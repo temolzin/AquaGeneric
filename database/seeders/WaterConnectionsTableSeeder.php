@@ -18,38 +18,45 @@ class WaterConnectionsTableSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        $customers = DB::table('customers')->pluck('id');
-        $localities = DB::table('localities')->pluck('id');
-        $costs = DB::table('costs')->pluck('id');
-        $users = DB::table('users')->pluck('id');
+        $localities = DB::table('localities')->pluck('id')->toArray();
 
-        foreach ($customers as $customerId) {
-            WaterConnection::create([
-                'customer_id' => $customerId,
-                'locality_id' => $faker->randomElement($localities),
-                'cost_id' => $faker->randomElement($costs),
-                'created_by' => $faker->randomElement($users),
-                'name' => $faker->streetName,
-                'occupants_number' => $faker->numberBetween(1, 10),
-                'water_days' => $faker->numberBetween(1, 7),
-                'has_water_pressure' => $faker->boolean,
-                'has_cistern' => $faker->boolean,
-                'type' => $faker->randomElement(['residencial', 'commercial']),
-            ]);
+        foreach ($localities as $localityId) {
+            $customers = DB::table('customers')->where('locality_id', $localityId)->pluck('id')->toArray();
+            $costs = DB::table('costs')->where('locality_id', $localityId)->pluck('id')->toArray();
+            $users = DB::table('users')->pluck('id')->toArray();
 
-            if ($faker->boolean(30)) {
+            foreach ($customers as $customerId) {
                 WaterConnection::create([
                     'customer_id' => $customerId,
-                    'locality_id' => $faker->randomElement($localities),
+                    'locality_id' => $localityId,
                     'cost_id' => $faker->randomElement($costs),
                     'created_by' => $faker->randomElement($users),
                     'name' => $faker->streetName,
                     'occupants_number' => $faker->numberBetween(1, 10),
-                    'water_days' => $faker->numberBetween(1, 7),
+                    'water_days' => $faker->boolean(20) ? json_encode('all') : json_encode($faker->randomElements([
+                        'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+                    ])),
                     'has_water_pressure' => $faker->boolean,
                     'has_cistern' => $faker->boolean,
                     'type' => $faker->randomElement(['residencial', 'commercial']),
                 ]);
+
+                if ($faker->boolean(30)) {
+                    WaterConnection::create([
+                        'customer_id' => $customerId,
+                        'locality_id' => $localityId,
+                        'cost_id' => $faker->randomElement($costs),
+                        'created_by' => $faker->randomElement($users),
+                        'name' => $faker->streetName,
+                        'occupants_number' => $faker->numberBetween(1, 10),
+                        'water_days' => $faker->boolean(20) ? json_encode('all') : json_encode($faker->randomElements([
+                            'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+                        ])),
+                        'has_water_pressure' => $faker->boolean,
+                        'has_cistern' => $faker->boolean,
+                        'type' => $faker->randomElement(['residencial', 'commercial']),
+                    ]);
+                }
             }
         }
     }

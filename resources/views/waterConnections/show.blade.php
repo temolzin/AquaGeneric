@@ -48,10 +48,27 @@
                                         <input type="text" disabled class="form-control" value="{{ $connection->occupants_number }}" />
                                     </div>
                                 </div>
+                                @php
+                                    $daysMap = [
+                                        'monday' => 'Lunes',
+                                        'tuesday' => 'Martes',
+                                        'wednesday' => 'Miércoles',
+                                        'thursday' => 'Jueves',
+                                        'friday' => 'Viernes',
+                                        'saturday' => 'Sábado',
+                                        'sunday' => 'Domingo'
+                                    ];
+                                    $waterDays = json_decode($connection->water_days);
+                                    $displayDays = match (true) {
+                                        is_array($waterDays) => implode(', ', array_map(fn($day) => $daysMap[$day], $waterDays)),
+                                        $waterDays === 'all' => 'Todos los días',
+                                        default => 'No definido',
+                                    };
+                                @endphp
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Días de Agua</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->water_days }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $displayDays }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
