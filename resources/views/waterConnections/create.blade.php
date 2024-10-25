@@ -56,14 +56,37 @@
                                         <div class="form-group">
                                             <label for="water_days" class="form-label">Días de Agua(*)</label>
                                             <div class="input-group">
-                                                <input type="number" min="0" max="7" class="form-control" id="water_days" name="water_days" placeholder="Ingresa días de agua" value="{{ old('water_days') }}" required />
-                                                <div class="input-group-append">
-                                                    <div class="form-check ml-3">
-                                                        <input class="form-check-input" type="checkbox" id="all_days" name="all_days">
-                                                        <label class="form-check-label" for="all_days">
-                                                            Todos los días
-                                                        </label>
-                                                    </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="monday" name="days[]" value="monday">
+                                                    <label class="form-check-label" for="monday">Lunes</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="tuesday" name="days[]" value="tuesday">
+                                                    <label class="form-check-label" for="tuesday">Martes</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="wednesday" name="days[]" value="wednesday">
+                                                    <label class="form-check-label" for="wednesday">Miércoles</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="thursday" name="days[]" value="thursday">
+                                                    <label class="form-check-label" for="thursday">Jueves</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="friday" name="days[]" value="friday">
+                                                    <label class="form-check-label" for="friday">Viernes</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="saturday" name="days[]" value="saturday">
+                                                    <label class="form-check-label" for="saturday">Sábado</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="sunday" name="days[]" value="sunday">
+                                                    <label class="form-check-label" for="sunday">Domingo</label>
+                                                </div>
+                                                <div class="form-check col-lg-5">
+                                                    <input class="form-check-input" type="checkbox" id="all_days" name="all_days">
+                                                    <label class="form-check-label" for="all_days">Todos los días</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -124,14 +147,19 @@
 </style>
 
 <script>
-    document.getElementById('all_days').addEventListener('change', function() {
-        const waterDaysInput = document.getElementById('water_days');
+    const allDaysCheckbox = document.getElementById('all_days');
+    const dayCheckboxes = document.querySelectorAll('input[name="days[]"]');
+
+    allDaysCheckbox.addEventListener('change', function() {
         if (this.checked) {
-            waterDaysInput.value = 7;
-            waterDaysInput.setAttribute('disabled', 'disabled');t
+            dayCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            });
         } else {
-            waterDaysInput.removeAttribute('disabled');
-            waterDaysInput.value = '';
+            dayCheckboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+            });
         }
     });
 </script>

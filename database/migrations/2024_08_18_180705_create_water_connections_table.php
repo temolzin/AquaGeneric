@@ -21,7 +21,7 @@ class CreateWaterConnectionsTable extends Migration
             $table->unsignedBigInteger('created_by');
             $table->string('name');
             $table->integer('occupants_number');
-            $table->integer('water_days');
+            $table->json('water_days');
             $table->boolean('has_water_pressure');
             $table->boolean('has_cistern');
             $table->enum('type', ['residencial', 'commercial'])->default('residencial');
