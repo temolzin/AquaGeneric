@@ -1,5 +1,4 @@
 <div class="modal fade" id="viewDebts{{ $debt->waterConnection->customer->id }}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel{{ $debt->waterConnection->customer->id }}" aria-hidden="true">
-
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="card-primary">
@@ -29,65 +28,86 @@
                                 </div>
                             </div>
                             <hr>
-                            <h5>Deudas Asociadas</h5>
+                            <h5>Deudas Asociadas Por Tomas</h5>
 
                             <div class="form-group">
-                                <input type="text" id="searchDebt{{ $debt->waterConnection->customer->id }}" class="form-control search-input" placeholder="🔍 Buscar por ID, monto, estado o fechas...">
+                                <input type="text" id="searchDebt{{ $debt->waterConnection->customer->id }}" class="form-control search-input" placeholder="🔍 Buscar por ID, toma, monto, estado o fechas...">
                             </div>
                             <div class="debt-list overflow-auto" style="max-height: 300px;">
-                                @foreach ($debt->waterConnection->debts as $waterConnectionDebt)
-                                    <div class="debt-item card mb-3">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-1">
-                                                    <p><strong>ID:</strong> {{ $waterConnectionDebt->id }}</p>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <p><strong>Fecha de Inicio:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
-                                                            <p><strong>Fecha de Fin:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <p><strong>Monto:</strong> ${{ number_format($waterConnectionDebt->amount, 2) }}</p>
-                                                        </div>                                              
-                                                        <div class="col-md-2">
-                                                            <p><strong>Status:</strong> 
-                                                                @if ($waterConnectionDebt->status === 'pending')
-                                                                    <button class="btn btn-danger btn-xs">No pagada</button>
-                                                                @elseif ($waterConnectionDebt->status === 'partial')
-                                                                    <button class="btn btn-warning btn-xs">Abonada</button>
-                                                                @elseif ($waterConnectionDebt->status === 'paid')
-                                                                    <button class="btn btn-success btn-xs">Pagada</button>
-                                                                @endif
-                                                            </p>
-                                                        </div>
-                                                        <div class="col-md-2 text-right">
-                                                            <div class="btn-group" role="group" aria-label="Opciones">
-                                                                <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $waterConnectionDebt->id }}">
-                                                                    <i class="fas fa-eye"></i>
-                                                                </button>
-                                                                @can('deleteDebt')
-                                                                    @if($waterConnectionDebt->hasDependencies() && $waterConnectionDebt->status !== 'paid')
-                                                                        <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
-                                                                            <i class="fas fa-trash-alt"></i>
-                                                                        </button>
-                                                                    @else
-                                                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $waterConnectionDebt->id }}">
-                                                                            <i class="fas fa-trash-alt"></i>
-                                                                        </button>
-                                                                    @endif
-                                                                @endcan
-                                                            </div>
-                                                        </div>
-                                                        @include('debts.delete')
-                                                        @include('debts.show')
-                                                    </div>
-                                                </div>
+                                @foreach ($debt->waterConnection->customer->waterConnections as $waterConnection)
+                                    @if ($waterConnection->debts->isNotEmpty())
+                                    <div class="row">
+                                        <div class="col-lg-2">
+                                            <div class="form-group">
+                                                <label>ID de la Toma</label>
+                                                <input type="text" disabled class="form-control" value="{{ $waterConnection->id }}" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <div class="form-group">
+                                                <label>Nombre de la Toma</label>
+                                                <input type="text" disabled class="form-control" value="{{ $waterConnection->name }}" />
                                             </div>
                                         </div>
                                     </div>
+                                        @foreach ($waterConnection->debts as $waterConnectionDebt)
+                                            <div class="debt-item card mb-3">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-1">
+                                                            <p><strong>ID:</strong> {{ $waterConnectionDebt->id }}</p>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <p><strong>Fecha de Inicio:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
+                                                                    <p><strong>Fecha de Fin:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <p><strong>Monto:</strong> ${{ number_format($waterConnectionDebt->amount, 2) }}</p>
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <p><strong>Status:</strong>
+                                                                        @if ($waterConnectionDebt->status === 'pending')
+                                                                            <button class="btn btn-danger btn-xs">No pagada</button>
+                                                                        @elseif ($waterConnectionDebt->status === 'partial')
+                                                                            <button class="btn btn-warning btn-xs">Abonada</button>
+                                                                        @elseif ($waterConnectionDebt->status === 'paid')
+                                                                            <button class="btn btn-success btn-xs">Pagada</button>
+                                                                        @endif
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-md-2 text-right">
+                                                                    <div class="btn-group" role="group" aria-label="Opciones">
+                                                                        <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $waterConnectionDebt->id }}">
+                                                                            <i class="fas fa-eye"></i>
+                                                                        </button>
+                                                                        @can('deleteDebt')
+                                                                            @if($waterConnectionDebt->hasDependencies() && $waterConnectionDebt->status !== 'paid')
+                                                                                <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
+                                                                                    <i class="fas fa-trash-alt"></i>
+                                                                                </button>
+                                                                            @else
+                                                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $waterConnectionDebt->id }}">
+                                                                                    <i class="fas fa-trash-alt"></i>
+                                                                                </button>
+                                                                            @endif
+                                                                        @endcan
+                                                                    </div>
+                                                                </div>
+                                                                @include('debts.delete')
+                                                                @include('debts.show')
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @endif
                                 @endforeach
+                                @if ($debt->waterConnection->customer->waterConnections->every(fn($wc) => $wc->debts->isEmpty()))
+                                    <p>No hay deudas asociadas a ninguna de las tomas.</p>
+                                @endif
                             </div>
                         </div>
                     </div>

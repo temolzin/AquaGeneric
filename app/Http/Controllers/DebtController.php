@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Debt;
+use App\Models\Payment;
+use App\Models\WaterConnection;
 use Illuminate\Support\Facades\DB;
 
 class DebtController extends Controller
@@ -16,31 +18,68 @@ class DebtController extends Controller
 
         $customers = Customer::where('locality_id', $localityId)->get();
 
-        $debts = Debt::with('waterConnection.customer', 'creator')
-            ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
-                $query->where('locality_id', $localityId)
-                    ->whereHas('customer', function ($query) use ($search) {
-                        $query->where(function ($query) use ($search) {
-                            $query->where('id', 'like', "%{$search}%")
-                                  ->orWhere('name', 'like', "%{$search}%")
-                                  ->orWhere('last_name', 'like', "%{$search}%")
-                                  ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
-                        });
-                    });
-            })
-            ->where('status', '!=', 'paid')
-            ->select('water_connection_id')
-            ->groupBy('water_connection_id', 'created_at')
-            ->orderBy('created_at', 'desc')
-            ->selectRaw('SUM(amount) as total_amount')
-            ->paginate(10);
+        $waterConnections = WaterConnection::with('customer')
+        ->where('locality_id', $localityId)
+        ->get();
 
-        return view('debts.index', compact('debts', 'customers'));
+        $debts = Debt::with('waterConnection.customer', 'creator')
+        ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
+            $query->where('locality_id', $localityId)
+                ->whereHas('customer', function ($query) use ($search) {
+                    $query->where(function ($query) use ($search) {
+                        $query->where('id', 'like', "%{$search}%")
+                              ->orWhere('name', 'like', "%{$search}%")
+                              ->orWhere('last_name', 'like', "%{$search}%")
+                              ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+                    });
+                });
+        })
+        ->where('status', '!=', 'paid')
+        ->groupBy('water_connection_id')
+        ->selectRaw('water_connection_id,
+                     SUM(CASE
+                         WHEN status = "partial" THEN debt_current
+                         ELSE amount
+                     END) AS total_amount')
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+
+        $totalDebts = [];
+        foreach ($debts as $debt) {
+            $customerId = $debt->waterConnection->customer_id;
+            if (!isset($totalDebts[$customerId])) {
+                $totalDebts[$customerId] = 0;
+            }
+
+            $payments = Payment::where('debt_id', $debt->id)->sum('amount');
+            $totalDebts[$customerId] += $debt->total_amount - $payments;
+        }
+
+        return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts'));
+    }
+
+    public function getWaterConnections(Request $request)
+    {
+        $authUser = auth()->user();
+        $customerId = $request->input('customer_id');
+        $waterConnections = WaterConnection::where('customer_id', $customerId)
+                                            ->where('locality_id', $authUser->locality_id)
+                                            ->get()
+                                            ->map(function ($waterConnection) {
+                                                return [
+                                                    'id' => $waterConnection->id,
+                                                    'name' => $waterConnection->name,
+                                                ];
+                                            });
+
+        return response()->json(['waterConnections' => $waterConnections]);
     }
 
     public function store(Request $request)
     {
         $authUser = auth()->user();
+
+        $waterConnection = WaterConnection::findOrFail($request->water_connection_id);
 
         $startMonth = $request->input('start_date');
         $endMonth = $request->input('end_date');
@@ -62,7 +101,7 @@ class DebtController extends Controller
         Debt::create([
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
-            'water_connection_id' => $request->input('water_connection_id'),
+            'water_connection_id' => $request->water_connection_id,
             'start_date' => $startDate->format('Y-m-d'),
             'end_date' => $endDate->format('Y-m-d'),
             'amount' => $request->input('amount'),

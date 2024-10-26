@@ -47,6 +47,14 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
+                                            <label for="water_connection_id" class="form-label">Seleccionar Toma(*)</label>
+                                            <select class="form-control select2" name="water_connection_id" id="water_connection_id" required>
+                                                <option value="">Selecciona una toma</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
                                             <label for="debt_id" class="form-label">Seleccionar Deuda(*)</label>
                                             <select class="form-control select2" name="debt_id" id="debt_id" required>
                                                 <option value="">Selecciona una deuda</option>

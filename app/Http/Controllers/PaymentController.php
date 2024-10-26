@@ -65,26 +65,24 @@ class PaymentController extends Controller
         return view('payments.index', compact('payments', 'customers'));
     }
 
-    public function getCustomerDebts(Request $request)
+    public function getDebtsByWaterConnection(Request $request)
     {
         $authUser = auth()->user();
-        $customerId = $request->input('customer_id');
-        $debts = Debt::where('customer_id', $customerId)
-            ->where('status', '!=', 'paid')
-            ->where('locality_id', $authUser->locality_id)
-            ->orderBy('start_date', 'asc')
-            ->get()
-            ->map(function ($debt) {
-                $remainingAmount = $debt->amount - $debt->debt_current;
-                
-                return [
-                    'id' => $debt->id,
-                    'start_date' => $debt->start_date,
-                    'end_date' => $debt->end_date,
-                    'amount' => $debt->amount,
-                    'remaining_amount' => $remainingAmount,
-                ];
-            });
+        $waterConnectionId = $request->input('water_connection_id');
+        $debts = Debt::where('water_connection_id', $waterConnectionId)
+                 ->where('status', '!=', 'paid')
+                 ->orderBy('start_date', 'asc')
+                 ->get()
+                 ->map(function ($debt) {
+                     $remainingAmount = $debt->amount - $debt->debt_current;
+                     return [
+                         'id' => $debt->id,
+                         'start_date' => $debt->start_date,
+                         'end_date' => $debt->end_date,
+                         'amount' => $debt->amount,
+                         'remaining_amount' => $remainingAmount,
+                     ];
+                 });
 
         return response()->json(['debts' => $debts]);
     }
@@ -105,6 +103,7 @@ class PaymentController extends Controller
         }
 
         Payment::create([
+            'customer_id' => $request->customer_id,
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
