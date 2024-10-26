@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Debt;
+use App\Models\Payment;
 use App\Models\WaterConnection;
 use Illuminate\Support\Facades\DB;
 
@@ -22,32 +23,37 @@ class DebtController extends Controller
         ->get();
 
         $debts = Debt::with('waterConnection.customer', 'creator')
-            ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
-                $query->where('locality_id', $localityId)
-                    ->whereHas('customer', function ($query) use ($search) {
-                        $query->where(function ($query) use ($search) {
-                            $query->where('id', 'like', "%{$search}%")
-                                  ->orWhere('name', 'like', "%{$search}%")
-                                  ->orWhere('last_name', 'like', "%{$search}%")
-                                  ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
-                        });
+        ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
+            $query->where('locality_id', $localityId)
+                ->whereHas('customer', function ($query) use ($search) {
+                    $query->where(function ($query) use ($search) {
+                        $query->where('id', 'like', "%{$search}%")
+                              ->orWhere('name', 'like', "%{$search}%")
+                              ->orWhere('last_name', 'like', "%{$search}%")
+                              ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
                     });
-            })
-            ->where('status', '!=', 'paid')
-            ->select('water_connection_id')
-            ->groupBy('water_connection_id', 'created_at')
-            ->orderBy('created_at', 'desc')
-            ->selectRaw('SUM(amount) as total_amount')
-            ->paginate(10);
+                });
+        })
+        ->where('status', '!=', 'paid')
+        ->groupBy('water_connection_id')
+        ->selectRaw('water_connection_id,
+                     SUM(CASE
+                         WHEN status = "partial" THEN debt_current
+                         ELSE amount
+                     END) AS total_amount')
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
 
-            $totalDebts = [];
-            foreach ($debts as $debt) {
-                $customerId = $debt->waterConnection->customer_id;
-                if (!isset($totalDebts[$customerId])) {
-                    $totalDebts[$customerId] = 0;
-                }
-                $totalDebts[$customerId] += $debt->total_amount;
+        $totalDebts = [];
+        foreach ($debts as $debt) {
+            $customerId = $debt->waterConnection->customer_id;
+            if (!isset($totalDebts[$customerId])) {
+                $totalDebts[$customerId] = 0;
             }
+
+            $payments = Payment::where('debt_id', $debt->id)->sum('amount');
+            $totalDebts[$customerId] += $debt->total_amount - $payments;
+        }
 
         return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts'));
     }

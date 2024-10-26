@@ -126,29 +126,28 @@ $(document).ready(function() {
         });
     });
     
-    $('#customer_id').change(function() {
-        var customerId = $(this).val();
-        if (customerId) {
-            $.ajax({
-                url: '{{ route("getCustomerDebts") }}',
-                type: 'GET',
-                data: { customer_id: customerId },
-                success: function(response) {
-                    $('#debt_id').empty();
-                    $('#debt_id').append('<option value="">Selecciona una deuda</option>');
-                    $.each(response.debts, function(key, value) {
-                        $('#debt_id').append('<option value="'+ value.id +'" data-remaining-amount="'+ value.remaining_amount +'">'+ value.start_date +' - '+ value.end_date +' | Monto: '+ value.amount +'</option>');
-                    });
-                },
-                error: function(xhr) {
-                    console.log('Error:', xhr.responseText);
-                }
-            });
-        } else {
-            $('#debt_id').empty();
-            $('#debt_id').append('<option value="">Selecciona una deuda</option>');
-        }
-    });
+    $('#water_connection_id').change(function() {
+    var waterConnectionId = $(this).val();
+    if (waterConnectionId) {
+        $.ajax({
+            url: '{{ route("getDebtsByWaterConnection") }}',
+            type: 'GET',
+            data: { water_connection_id: waterConnectionId },
+            success: function(response) {
+                $('#debt_id').empty();
+                $('#debt_id').append('<option value="">Selecciona una deuda</option>');
+                $.each(response.debts, function(index, debt) {
+                    $('#debt_id').append('<option value="' + debt.id + '" data-remaining-amount="' + debt.remaining_amount + '">' + debt.start_date + ' - ' + debt.end_date + ' | Monto: ' + debt.amount + '</option>');
+                });
+            },
+            error: function(xhr) {
+                console.log('Error:', xhr.responseText);
+            }
+        });
+    } else {
+        $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>');
+    }
+});
 
     $('#debt_id').change(function() {
         var selectedOption = $(this).find('option:selected');
@@ -196,5 +195,39 @@ $('#clientPayments').on('shown.bs.modal', function(){
         dropdownParent: $('#clientPayments')
     });
 });
+
+$('#customer_id').on('change', function() {
+            var customerId = $(this).val();
+
+            if (customerId) {
+                $.ajax({
+                    url: "{{ route('getWaterConnections') }}",
+                    type: "GET",
+                    data: { customer_id: customerId },
+                    success: function(response) {
+                        var waterConnectionSelect = $('#water_connection_id');
+                        waterConnectionSelect.empty();
+                        waterConnectionSelect.append('<option value="">Selecciona una toma</option>');
+
+                        $.each(response.waterConnections, function(index, waterConnection) {
+                            waterConnectionSelect.append(
+                                '<option value="' + waterConnection.id + '">' + waterConnection.id + ' - ' + waterConnection.name + '</option>'
+                            );
+                        });
+                        waterConnectionSelect.trigger('change');
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudieron cargar las tomas de agua para el cliente seleccionado.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                });
+            } else {
+                $('#water_connection_id').empty().append('<option value="">Selecciona una toma</option>');
+            }
+        });
 </script>
 @endsection

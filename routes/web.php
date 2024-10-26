@@ -79,7 +79,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['can:viewPayments']], function () {
         Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
         Route::resource('payments', PaymentController::class);
-        Route::get('/getCustomerDebts', [PaymentController::class, 'getCustomerDebts'])->name('getCustomerDebts');
+        Route::get('/getDebtsByWaterConnection', [PaymentController::class, 'getDebtsByWaterConnection'])->name('getDebtsByWaterConnection');
         Route::get('/receipt-payment/{id}', [PaymentController::class, 'receiptPayment'])->name('reports.receiptPayment');
         Route::get('/client-payments', [PaymentController::class, 'clientPaymentReport'])->name('report.client-payments');
         Route::get('/annual-earnings-report/{year}', [PaymentController::class, 'annualEarningsReport']);
