@@ -33,27 +33,32 @@
                             <div class="form-group">
                                 <input type="text" id="searchDebt{{ $debt->waterConnection->customer->id }}" class="form-control search-input" placeholder="🔍 Buscar por ID, toma, monto, estado o fechas...">
                             </div>
-                            <div class="debt-list overflow-auto" style="max-height: 300px;">
+                            <div class="debt-list" style="overflow-y: auto; max-height: 300px; overflow-x: hidden;">
+                                @php $connectionCounter = 0; @endphp
                                 @foreach ($debt->waterConnection->customer->waterConnections as $waterConnection)
                                     @if ($waterConnection->debts->isNotEmpty())
-                                    <div class="row">
-                                        <div class="col-lg-2">
-                                            <div class="form-group">
-                                                <label>ID de la Toma</label>
-                                                <input type="text" disabled class="form-control" value="{{ $waterConnection->id }}" />
+                                        @php $connectionCounter++; @endphp
+                                        @if ($connectionCounter > 1)
+                                            <hr style="border: none; border-top: 4px solid rgba(8, 124, 252, 0.8); margin-top: 20px; margin-bottom: 20px;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
+                                        @endif
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col-lg-2">
+                                                <div class="form-group">
+                                                    <label>ID de la Toma</label>
+                                                    <input type="text" disabled class="form-control" value="{{ $waterConnection->id }}" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-10 pl-lg-3">
+                                                <div class="form-group">
+                                                    <label>Nombre de la Toma</label>
+                                                    <input type="text" disabled class="form-control" value="{{ $waterConnection->name }}" />
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-10">
-                                            <div class="form-group">
-                                                <label>Nombre de la Toma</label>
-                                                <input type="text" disabled class="form-control" value="{{ $waterConnection->name }}" />
-                                            </div>
-                                        </div>
-                                    </div>
                                         @foreach ($waterConnection->debts as $waterConnectionDebt)
                                             <div class="debt-item card mb-3">
                                                 <div class="card-body">
-                                                    <div class="row">
+                                                    <div class="row no-gutters">
                                                         <div class="col-md-1">
                                                             <p><strong>ID:</strong> {{ $waterConnectionDebt->id }}</p>
                                                         </div>
