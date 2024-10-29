@@ -174,13 +174,15 @@
                     @foreach ($customers as $customer)
                         <tr>
                             <td class="textcenter">{{ $customer->id }}</td>
-                            <td class="textcenter">{{ $customer->name }} {{ $customer->last_name}}</td>
+                            <td class="textcenter">{{ $customer->name }} {{ $customer->last_name }}</td>
                             <td class="textcenter">
                                 @php
-                                    $unpaidDebts = $customer->debts->where('status', '!=', 'paid');
+                                    $unpaidDebts = $customer->waterConnections->flatMap(function ($waterConnection) {
+                                        return $waterConnection->debts->where('status', '!=', 'paid');
+                                    });
                                     $totalDebt = $unpaidDebts->sum('amount');
                                 @endphp
-                                    {{ number_format($totalDebt, 2) }}
+                                {{ number_format($totalDebt, 2, '.', ',') }}
                             </td>
                         </tr>
                     @endforeach
