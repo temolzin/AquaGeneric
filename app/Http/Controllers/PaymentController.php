@@ -251,7 +251,7 @@ class PaymentController extends Controller
         $authUser = auth()->user();
 
         $payments = Payment::whereHas('debt.customer', function ($query) use ($customerId) {
-            $query->where('id', $customerId);
+            $query->where('customers.id', $customerId);
         })
         ->whereBetween('created_at', [$startDate, $endDate])
         ->get();

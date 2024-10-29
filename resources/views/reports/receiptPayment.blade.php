@@ -26,6 +26,11 @@
             position: relative;
             min-height: 100vh;
             box-sizing: border-box;
+            page-break-inside: avoid;
+        }
+
+        .receipt-header, .info-container, .signature, .company-info {
+            page-break-inside: avoid;
         }
         .receipt-header {
             height: auto;
@@ -80,7 +85,7 @@
             align-items: center;
         }
 
-        .customer-info, .debt-info, .payment-info {
+        .customer-info, .debt-info, .payment-info, .water-connection-info{
             padding-left: 150px;
             margin: 11px;
             text-align: left;
@@ -92,13 +97,16 @@
             text-align: center;
             font-size: 12px;
             page-break-before: avoid;
+            margin-bottom: 80px;
+            transform: translateY(2px);
         }
 
         .company-info {
             text-align: center;
             font-weight: bold;
             font-size: 15px;
-            margin-top: 180px;
+            margin-top: 80px;
+            transform: translateY(35px);
             page-break-inside: avoid;
         }
 
@@ -119,8 +127,8 @@
         }
 
         p {
-            margin: 5px 0;
-            font-size: 16px;
+            margin: 3px 0;
+            font-size: 15px;
         }
     </style>
 </head>
@@ -154,6 +162,20 @@
                 <p>{{ $payment->debt->customer->street }} #{{ $payment->debt->customer->interior_number }}, {{ $payment->debt->customer->block }}, {{$payment->locality->zip_code }}</p>
                 <p>{{ $payment->locality->name }}, {{ $payment->locality->state }}</p>
             </div>
+            <div class="water-connection-info">
+                <h4>Datos de la toma</h4>
+                <p>Nombre: {{ $payment->debt->waterConnection->name }}</p>
+                <p>
+                    @switch($payment->debt->waterConnection->type )
+                        @case('commercial')
+                        <p>Tipo: Comercial</p>
+                            @break
+                        @case('residencial')
+                        <p>Tipo: Residencial</p>
+                            @break
+                    @endswitch
+                </p>
+            </div>
             <div class="debt-info">
                 <h4>Datos de la deuda</h4>
                 <p>FOLIO. {{ $payment->debt->id }}</p>
@@ -161,7 +183,7 @@
                 <p>Fecha de vencimiento: {{ \Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }}</p>
             </div>
             <div class="payment-info">
-                <br>
+                <h4>Datos del pago</h4>
                 <p><strong>Monto del pago: </strong>${{ $payment->amount }}</p>
                 <p>
                     @switch($payment->method)
@@ -178,16 +200,17 @@
                 </p>
             </div>
         </div>
+        <div class="signature">
+            <br><br>
+            _________________________________
+            <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
+        </div>
+        <footer class="company-info">
+            <a class="text_infoE" href="https://www.rootheim.com/">
+                <strong>AquaControl</strong> powered by <strong>Root Heim Company</strong>
+                <img src="img/rootheim.png" width="18px">
+            </a>
+        </footer>
     </div>
-    <div class="signature">
-        _______________________________________________
-        <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
-    </div>
-    <footer class="company-info">
-        <a class="text_infoE" href="https://www.rootheim.com/">
-            <strong>AquaControl</strong> powered by <strong>Root Heim Company</strong>
-            <img src="img/rootheim.png" width="18px">
-        </a>
-    </footer>
 </body>
 </html>
