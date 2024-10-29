@@ -23,26 +23,27 @@ class DebtController extends Controller
         ->get();
 
         $debts = Debt::with('waterConnection.customer', 'creator')
-        ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
-            $query->where('locality_id', $localityId)
-                ->whereHas('customer', function ($query) use ($search) {
-                    $query->where(function ($query) use ($search) {
-                        $query->where('id', 'like', "%{$search}%")
-                              ->orWhere('name', 'like', "%{$search}%")
-                              ->orWhere('last_name', 'like', "%{$search}%")
-                              ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+            ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
+                $query->where('locality_id', $localityId)
+                    ->whereHas('customer', function ($query) use ($search) {
+                        $query->where(function ($query) use ($search) {
+                            $query->where('id', 'like', "%{$search}%")
+                                ->orWhere('name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%")
+                                ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+                        });
                     });
-                });
-        })
-        ->where('status', '!=', 'paid')
-        ->groupBy('water_connection_id')
-        ->selectRaw('water_connection_id,
-                     SUM(CASE
-                         WHEN status = "partial" THEN debt_current
-                         ELSE amount
-                     END) AS total_amount')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+            })
+            ->where('status', '!=', 'paid')
+            ->groupBy('water_connection_id')
+            ->selectRaw('water_connection_id,
+                        SUM(CASE
+                            WHEN status = "partial" THEN debt_current
+                            ELSE amount
+                        END) AS total_amount,
+                        MAX(created_at) AS latest_created_at')
+            ->orderBy('latest_created_at', 'desc')
+            ->paginate(10);
 
         $totalDebts = [];
         foreach ($debts as $debt) {
