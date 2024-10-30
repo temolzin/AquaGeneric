@@ -14,13 +14,13 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-5">
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>ID</label>
                                         <input type="text" disabled class="form-control" value="{{ $waterConnectionDebt->id }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-7">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Monto de la Deuda</label>
                                         <div class="input-group">
@@ -42,7 +42,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Saldo pendiente</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
+                                            </div>
+                                            @php
+                                                $remainingAmount = $waterConnectionDebt->amount - $waterConnectionDebt->debt_current;
+                                            @endphp
+                                            <input type="text" disabled class="form-control" value="{{ number_format($remainingAmount , 2) }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Estado</label>
                                         <p class="form-control">
@@ -91,3 +105,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    function closeCurrentModal(modalId) {
+        $(modalId).modal('hide');
+    }
+</script>
