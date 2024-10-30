@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Debt;
 use App\Models\Customer;
+use App\Models\WaterConnection;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
@@ -65,9 +66,25 @@ class PaymentController extends Controller
         return view('payments.index', compact('payments', 'customers'));
     }
 
-    public function getDebtsByWaterConnection(Request $request)
+    public function getWaterConnectionsByCustomer(Request $request)
     {
         $authUser = auth()->user();
+        $customerId = $request->input('waterCustomerId');
+        $waterConnections = WaterConnection::where('customer_id', $customerId)
+                                            ->where('locality_id', $authUser->locality_id)
+                                            ->get()
+                                            ->map(function ($waterConnection) {
+                                                return [
+                                                    'id' => $waterConnection->id,
+                                                    'name' => $waterConnection->name,
+                                                ];
+                                            });
+
+        return response()->json(['waterConnections' => $waterConnections]);
+    }
+
+    public function getDebtsByWaterConnection(Request $request)
+    {
         $waterConnectionId = $request->input('water_connection_id');
         $debts = Debt::where('water_connection_id', $waterConnectionId)
                  ->where('status', '!=', 'paid')
@@ -262,5 +279,33 @@ class PaymentController extends Controller
         ->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_pagos_cliente.pdf');
+    }
+
+    public function waterConnectionPaymentsReport(Request $request)
+    {
+        $customerId = $request->input('waterCustomerId');
+        $waterConnectionId = $request->input('waterConnectionId');
+        $startDate = $request->input('waterStartDate');
+        $endDate = $request->input('waterEndDate');
+
+        $customer = Customer::findOrFail($customerId);
+        $authUser = auth()->user();
+
+        $waterConnection = WaterConnection::where('id', $waterConnectionId)
+                                        ->where('customer_id', $customerId)
+                                        ->firstOrFail();
+
+        $payments = Payment::whereHas('debt', function ($query) use ($waterConnectionId) {
+                $query->where('water_connection_id', $waterConnectionId);
+            })
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->get();
+
+        $totalPayments = $payments->sum('amount');
+
+        $pdf = PDF::loadView('reports.waterConnectionPayments', compact('customer', 'waterConnection', 'startDate', 'endDate', 'payments', 'authUser', 'totalPayments'))
+                ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('reporte_pagos_tomas.pdf');
     }
 }

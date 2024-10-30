@@ -13,6 +13,7 @@
                             @include('payments.create')
                             @include('payments.annualEarnings')
                             @include('payments.clientPayments')
+                            @include('payments.waterConnectionPayments')
                             <div class="col-lg-12 text-right">
                                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createPayment">
                                     <i class="fa fa-plus"></i> Registrar Pago
@@ -25,7 +26,10 @@
                                 </a>
                                 </button>
                                 <button type="button" class="btn bg-maroon" data-toggle="modal" data-target="#clientPayments">
-                                    <i class="fas fa-money-bill-wave"></i> Pagos por cliente
+                                    <i class="fas fa-money-bill-wave"></i> Pagos por Cliente
+                                </button>
+                                <button type="button" class="btn bg-purple" data-toggle="modal" data-target="#waterConnectionPayments">
+                                    <i class="fas fa-fw fa-water"></i> Pagos por Toma de agua
                                 </button>
                             </div>
                             <div class="clearfix"></div>
@@ -125,6 +129,35 @@ $(document).ready(function() {
             dropdownParent: $('#createPayment')
         });
     });
+
+    $('#waterCustomerId').on('change', function() {
+        const customerId = $(this).val();
+        const waterConnectionSelect = $('#waterConnectionId');
+
+        waterConnectionSelect.empty().append('<option value="">Selecciona una toma</option>');
+
+        if (customerId) {
+            $.ajax({
+                url: '{{ route("getWaterConnectionsByCustomer") }}',
+                method: 'GET',
+                data: { waterCustomerId: customerId },
+                success: function(response) {
+
+                    $.each(response.waterConnections, function(index, connection) {
+                        const connectionId = connection.id;
+                        const connectionName = connection.name;
+
+                        if (connectionId && connectionName) {
+                            waterConnectionSelect.append(`<option value="${connectionId}">${connectionId} - ${connectionName}</option>`);
+                        }
+                    });
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error', textStatus, errorThrown);
+                }
+            });
+        }
+    });
     
     $('#water_connection_id').change(function() {
     var waterConnectionId = $(this).val();
@@ -196,12 +229,18 @@ $('#clientPayments').on('shown.bs.modal', function(){
     });
 });
 
+$('#waterConnectionPayments').on('shown.bs.modal', function(){
+    $('.select2').select2({
+        dropdownParent: $('#waterConnectionPayments')
+    });
+});
+
 $('#customer_id').on('change', function() {
             var customerId = $(this).val();
 
             if (customerId) {
                 $.ajax({
-                    url: "{{ route('getWaterConnections') }}",
+                    url: "{{ route('getWaterConnectionsByCustomer') }}",
                     type: "GET",
                     data: { customer_id: customerId },
                     success: function(response) {
