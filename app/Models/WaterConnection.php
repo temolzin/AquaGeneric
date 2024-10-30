@@ -44,6 +44,6 @@ class WaterConnection extends Model
 
     public function debts()
     {
-        return $this->hasMany(Debt::class);
+        return $this->hasMany(Debt::class, 'water_connection_id');
     }
 }
