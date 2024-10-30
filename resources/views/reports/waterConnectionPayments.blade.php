@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Pagos por Cliente</title>
+        <title>Pagos por Toma de Agua</title>
         <style>
             html{
                 margin: 0;
@@ -55,7 +55,7 @@
             .h3 {
                 font-weight: bold;
                 font-family: 'Montserrat', sans-serif;
-                font-size: 15pt;
+                font-size: 13pt;
                 display: block;
                 color: #0B1C80;
                 text-align: left;
@@ -232,7 +232,21 @@
                 <tr>
                     <td class="info_cliente">
                         <div class="round">
-                            <span class="h3">Cliente</span>
+                            <span class="h3">Toma de Agua</span>
+                            <table class="datos_cliente">
+                                <tr>
+                                    <td><label>Nombre:</label> <p>{{ $waterConnection->name}}</p></td>
+                                    @php
+                                        $tipos = [
+                                            'commercial' => 'Comercial',
+                                            'residencial' => 'Residencial'
+                                        ];
+                                    @endphp
+                                    <td><label>Tipo:</label> <p>{{ $tipos[$waterConnection->type] ?? ucfirst($waterConnection->type) }}</p></td>
+                                </tr>
+                            </table>
+                            <br>
+                            <span class="h3">Propietario</span>
                             <table class="datos_cliente">
                                 <tr>
                                     <td><label>Nombre:</label> <p>{{ $customer->name}} {{$customer->last_name}}</p></td>
@@ -247,7 +261,6 @@
                 <thead>
                     <tr>
                         <th class="textable">Folio</th>
-                        <th class="textable">Toma de agua</th>
                         <th class="textable">Fecha del pago</th>
                         <th class="textable">Cantidad</th>
                     </tr>
@@ -256,13 +269,12 @@
                     @foreach ($payments as $payment)
                         <tr>
                             <td class="textcenter">{{ $payment->id }}</td>
-                            <td class="textcenter">{{ $payment->debt->waterConnection->name}}
                             <td class="textcenter">{{ \Carbon\Carbon::parse($payment->created_at)->translatedFormat('j \d\e F \d\e Y') }}</td>
                             <td class="textcenter">$ {{ $payment->amount }}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="3" class="total_payment"><strong>Total:</strong></td>
+                        <td colspan="2" class="total_payment"><strong>Total:</strong></td>
                         <td class="textcenter"><strong>$ {{ number_format($totalPayments, 2) }}</strong></td>
                     </tr>
                 </tbody>
