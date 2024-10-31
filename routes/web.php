@@ -55,7 +55,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['can:viewCustomers']], function () {
         Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
         Route::resource('customers', CustomerController::class);
-        Route::get('/getWaterConnections', [DebtController::class, 'getWaterConnections'])->name('getWaterConnections');
         Route::get('/customers-with-debts', [CustomerController::class, 'customersWithDebts'])->name('report.with-debts');
         Route::get('/report/pdfCustomers', [CustomerController::class, 'pdfCustomers'])->name('customers.pdfCustomers');
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
@@ -74,6 +73,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['can:viewDebts']], function () {
         Route::post('/debts/assign-all', [DebtController::class, 'assignAll'])->name('debts.assignAll');
         Route::resource('debts', DebtController::class);
+        Route::get('/getWaterConnections', [DebtController::class, 'getWaterConnections'])->name('getWaterConnections');
     });
 
     Route::group(['middleware' => ['can:viewPayments']], function () {

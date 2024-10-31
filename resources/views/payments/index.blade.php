@@ -240,7 +240,7 @@ $('#customer_id').on('change', function() {
 
             if (customerId) {
                 $.ajax({
-                    url: "{{ route('getWaterConnectionsByCustomer') }}",
+                    url: "{{ route('getWaterConnections') }}",
                     type: "GET",
                     data: { customer_id: customerId },
                     success: function(response) {
