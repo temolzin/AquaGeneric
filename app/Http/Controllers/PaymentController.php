@@ -21,8 +21,8 @@ class PaymentController extends Controller
 
         if ($request->filled('name')) {
             $query->whereHas('debt.customer', function ($q) use ($request) {
-                $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $request->name . '%'])
-                    ->orWhereRaw("CONCAT(last_name, ' ', name) LIKE ?", ['%' . $request->name . '%']);
+            $q->whereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ['%' . $request->name . '%'])
+                ->orWhereRaw("CONCAT(customers.last_name, ' ', customers.name) LIKE ?", ['%' . $request->name . '%']);
             });
         }
 

@@ -181,8 +181,12 @@
                                         return $waterConnection->debts->where('status', '!=', 'paid');
                                     });
                                     $totalDebt = $unpaidDebts->sum('amount');
+                                    $totalPaid = $unpaidDebts->flatMap(function ($debt) {
+                                        return $debt->payments;
+                                    })->sum('amount');
+                                    $pendingBalance = $totalDebt - $totalPaid;
                                 @endphp
-                                {{ number_format($totalDebt, 2, '.', ',') }}
+                                ${{ number_format($pendingBalance, 2, '.', ',') }}
                             </td>
                         </tr>
                     @endforeach
