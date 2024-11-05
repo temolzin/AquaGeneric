@@ -105,7 +105,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="hasCisternUpdate" class="form-label">¿Tiene cisterna?</label>
                                             <select class="form-control" id="hasCisternUpdate" name="hasCisternUpdate" required>
@@ -115,7 +115,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-5">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="costIdUpdate" class="form-label">Costo(*)</label>
                                             <select class="form-control" id="costIdUpdate" name="costIdUpdate" required>

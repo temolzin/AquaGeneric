@@ -61,7 +61,7 @@
                                         <input type="text" disabled class="form-control" value="{{ $customer->marital_status ? 'Casado' : 'Soltero' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Status</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->status ? 'Con vida' : 'Fallecido' }}" />

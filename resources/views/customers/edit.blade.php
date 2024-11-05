@@ -73,7 +73,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estado del titular(*)</label>
                                             <select class="form-control" id="statusUpdate" name="statusUpdate">

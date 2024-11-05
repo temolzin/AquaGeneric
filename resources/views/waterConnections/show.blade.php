@@ -95,7 +95,7 @@
                                         <input type="text" disabled class="form-control" value="{{ $connection->locality->name ?? 'Desconocido' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Registrado por</label>
                                         <input type="text" disabled class="form-control" value="{{ $connection->creator->name ?? 'Desconocido' }} {{ $connection->creator->last_name ?? '' }}" />
