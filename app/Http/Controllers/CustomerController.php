@@ -54,6 +54,7 @@ class CustomerController extends Controller
             $customer->marital_status = $request->input('maritalStatusUpdate');
             $customer->status = $request->input('statusUpdate');
             $customer->responsible_name = $request->input('responsibleNameUpdate');
+            $customer->note = $request->input('noteUpdate');
 
             $customer->save();
 

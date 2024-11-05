@@ -85,6 +85,12 @@
                                         <input type="text" disabled class="form-control" value="{{ $customer->creator->name ?? 'Desconocido' }} {{ $customer->creator->last_name ?? '' }}" />
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="note" class="form-label">Notas del Cliente</label>
+                                        <textarea disabled class="form-control" id="note" name="note" placeholder="Ingresa una nota"> {{ $customer->note}}</textarea>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

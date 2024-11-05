@@ -90,6 +90,12 @@
                                             placeholder="Nombre de la persona responsable si el titular fallecio, si no hay dejalo vacio"  id="responsibleNameUpdate" value="{{ $customer->responsible_name }}">
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="noteUpdate" class="form-label">Nota</label>
+                                            <textarea class="form-control" id="noteUpdate" name="noteUpdate" placeholder="Ingresa una nota">{{ $customer->note }}</textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

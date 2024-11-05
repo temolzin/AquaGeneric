@@ -59,7 +59,7 @@ class WaterConnectionController extends Controller
         $connection = WaterConnection::find($id);
 
         if (!$connection) {
-            return redirect()->back()->with('error', 'Usuario no encontrado.');
+            return redirect()->back()->with('error', 'Toma de Agua no encontrada.');
         }
 
         $connection->name = $request->input('nameUpdate');
@@ -76,10 +76,11 @@ class WaterConnectionController extends Controller
         $connection->has_water_pressure = $request->input('hasWaterPressureUpdate');
         $connection->has_cistern = $request->input('hasCisternUpdate');
         $connection->cost_id = $request->input('costIdUpdate');
+        $connection->note = $request->input('noteUpdate');
 
         $connection->save();
 
-        return redirect()->route('waterConnections.index')->with('success', 'Usuario actualizado correctamente.');
+        return redirect()->route('waterConnections.index')->with('success', 'Toma de Agua actualizada correctamente.');
     }
 
     public function destroy($id)

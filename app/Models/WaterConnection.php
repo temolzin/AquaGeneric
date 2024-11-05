@@ -20,6 +20,7 @@ class WaterConnection extends Model
         'has_water_pressure',
         'has_cistern',
         'type',
+        'note',
     ];
 
     public function customer()
