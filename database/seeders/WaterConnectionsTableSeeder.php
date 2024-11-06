@@ -29,6 +29,10 @@ class WaterConnectionsTableSeeder extends Seeder
                 WaterConnection::create([
                     'customer_id' => $customerId,
                     'locality_id' => $localityId,
+                    'street' => $faker->streetName,
+                    'block' => $faker->word,
+                    'exterior_number' => $faker->numberBetween(1, 100),
+                    'interior_number' => $faker->numberBetween(1, 100),
                     'cost_id' => $faker->randomElement($costs),
                     'created_by' => $faker->randomElement($users),
                     'name' => $faker->streetName,
@@ -45,6 +49,10 @@ class WaterConnectionsTableSeeder extends Seeder
                     WaterConnection::create([
                         'customer_id' => $customerId,
                         'locality_id' => $localityId,
+                        'street' => $faker->streetName,
+                        'block' => $faker->word,
+                        'exterior_number' => $faker->numberBetween(1, 100),
+                        'interior_number' => $faker->numberBetween(1, 100),
                         'cost_id' => $faker->randomElement($costs),
                         'created_by' => $faker->randomElement($users),
                         'name' => $faker->streetName,

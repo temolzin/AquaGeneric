@@ -48,8 +48,12 @@ class CustomerController extends Controller
         if ($customer) {
             $customer->name = $request->input('nameUpdate');
             $customer->last_name = $request->input('lastNameUpdate');
+            $customer->locality = $request->input('localityUpdate');
+            $customer->state = $request->input('stateUpdate');
+            $customer->zip_code = $request->input('zipCodeUpdate');
             $customer->block = $request->input('blockUpdate');
             $customer->street = $request->input('streetUpdate');
+            $customer->exterior_number = $request->input('exteriorNumberUpdate');
             $customer->interior_number = $request->input('interiorNumberUpdate');
             $customer->marital_status = $request->input('maritalStatusUpdate');
             $customer->status = $request->input('statusUpdate');

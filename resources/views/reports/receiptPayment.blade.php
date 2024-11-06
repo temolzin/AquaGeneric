@@ -161,8 +161,8 @@
                 @else
                     <p>{{ $payment->debt->customer->name }} {{ $payment->debt->customer->last_name }}</p>
                 @endif
-                <p>{{ $payment->debt->customer->street }} #{{ $payment->debt->customer->interior_number }}, {{ $payment->debt->customer->block }}, {{$payment->locality->zip_code }}</p>
-                <p>{{ $payment->locality->name }}, {{ $payment->locality->state }}</p>
+                <p>{{ $payment->debt->customer->street }}, Mz. {{ $payment->debt->customer->exterior_number }}, {{ $payment->debt->customer->interior_number }}, {{ $payment->debt->customer->block }}, {{$payment->customer->zip_code }}</p>
+                <p>{{ $payment->customer->locality }}, {{ $payment->customer->state }}</p>
             </div>
             <div class="water-connection-info">
                 <h4>Datos de la toma</h4>

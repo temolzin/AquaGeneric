@@ -47,17 +47,41 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="block" class="form-label">Manzana(*)</label>
-                                            <input type="text" class="form-control" id="block" name="block" placeholder="Ingresa bloque" value="{{ old('block') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
                                             <label for="street" class="form-label">Calle(*)</label>
                                             <input type="text" class="form-control" id="street" name="street" placeholder="Ingresa calle" value="{{ old('street') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="block" class="form-label">Colonia(*)</label>
+                                            <input type="text" class="form-control" id="block" name="block" placeholder="Ingresa colonia" value="{{ old('block') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="locality" class="form-label">Localidad(*)</label>
+                                            <input type="text" class="form-control" id="locality" name="locality" placeholder="Ingresa localidad" value="{{ old('locality') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="state" class="form-label">Estado(*)</label>
+                                            <input type="text" class="form-control" id="state" name="state" placeholder="Ingresa estado" value="{{ old('state') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="zip_code" class="form-label">Código Postal(*)</label>
+                                            <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Ingresa código postal" value="{{ old('zip_code') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="exterior_number" class="form-label">Número Exterior(*)</label>
+                                            <input type="text" class="form-control" id="exterior_number" name="exterior_number" placeholder="Ingresa número exterior" value="{{ old('exterior_number') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="interior_number" class="form-label">Número Interior(*)</label>
                                             <input type="text" class="form-control" id="interior_number" name="interior_number" placeholder="Ingresa número interior" value="{{ old('interior_number') }}" required />
@@ -73,7 +97,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estado del titular(*)</label>
                                             <select class="form-control" id="status" name="status" required onchange="toggleResponsibleField()">

@@ -34,6 +34,30 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
+                                            <label for="streetUpdate" class="form-label">Calle(*)</label>
+                                            <input type="text" class="form-control" id="streetUpdate" name="streetUpdate" value="{{ $connection->street }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="blockUpdate" class="form-label">Colonia(*)</label>
+                                            <input type="text" class="form-control" id="blockUpdate" name="blockUpdate" value="{{$connection->block }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="exteriorNumberUpdate" class="form-label">Número Exterior(*)</label>
+                                            <input type="text" class="form-control" id="exteriorNumberUpdate" name="exteriorNumberUpdate" value="{{ $connection->exterior_number }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="interiorNumberUpdate" class="form-label">Número Interior(*)</label>
+                                            <input type="text" class="form-control" id="interiorNumberUpdate" name="interiorNumberUpdate" value="{{ $connection->interior_number }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
                                             <label for="typeUpdate" class="form-label">Tipo de toma(*)</label>
                                             <select class="form-control" id="typeUpdate" name="typeUpdate" required>
                                                 <option value="">Selecciona una opción</option>
@@ -105,7 +129,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="hasCisternUpdate" class="form-label">¿Tiene cisterna?</label>
                                             <select class="form-control" id="hasCisternUpdate" name="hasCisternUpdate" required>
@@ -115,7 +139,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-5">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="costIdUpdate" class="form-label">Costo(*)</label>
                                             <select class="form-control" id="costIdUpdate" name="costIdUpdate" required>
@@ -127,7 +151,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>                                                                       
+                                    </div>
                                 </div>
                             </div>
                         </div>
