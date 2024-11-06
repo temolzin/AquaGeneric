@@ -115,7 +115,7 @@ class DebtController extends Controller
     public function assignAll(Request $request)
     {
         $authUser = auth()->user();
-        $customers = Customer::with('waterConnection', 'cost')
+        $customers = Customer::with('waterConnections')
             ->where('locality_id', $authUser->locality_id)
             ->get();
 
@@ -123,52 +123,49 @@ class DebtController extends Controller
         $endMonth = $request->input('end_date');
 
         $startDate = new \DateTime($startMonth . '-01');
-        $endDate = (new \DateTime($endMonth . '-01'))->modify('last day of this month');
+        $endDate = (new \DateTime($endMonth . '-01'))->modify('first day of next month')->modify('-1 day');
 
         $note = $request->note ?? 'Deuda asignada manualmente';
+
         $allHaveDebt = true;
 
         foreach ($customers as $customer) {
-            $waterConnection = $customer->waterConnection;
+            foreach ($customer->waterConnections as $waterConnection) {
+                $cost = $waterConnection->cost;
 
-            if (!$waterConnection) {
-                continue;
+                if (!$cost || !$cost->price) {
+                    continue;
+                }
+
+                $existingDebt = Debt::where('water_connection_id', $waterConnection->id)
+                    ->where(function ($query) use ($startDate, $endDate) {
+                        $query->where('start_date', '<=', $endDate->format('Y-m-d'))
+                            ->where('end_date', '>=', $startDate->format('Y-m-d'));
+                    })
+                    ->exists();
+
+                if ($existingDebt) {
+                    continue;
+                }
+
+                $allHaveDebt = false;
+                Debt::create([
+                    'locality_id' => $authUser->locality_id,
+                    'created_by' => $authUser->id,
+                    'water_connection_id' => $waterConnection->id,
+                    'start_date' => $startDate->format('Y-m-d'),
+                    'end_date' => $endDate->format('Y-m-d'),
+                    'amount' => $cost->price,
+                    'note' => $note,
+                ]);
             }
-
-            $cost = $customer->cost;
-
-            if (!$cost || !$cost->price) {
-                continue;
-            }
-
-            $existingDebt = Debt::where('water_connection_id', $waterConnection->id)
-                ->where(function ($query) use ($startDate, $endDate) {
-                    $query->where('start_date', '<=', $endDate->format('Y-m-d'))
-                          ->where('end_date', '>=', $startDate->format('Y-m-d'));
-                })
-                ->exists();
-
-            if ($existingDebt) {
-                continue;
-            }
-
-            $allHaveDebt = false;
-            Debt::create([
-                'locality_id' => $authUser->locality_id,
-                'created_by' => $authUser->id,
-                'water_connection_id' => $waterConnection->id,
-                'start_date' => $startDate->format('Y-m-d'),
-                'end_date' => $endDate->format('Y-m-d'),
-                'amount' => $cost->price,
-                'note' => $note,
-            ]);
         }
 
         if ($allHaveDebt) {
-            return redirect()->back()->with('error', 'Ya todos los usuarios tienen la deuda del periodo.');
+            return redirect()->back()->with('error', 'Todas las tomas de agua de los clientes ya tienen deudas asignadas para el período especificado.');
         }
 
-        return redirect()->back()->with('success', 'Deudas asignadas a todos los Usuarios.');
+        return redirect()->back()->with('success', 'Deudas asignadas exitosamente a todas las tomas de agua de los clientes.');
     }
 
     public function destroy($id, Request $request)

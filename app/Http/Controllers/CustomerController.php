@@ -38,7 +38,7 @@ class CustomerController extends Controller
             $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
         }
 
-        return redirect()->route('customers.index')->with('success', 'Usuario registrado correctamente.');
+        return redirect()->route('customers.index')->with('success', 'Cliente registrado correctamente.');
     }
 
     public function update(Request $request, $id)
@@ -63,10 +63,10 @@ class CustomerController extends Controller
             }
 
 
-            return redirect()->route('customers.index')->with('success', 'Usuario actualizado correctamente.');
+            return redirect()->route('customers.index')->with('success', 'Cliente actualizado correctamente.');
         }
 
-        return redirect()->back()->with('error', 'Usuario no encontrado.');
+        return redirect()->back()->with('error', 'Cliente no encontrado.');
     }
 
     public function show($id)
@@ -79,7 +79,7 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         $customer->delete();
-        return redirect()->route('customers.index')->with('success', 'Usuario eliminado correctamente.');
+        return redirect()->route('customers.index')->with('success', 'Cliente eliminado correctamente.');
     }
 
     public function pdfCustomers()
