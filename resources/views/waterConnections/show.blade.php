@@ -14,13 +14,13 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-2">
                                     <div class="form-group">
                                         <label>ID</label>
                                         <input type="text" disabled class="form-control" value="{{ $connection->id }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-10">
                                     <div class="form-group">
                                         <label>Nombre de la Toma</label>
                                         <input type="text" disabled class="form-control" value="{{ $connection->name }}" />
@@ -40,6 +40,36 @@
                                         @elseif ($connection->type === 'commercial')
                                             <input type="text" disabled class="form-control" value="Comercial" />
                                         @endif
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Calle</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->street }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Colonia</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->block }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Código Postal</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->locality->zip_code ?? 'Desconocido' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Número Exterior</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->exterior_number ?? 'Desconocido' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Número Interior</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->interior_number ?? 'Desconocido' }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -90,12 +120,6 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Localidad</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->locality->name ?? 'Desconocido' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Registrado por</label>
                                         <input type="text" disabled class="form-control" value="{{ $connection->creator->name ?? 'Desconocido' }} {{ $connection->creator->last_name ?? '' }}" />

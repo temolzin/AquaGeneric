@@ -47,17 +47,41 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="blockUpdate" class="form-label">Bloque(*)</label>
-                                            <input type="text" class="form-control" name="blockUpdate" id="blockUpdate" value="{{ $customer->block }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
                                             <label for="streetUpdate" class="form-label">Calle(*)</label>
                                             <input type="text" class="form-control" name="streetUpdate" id="streetUpdate" value="{{ $customer->street }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="blockUpdate" class="form-label">Colonia(*)</label>
+                                            <input type="text" class="form-control" name="blockUpdate" id="blockUpdate" value="{{ $customer->block }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="localityUpdate" class="form-label">Localidad(*)</label>
+                                            <input type="text" class="form-control" name="localityUpdate" id="localityUpdate" value="{{ $customer->locality }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="stateUpdate" class="form-label">Estado(*)</label>
+                                            <input type="text" class="form-control" name="stateUpdate" id="stateUpdate" value="{{ $customer->state }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="zipCodeUpdate" class="form-label">Código Postal(*)</label>
+                                            <input type="text" class="form-control" name="zipCodeUpdate" id="zipCodeUpdate" value="{{ $customer->zip_code }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="exteriorNumberUpdate" class="form-label">Manzana(*)</label>
+                                            <input type="text" class="form-control" name="exteriorNumberUpdate" id="exteriorNumberUpdate" value="{{ $customer->exterior_number }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="interiorNumberUpdate" class="form-label">Número Interior(*)</label>
                                             <input type="text" class="form-control" name="interiorNumberUpdate" id="interiorNumberUpdate" value="{{ $customer->interior_number }}" required>
@@ -73,7 +97,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estado del titular(*)</label>
                                             <select class="form-control" id="statusUpdate" name="statusUpdate">

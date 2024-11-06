@@ -78,6 +78,10 @@ class WaterConnectionController extends Controller
                 : $request->input('days_update', [])
         );
 
+        $connection->street = $request->input('streetUpdate');
+        $connection->block = $request->input('blockUpdate');
+        $connection->exterior_number = $request->input('exteriorNumberUpdate');
+        $connection->interior_number = $request->input('interiorNumberUpdate');
         $connection->has_water_pressure = $request->input('hasWaterPressureUpdate');
         $connection->has_cistern = $request->input('hasCisternUpdate');
         $connection->cost_id = $request->input('costIdUpdate');

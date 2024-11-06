@@ -38,6 +38,30 @@
                                     </div>  
                                     <div class="col-lg-6">
                                         <div class="form-group">
+                                            <label for="street" class="form-label">Calle(*)</label>
+                                            <input type="text" class="form-control" id="street" name="street" placeholder="Ingresa calle" value="{{ old('street') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="block" class="form-label">Colonia(*)</label>
+                                            <input type="text" class="form-control" id="block" name="block" placeholder="Ingresa colonia" value="{{ old('block') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="exterior_number" class="form-label">Número Exterior(*)</label>
+                                            <input type="text" class="form-control" id="exterior_number" name="exterior_number" placeholder="Ingresa número exterior" value="{{ old('exterior_number') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="interior_number" class="form-label">Número Interior(*)</label>
+                                            <input type="text" class="form-control" id="interior_number" name="interior_number" placeholder="Ingresa número interior" value="{{ old('interior_number') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
                                             <label for="type" class="form-label">Tipo de toma(*)</label>
                                             <select class="form-control" id="has_cistern" name="has_cistern" required>
                                                 <option value="">Selecciona una opción</option>

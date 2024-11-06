@@ -39,7 +39,7 @@ class CustomerController extends Controller
             $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
         }
 
-        return redirect()->route('customers.index')->with('success', 'Usuario registrado correctamente.');
+        return redirect()->route('customers.index')->with('success', 'Cliente registrado correctamente.');
     }
 
     public function update(Request $request, $id)
@@ -49,8 +49,12 @@ class CustomerController extends Controller
         if ($customer) {
             $customer->name = $request->input('nameUpdate');
             $customer->last_name = $request->input('lastNameUpdate');
+            $customer->locality = $request->input('localityUpdate');
+            $customer->state = $request->input('stateUpdate');
+            $customer->zip_code = $request->input('zipCodeUpdate');
             $customer->block = $request->input('blockUpdate');
             $customer->street = $request->input('streetUpdate');
+            $customer->exterior_number = $request->input('exteriorNumberUpdate');
             $customer->interior_number = $request->input('interiorNumberUpdate');
             $customer->marital_status = $request->input('maritalStatusUpdate');
             $customer->status = $request->input('statusUpdate');
@@ -65,10 +69,10 @@ class CustomerController extends Controller
             }
 
 
-            return redirect()->route('customers.index')->with('success', 'Usuario actualizado correctamente.');
+            return redirect()->route('customers.index')->with('success', 'Cliente actualizado correctamente.');
         }
 
-        return redirect()->back()->with('error', 'Usuario no encontrado.');
+        return redirect()->back()->with('error', 'Cliente no encontrado.');
     }
 
     public function show($id)
@@ -81,7 +85,7 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         $customer->delete();
-        return redirect()->route('customers.index')->with('success', 'Usuario eliminado correctamente.');
+        return redirect()->route('customers.index')->with('success', 'Cliente eliminado correctamente.');
     }
 
     public function pdfCustomers()

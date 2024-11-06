@@ -25,6 +25,10 @@ class CreateWaterConnectionsTable extends Migration
             $table->boolean('has_water_pressure');
             $table->boolean('has_cistern');
             $table->enum('type', ['residencial', 'commercial'])->default('residencial');
+            $table->string('block');
+            $table->string('street');
+            $table->string('exterior_number');
+            $table->string('interior_number');
             $table->text('note')->nullable();
             $table->timestamps();
             $table->softDeletes();

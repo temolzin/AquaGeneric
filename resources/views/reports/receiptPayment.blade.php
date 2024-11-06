@@ -94,11 +94,13 @@
         }
 
         .signature {
+            font-weight: bold;
+            color: white;
             text-align: center;
             font-size: 12px;
             page-break-before: avoid;
             margin-bottom: 80px;
-            transform: translateY(2px);
+            transform: translateY(100px);
         }
 
         .company-info {
@@ -106,7 +108,7 @@
             font-weight: bold;
             font-size: 15px;
             margin-top: 80px;
-            transform: translateY(35px);
+            transform: translateY(70px);
             page-break-inside: avoid;
         }
 
@@ -159,8 +161,8 @@
                 @else
                     <p>{{ $payment->debt->customer->name }} {{ $payment->debt->customer->last_name }}</p>
                 @endif
-                <p>{{ $payment->debt->customer->street }} #{{ $payment->debt->customer->interior_number }}, {{ $payment->debt->customer->block }}, {{$payment->locality->zip_code }}</p>
-                <p>{{ $payment->locality->name }}, {{ $payment->locality->state }}</p>
+                <p>{{ $payment->debt->customer->street }}, Mz. {{ $payment->debt->customer->exterior_number }}, {{ $payment->debt->customer->interior_number }}, {{ $payment->debt->customer->block }}, {{$payment->customer->zip_code }}</p>
+                <p>{{ $payment->customer->locality }}, {{ $payment->customer->state }}</p>
             </div>
             <div class="water-connection-info">
                 <h4>Datos de la toma</h4>
@@ -198,10 +200,12 @@
                             @break
                     @endswitch
                 </p>
+                @if($payment->note)
+                <p><strong>Nota: </strong>{{ $payment->note }}</p>
+                @endif
             </div>
         </div>
         <div class="signature">
-            <br><br>
             _________________________________
             <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
         </div>

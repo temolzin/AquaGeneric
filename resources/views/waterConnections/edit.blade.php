@@ -34,6 +34,30 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
+                                            <label for="streetUpdate" class="form-label">Calle(*)</label>
+                                            <input type="text" class="form-control" id="streetUpdate" name="streetUpdate" value="{{ $connection->street }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="blockUpdate" class="form-label">Colonia(*)</label>
+                                            <input type="text" class="form-control" id="blockUpdate" name="blockUpdate" value="{{$connection->block }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="exteriorNumberUpdate" class="form-label">Número Exterior(*)</label>
+                                            <input type="text" class="form-control" id="exteriorNumberUpdate" name="exteriorNumberUpdate" value="{{ $connection->exterior_number }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="interiorNumberUpdate" class="form-label">Número Interior(*)</label>
+                                            <input type="text" class="form-control" id="interiorNumberUpdate" name="interiorNumberUpdate" value="{{ $connection->interior_number }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
                                             <label for="typeUpdate" class="form-label">Tipo de toma(*)</label>
                                             <select class="form-control" id="typeUpdate" name="typeUpdate" required>
                                                 <option value="">Selecciona una opción</option>
@@ -126,12 +150,6 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label for="noteUpdate" class="form-label">Nota</label>
-                                            <textarea class="form-control" name="note" placeholder="Ingresa una nota">{{ $connection->note}}</textarea>
                                         </div>
                                     </div>                                                                       
                                 </div>

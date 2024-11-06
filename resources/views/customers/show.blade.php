@@ -25,22 +25,16 @@
                                         @endif
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-2">
                                     <div class="form-group">
                                         <label>ID</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->id }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-10">
                                     <div class="form-group">
                                         <label>Nombre</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->name }} {{ $customer->last_name }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Bloque</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->block }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -50,6 +44,36 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Colonia</label>
+                                        <input type="text" disabled class="form-control" value="{{ $customer->block }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Localidad</label>
+                                        <input type="text" disabled class="form-control" value="{{ $customer->locality ?? 'Desconocido' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Estado</label>
+                                        <input type="text" disabled class="form-control" value="{{ $customer->state ?? 'Desconocido' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Código Postal</label>
+                                        <input type="text" disabled class="form-control" value="{{ $customer->zip_code ?? 'Desconocido' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Manzana</label>
+                                        <input type="text" disabled class="form-control" value="{{ $customer->exterior_number }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label>Número Interior</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->interior_number }}" />
@@ -73,13 +97,7 @@
                                         <input type="text" disabled class="form-control"  placeholder="Nombre de la persona responsable si el titular fallecio"value="{{ $customer->responsible_name }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Localidad</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->locality->name ?? 'Desconocido' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Registrado por</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->creator->name ?? 'Desconocido' }} {{ $customer->creator->last_name ?? '' }}" />
