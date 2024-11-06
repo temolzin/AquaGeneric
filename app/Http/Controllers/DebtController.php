@@ -16,7 +16,20 @@ class DebtController extends Controller
         $search = $request->input('search');
         $localityId = auth()->user()->locality_id;
 
-        $customers = Customer::where('locality_id', $localityId)->get();
+        $customers = Customer::where('customers.locality_id', $localityId)
+                    ->select('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id', DB::raw('MAX(debts.created_at) as latest_debt_date'))
+                    ->leftJoin('water_connections', 'water_connections.customer_id', '=', 'customers.id')
+                    ->leftJoin('debts', 'debts.water_connection_id', '=', 'water_connections.id')
+                    ->where('water_connections.locality_id', $localityId)
+                    ->where(function ($query) use ($search) {
+                        $query->where('customers.id', 'like', "%{$search}%")
+                            ->orWhere('customers.name', 'like', "%{$search}%")
+                            ->orWhere('customers.last_name', 'like', "%{$search}%")
+                            ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"]);
+                    })
+                    ->groupBy('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
+                    ->orderByDesc('latest_debt_date')
+                    ->get();
 
         $waterConnections = WaterConnection::with('customer')
         ->where('locality_id', $localityId)
@@ -52,8 +65,9 @@ class DebtController extends Controller
                 $totalDebts[$customerId] = 0;
             }
 
-            $payments = Payment::where('debt_id', $debt->id)->sum('amount');
-            $totalDebts[$customerId] += $debt->total_amount - $payments;
+            $totalDebtAmount = Debt::where('water_connection_id', $debt->water_connection_id)->sum('amount');
+            $totalDebtPaid = Debt::where('water_connection_id', $debt->water_connection_id)->sum('debt_current');
+            $totalDebts[$customerId] = $totalDebtAmount - $totalDebtPaid;
         }
 
         return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts'));

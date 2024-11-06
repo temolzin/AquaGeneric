@@ -147,7 +147,13 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>                                                                                             
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="note" class="form-label">Nota</label>
+                                            <textarea class="form-control" id="note" name="note" placeholder="Ingresa una nota"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

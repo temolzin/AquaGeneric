@@ -85,7 +85,7 @@
                                         <input type="text" disabled class="form-control" value="{{ $customer->marital_status ? 'Casado' : 'Soltero' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Status</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->status ? 'Con vida' : 'Fallecido' }}" />
@@ -101,6 +101,12 @@
                                     <div class="form-group">
                                         <label>Registrado por</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->creator->name ?? 'Desconocido' }} {{ $customer->creator->last_name ?? '' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="note" class="form-label">Notas del Cliente</label>
+                                        <textarea disabled class="form-control" id="note" name="note" placeholder="Ingresa una nota"> {{ $customer->note}}</textarea>
                                     </div>
                                 </div>
                             </div>

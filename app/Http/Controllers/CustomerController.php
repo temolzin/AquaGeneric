@@ -17,7 +17,8 @@ class CustomerController extends Controller
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+            $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                ->orWhere('id', 'LIKE', "%{$search}%");
         }
 
         $customers = $query->paginate(10);
@@ -58,6 +59,7 @@ class CustomerController extends Controller
             $customer->marital_status = $request->input('maritalStatusUpdate');
             $customer->status = $request->input('statusUpdate');
             $customer->responsible_name = $request->input('responsibleNameUpdate');
+            $customer->note = $request->input('noteUpdate');
 
             $customer->save();
 

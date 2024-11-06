@@ -125,6 +125,12 @@
                                         <input type="text" disabled class="form-control" value="{{ $connection->creator->name ?? 'Desconocido' }} {{ $connection->creator->last_name ?? '' }}" />
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Nota de la Toma de Agua</label>
+                                        <textarea disabled class="form-control">{{ $connection->note }}</textarea>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

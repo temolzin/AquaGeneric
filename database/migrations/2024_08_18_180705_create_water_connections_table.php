@@ -29,6 +29,7 @@ class CreateWaterConnectionsTable extends Migration
             $table->string('street');
             $table->string('exterior_number');
             $table->string('interior_number');
+            $table->text('note')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

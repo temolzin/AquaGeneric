@@ -1,7 +1,7 @@
 <div class="modal fade" id="assignDebtModal" tabindex="-1" role="dialog" aria-labelledby="assignDebtModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #28a745; color: white;">
+            <div class="modal-header bg-primary">
                 <h5 class="modal-title" id="assignDebtModalLabel">Asignar Deuda a Todos</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -25,7 +25,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Asignar Deuda</button>
+                    <button type="submit" class="btn btn-primary">Asignar Deuda</button>
                 </div>
             </form>
         </div>

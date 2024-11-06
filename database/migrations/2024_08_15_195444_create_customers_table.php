@@ -31,6 +31,7 @@ class CreateCustomersTable extends Migration
             $table->boolean('marital_status');
             $table->boolean('status');
             $table->string('responsible_name')->nullable();
+            $table->text('note')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

@@ -1,7 +1,7 @@
 <div class="modal fade" id="annualEarnings" tabindex="-1" role="dialog" aria-labelledby="annualEarningsLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
-            <div class="modal-header modal-header-custom">
+            <div class="modal-header modal-header-custom bg-info">
                 <h5 class="modal-title" id="annualEarningsLabel">Selecciona un año</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -17,7 +17,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Generar Reporte</button>
+                    <button type="submit" class="btn btn-info">Generar Reporte</button>
                 </div>
             </form>
         </div>

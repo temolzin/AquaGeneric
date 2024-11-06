@@ -33,6 +33,7 @@ class Customer extends Model implements HasMedia
         'responsible_name',
         'locality_id',
         'created_by',
+        'note',
     ];
 
 

@@ -12,15 +12,20 @@ class WaterConnectionController extends Controller
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = WaterConnection::where('locality_id', $authUser->locality_id)->orderBy('created_at', 'desc');
+        $query = WaterConnection::where('water_connections.locality_id', $authUser->locality_id)
+            ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
+            ->orderBy('water_connections.created_at', 'desc')
+            ->select('water_connections.*');
 
         if ($request->has('search')) {
             $search = $request->input('search');
-        
+
             $query->where(function ($q) use ($search) {
-                $q->where('id', 'LIKE', "%{$search}%")
-                ->orWhere('name', 'LIKE', "%{$search}%")
-                ->orWhere('type', $search);
+                $q->where('water_connections.id', 'LIKE', "%{$search}%")
+                ->orWhere('water_connections.name', 'LIKE', "%{$search}%")
+                ->orWhere('water_connections.type', $search)
+                ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                ->orWhere('customers.last_name', 'LIKE', "%{$search}%");
             });
         }
 
@@ -59,7 +64,7 @@ class WaterConnectionController extends Controller
         $connection = WaterConnection::find($id);
 
         if (!$connection) {
-            return redirect()->back()->with('error', 'Usuario no encontrado.');
+            return redirect()->back()->with('error', 'Toma de Agua no encontrada.');
         }
 
         $connection->name = $request->input('nameUpdate');
@@ -80,10 +85,11 @@ class WaterConnectionController extends Controller
         $connection->has_water_pressure = $request->input('hasWaterPressureUpdate');
         $connection->has_cistern = $request->input('hasCisternUpdate');
         $connection->cost_id = $request->input('costIdUpdate');
+        $connection->note = $request->input('noteUpdate');
 
         $connection->save();
 
-        return redirect()->route('waterConnections.index')->with('success', 'Usuario actualizado correctamente.');
+        return redirect()->route('waterConnections.index')->with('success', 'Toma de Agua actualizada correctamente.');
     }
 
     public function destroy($id)
