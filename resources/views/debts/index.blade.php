@@ -53,19 +53,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $shownCustomers = [];
+                                        @endphp
                                         @forelse ($debts as $debt)
-                                            <tr>
-                                                <td>{{ $debt->customer->id }}</td>
-                                                <td>{{ $debt->customer->name }} {{ $debt->customer->last_name }}</td>
-                                                <td>${{ number_format($totalDebts[$debt->waterConnection->customer_id] ?? 0, 2, '.', ',') }}</td>                                                <td>
-                                                    <div class="btn-group" role="group" aria-label="Opciones">
-                                                        <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" 
-                                                            data-target="#viewDebts{{ $debt->customer->id }}"> <i class="fas fa-eye"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            @include('debts.showDebts')
+                                            @if (!in_array($debt->waterConnection->customer_id, $shownCustomers))
+                                                <tr>
+                                                    <td>{{ $debt->waterConnection->customer->id }}</td>
+                                                    <td>{{ $debt->waterConnection->customer->name }} {{ $debt->waterConnection->customer->last_name }}</td>
+                                                    <td>${{ number_format($totalDebts[$debt->waterConnection->customer_id] ?? 0, 2, '.', ',') }}</td>
+                                                    <td>
+                                                        <div class="btn-group" role="group" aria-label="Opciones">
+                                                            <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles"
+                                                                data-target="#viewDebts{{ $debt->waterConnection->customer_id }}"> <i class="fas fa-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                @include('debts.showDebts')
+                                                @php
+                                                    $shownCustomers[] = $debt->waterConnection->customer_id;
+                                                @endphp
+                                            @endif
                                         @empty
                                             <tr>
                                                 <td colspan="4">No hay deudas registradas.</td>
