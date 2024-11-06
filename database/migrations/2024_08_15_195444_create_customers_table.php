@@ -21,8 +21,12 @@ class CreateCustomersTable extends Migration
             $table->unsignedBigInteger('created_by');
             $table->string('name');
             $table->string('last_name');
+            $table->string('locality');
+            $table->string('zip_code', 5);
+            $table->string('state');
             $table->string('block');
             $table->string('street');
+            $table->string('exterior_number');
             $table->string('interior_number');
             $table->boolean('marital_status');
             $table->boolean('status');

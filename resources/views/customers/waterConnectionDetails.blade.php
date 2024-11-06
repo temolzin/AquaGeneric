@@ -39,6 +39,36 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
+                                            <label>Calle</label>
+                                            <input type="text" disabled class="form-control" value="{{ $waterConnection->street }}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label>Colonia</label>
+                                            <input type="text" disabled class="form-control" value="{{ $waterConnection->block }}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label>Código Postal</label>
+                                            <input type="text" disabled class="form-control" value="{{ $waterConnection->locality->zip_code ?? 'Desconocido' }}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label>Número Exterior</label>
+                                            <input type="text" disabled class="form-control" value="{{ $waterConnection->exterior_number ?? 'Desconocido' }}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label>Número Interior</label>
+                                            <input type="text" disabled class="form-control" value="{{ $waterConnection->interior_number ?? 'Desconocido' }}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
                                             <label>Número de Ocupantes</label>
                                             <input type="text" disabled class="form-control" value="{{ $waterConnection->occupants_number }}" />
                                         </div>
