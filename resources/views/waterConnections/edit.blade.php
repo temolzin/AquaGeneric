@@ -151,7 +151,13 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>                                                                       
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="noteUpdate" class="form-label">Nota</label>
+                                            <textarea class="form-control" id="noteUpdate" name="noteUpdate">{{ $connection->note }}</textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
