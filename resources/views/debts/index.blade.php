@@ -61,7 +61,17 @@
                                                 <tr>
                                                     <td>{{ $debt->waterConnection->customer->id }}</td>
                                                     <td>{{ $debt->waterConnection->customer->name }} {{ $debt->waterConnection->customer->last_name }}</td>
-                                                    <td>${{ number_format($totalDebts[$debt->waterConnection->customer_id] ?? 0, 2, '.', ',') }}</td>
+                                                    <td>
+                                                        @php
+                                                            $unpaidDebts = collect($debt->waterConnection->customer->waterConnections)->flatMap(function ($waterConnection) {
+                                                                return $waterConnection->debts->where('status', '!=', 'paid');
+                                                            });
+                                                            $totalDebt = $unpaidDebts->sum('amount');
+                                                            $totalPaid = $unpaidDebts->sum('debt_current');
+                                                            $pendingBalance = $totalDebt - $totalPaid;
+                                                        @endphp
+                                                        ${{ number_format($pendingBalance, 2, '.', ',') }}
+                                                    </td>
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles"
