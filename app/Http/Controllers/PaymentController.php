@@ -213,6 +213,51 @@ class PaymentController extends Controller
         return $pdf->stream('annual_earnings_' . $year . '.pdf');
     }
 
+    public function weeklyEarningsReport(Request $request)
+    {
+        $authUser = auth()->user();
+        $startDate = Carbon::parse($request->input('weekStartDate'));
+        $endDate = Carbon::parse($request->input('weekEndDate'));
+
+        $weeks = [];
+        $currentStart = $startDate->copy();
+        $totalPeriodEarnings = 0;
+        
+        while ($currentStart->lte($endDate)) {
+            $currentEnd = $currentStart->copy()->endOfWeek();
+            if ($currentEnd->gt($endDate)) {
+                $currentEnd = $endDate;
+            }
+
+            $dailyEarnings = [];
+
+            $day = $currentStart->copy();
+            while ($day->lte($currentEnd)) {
+                $earnings = Payment::where('locality_id', $authUser->locality_id)
+                    ->whereDate('created_at', $day->toDateString())
+                    ->sum('amount');
+
+                $dailyEarnings[$day->format('l')] = $earnings;
+                $day->addDay();
+            }
+
+            $totalPeriodEarnings += array_sum($dailyEarnings);
+
+            $weeks[] = [
+                'start' => $currentStart->toDateString(),
+                'end' => $currentEnd->toDateString(),
+                'dailyEarnings' => $dailyEarnings,
+            ];
+
+            $currentStart = $currentEnd->copy()->addDay();
+        }
+
+        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('weekly_earnings_' . now()->format('Ymd') . '.pdf');
+    }
+
     public function receiptPayment($paymentId)
     {
         $decryptedId = Crypt::decrypt($paymentId);

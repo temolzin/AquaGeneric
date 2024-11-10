@@ -26,10 +26,26 @@
                                         <input type="text" disabled class="form-control" value="{{ $debt->waterConnection->customer->name }} {{ $debt->waterConnection->customer->last_name }}" />
                                     </div>
                                 </div>
+                                @php
+                                    $unpaidDebts = collect($debt->waterConnection->customer->waterConnections)->flatMap(function ($waterConnection) {
+                                        return $waterConnection->debts->where('status', '!=', 'paid');
+                                    });
+                                    $totalDebt = $unpaidDebts->sum('amount');
+                                    $totalPaid = $unpaidDebts->sum('debt_current');
+                                    $pendingBalance = $totalDebt - $totalPaid;
+                                @endphp
+                                <div class="col-lg-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-success"><i class="fa fa-dollar-sign"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Saldo Total Pendiente</span>
+                                            <span class="info-box-number">${{ number_format($pendingBalance, 2, '.', ',') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
                             <h5>Deudas Asociadas Por Tomas</h5>
-
                             <div class="form-group">
                                 <input type="text" id="searchDebt{{ $debt->waterConnection->customer->id }}" class="form-control search-input" placeholder="🔍 Buscar por ID, toma, monto, estado o fechas...">
                             </div>
@@ -64,12 +80,18 @@
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="row">
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-4">
                                                                     <p><strong>Fecha de Inicio:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
                                                                     <p><strong>Fecha de Fin:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
                                                                 </div>
                                                                 <div class="col-md-2">
                                                                     <p><strong>Monto:</strong> ${{ number_format($waterConnectionDebt->amount, 2) }}</p>
+                                                                </div>
+                                                                @php
+                                                                    $pendingDebt = $waterConnectionDebt->amount - $waterConnectionDebt->debt_current;
+                                                                @endphp
+                                                                <div class="col-md-2">
+                                                                    <p><strong>Pendiente:</strong> ${{ number_format($pendingDebt, 2) }}</p>
                                                                 </div>
                                                                 <div class="col-md-2">
                                                                     <p><strong>Status:</strong>
@@ -82,7 +104,7 @@
                                                                         @endif
                                                                     </p>
                                                                 </div>
-                                                                <div class="col-md-2 text-right">
+                                                                <div class="col-md-2">
                                                                     <div class="btn-group" role="group" aria-label="Opciones">
                                                                         <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $waterConnectionDebt->id }}">
                                                                             <i class="fas fa-eye"></i>

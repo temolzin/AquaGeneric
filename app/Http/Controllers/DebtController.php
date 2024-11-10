@@ -17,10 +17,7 @@ class DebtController extends Controller
         $localityId = auth()->user()->locality_id;
 
         $customers = Customer::where('customers.locality_id', $localityId)
-                    ->select('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id', DB::raw('MAX(debts.created_at) as latest_debt_date'))
-                    ->leftJoin('water_connections', 'water_connections.customer_id', '=', 'customers.id')
-                    ->leftJoin('debts', 'debts.water_connection_id', '=', 'water_connections.id')
-                    ->where('water_connections.locality_id', $localityId)
+                    ->select('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
                     ->where(function ($query) use ($search) {
                         $query->where('customers.id', 'like', "%{$search}%")
                             ->orWhere('customers.name', 'like', "%{$search}%")
@@ -28,7 +25,6 @@ class DebtController extends Controller
                             ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"]);
                     })
                     ->groupBy('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
-                    ->orderByDesc('latest_debt_date')
                     ->get();
 
         $waterConnections = WaterConnection::with('customer')
@@ -47,14 +43,9 @@ class DebtController extends Controller
                         });
                     });
             })
+            ->selectRaw('water_connection_id, SUM(amount) as total_amount, MAX(debts.created_at) AS latest_created_at')
             ->where('status', '!=', 'paid')
             ->groupBy('water_connection_id')
-            ->selectRaw('water_connection_id,
-                        SUM(CASE
-                            WHEN status = "partial" THEN debt_current
-                            ELSE amount
-                        END) AS total_amount,
-                        MAX(created_at) AS latest_created_at')
             ->orderBy('latest_created_at', 'desc')
             ->paginate(10);
 
