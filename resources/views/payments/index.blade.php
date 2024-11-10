@@ -80,9 +80,9 @@
                                                         <td>
                                                             {{ \Carbon\Carbon::parse($payment->debt->start_date)->locale('es')->isoFormat('MMMM [/] YYYY')}} - 
                                                             {{ \Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('MMMM [/] YYYY') }}
-                                                            | Monto: {{ $payment->debt->amount }}
+                                                            | Deuda: ${{ number_format($payment->debt->amount, 2) }}
                                                         </td>
-                                                        <td>{{ $payment->amount }}</td>
+                                                        <td>${{ number_format($payment->amount, 2) }}</td>
                                                         <td>
                                                             <div class="btn-group" payment="group" aria-label="Opciones">
                                                                 <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $payment->id }}">

@@ -14,10 +14,24 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-12">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>ID</label>
                                         <input type="text" disabled class="form-control" value="{{ $waterConnectionDebt->id }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Estado</label>
+                                        <p class="form-control">
+                                            @if ($waterConnectionDebt->status === 'pending')
+                                                <button class="badge badge-danger">No pagada</button>
+                                            @elseif ($waterConnectionDebt->status === 'partial')
+                                                <button class="badge badge-warning">Abonada</button>
+                                            @elseif ($waterConnectionDebt->status === 'paid')
+                                                <button class="badge badge-success">Pagada</button>
+                                            @endif
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -56,20 +70,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label>Estado</label>
-                                        <p class="form-control">
-                                            @if ($waterConnectionDebt->status === 'pending')
-                                                <button class="badge badge-danger">No pagada</button>
-                                            @elseif ($waterConnectionDebt->status === 'partial')
-                                                <button class="badge badge-warning">Abonada</button>
-                                            @elseif ($waterConnectionDebt->status === 'paid')
-                                                <button class="badge badge-success">Pagada</button>
-                                            @endif
-                                        </p>
-                                    </div>
-                                </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Fecha de Inicio</label>
@@ -92,6 +92,38 @@
                                     <div class="form-group">
                                         <label>Registrada por</label>
                                         <input type="text" disabled class="form-control" value="{{ $waterConnectionDebt->creator->name ?? 'Desconocido' }} {{ $waterConnectionDebt->creator->last_name ?? '' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 mt-4">
+                                    <label>Historial de Pagos</label>
+                                    <div class="payment-history" style="max-height: 110px; overflow-y: auto;">                                        <ul class="list-group">
+                                            @forelse ($waterConnectionDebt->payments as $payment)
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>Monto:</strong> ${{ number_format($payment->amount, 2) }} <br>
+                                                        @switch($payment->method)
+                                                            @case('cash')
+                                                                <strong>Método:</strong> Efectivo <br>
+                                                                @break
+                                                            @case('card')
+                                                            <strong>Método:</strong> Tarjeta <br>
+                                                                @break
+                                                            @case('transfer')
+                                                            <strong>Método:</strong> Transferencia <br>
+                                                                @break
+                                                            @default
+                                                                <strong>Método:</strong> Desconocido <br>
+                                                        @endswitch
+                                                        @if ($payment->note)
+                                                            <strong>Nota:</strong> {{ $payment->note }} <br>
+                                                        @endif
+                                                        <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                                    </div>
+                                                </li>
+                                            @empty
+                                                <li class="list-group-item">No hay pagos registrados para esta deuda.</li>
+                                            @endforelse
+                                        </ul>
                                     </div>
                                 </div>
                             </div>

@@ -41,7 +41,7 @@
                                                 <tr>
                                                     <td>{{ $cost->id }}</td>
                                                     <td>{{ $cost->category }}</td>
-                                                    <td>{{ $cost->price }}</td>
+                                                    <td>${{ number_format($cost->price, 2) }}</td>
                                                     <td>
                                                         <div class="btn-group" cost="group" aria-label="Opciones">
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $cost->id }}">

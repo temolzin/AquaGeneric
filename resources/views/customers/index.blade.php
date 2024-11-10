@@ -78,6 +78,9 @@
                                                     <button type="button" class="btn bg-purple mr-2" data-toggle="modal" title="Ver Tomas de Agua" data-target="#waterConnections{{$customer->id}}">
                                                         <i class="fas fa-fw fa-water"></i>
                                                     </button>
+                                                    <button type="button" class="btn bg-blue mr-2" data-toggle="modal" title="Ver Deudas Por Toma de Agua" data-target="#showDebtsPerWaterConnection{{$customer->id}}">
+                                                        <i class="fa fa-dollar-sign"></i>
+                                                    </button>
                                                     @can('deleteCustomer')
                                                         @if($customer->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
@@ -95,6 +98,7 @@
                                             @include('customers.delete')
                                             @include('customers.show')
                                             @include('customers.waterConnections')
+                                            @include('customers.showDebtsPerWaterConnection')
                                         </tr>
                                         @endforeach
                                         @endif
