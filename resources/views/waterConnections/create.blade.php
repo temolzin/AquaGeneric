@@ -142,7 +142,7 @@
                                                 <option value="">Selecciona el costo</option>
                                                 @foreach ($costs as $cost)
                                                     <option value="{{ $cost->id }}" {{ old('cost_id') == $cost->id ? 'selected' : '' }}>
-                                                        {{ $cost->category }} - {{ $cost->price }}
+                                                        {{ $cost->category }} - ${{ $cost->price }}
                                                     </option>
                                                 @endforeach
                                             </select>

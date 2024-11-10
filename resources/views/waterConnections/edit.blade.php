@@ -146,7 +146,7 @@
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach($costs as $cost)
                                                     <option value="{{ $cost->id }}" {{ $connection->cost_id == $cost->id ? 'selected' : '' }}>
-                                                        {{ $cost->category }} - {{ $cost->price }}
+                                                        {{ $cost->category }} - ${{ $cost->price }}
                                                     </option>
                                                 @endforeach
                                             </select>
