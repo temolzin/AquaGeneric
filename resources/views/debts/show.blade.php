@@ -94,6 +94,38 @@
                                         <input type="text" disabled class="form-control" value="{{ $waterConnectionDebt->creator->name ?? 'Desconocido' }} {{ $waterConnectionDebt->creator->last_name ?? '' }}" />
                                     </div>
                                 </div>
+                                <div class="col-lg-12 mt-4">
+                                    <label>Historial de Pagos</label>
+                                    <div class="payment-history" style="max-height: 200px; overflow-y: auto;">                                        <ul class="list-group">
+                                            @forelse ($waterConnectionDebt->payments as $payment)
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>Monto:</strong> ${{ number_format($payment->amount, 2) }} <br>
+                                                        @switch($payment->method)
+                                                            @case('cash')
+                                                                <strong>Método:</strong> Efectivo <br>
+                                                                @break
+                                                            @case('card')
+                                                            <strong>Método:</strong> Tarjeta <br>
+                                                                @break
+                                                            @case('transfer')
+                                                            <strong>Método:</strong> Transferencia <br>
+                                                                @break
+                                                            @default
+                                                                <strong>Método:</strong> Desconocido <br>
+                                                        @endswitch
+                                                        @if ($payment->note)
+                                                            <strong>Nota:</strong> {{ $payment->note }} <br>
+                                                        @endif
+                                                        <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                                    </div>
+                                                </li>
+                                            @empty
+                                                <li class="list-group-item">No hay pagos registrados para esta deuda.</li>
+                                            @endforelse
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
