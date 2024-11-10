@@ -14,10 +14,24 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-12">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>ID</label>
                                         <input type="text" disabled class="form-control" value="{{ $waterConnectionDebt->id }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Estado</label>
+                                        <p class="form-control">
+                                            @if ($waterConnectionDebt->status === 'pending')
+                                                <button class="badge badge-danger">No pagada</button>
+                                            @elseif ($waterConnectionDebt->status === 'partial')
+                                                <button class="badge badge-warning">Abonada</button>
+                                            @elseif ($waterConnectionDebt->status === 'paid')
+                                                <button class="badge badge-success">Pagada</button>
+                                            @endif
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -56,20 +70,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label>Estado</label>
-                                        <p class="form-control">
-                                            @if ($waterConnectionDebt->status === 'pending')
-                                                <button class="badge badge-danger">No pagada</button>
-                                            @elseif ($waterConnectionDebt->status === 'partial')
-                                                <button class="badge badge-warning">Abonada</button>
-                                            @elseif ($waterConnectionDebt->status === 'paid')
-                                                <button class="badge badge-success">Pagada</button>
-                                            @endif
-                                        </p>
-                                    </div>
-                                </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Fecha de Inicio</label>
@@ -96,7 +96,7 @@
                                 </div>
                                 <div class="col-lg-12 mt-4">
                                     <label>Historial de Pagos</label>
-                                    <div class="payment-history" style="max-height: 200px; overflow-y: auto;">                                        <ul class="list-group">
+                                    <div class="payment-history" style="max-height: 110px; overflow-y: auto;">                                        <ul class="list-group">
                                             @forelse ($waterConnectionDebt->payments as $payment)
                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                                     <div>
