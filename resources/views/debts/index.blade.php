@@ -81,6 +81,9 @@
                                                     </td>
                                                 </tr>
                                                 @include('debts.showDebts')
+                                                @php
+                                                    $shownCustomers[] = $debt->waterConnection->customer_id;
+                                                @endphp
                                             @endif
                                         @empty
                                             <tr>
