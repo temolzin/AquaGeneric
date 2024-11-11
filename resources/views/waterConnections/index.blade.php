@@ -102,6 +102,12 @@
 @section('js')
 <script>
     $(document).ready(function() {
+        $('#waterConnections').DataTable({
+            responsive: true,
+            paging: false,
+            info: false,
+            searching: false
+        });
 
         var successMessage = "{{ session('success') }}";
         var errorMessage = "{{ session('error') }}";
