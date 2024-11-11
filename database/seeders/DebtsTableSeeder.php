@@ -31,7 +31,6 @@ class DebtsTableSeeder extends Seeder
         foreach (range(1, self::DEBT_COUNT) as $index) {
             $waterConnectionId = $faker->randomElement($waterConnectionIds);
             $waterConnection = DB::table('water_connections')->find($waterConnectionId);
-            $createdAt = $faker->dateTimeBetween($startDate, $endDate);
             $debtStartDate = $faker->dateTimeBetween($startDate, $endDate);
             $debtDuration = $faker->numberBetween(1, 12);
             $debtEndDate = Carbon::instance($debtStartDate)->addMonths($debtDuration);
@@ -57,8 +56,8 @@ class DebtsTableSeeder extends Seeder
                 'status' => $status,
                 'note' => 'Deuda generada de prueba #' . $index,
                 'deleted_at' => null,
-                'created_at' => $createdAt,
-                'updated_at' => $createdAt,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
     }

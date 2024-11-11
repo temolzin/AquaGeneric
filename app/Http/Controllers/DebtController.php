@@ -43,10 +43,10 @@ class DebtController extends Controller
                         });
                     });
             })
-            ->selectRaw('water_connection_id, SUM(amount) as total_amount, MAX(debts.created_at) AS latest_created_at')
+            ->selectRaw('water_connection_id, debts.created_at, SUM(amount) as total_amount')
             ->where('status', '!=', 'paid')
-            ->groupBy('water_connection_id')
-            ->orderBy('latest_created_at', 'desc')
+            ->groupBy('water_connection_id', 'debts.created_at')
+            ->orderByDesc('debts.created_at')
             ->paginate(10);
 
         $totalDebts = [];
