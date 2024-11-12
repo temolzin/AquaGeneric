@@ -136,7 +136,11 @@ class CustomerController extends Controller
         $payments = $debt->payments;
         $totalDebt = $debt->amount;
 
-        $pdf = Pdf::loadView('reports.paymentHistoryReport', compact('debt', 'customer', 'payments', 'totalDebt', 'authUser'))
+        $totalPayments = $payments->sum('amount');
+
+        $pendingBalance = $totalDebt - $totalPayments;
+
+        $pdf = Pdf::loadView('reports.paymentHistoryReport', compact('debt', 'customer', 'payments', 'totalDebt', 'authUser', 'totalPayments', 'pendingBalance'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_historial_pagos.pdf');
