@@ -101,7 +101,7 @@ class DebtController extends Controller
             ->exists();
 
         if ($existingDebt) {
-            return redirect()->back()->with('error', 'El Usuario ya tiene una deuda en este rango de fechas.')->withInput();
+            return response()->json(['error' => 'El cliente ya tiene una deuda en este rango de fechas.'], 400);
         }
 
         Debt::create([
@@ -114,7 +114,7 @@ class DebtController extends Controller
             'note' => $request->input('note'),
         ]);
 
-        return redirect()->route('debts.index')->with('success', 'Deuda creada exitosamente.');
+        return response()->json(['success' => 'Deuda creada exitosamente.'], 400);
     }
 
     public function assignAll(Request $request)

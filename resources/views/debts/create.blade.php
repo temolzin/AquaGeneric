@@ -10,7 +10,7 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('debts.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('debts.store') }}" method="post" enctype="multipart/form-data" id="createDebtForm">
                     @csrf
                     <div class="card-body">
                         <div class="card">
@@ -87,6 +87,7 @@
         </div>
     </div>
 </div>
+
 <style>
     .select2-container .select2-selection--single {
         height: 40px;
@@ -94,3 +95,34 @@
         align-items: center;
     }
 </style>
+
+<script>
+    document.getElementById('createDebtForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            const data = await response.json();
+
+            Swal.fire({
+                icon: data.error ? 'error' : 'success',
+                title: data.error ? 'Error' : 'Éxito',
+                text: data.error || data.success,
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                if (data.success) window.location.href = "{{ route('debts.index') }}";
+            });
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+</script>
