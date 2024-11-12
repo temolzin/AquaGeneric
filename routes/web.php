@@ -58,6 +58,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/customers-with-debts', [CustomerController::class, 'customersWithDebts'])->name('report.with-debts');
         Route::get('/report/pdfCustomers', [CustomerController::class, 'pdfCustomers'])->name('customers.pdfCustomers');
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
+        Route::get('/payment-history/{id}', [CustomerController::class, 'generatePaymentHistoryReport'])->name('reports.paymentHistoryReport');
     });
 
     Route::group(['middleware' => ['can:viewRoles']], function () {

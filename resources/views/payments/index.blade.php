@@ -101,7 +101,7 @@
                                                                 <a type="button" class="btn btn-block bg-gradient-secondary mr-2" target="_blank" title="Generar Recibo"
                                                                     href="{{ route('reports.receiptPayment', Crypt::encrypt($payment->id)) }}">
                                                                     <i class="fas fa-file-invoice"></i>
-                                                                    </a>
+                                                                </a>
                                                             </div>
                                                         </td>
                                                         @include('payments.delete')

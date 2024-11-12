@@ -7,6 +7,8 @@ use App\Models\Cost;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Mpdf\Mpdf;
+use App\Models\Debt;
+use Illuminate\Support\Facades\Crypt;
 
 class CustomerController extends Controller
 {
@@ -121,5 +123,22 @@ class CustomerController extends Controller
         $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers', 'authUser'))
         ->setPaper('A4', 'portrait');
         return $pdf->stream('reporte_clientes_con_deudas.pdf');
+    }
+
+    public function generatePaymentHistoryReport($debt_id)
+    {
+        $authUser = auth()->user();
+        $debtId = Crypt::decrypt($debt_id);
+
+        $debt = Debt::with(['waterConnection', 'customer'])->findOrFail($debtId);
+        $customer = $debt->customer;
+
+        $payments = $debt->payments;
+        $totalDebt = $debt->amount;
+
+        $pdf = Pdf::loadView('reports.paymentHistoryReport', compact('debt', 'customer', 'payments', 'totalDebt', 'authUser'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('reporte_historial_pagos.pdf');
     }
 }

@@ -106,6 +106,10 @@
                                                                         <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewDebt{{ $waterConnectionDebt->id }}">
                                                                             <i class="fas fa-eye"></i>
                                                                         </button>
+                                                                        <a type="button" class="btn btn-block bg-gradient-secondary mr-2" target="_blank" title="Generar Historial de Pagos"
+                                                                            href="{{ route('reports.paymentHistoryReport', Crypt::encrypt($waterConnectionDebt->id)) }}">
+                                                                            <i class="fas fa-file-invoice"></i>
+                                                                        </a>
                                                                         @can('deleteDebt')
                                                                             @if($waterConnectionDebt->hasDependencies() && $waterConnectionDebt->status !== 'paid')
                                                                                 <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
