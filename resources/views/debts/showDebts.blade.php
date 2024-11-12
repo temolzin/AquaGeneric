@@ -35,13 +35,23 @@
                                     $pendingBalance = $totalDebt - $totalPaid;
                                 @endphp
                                 <div class="col-lg-12">
+                                    @if ($pendingBalance > 0)
+                                        <div class="info-box">
+                                            <span class="info-box-icon bg-danger"><i class="fa fa-dollar-sign"></i></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text">Saldo Total Pendiente</span>
+                                                <span class="info-box-number">${{ number_format($pendingBalance, 2, '.', ',') }}</span>
+                                            </div>
+                                        </div>
+                                    @else
                                     <div class="info-box">
                                         <span class="info-box-icon bg-success"><i class="fa fa-dollar-sign"></i></span>
                                         <div class="info-box-content">
-                                            <span class="info-box-text">Saldo Total Pendiente</span>
-                                            <span class="info-box-number">${{ number_format($pendingBalance, 2, '.', ',') }}</span>
+                                            <span class="info-box-text">Sin Deudas</span>
+                                            <span class="info-box-number">Este cliente no tiene deudas pendientes</span>
                                         </div>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                             <hr>
