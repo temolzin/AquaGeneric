@@ -103,7 +103,7 @@
                                                                 </div>
                                                                 <div class="col-md-2">
                                                                     <div class="btn-group" role="group" aria-label="Opciones">
-                                                                        <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $waterConnectionDebt->id }}">
+                                                                        <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewDebt{{ $waterConnectionDebt->id }}">
                                                                             <i class="fas fa-eye"></i>
                                                                         </button>
                                                                         @can('deleteDebt')
@@ -112,7 +112,7 @@
                                                                                     <i class="fas fa-trash-alt"></i>
                                                                                 </button>
                                                                             @else
-                                                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $waterConnectionDebt->id }}">
+                                                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" title="Eliminar Registro" data-target="#deleteDebt{{ $waterConnectionDebt->id }}">
                                                                                     <i class="fas fa-trash-alt"></i>
                                                                                 </button>
                                                                             @endif
