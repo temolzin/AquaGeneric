@@ -97,39 +97,32 @@
 </style>
 
 <script>
-    document.getElementById('createDebtForm').addEventListener('submit', function (e) {
+    document.getElementById('createDebtForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        let formData = new FormData(this);
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
 
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.error,
-                    confirmButtonText: 'Aceptar'
-                });
-            } else if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: data.success,
-                    confirmButtonText: 'Aceptar'
-                }).then(() => {
-                    window.location.href = "{{ route('debts.index') }}";
-                });
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            const data = await response.json();
+
+            Swal.fire({
+                icon: data.error ? 'error' : 'success',
+                title: data.error ? 'Error' : 'Éxito',
+                text: data.error || data.success,
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                if (data.success) window.location.href = "{{ route('debts.index') }}";
+            });
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
     });
 </script>
