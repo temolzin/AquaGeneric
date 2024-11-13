@@ -61,7 +61,7 @@
                 margin-bottom: 5px;
             }
 
-            #reporte_cliente {
+            #customer_report {
                 width: 100%;
                 padding: 15px;
                 margin: 10px 0;
@@ -70,14 +70,14 @@
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             }
 
-            .info_empresa {
+            .enterprise_info {
                 width: 50%;
                 text-align: center;
                 align-content: stretch;
                 font-family: 'Montserrat', sans-serif;
             }
 
-            .info_reporte {
+            .report_info {
                 padding: 15px;
                 border: 1px solid #0B1C80;
                 border-radius: 8px;
@@ -140,19 +140,19 @@
                 font-family: 'Montserrat', sans-serif;
             }
 
-            #reporte_detalle {
+            #report_detail {
                 border-collapse: collapse;
                 width: 100%;
                 margin: 0;
             }
 
-            #reporte_detalle thead th {
+            #report_detail thead th {
                 background: #0B1C80;
                 color: #FFF;
                 padding: 5px;
             }
 
-            #detalle_productos tr {
+            #payments_details tr {
                 border-top: 1px solid #bfc9ff;
             }
 
@@ -213,7 +213,7 @@
         </div>
         <table id="reporte_head">
             <tr>
-                <td class="info_empresa">
+                <td class="enterprise_info">
                     <div>
                         <p class="aqua_titulo"> COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
                         </p><br>
@@ -221,7 +221,7 @@
                         <a class="link_Email" href="mailto:info@rootheim.com">Email: info@rootheim.com</a>
                     </div>
                 </td>
-                <td class="info_reporte">
+                <td class="report_info">
                     <div class="round">
                         <span class="h3">Historial de Pagos</span>
                         @if ($customer->responsible_name)
@@ -234,7 +234,7 @@
                 </td>
             </tr>
         </table>
-        <table id="reporte_cliente">
+        <table id="customer_report">
             <tr>
                 <td class="info_cliente">
                     <div class="round">
@@ -250,26 +250,34 @@
                 </td>
             </tr>
         </table>
-        <table id="reporte_detalle">
+        <table id="report_detail">
             <thead>
                 <tr>
                     <th class="textable">Fecha</th>
                     <th class="textable">Monto</th>
                 </tr>
             </thead>
-            <tbody id="detalle_productos">
+            <tbody id="payments_details">
                 @if ($payments->isEmpty())
                     <tr>
                         <td class="textcenter
-                        " colspan="2">Aún no hay pagos registrados</td>
+                        " colspan="2">Aún no hay pagos registrados para esta deuda</td>
                     </tr>
                 @endif
                 @foreach ($payments as $payment)
                     <tr>
                         <td class="textcenter">{{ \Carbon\Carbon::parse($payment->created_at)->translatedFormat('j \d\e F \d\e Y') }}</td>
-                        <td class="textcenter">$ {{ $payment->amount }}</td>
+                        <td class="textcenter">${{ $payment->amount }}</td>
                     </tr>
                 @endforeach
+                <tr>
+                    <td colspan="1" class="total_payment"><strong>Total:</strong></td>
+                    <td class="textcenter"><strong>${{ number_format($totalPayments, 2) }} </strong></td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="total_payment"><strong>Pendiente:</strong></td>
+                    <td class="textcenter"><strong>${{ number_format($pendingBalance, 2) }} </strong></td>
+                </tr>
             </tbody>
         </table>
     </div>
