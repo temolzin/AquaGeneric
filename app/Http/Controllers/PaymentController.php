@@ -340,13 +340,19 @@ class PaymentController extends Controller
                                         ->where('customer_id', $customerId)
                                         ->firstOrFail();
 
-        $payments = Payment::whereHas('debt', function ($query) use ($waterConnectionId) {
+        $payments = Payment::select('id', 'debt_id', 'amount', 'created_at')
+            ->where('locality_id', $authUser->locality_id)
+            ->whereHas('debt', function ($query) use ($waterConnectionId) {
                 $query->where('water_connection_id', $waterConnectionId);
             })
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->get();
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->groupBy('debt_id');
 
-        $totalPayments = $payments->sum('amount');
+        $totalPayments = $payments->flatMap(function ($group) {
+            return $group;
+        })->sum('amount');
 
         $pdf = PDF::loadView('reports.waterConnectionPayments', compact('customer', 'waterConnection', 'startDate', 'endDate', 'payments', 'authUser', 'totalPayments'))
                 ->setPaper('A4', 'portrait');

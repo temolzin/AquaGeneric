@@ -100,7 +100,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estado del titular(*)</label>
-                                            <select class="form-control" id="statusUpdate" name="statusUpdate">
+                                            <select class="form-control" id="statusUpdate" name="statusUpdate" onchange="toggleResponsibleFieldUpdate()">
                                                 <option value="">Selecciona una opción</option>
                                                 <option value="1" {{ $customer->status == 1 ? 'selected' : '' }}>Con Vida</option>
                                                 <option value="0" {{ $customer->status == 0 ? 'selected' : '' }}>Fallecido</option>
@@ -135,6 +135,10 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleResponsibleFieldUpdate();
+    });
+
     function previewImageEdit(event, id) {
         var input = event.target;
         var file = input.files[0];
@@ -166,5 +170,16 @@
         var photoPreview = document.getElementById('photo-preview-edit-' + id);
         var customerGalleryUrl = "{{ $customer->getFirstMediaUrl('customerGallery') ? $customer->getFirstMediaUrl('customerGallery') : asset('img/userDefault.png') }}";
         photoPreview.src = customerGalleryUrl;
+    }
+
+    function toggleResponsibleFieldUpdate() {
+        var statusSelect = document.getElementById('statusUpdate');
+        var responsibleField = document.getElementById('responsibleNameUpdate');
+
+        if (statusSelect.value == '0') {
+            responsibleField.style.display = 'block';
+        } else {
+            responsibleField.style.display = 'none';
+        }
     }
 </script>
