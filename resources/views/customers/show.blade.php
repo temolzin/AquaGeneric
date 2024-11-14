@@ -91,12 +91,14 @@
                                         <input type="text" disabled class="form-control" value="{{ $customer->status ? 'Con vida' : 'Fallecido' }}" />
                                     </div>
                                 </div>
+                                @if ($customer->status == 0)
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Nombre de la persona que será responsable sin el Titular Fallecido</label>
                                         <input type="text" disabled class="form-control"  placeholder="Nombre de la persona responsable si el titular fallecio"value="{{ $customer->responsible_name }}" />
                                     </div>
                                 </div>
+                                @endif
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Registrado por</label>
