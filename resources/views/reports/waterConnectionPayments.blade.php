@@ -261,20 +261,24 @@
                 <thead>
                     <tr>
                         <th class="textable">Folio</th>
-                        <th class="textable">Fecha del pago</th>
+                        <th class="textable">Fecha del Pago</th>
+                        <th class="textable">Folio Deuda</th>
                         <th class="textable">Cantidad</th>
                     </tr>
                 </thead>
                 <tbody id="detalle_productos">'
-                    @foreach ($payments as $payment)
-                        <tr>
-                            <td class="textcenter">{{ $payment->id }}</td>
-                            <td class="textcenter">{{ \Carbon\Carbon::parse($payment->created_at)->translatedFormat('j \d\e F \d\e Y') }}</td>
-                            <td class="textcenter">$ {{ $payment->amount }}</td>
-                        </tr>
+                    @foreach($payments as $debtId => $debtPayments)
+                        @foreach($debtPayments as $payment)
+                            <tr>
+                                <td class="textcenter">{{ $payment->id }}</td>
+                                <td class="textcenter">{{ \Carbon\Carbon::parse($payment->created_at)->translatedFormat('j \d\e F \d\e Y') }}</td>
+                                <td class="textcenter">{{ $payment->debt->id }}</td>
+                                <td class="textcenter">$ {{ $payment->amount }}</td>
+                            </tr>
+                        @endforeach
                     @endforeach
                     <tr>
-                        <td colspan="2" class="total_payment"><strong>Total:</strong></td>
+                        <td colspan="3" class="total_payment"><strong>Total:</strong></td>
                         <td class="textcenter"><strong>$ {{ number_format($totalPayments, 2) }}</strong></td>
                     </tr>
                 </tbody>
