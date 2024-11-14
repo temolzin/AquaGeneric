@@ -346,7 +346,7 @@ class PaymentController extends Controller
                 $query->where('water_connection_id', $waterConnectionId);
             })
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('debt_id');
 

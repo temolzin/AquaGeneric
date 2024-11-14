@@ -22,6 +22,9 @@ class CustomersTableSeeder extends Seeder
         $userIds = DB::table('users')->pluck('id')->toArray();
 
         foreach (range(1, 150) as $index) {
+            $status = $faker->boolean;
+            $responsibleName = $status ? null : $faker->name;
+
             DB::table('customers')->insert([
                 'name' => $faker->firstName,
                 'last_name' => $faker->lastName,
@@ -33,7 +36,8 @@ class CustomersTableSeeder extends Seeder
                 'exterior_number' => $faker->numberBetween(1, 100),
                 'interior_number' => $faker->numberBetween(1, 100),
                 'marital_status' => $faker->boolean,
-                'status' => $faker->boolean, 
+                'status' => $status,
+                'responsible_name' => $responsibleName,
                 'locality_id' => $faker->randomElement($localityIds),
                 'created_by' => $faker->randomElement($userIds),
             ]);

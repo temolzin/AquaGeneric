@@ -133,7 +133,10 @@ class CustomerController extends Controller
         $debt = Debt::with(['waterConnection', 'customer'])->findOrFail($debtId);
         $customer = $debt->customer;
 
-        $payments = $debt->payments;
+        $payments = $debt->payments()
+                         ->orderBy('created_at', 'desc')
+                         ->get();
+
         $totalDebt = $debt->amount;
 
         $totalPayments = $payments->sum('amount');
