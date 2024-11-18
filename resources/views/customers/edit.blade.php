@@ -100,18 +100,23 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estado del titular(*)</label>
-                                            <select class="form-control" id="statusUpdate" name="statusUpdate" onchange="toggleResponsibleFieldUpdate()">
+                                            <select class="form-control"
+                                                    id="statusUpdate-{{ $customer->id }}"
+                                                    name="statusUpdate"
+                                                    onchange="toggleResponsibleFieldUpdate({{ $customer->id }})">
                                                 <option value="">Selecciona una opción</option>
                                                 <option value="1" {{ $customer->status == 1 ? 'selected' : '' }}>Con Vida</option>
                                                 <option value="0" {{ $customer->status == 0 ? 'selected' : '' }}>Fallecido</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-12" id="responsibleNameUpdate">
+                                    <div class="col-lg-12"
+                                        id="responsibleNameUpdate-{{ $customer->id }}"
+                                        style="display: {{ $customer->status == 0 ? 'block' : 'none' }};">
                                         <div class="form-group">
-                                            <label for="responsibleNameUpdate" class="form-label">Nombre de la persona que será responsable</label>
-                                            <input type="text" class="form-control" name="responsibleNameUpdate" 
-                                            placeholder="Nombre de la persona responsable si el titular fallecio, si no hay dejalo vacio"  id="responsibleNameUpdate" value="{{ $customer->responsible_name }}">
+                                            <label for="responsibleNameUpdate-{{ $customer->id }}" class="form-label"> Nombre de la persona que será responsable </label>
+                                            <input type="text" class="form-control" name="responsibleNameUpdate"
+                                                placeholder="Nombre de la persona responsable si el titular falleció, si no hay déjalo vacío" id="responsibleNameUpdate-{{ $customer->id }}" value="{{ $customer->responsible_name }}">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -135,10 +140,6 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleResponsibleFieldUpdate();
-    });
-
     function previewImageEdit(event, id) {
         var input = event.target;
         var file = input.files[0];
@@ -172,14 +173,24 @@
         photoPreview.src = customerGalleryUrl;
     }
 
-    function toggleResponsibleFieldUpdate() {
-        var statusSelect = document.getElementById('statusUpdate');
-        var responsibleField = document.getElementById('responsibleNameUpdate');
+    function toggleResponsibleFieldUpdate(id) {
+        const statusSelect = document.getElementById('statusUpdate-' + id);
+        const responsibleField = document.getElementById('responsibleNameUpdate-' + id);
 
-        if (statusSelect.value == '0') {
-            responsibleField.style.display = 'block';
-        } else {
-            responsibleField.style.display = 'none';
-        }
+        responsibleField.style.display = statusSelect.value === '0' ? 'block' : 'none';
     }
+
+    function initializeModal(id) {
+        toggleResponsibleFieldUpdate(id);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('show.bs.modal', function () {
+                const customerId = modal.id.replace('edit', '');
+                initializeModal(customerId);
+            });
+        });
+    });
 </script>
