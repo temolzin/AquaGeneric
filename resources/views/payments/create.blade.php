@@ -64,8 +64,8 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="suggested_amount" class="form-label" style="font-weight: bold; color: #555;">Saldo Pendiente</label>
-                                            <div style="border-radius: 8px; background-color: #d2e0ca; padding: 10px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); display: flex; align-items: center;">
-                                                <i class="fas fa-money-bill-wave" style="margin-right: 8px; color: #28a745;"></i>
+                                            <div style="border-radius: 8px; background-color: #e49c9c; padding: 10px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); display: flex; align-items: center;">
+                                                <i class="fas fa-money-bill-wave" style="margin-right: 8px; color: #a72828;"></i>
                                                 <p id="suggested_amount" class="form-control-static" style="margin: 0; font-size: 16px; color: #333;">Selecciona una deuda para ver el saldo pendiente.</p>
                                             </div>
                                         </div>
