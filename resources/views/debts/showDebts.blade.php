@@ -83,28 +83,28 @@
                                         </div>
                                         <div class="debt-details" id="debts-{{ $waterConnection->id }}" style="display: none; margin-left: 15px;">
                                             @foreach ($waterConnection->debts as $waterConnectionDebt)
-                                                <div class="debt-item card mb-1" style="margin: 15px; margin-right: 50px;">
+                                                <div class="debt-item card mb-3 mx-0">
                                                     <div class="card-body">
-                                                        <div class="row no-gutters">
-                                                            <div class="col-md-1">
+                                                        <div class="row">
+                                                            <div class="col-12 col-md-1 mb-2 mb-md-0">
                                                                 <p><strong>ID:</strong> {{ $waterConnectionDebt->id }}</p>
                                                             </div>
                                                             <div class="col-md-12">
                                                                 <div class="row">
-                                                                    <div class="col-md-4">
+                                                                    <div class="col-12 col-md-4">
                                                                         <p><strong>Fecha de Inicio:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
                                                                         <p><strong>Fecha de Fin:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
                                                                     </div>
-                                                                    <div class="col-md-2">
+                                                                    <div class="col-6 col-md-2">
                                                                         <p><strong>Monto:</strong> ${{ number_format($waterConnectionDebt->amount, 2) }}</p>
                                                                     </div>
                                                                     @php
                                                                         $pendingDebt = $waterConnectionDebt->amount - $waterConnectionDebt->debt_current;
                                                                     @endphp
-                                                                    <div class="col-md-2">
+                                                                    <div class="col-6 col-md-2">
                                                                         <p><strong>Pendiente:</strong> ${{ number_format($pendingDebt, 2) }}</p>
                                                                     </div>
-                                                                    <div class="col-md-2">
+                                                                    <div class="col-6 col-md-2">
                                                                         <p><strong>Status:</strong>
                                                                             @if ($waterConnectionDebt->status === 'pending')
                                                                                 <button class="btn btn-danger btn-xs">No pagada</button>
@@ -115,7 +115,7 @@
                                                                             @endif
                                                                         </p>
                                                                     </div>
-                                                                    <div class="col-md-2" style="margin-left: 485px">
+                                                                    <div class="col-12 col-md-2 text-right">
                                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                                             <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewDebt{{ $waterConnectionDebt->id }}">
                                                                                 <i class="fas fa-eye"></i>
