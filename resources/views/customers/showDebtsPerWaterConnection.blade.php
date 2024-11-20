@@ -155,3 +155,32 @@
         </div>
     </div>
 </div>
+
+<style>
+    .search-input:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+        background-color: #ffffff;
+    }
+</style>
+
+<script>
+    document.getElementById('searchDebt{{ $customer->id }}').addEventListener('input', function() {
+        let searchValue = this.value.toLowerCase();
+        let debtItems = document.querySelectorAll('#showDebtsPerWaterConnection{{ $customer->id }} .debt-item');
+
+        debtItems.forEach(function(item) {
+            let id = item.querySelector('.col-md-1 p').innerText.toLowerCase();
+            let amount = item.querySelector('.col-md-2 p').innerText.toLowerCase();
+            let status = item.querySelector('.col-md-2 p button').innerText.toLowerCase();
+            let startDate = item.querySelector('.col-md-4 p').innerText.toLowerCase();
+            let endDate = item.querySelector('.col-md-4 p + p').innerText.toLowerCase();
+
+            if (id.includes(searchValue) || amount.includes(searchValue) || status.includes(searchValue) || startDate.includes(searchValue) || endDate.includes(searchValue)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+</script>
