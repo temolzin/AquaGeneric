@@ -359,6 +359,12 @@ return [
             'icon' => 'fas fa-fw fa-water',
             'can'  =>'viewWaterConnection'
         ],
+        [
+            'text' => 'Gastos',
+            'url' => '/generalExpenses',
+            'icon' => 'fas fa-fw fa-coins',
+            'can'  =>'viewGeneralExpense'
+        ],
     ],
     /*
     |--------------------------------------------------------------------------

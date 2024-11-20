@@ -102,5 +102,17 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'viewLocalityCharts',
             'description' => 'Permite ver las gráficas correspondientes a una localidad en el dashboard.'
         ])->assignRole($roleAdmin);
+        Permission::create([
+            'name' => 'viewGeneralExpense',
+            'description' => 'Permite ver los Gastos.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        Permission::create([
+            'name' => 'deleteGeneralExpense',
+            'description' => 'Permite eliminar los Gastos.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::create([
+            'name' => 'editGeneralExpense',
+            'description' => 'Permite editar los Gastos.'
+        ])->assignRole([$roleSupervisor]);
     }
 }
