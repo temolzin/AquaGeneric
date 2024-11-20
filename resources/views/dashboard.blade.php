@@ -95,7 +95,7 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Ganancias Mensuales<span id="localityInfoMonthly"></h3>
+                                    <h3 class="card-title">Ingresos Mensuales<span id="localityInfoMonthly"></h3>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="earningsChart" width="400" height="200"></canvas>
@@ -105,7 +105,7 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Ganancias Anuales por Mes<span id="localityInfoAnnual"></h3>
+                                    <h3 class="card-title">Ingresos Anuales por Mes<span id="localityInfoAnnual"></h3>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="annualEarningsChart" width="400" height="200"></canvas>
@@ -178,7 +178,7 @@
             data: {
                 labels: @json($data['months']),
                 datasets: [{
-                    label: 'Ganancias en $',
+                    label: 'Ingresos en $',
                     data: @json($data['earningsPerMonth']),
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgba(54, 162, 235, 1)',
@@ -200,7 +200,7 @@
             data: {
                 labels: @json($data['months']),
                 datasets: [{
-                    label: 'Ganancias Anuales en $',
+                    label: 'Ingresos Anuales en $',
                     data: @json($data['earningsPerMonth']),
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgba(255, 99, 132, 1)',

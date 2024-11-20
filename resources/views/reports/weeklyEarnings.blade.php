@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Reporte Semanal de Ganancias</title>
+        <title>Reporte Semanal de Ingresos</title>
         <style>
             html{
                 margin: 0;
@@ -93,7 +93,7 @@
                 page-break-after: auto;
             }
 
-            #detalle_ganancias tr {
+            #detalle_ingresos tr {
                 border-top: 1px solid #bfc9ff;
                 page-break-inside: avoid;
             }
@@ -182,7 +182,7 @@
                 </p>
             </div>
             <div class="title">
-                <h3>GANANCIAS SEMANALES<h3>
+                <h3>INGRESOS SEMANALES<h3>
             </div>
             @php
                 $daysInSpanish = [
@@ -206,7 +206,7 @@
                                 @endforeach
                             </tr>
                         </thead>
-                        <tbody id="detalle_ganancias">
+                        <tbody id="detalle_ingresos">
                             <tr>
                                 @foreach ($daysInSpanish as $dayEnglish => $dayName)
                                     @php
