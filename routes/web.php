@@ -9,6 +9,7 @@ use App\Http\Controllers\CostController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GeneralExpenseController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
@@ -99,5 +100,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['can:viewWaterConnection']], function () {
         Route::get('/waterConnections', [WaterConnectionController::class, 'index'])->name('connections.index');
         Route::resource('waterConnections', WaterConnectionController::class);
+    });
+
+    Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
+        Route::get('/generalExpenses', [GeneralExpenseController::class, 'index'])->name('expenses.index');
+        Route::resource('generalExpenses', GeneralExpenseController::class);
     });
 });

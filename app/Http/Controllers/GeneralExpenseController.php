@@ -3,82 +3,73 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\GeneralExpense;
 
 class GeneralExpenseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $authUser = auth()->user();
+        $query = GeneralExpense::where('general_expenses.locality_id', $authUser->locality_id)
+            ->orderBy('general_expenses.created_at', 'desc')
+            ->select('general_expenses.*');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+
+            $query->where(function ($q) use ($search) {
+                $q->where('general_expenses.concept', 'LIKE', "%{$search}%")
+                ->orWhere('general_expenses.id', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $expenses = $query->paginate(10);
+        return view('generalExpenses.index', compact('expenses'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $authUser = auth()->user();
+
+        $generalExpenseData = $request->all();
+
+        $generalExpenseData['locality_id'] = $authUser->locality_id;
+        $generalExpenseData['created_by'] = $authUser->id;
+
+        GeneralExpense::create($generalExpenseData);
+
+        return redirect()->route('generalExpenses.index')->with('success', 'Gasto registrado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
+        $expenses = GeneralExpense::findOrFail($id);
+        return view('generalExpenses.show', compact('expenses'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
+        $expense = GeneralExpense::find($id);
+
+        if (!$expense) {
+            return redirect()->back()->with('error', 'Gasto no encontrado.');
+        }
+
+        $expense->concept = $request->input('conceptUpdate');
+        $expense->description = $request->input('descriptionUpdate');
+        $expense->amount = $request->input('amountUpdate');
+        $expense->type = $request->input('typeUpdate');
+        $expense->expense_date = $request->input('expenseDateUpdate');
+
+        $expense->save();
+
+        return redirect()->route('generalExpenses.index')->with('success', 'Gasto actualizado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+        $expense = GeneralExpense::find($id);
+        $expense->delete();
+        return redirect()->route('generalExpenses.index')->with('success', 'Gasto eliminado correctamente.');
     }
 }
