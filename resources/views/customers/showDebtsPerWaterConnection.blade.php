@@ -203,11 +203,19 @@
 
             if (hasMatch || connectionId.includes(searchValue) || connectionName.includes(searchValue)) {
                 connection.style.display = '';
-                connection.nextElementSibling.style.display = '';
+                connection.nextElementSibling.style.display = 'none';
+                connection.querySelector('button.toggle-debts i').classList.remove('fa-chevron-up');
+                connection.querySelector('button.toggle-debts i').classList.add('fa-chevron-down');
             } else {
                 connection.style.display = 'none';
                 connection.nextElementSibling.style.display = 'none';
             }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.debt-details').forEach(function (details) {
+            details.style.display = 'none';
         });
     });
 
@@ -228,11 +236,5 @@
                 icon.classList.add('fa-chevron-down');
             }
         }
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll('.debt-details').forEach(function (details) {
-            details.style.display = 'none';
-        });
     });
 </script>
