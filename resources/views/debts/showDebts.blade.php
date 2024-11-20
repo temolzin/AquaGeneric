@@ -178,8 +178,8 @@
             let id = item.querySelector('.col-md-1 p').innerText.toLowerCase();
             let amount = item.querySelector('.col-md-2 p').innerText.toLowerCase();
             let status = item.querySelector('.col-md-2 p button').innerText.toLowerCase();
-            let startDate = item.querySelector('.col-md-6 p').innerText.toLowerCase();
-            let endDate = item.querySelector('.col-md-6 p + p').innerText.toLowerCase();
+            let startDate = item.querySelector('.col-md-4 p').innerText.toLowerCase();
+            let endDate = item.querySelector('.col-md-4 p + p').innerText.toLowerCase();
 
             if (id.includes(searchValue) || amount.includes(searchValue) || status.includes(searchValue) || startDate.includes(searchValue) || endDate.includes(searchValue)) {
                 item.style.display = '';
