@@ -60,13 +60,8 @@
                                 <input type="text" id="searchDebt{{ $debt->waterConnection->customer->id }}" class="form-control search-input" placeholder="🔍 Buscar por ID o nombre de la toma...">
                             </div>
                             <div class="debt-list" style="overflow-y: auto; max-height: 300px; overflow-x: hidden;">
-                                @php $connectionCounter = 0; @endphp
                                 @foreach ($debt->waterConnection->customer->waterConnections as $waterConnection)
                                     @if ($waterConnection->debts->isNotEmpty())
-                                        @php $connectionCounter++; @endphp
-                                        @if ($connectionCounter > 1)
-                                            <hr style="border: none; border-top: 4px solid rgba(8, 124, 252, 0.8); margin-top: 20px; margin-bottom: 20px;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
-                                        @endif
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-lg-2">
                                                 <div class="form-group">
@@ -74,76 +69,83 @@
                                                     <input type="text" disabled class="form-control" value="{{ $waterConnection->id }}" />
                                                 </div>
                                             </div>
-                                            <div class="col-lg-10 pl-lg-3">
+                                            <div class="col-lg-8 pl-lg-3">
                                                 <div class="form-group">
                                                     <label>Nombre de la Toma</label>
                                                     <input type="text" disabled class="form-control" value="{{ $waterConnection->name }}" />
                                                 </div>
                                             </div>
+                                            <div class="col-lg-2 text-right">
+                                                <button class="btn btn-sm btn-primary toggle-debts" title="Ver Deudas" data-target="#debts-{{ $waterConnection->id }}">
+                                                    <i class="fas fa-chevron-down"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                        @foreach ($waterConnection->debts as $waterConnectionDebt)
-                                            <div class="debt-item card mb-3">
-                                                <div class="card-body">
-                                                    <div class="row no-gutters">
-                                                        <div class="col-md-1">
-                                                            <p><strong>ID:</strong> {{ $waterConnectionDebt->id }}</p>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <div class="row">
-                                                                <div class="col-md-4">
-                                                                    <p><strong>Fecha de Inicio:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
-                                                                    <p><strong>Fecha de Fin:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
-                                                                </div>
-                                                                <div class="col-md-2">
-                                                                    <p><strong>Monto:</strong> ${{ number_format($waterConnectionDebt->amount, 2) }}</p>
-                                                                </div>
-                                                                @php
-                                                                    $pendingDebt = $waterConnectionDebt->amount - $waterConnectionDebt->debt_current;
-                                                                @endphp
-                                                                <div class="col-md-2">
-                                                                    <p><strong>Pendiente:</strong> ${{ number_format($pendingDebt, 2) }}</p>
-                                                                </div>
-                                                                <div class="col-md-2">
-                                                                    <p><strong>Status:</strong>
-                                                                        @if ($waterConnectionDebt->status === 'pending')
-                                                                            <button class="btn btn-danger btn-xs">No pagada</button>
-                                                                        @elseif ($waterConnectionDebt->status === 'partial')
-                                                                            <button class="btn btn-warning btn-xs">Abonada</button>
-                                                                        @elseif ($waterConnectionDebt->status === 'paid')
-                                                                            <button class="btn btn-success btn-xs">Pagada</button>
-                                                                        @endif
-                                                                    </p>
-                                                                </div>
-                                                                <div class="col-md-2">
-                                                                    <div class="btn-group" role="group" aria-label="Opciones">
-                                                                        <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewDebt{{ $waterConnectionDebt->id }}">
-                                                                            <i class="fas fa-eye"></i>
-                                                                        </button>
-                                                                        <a type="button" class="btn btn-block bg-gradient-secondary mr-2" target="_blank" title="Generar Historial de Pagos"
-                                                                        href="{{ route('reports.paymentHistoryReport', Crypt::encrypt($waterConnectionDebt->id)) }}">
-                                                                            <i class="fas fa-file-invoice"></i>
-                                                                        </a>
-                                                                        @can('deleteDebt')
-                                                                            @if($waterConnectionDebt->hasDependencies() && $waterConnectionDebt->status !== 'paid')
-                                                                                <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
-                                                                                    <i class="fas fa-trash-alt"></i>
-                                                                                </button>
-                                                                            @else
-                                                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" title="Eliminar Registro" data-target="#deleteDebt{{ $waterConnectionDebt->id }}">
-                                                                                    <i class="fas fa-trash-alt"></i>
-                                                                                </button>
-                                                                            @endif
-                                                                        @endcan
+                                        <div class="debt-details" id="debts-{{ $waterConnection->id }}" style="display: none; margin-left: 15px;">
+                                            @foreach ($waterConnection->debts as $waterConnectionDebt)
+                                                <div class="debt-item card mb-1" style="margin: 15px; margin-right: 50px;">
+                                                    <div class="card-body">
+                                                        <div class="row no-gutters">
+                                                            <div class="col-md-1">
+                                                                <p><strong>ID:</strong> {{ $waterConnectionDebt->id }}</p>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <p><strong>Fecha de Inicio:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
+                                                                        <p><strong>Fecha de Fin:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
                                                                     </div>
+                                                                    <div class="col-md-2">
+                                                                        <p><strong>Monto:</strong> ${{ number_format($waterConnectionDebt->amount, 2) }}</p>
+                                                                    </div>
+                                                                    @php
+                                                                        $pendingDebt = $waterConnectionDebt->amount - $waterConnectionDebt->debt_current;
+                                                                    @endphp
+                                                                    <div class="col-md-2">
+                                                                        <p><strong>Pendiente:</strong> ${{ number_format($pendingDebt, 2) }}</p>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        <p><strong>Status:</strong>
+                                                                            @if ($waterConnectionDebt->status === 'pending')
+                                                                                <button class="btn btn-danger btn-xs">No pagada</button>
+                                                                            @elseif ($waterConnectionDebt->status === 'partial')
+                                                                                <button class="btn btn-warning btn-xs">Abonada</button>
+                                                                            @elseif ($waterConnectionDebt->status === 'paid')
+                                                                                <button class="btn btn-success btn-xs">Pagada</button>
+                                                                            @endif
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="col-md-2" style="margin-left: 485px">
+                                                                        <div class="btn-group" role="group" aria-label="Opciones">
+                                                                            <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewDebt{{ $waterConnectionDebt->id }}">
+                                                                                <i class="fas fa-eye"></i>
+                                                                            </button>
+                                                                            <a type="button" class="btn btn-block bg-gradient-secondary btn-sm mr-2" target="_blank" title="Generar Historial de Pagos"
+                                                                            href="{{ route('reports.paymentHistoryReport', Crypt::encrypt($waterConnectionDebt->id)) }}">
+                                                                                <i class="fas fa-file-invoice"></i>
+                                                                            </a>
+                                                                            @can('deleteDebt')
+                                                                                @if($waterConnectionDebt->hasDependencies() && $waterConnectionDebt->status !== 'paid')
+                                                                                    <button type="button" class="btn btn-secondary btn-sm mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
+                                                                                        <i class="fas fa-trash-alt"></i>
+                                                                                    </button>
+                                                                                @else
+                                                                                    <button type="button" class="btn btn-danger btn-sm mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#deleteDebt{{ $waterConnectionDebt->id }}">
+                                                                                        <i class="fas fa-trash-alt"></i>
+                                                                                    </button>
+                                                                                @endif
+                                                                            @endcan
+                                                                        </div>
+                                                                    </div>
+                                                                    @include('debts.delete')
+                                                                    @include('debts.show')
                                                                 </div>
-                                                                @include('debts.delete')
-                                                                @include('debts.show')
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endforeach
+                                            @endforeach
+                                        </div>
                                     @endif
                                 @endforeach
                                 @if ($debt->waterConnection->customer->waterConnections->every(fn($wc) => $wc->debts->isEmpty()))
@@ -176,7 +178,7 @@
 
         connections.forEach(function (connection) {
             let connectionId = connection.querySelector('.col-lg-2 input')?.value.toLowerCase() || '';
-            let connectionName = connection.querySelector('.col-lg-10 input')?.value.toLowerCase() || '';
+            let connectionName = connection.querySelector('.col-lg-8 input')?.value.toLowerCase() || '';
 
             let debtItems = connection.nextElementSibling.querySelectorAll('.debt-item');
             let hasMatch = false;
@@ -211,6 +213,31 @@
                 connection.style.display = 'none';
                 connection.nextElementSibling.style.display = 'none';
             }
+        });
+    });
+
+    document.querySelector('#viewDebts{{ $debt->waterConnection->customer->id }}').addEventListener('click', function(event) {
+        const button = event.target.closest('button.toggle-debts');
+        if (button) {
+            const targetId = button.getAttribute('data-target');
+            const details = document.querySelector(targetId);
+            const icon = button.querySelector('i');
+
+            if (details.style.display === 'none') {
+                details.style.display = 'block';
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                details.style.display = 'none';
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.debt-details').forEach(function (details) {
+            details.style.display = 'none';
         });
     });
 </script>
