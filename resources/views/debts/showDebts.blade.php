@@ -57,7 +57,7 @@
                             <hr>
                             <h5>Deudas Asociadas Por Tomas</h5>
                             <div class="form-group">
-                                <input type="text" id="searchDebt{{ $debt->waterConnection->customer->id }}" class="form-control search-input" placeholder="🔍 Buscar por ID, toma, monto, estado o fechas...">
+                                <input type="text" id="searchDebt{{ $debt->waterConnection->customer->id }}" class="form-control search-input" placeholder="🔍 Buscar por ID o nombre de la toma...">
                             </div>
                             <div class="debt-list" style="overflow-y: auto; max-height: 300px; overflow-x: hidden;">
                                 @php $connectionCounter = 0; @endphp
@@ -170,21 +170,46 @@
 </style>
 
 <script>
-    document.getElementById('searchDebt{{ $debt->waterConnection->customer->id }}').addEventListener('input', function() {
+    document.getElementById('searchDebt{{ $debt->waterConnection->customer->id }}').addEventListener('input', function () {
         let searchValue = this.value.toLowerCase();
-        let debtItems = document.querySelectorAll('#viewDebts{{ $debt->waterConnection->customer->id }} .debt-item');
+        let connections = document.querySelectorAll('#viewDebts{{ $debt->waterConnection->customer->id }} .row.no-gutters.align-items-center');
 
-        debtItems.forEach(function(item) {
-            let id = item.querySelector('.col-md-1 p').innerText.toLowerCase();
-            let amount = item.querySelector('.col-md-2 p').innerText.toLowerCase();
-            let status = item.querySelector('.col-md-2 p button').innerText.toLowerCase();
-            let startDate = item.querySelector('.col-md-4 p').innerText.toLowerCase();
-            let endDate = item.querySelector('.col-md-4 p + p').innerText.toLowerCase();
+        connections.forEach(function (connection) {
+            let connectionId = connection.querySelector('.col-lg-2 input')?.value.toLowerCase() || '';
+            let connectionName = connection.querySelector('.col-lg-10 input')?.value.toLowerCase() || '';
 
-            if (id.includes(searchValue) || amount.includes(searchValue) || status.includes(searchValue) || startDate.includes(searchValue) || endDate.includes(searchValue)) {
-                item.style.display = '';
+            let debtItems = connection.nextElementSibling.querySelectorAll('.debt-item');
+            let hasMatch = false;
+
+            debtItems.forEach(function (item) {
+                let id = item.querySelector('.col-md-1 p')?.textContent?.toLowerCase() || '';
+                let amount = item.querySelector('.col-md-2 p')?.textContent?.toLowerCase() || '';
+                let status = item.querySelector('.col-md-2 p button')?.textContent?.toLowerCase() || '';
+                let startDate = item.querySelector('.col-md-4 p')?.textContent?.toLowerCase() || '';
+                let endDate = item.querySelector('.col-md-4 p + p')?.textContent?.toLowerCase() || '';
+
+                if (
+                    id.includes(searchValue) ||
+                    amount.includes(searchValue) ||
+                    status.includes(searchValue) ||
+                    startDate.includes(searchValue) ||
+                    endDate.includes(searchValue) ||
+                    connectionId.includes(searchValue) ||
+                    connectionName.includes(searchValue)
+                ) {
+                    item.style.display = '';
+                    hasMatch = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            if (hasMatch || connectionId.includes(searchValue) || connectionName.includes(searchValue)) {
+                connection.style.display = '';
+                connection.nextElementSibling.style.display = '';
             } else {
-                item.style.display = 'none';
+                connection.style.display = 'none';
+                connection.nextElementSibling.style.display = 'none';
             }
         });
     });
