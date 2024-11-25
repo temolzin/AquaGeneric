@@ -182,7 +182,7 @@
                 </p>
             </div>
             <div class="title">
-                <h3>INGRESOS SEMANALES<h3>
+                <h3>EGRESOS SEMANALES<h3>
             </div>
             @php
                 $daysInSpanish = [
