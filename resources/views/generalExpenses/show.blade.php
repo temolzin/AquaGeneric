@@ -32,7 +32,7 @@
                                         <textarea disabled class="form-control">{{ $expense->description }}</textarea>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Tipo</label>
                                         @switch($expense->type)
@@ -54,7 +54,7 @@
                                         @endswitch
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="amount" class="form-label">Monto(*)</label>
                                         <div class="input-group">
@@ -65,10 +65,20 @@
                                         </div>
                                     </div>
                                 </div> 
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Fecha del gasto</label>
                                         <input type="text" disabled class="form-control" value="{{ $expense->expense_date }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Comprobante del Gasto</label>
+                                        <form action="{{ $expense->getFirstMediaUrl('expenseGallery') }}" method="get" target="_blank">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-eye"></i> Ver recibo
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                                 <div class="col-lg-12">

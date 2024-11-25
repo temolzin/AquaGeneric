@@ -33,10 +33,16 @@ class GeneralExpenseController extends Controller
 
         $generalExpenseData = $request->all();
 
+        $generalExpenseData['expense_date'] = $request->input('expenseDate');
         $generalExpenseData['locality_id'] = $authUser->locality_id;
         $generalExpenseData['created_by'] = $authUser->id;
 
-        GeneralExpense::create($generalExpenseData);
+        $expense = GeneralExpense::create($generalExpenseData);
+
+        if ($request->hasFile('receipt')) {
+            $file = $request->file('receipt');
+            $expense->addMedia($file)->toMediaCollection('expenseGallery');
+        }
 
         return redirect()->route('generalExpenses.index')->with('success', 'Gasto registrado correctamente.');
     }
@@ -60,6 +66,11 @@ class GeneralExpenseController extends Controller
         $expense->amount = $request->input('amountUpdate');
         $expense->type = $request->input('typeUpdate');
         $expense->expense_date = $request->input('expenseDateUpdate');
+
+        if ($request->hasFile('receiptUpdate')) {
+            $expense->clearMediaCollection('expenseGallery');
+            $expense->addMedia($request->file('receiptUpdate'))->toMediaCollection('expenseGallery');
+        }
 
         $expense->save();
 

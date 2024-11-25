@@ -58,6 +58,26 @@
                                             <input type="date" class="form-control" name="expenseDateUpdate" value="{{ $expense->expense_date }}" required />
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="receiptUpdate" class="form-label">Comprobante del gasto (*)</label>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                @if($expense->hasMedia('expenseGallery'))
+                                                    <div>
+                                                        Archivo actual:
+                                                        <a href="{{ $expense->getFirstMediaUrl('expenseGallery') }}" target="_blank" class="btn btn-link">
+                                                            Ver comprobante actual
+                                                        </a>
+                                                    </div>
+                                                @else
+                                                    <p class="mt-2 text-danger">No hay comprobante actual.</p>
+                                                @endif
+                                                <div>
+                                                    <input type="file" class="form-control" name="receiptUpdate" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

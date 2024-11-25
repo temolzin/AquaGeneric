@@ -53,10 +53,16 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="expenseDate" class="form-label">Fecha del gasto(*)</label>
                                             <input type="date" class="form-control" name="expenseDate" value="{{ old('expense_date') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="receipt" class="form-label">Comprobante del gasto(*)</label>
+                                            <input type="file" class="form-control" name="receipt" required />
                                         </div>
                                     </div>
                                 </div>
