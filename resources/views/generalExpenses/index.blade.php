@@ -10,7 +10,11 @@
                 <div class="x_title">
                     <h2>Gastos</h2>
                     <div class="row">
+                        @include('generalExpenses.weeklyExpenses')
                         <div class="col-lg-12 text-right">
+                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyExpenses">
+                                <i class="fa fa-dollar-sign"></i> Egresos Semanales
+                            </button>
                             <button class="btn btn-success" data-toggle='modal' data-target="#createGeneralExpenses">
                                 <i class="fa fa-plus"></i> Registrar Gasto
                             </button>
