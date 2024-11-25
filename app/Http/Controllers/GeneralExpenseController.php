@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\GeneralExpense;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class GeneralExpenseController extends Controller
 {
@@ -82,5 +84,50 @@ class GeneralExpenseController extends Controller
         $expense = GeneralExpense::find($id);
         $expense->delete();
         return redirect()->route('generalExpenses.index')->with('success', 'Gasto eliminado correctamente.');
+    }
+
+    public function weeklyExpensesReport(Request $request)
+    {
+        $authUser = auth()->user();
+        $startDate = Carbon::parse($request->input('weekStartDate'));
+        $endDate = Carbon::parse($request->input('weekEndDate'));
+
+        $weeks = [];
+        $currentStart = $startDate->copy();
+        $totalPeriodExpenses = 0;
+
+        while ($currentStart->lte($endDate)) {
+            $currentEnd = $currentStart->copy()->endOfWeek();
+            if ($currentEnd->gt($endDate)) {
+                $currentEnd = $endDate;
+            }
+
+            $dailyExpenses = [];
+
+            $day = $currentStart->copy();
+            while ($day->lte($currentEnd)) {
+                $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
+                    ->whereDate('expense_date', $day->toDateString())
+                    ->sum('amount');
+
+                $dailyExpenses[$day->format('l')] = $expenses;
+                $day->addDay();
+            }
+
+            $totalPeriodExpenses += array_sum($dailyExpenses);
+
+            $weeks[] = [
+                'start' => $currentStart->toDateString(),
+                'end' => $currentEnd->toDateString(),
+                'dailyExpenses' => $dailyExpenses,
+            ];
+
+            $currentStart = $currentEnd->copy()->addDay();
+        }
+
+        $pdf = PDF::loadView('reports.weeklyExpenses', compact('authUser', 'weeks', 'totalPeriodExpenses'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('weekly_expenses_' . now()->format('Ymd') . '.pdf');
     }
 }
