@@ -62,7 +62,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="receipt" class="form-label">Comprobante del gasto(*)</label>
-                                            <input type="file" class="form-control" name="receipt" required />
+                                            <input type="file" class="form-control" name="receipt" id="receipt" accept=".jpg,.jpeg,.png,.pdf" required />
                                         </div>
                                     </div>
                                 </div>
@@ -86,3 +86,29 @@
         align-items: center;
     }
 </style>
+
+<script>
+    document.getElementById('receipt').addEventListener('change', function (event) {
+        const input = event.target;
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+        const file = input.files[0];
+
+        if (file) {
+            const fileType = file.type;
+            const fileName = file.name.toLowerCase();
+            const validExtensions = ['.jpg', '.jpeg', '.png', '.pdf'];
+            const isValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
+
+            if (!allowedTypes.includes(fileType) || !isValidExtension) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Por favor, sube un archivo PDF o una imagen (jpg, jpeg, png).',
+                    confirmButtonText: 'Aceptar'
+                });
+                input.value = '';
+                return;
+            }
+        }
+    });
+</script>

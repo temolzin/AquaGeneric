@@ -73,7 +73,7 @@
                                                     <p class="mt-2 text-danger">No hay comprobante actual.</p>
                                                 @endif
                                                 <div>
-                                                    <input type="file" class="form-control" name="receiptUpdate" />
+                                                    <input type="file" class="form-control" name="receiptUpdate" id="receiptUpdate" accept=".jpg,.jpeg,.png,.pdf"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -91,3 +91,29 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('receiptUpdate').addEventListener('change', function (event) {
+        const input = event.target;
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+        const file = input.files[0];
+
+        if (file) {
+            const fileType = file.type;
+            const fileName = file.name.toLowerCase();
+            const validExtensions = ['.jpg', '.jpeg', '.png', '.pdf'];
+            const isValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
+
+            if (!allowedTypes.includes(fileType) || !isValidExtension) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Por favor, sube un archivo PDF o una imagen (jpg, jpeg, png).',
+                    confirmButtonText: 'Aceptar'
+                });
+                input.value = '';
+                return;
+            }
+        }
+    });
+</script>
