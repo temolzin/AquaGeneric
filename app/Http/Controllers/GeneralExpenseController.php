@@ -134,4 +134,28 @@ class GeneralExpenseController extends Controller
 
         return $pdf->stream('weekly_expenses_' . now()->format('Ymd') . '.pdf');
     }
+
+    public function annualExpensesReport($year)
+    {
+        $authUser = auth()->user();
+        $year = intval($year);
+
+        $monthlyExpenses = [];
+        $totalExpenses = 0;
+
+        for ($month = 1; $month <= 12; $month++) {
+            $expenses = GeneralExpense::whereYear('expense_date', $year)
+            ->whereMonth('expense_date', $month)
+            ->where('locality_id', $authUser->locality_id)
+            ->sum('amount');
+
+            $monthlyExpenses[$month] = $expenses;
+            $totalExpenses += $expenses;
+        }
+
+        $pdf = PDF::loadView('reports.annualExpenses', compact('monthlyExpenses', 'totalExpenses', 'year', 'authUser'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('annual_expenses_' . $year . '.pdf');
+    }
 }
