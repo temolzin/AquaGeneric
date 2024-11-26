@@ -210,13 +210,19 @@
                             <tr>
                                 @foreach ($daysInSpanish as $dayEnglish => $dayName)
                                     @php
-                                        $dayEarnings = $week['dailyEarnings'][$dayEnglish] ?? 0;
+                                        $dayEarnings = $week['dailyEarnings'][$dayEnglish] ?? 'N/A';
                                     @endphp
-                                    <td class="textcenter">${{ number_format($dayEarnings, 2) }}</td>
+                                    <td class="textcenter">
+                                        @if ($dayEarnings === 'N/A')
+                                            {{ $dayEarnings }}
+                                        @else
+                                            ${{ number_format($dayEarnings, 2) }}
+                                        @endif
+                                    </td>
                                 @endforeach
                             </tr>
                             <tr>
-                                <td colspan="7" class="total_payment"><strong>Total de la semana:</strong> ${{ number_format(array_sum($week['dailyEarnings']), 2) }}</td>
+                                <td colspan="7" class="total_payment"><strong>Total de la semana:</strong> ${{ number_format(array_sum(array_filter($week['dailyEarnings'], fn($value) => $value !== 'N/A')), 2) }}</td>
                             </tr>
                         </tbody>
                     </table>
