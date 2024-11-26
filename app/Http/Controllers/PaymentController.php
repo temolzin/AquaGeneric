@@ -233,9 +233,13 @@ class PaymentController extends Controller
 
             $day = $currentStart->copy();
             while ($day->lte($currentEnd)) {
-                $earnings = Payment::where('locality_id', $authUser->locality_id)
-                    ->whereDate('created_at', $day->toDateString())
-                    ->sum('amount');
+                if ($day->between($startDate, $endDate)) {
+                    $earnings = Payment::where('locality_id', $authUser->locality_id)
+                        ->whereDate('created_at', $day->toDateString())
+                        ->sum('amount');
+                } else {
+                    $earnings = 'N/A';
+                }
 
                 $dailyEarnings[$day->format('l')] = $earnings;
                 $day->addDay();

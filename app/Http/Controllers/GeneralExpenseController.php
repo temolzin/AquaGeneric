@@ -106,9 +106,13 @@ class GeneralExpenseController extends Controller
 
             $day = $currentStart->copy();
             while ($day->lte($currentEnd)) {
-                $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
-                    ->whereDate('expense_date', $day->toDateString())
-                    ->sum('amount');
+                if ($day->between($startDate, $endDate)) {
+                    $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
+                        ->whereDate('expense_date', $day->toDateString())
+                        ->sum('amount');
+                } else {
+                    $expenses = 'N/A';
+                }
 
                 $dailyExpenses[$day->format('l')] = $expenses;
                 $day->addDay();
