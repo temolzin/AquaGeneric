@@ -144,8 +144,8 @@ class GeneralExpenseController extends Controller
         $totalExpenses = 0;
 
         for ($month = 1; $month <= 12; $month++) {
-            $expenses = GeneralExpense::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
+            $expenses = GeneralExpense::whereYear('expense_date', $year)
+            ->whereMonth('expense_date', $month)
             ->where('locality_id', $authUser->locality_id)
             ->sum('amount');
 
