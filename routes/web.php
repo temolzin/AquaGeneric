@@ -106,5 +106,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/generalExpenses', [GeneralExpenseController::class, 'index'])->name('expenses.index');
         Route::resource('generalExpenses', GeneralExpenseController::class);
         Route::get('/weekly-expenses-report', [GeneralExpenseController::class, 'weeklyExpensesReport'])->name('report.weeklyExpensesReport');
+        Route::get('/annual-expenses-report/{year}', [GeneralExpenseController::class, 'annualExpensesReport'])->name('report.annualExpensesReport');
     });
 });
