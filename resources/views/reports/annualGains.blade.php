@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Reporte Anual de Ingresos</title>
+        <title>Reporte Anual de Ganancias {{ $yearGains }}</title>
         <style>
             html{
                 margin: 0;
@@ -92,7 +92,7 @@
                 padding: 5px;
             }
 
-            #detalle_ingresos tr {
+            #detalle_ganancias tr {
                 border-top: 1px solid #bfc9ff;
             }
 
@@ -130,7 +130,7 @@
                 height: 120px;
             }
 
-            .total_payment{
+            .total_amounts{
                     padding: 20px;
                     font-size: 15pt;
                     text-align: right;
@@ -167,16 +167,18 @@
                 </p>
             </div>
             <div class="title">
-                <h3>INGRESOS DEL {{ $year }}</h3>
+                <h3>GANANCIAS DEL {{ $yearGains }}</h3>
             </div>
             <table id="reporte_detalle">
                 <thead>
                     <tr>
                         <th class="textable">MES</th>
                         <th class="textable">INGRESOS</th>
+                        <th class="textable">GASTOS</th>
+                        <th class="textable">GANANCIAS</th>
                     </tr>
                 </thead>
-                <tbody id="detalle_ingresos">'
+                <tbody id="detalle_ganancias">'
                     @php
                         $months = [
                             1 => 'Enero',
@@ -197,11 +199,15 @@
                         <tr>
                             <td class="textcenter">{{ $monthName }}</td>
                             <td class="textcenter">${{ number_format($monthlyEarnings[$monthNumber] ?? 0, 2) }}</td>
+                            <td class="textcenter">${{ number_format($monthlyExpenses[$monthNumber] ?? 0, 2) }}</td>
+                            <td class="textcenter">${{ number_format($monthlyGains[$monthNumber] ?? 0, 2) }}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="1" class="total_payment"><strong>Total:</strong></td>
+                        <td colspan="1" class="total_amounts"><strong>Total:</strong></td>
                         <td class="textcenter"><strong>${{ number_format($totalEarnings, 2) }}</strong></td>
+                        <td class="textcenter"><strong>${{ number_format($totalExpenses, 2) }}</strong></td>
+                        <td class="textcenter"><strong>${{ number_format($totalGains, 2) }}</strong></td>
                     </tr>
                 </tbody>
             </table>

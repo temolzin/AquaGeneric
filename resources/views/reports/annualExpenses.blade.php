@@ -173,7 +173,7 @@
                 <thead>
                     <tr>
                         <th class="textable">MES</th>
-                        <th class="textable">INGRESO</th>
+                        <th class="textable">GASTOS</th>
                     </tr>
                 </thead>
                 <tbody id="detalle_gastos">'
