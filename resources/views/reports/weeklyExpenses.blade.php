@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Reporte Semanal de Ingresos</title>
+        <title>Reporte Semanal de Egresos</title>
         <style>
             html{
                 margin: 0;
@@ -20,12 +20,12 @@
                 background-repeat: no-repeat;
             }
 
-            #page_pdf {
+            #pagePdf {
                 margin-top: 10%;
                 margin: 40px;
             }
 
-            .info_empresa {
+            .infoCompany {
                 width: 100%;
                 margin-top: 60px;
                 text-align: center;
@@ -33,7 +33,7 @@
                 font-family: 'Montserrat', sans-serif;
             }
 
-            .aqua_titulo {
+            .aquaTitle {
                 font-family: 'Montserrat', sans-serif;
                 font-size: 20pt;
                 font-weight: bold;
@@ -78,14 +78,14 @@
                 font-family: 'Montserrat', sans-serif;
             }
 
-            #reporte_detalle {
+            #reportDetail {
                 border-collapse: collapse;
                 width: 100%;
                 page-break-inside: auto;
                 margin-bottom: 10px;
             }
 
-            #reporte_detalle thead th {
+            #reportDetail thead th {
                 background: #0B1C80;
                 color: #FFF;
                 padding: 5px;
@@ -93,12 +93,12 @@
                 page-break-after: auto;
             }
 
-            #detalle_ingresos tr {
+            #expensesDetail tr {
                 border-top: 1px solid #bfc9ff;
                 page-break-inside: avoid;
             }
 
-            .info_Eabajo {
+            .footer {
                 text-align: center;
                 margin-top: 20px;
                 padding: 10px;
@@ -108,7 +108,7 @@
                 right: 20px;
             }
 
-            .text_infoE {
+            .footerText {
                 text-align: center;
                 font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
@@ -117,22 +117,22 @@
                 display: inline-block;
             }
 
-            #reporte_head {
+            #reportHeader {
                 justify-content: center;
             }
 
-            #reporte_head .logo {
+            #reportHeader .logo {
                 height: auto;
                 margin-left: 60px;
             }
 
-            #reporte_head .logo img {
+            #reportHeader .logo img {
                 border-radius: 50%;
                 width: 120px;
                 height: 120px;
             }
 
-            .total_payment{
+            .totalWeek{
                     padding: 15px;
                     font-size: 13pt;
                     text-align: right;
@@ -147,13 +147,13 @@
                 text-align: center;
             }
 
-            .week_section {
+            .weekSection {
                 margin-top: 0px; 
                 font-family: 'Montserrat', sans-serif;
                 page-break-inside: avoid;
             }
 
-            .total_earnings {
+            .totalExpenses {
                 position: absolute;
                 font-family: 'Montserrat', sans-serif;
                 font-size: 16pt;
@@ -162,8 +162,8 @@
         </style>
     </head>
     <body>
-        <div id="page_pdf">
-            <table id="reporte_head">
+        <div id="pagePdf">
+            <table id="reportHeader">
                 <tr>
                     <td>
                         <div class="logo">
@@ -176,8 +176,8 @@
                     </td>
                 </tr>
             </table>
-            <div class="info_empresa">
-                <p class="aqua_titulo">
+            <div class="infoCompany">
+                <p class="aquaTitle">
                     COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
                 </p>
             </div>
@@ -196,9 +196,9 @@
                 ];
             @endphp
             @foreach ($weeks as $week)
-                <div class="week_section">
+                <div class="weekSection">
                     <p><strong>Semana del {{ \Carbon\Carbon::parse($week['start'])->translatedFormat('j \\d\\e F') }} al {{ \Carbon\Carbon::parse($week['end'])->translatedFormat('j \\d\\e F') }}</strong></p>
-                    <table id="reporte_detalle">
+                    <table id="reportDetail">
                         <thead>
                             <tr>
                                 @foreach ($daysInSpanish as $dayName)
@@ -206,7 +206,7 @@
                                 @endforeach
                             </tr>
                         </thead>
-                        <tbody id="detalle_ingresos">
+                        <tbody id="expensesDetail">
                             <tr>
                                 @foreach ($daysInSpanish as $dayEnglish => $dayName)
                                     @php
@@ -222,18 +222,18 @@
                                 @endforeach
                             </tr>
                             <tr>
-                                <td colspan="7" class="total_payment"><strong>Total de la semana:</strong> ${{ number_format(array_sum(array_filter($week['dailyExpenses'], fn($value) => $value !== 'N/A')), 2) }}</td>
+                                <td colspan="7" class="totalWeek"><strong>Total de la semana:</strong> ${{ number_format(array_sum(array_filter($week['dailyExpenses'], fn($value) => $value !== 'N/A')), 2) }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             @endforeach
-            <div class="total_earnings">
+            <div class="totalExpenses">
                 <strong>Total del Periodo: ${{ number_format($totalPeriodExpenses, 2) }}</strong>
             </div>
         </div>
-        <div class="info_Eabajo">
-            <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+        <div class="footer">
+            <a class="footerText" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
             <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
             <img src="img/rootheim.png" width="15px" height="15px">
         </div>

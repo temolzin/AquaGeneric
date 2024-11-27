@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\GeneralExpense;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Payment;
 
 class GeneralExpenseController extends Controller
 {
@@ -157,5 +158,58 @@ class GeneralExpenseController extends Controller
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_expenses_' . $year . '.pdf');
+    }
+
+    public function weeklyGainsReport(Request $request)
+    {
+        $authUser = auth()->user();
+        $startDate = Carbon::parse($request->input('weekStartDate'));
+        $endDate = Carbon::parse($request->input('weekEndDate'));
+
+        $weeks = [];
+        $currentStart = $startDate->copy();
+        $totalPeriodGains = 0;
+
+        while ($currentStart->lte($endDate)) {
+            $currentEnd = $currentStart->copy()->endOfWeek();
+            if ($currentEnd->gt($endDate)) {
+                $currentEnd = $endDate;
+            }
+
+            $dailyGains = [];
+
+            $day = $currentStart->copy();
+            while ($day->lte($currentEnd)) {
+                if ($day->between($startDate, $endDate)) {
+                    $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
+                        ->whereDate('expense_date', $day->toDateString())
+                        ->sum('amount');
+                    $earnings = Payment::where('locality_id', $authUser->locality_id)
+                        ->whereDate('created_at', $day->toDateString())
+                        ->sum('amount');
+                    $gains = $earnings - $expenses;
+                } else {
+                    $gains = 'N/A';
+                }
+
+                $dailyGains[$day->format('l')] = $gains;
+                $day->addDay();
+            }
+
+            $totalPeriodGains += array_sum($dailyGains);
+
+            $weeks[] = [
+                'start' => $currentStart->toDateString(),
+                'end' => $currentEnd->toDateString(),
+                'dailyGains' => $dailyGains,
+            ];
+
+            $currentStart = $currentEnd->copy()->addDay();
+        }
+
+        $pdf = PDF::loadView('reports.weeklyGains', compact('authUser', 'weeks', 'totalPeriodGains'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('weekly_gains_' . now()->format('Ymd') . '.pdf');
     }
 }

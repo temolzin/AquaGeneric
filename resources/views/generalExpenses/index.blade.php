@@ -11,6 +11,7 @@
                     <h2>Gastos</h2>
                     <div class="row">
                         @include('generalExpenses.weeklyExpenses')
+                        @include('generalExpenses.weeklyGains')
                         @include('generalExpenses.annualExpenses')
                         <div class="col-lg-12 text-right">
                             <button class="btn btn-success" data-toggle='modal' data-target="#createGeneralExpenses">
@@ -21,6 +22,9 @@
                             </button>
                             <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyExpenses">
                                 <i class="fa fa-dollar-sign"></i> Egresos Semanales
+                            </button>
+                            <button type="button" class="btn bg-navy" data-toggle="modal" target="_blank"  data-target="#weeklyGains">
+                                <i class="fa fa-dollar-sign"></i> Ganancias Semanales
                             </button>
                         </div>
                     </div>
