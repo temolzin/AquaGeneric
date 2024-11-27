@@ -7,7 +7,6 @@ use App\Models\GeneralExpense;
 use App\Models\Payment;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Payment;
 
 class GeneralExpenseController extends Controller
 {
