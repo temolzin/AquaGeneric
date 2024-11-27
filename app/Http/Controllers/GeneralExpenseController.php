@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\GeneralExpense;
+use App\Models\Payment;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -157,5 +158,43 @@ class GeneralExpenseController extends Controller
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_expenses_' . $year . '.pdf');
+    }
+
+    public function annualGainsReport($yearGains)
+    {
+        $authUser = auth()->user();
+        $yearGains = intval($yearGains);
+
+        $monthlyGains = [];
+        $totalEarnings = 0;
+        $totalExpenses = 0;
+        $totalGains = 0;
+
+        for ($month = 1; $month <= 12; $month++) {
+            $expenses = GeneralExpense::whereYear('expense_date', $yearGains)
+            ->whereMonth('expense_date', $month)
+            ->where('locality_id', $authUser->locality_id)
+            ->sum('amount');
+
+            $earnings = Payment::whereYear('created_at', $yearGains)
+            ->whereMonth('created_at', $month)
+            ->where('locality_id', $authUser->locality_id)
+            ->sum('amount');
+
+            $gains = $earnings - $expenses;
+
+            $monthlyEarnings[$month] = $earnings;
+            $monthlyExpenses[$month] = $expenses;
+            $monthlyGains[$month] = $gains;
+
+            $totalEarnings += $earnings;
+            $totalExpenses += $expenses;
+            $totalGains += $gains;
+        }
+
+        $pdf = PDF::loadView('reports.annualGains', compact('monthlyEarnings', 'monthlyExpenses', 'monthlyGains', 'totalEarnings', 'totalExpenses', 'totalGains', 'yearGains', 'authUser'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('annual_gains_' . $yearGains . '.pdf');
     }
 }
