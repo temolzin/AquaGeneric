@@ -61,18 +61,17 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="receiptUpdate" class="form-label">Comprobante del gasto (*)</label>
-                                            <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
                                                 @if($expense->hasMedia('expenseGallery'))
-                                                    <div>
-                                                        Archivo actual:
-                                                        <a href="{{ $expense->getFirstMediaUrl('expenseGallery') }}" target="_blank" class="btn btn-link">
-                                                            Ver comprobante actual
+                                                    <div class="col-lg-6">
+                                                        <a href="{{ $expense->getFirstMediaUrl('expenseGallery') }}" target="_blank" class="btn btn-warning">
+                                                            <i class="fas fa-eye"></i> Ver recibo actual
                                                         </a>
                                                     </div>
                                                 @else
-                                                    <p class="mt-2 text-danger">No hay comprobante actual.</p>
+                                                    <p class="mt-2 text-danger">No hay recibo actual.</p>
                                                 @endif
-                                                <div>
+                                                <div class="col-lg-6">
                                                     <input type="file" class="form-control" name="receiptUpdate" id="receiptUpdate" accept=".jpg,.jpeg,.png,.pdf"/>
                                                 </div>
                                             </div>
