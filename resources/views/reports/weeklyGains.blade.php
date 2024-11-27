@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Reporte Semanal de Ingresos</title>
+        <title>Reporte Semanal de Ganancias</title>
         <style>
             html{
                 margin: 0;
@@ -93,7 +93,7 @@
                 page-break-after: auto;
             }
 
-            #earningsDetail tr {
+            #gainsDetail tr {
                 border-top: 1px solid #bfc9ff;
                 page-break-inside: avoid;
             }
@@ -117,16 +117,16 @@
                 display: inline-block;
             }
 
-            #reportHeader {
+            #headReport {
                 justify-content: center;
             }
 
-            #reportHeader .logo {
+            #headReport .logo {
                 height: auto;
                 margin-left: 60px;
             }
 
-            #reportHeader .logo img {
+            #headReport .logo img {
                 border-radius: 50%;
                 width: 120px;
                 height: 120px;
@@ -153,7 +153,7 @@
                 page-break-inside: avoid;
             }
 
-            .totalEarnings {
+            .totalGains {
                 position: absolute;
                 font-family: 'Montserrat', sans-serif;
                 font-size: 16pt;
@@ -163,7 +163,7 @@
     </head>
     <body>
         <div id="pagePdf">
-            <table id="reportHeader">
+            <table id="headReport">
                 <tr>
                     <td>
                         <div class="logo">
@@ -182,7 +182,7 @@
                 </p>
             </div>
             <div class="title">
-                <h3>INGRESOS SEMANALES<h3>
+                <h3>GANANCIAS SEMANALES<h3>
             </div>
             @php
                 $daysInSpanish = [
@@ -206,30 +206,30 @@
                                 @endforeach
                             </tr>
                         </thead>
-                        <tbody id="earningsDetail">
+                        <tbody id="gainsDetail">
                             <tr>
                                 @foreach ($daysInSpanish as $dayEnglish => $dayName)
                                     @php
-                                        $dayEarnings = $week['dailyEarnings'][$dayEnglish] ?? 'N/A';
+                                        $dayGains = $week['dailyGains'][$dayEnglish] ?? 'N/A';
                                     @endphp
                                     <td class="textcenter">
-                                        @if ($dayEarnings === 'N/A')
-                                            {{ $dayEarnings }}
+                                        @if ($dayGains === 'N/A')
+                                            {{ $dayGains }}
                                         @else
-                                            ${{ number_format($dayEarnings, 2) }}
+                                            ${{ number_format($dayGains, 2) }}
                                         @endif
                                     </td>
                                 @endforeach
                             </tr>
                             <tr>
-                                <td colspan="7" class="totalWeek"><strong>Total de la semana:</strong> ${{ number_format(array_sum(array_filter($week['dailyEarnings'], fn($value) => $value !== 'N/A')), 2) }}</td>
+                                <td colspan="7" class="totalWeek"><strong>Total de la semana:</strong> ${{ number_format(array_sum(array_filter($week['dailyGains'], fn($value) => $value !== 'N/A')), 2) }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             @endforeach
-            <div class="totalEarnings">
-                <strong>Total del Periodo: ${{ number_format($totalPeriodEarnings, 2) }}</strong>
+            <div class="totalGains">
+                <strong>Total del Periodo: ${{ number_format($totalPeriodGains, 2) }}</strong>
             </div>
         </div>
         <div class="footer">
