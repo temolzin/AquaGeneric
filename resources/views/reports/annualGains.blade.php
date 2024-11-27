@@ -130,7 +130,7 @@
                 height: 120px;
             }
 
-            .total_expense{
+            .total_amounts{
                     padding: 20px;
                     font-size: 15pt;
                     text-align: right;
@@ -204,7 +204,7 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="1" class="total_expense"><strong>Total:</strong></td>
+                        <td colspan="1" class="total_amounts"><strong>Total:</strong></td>
                         <td class="textcenter"><strong>${{ number_format($totalEarnings, 2) }}</strong></td>
                         <td class="textcenter"><strong>${{ number_format($totalExpenses, 2) }}</strong></td>
                         <td class="textcenter"><strong>${{ number_format($totalGains, 2) }}</strong></td>
