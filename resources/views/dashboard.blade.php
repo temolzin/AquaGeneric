@@ -73,6 +73,44 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            @include('payments.annualEarnings')
+                            @include('payments.weeklyEarnings')
+                            @include('generalExpenses.weeklyExpenses')
+                            @include('generalExpenses.weeklyGains')
+                            @include('generalExpenses.annualExpenses')
+                            @include('generalExpenses.annualGains')
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Reportes</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="column">
+                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#annualEarnings">
+                                                <i class="fa fa-dollar-sign"></i> Ingresos Anuales
+                                            </button>
+                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyEarnings">
+                                                <i class="fa fa-dollar-sign"></i> Ingresos Semanales
+                                            </button>
+                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#annualExpenses">
+                                                <i class="fa fa-dollar-sign"></i> Egresos Anuales
+                                            </button>
+                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyExpenses">
+                                                <i class="fa fa-dollar-sign"></i> Egresos Semanales
+                                            </button>
+                                            <button type="button" class="btn btn-info" data-toggle="modal" target="_blank"  data-target="#annualGains">
+                                                <i class="fa fa-dollar-sign"></i> Ganancias Anuales
+                                            </button>
+                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyGains">
+                                                <i class="fa fa-dollar-sign"></i> Ganancias Semanales
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endcan
 
                     @can('viewLocalityCharts')
