@@ -10,25 +10,9 @@
                 <div class="x_title">
                     <h2>Gastos</h2>
                     <div class="row">
-                        @include('generalExpenses.weeklyExpenses')
-                        @include('generalExpenses.weeklyGains')
-                        @include('generalExpenses.annualExpenses')
-                        @include('generalExpenses.annualGains')
                         <div class="col-lg-12 text-right">
                             <button class="btn btn-success" data-toggle='modal' data-target="#createGeneralExpenses">
                                 <i class="fa fa-plus"></i> Registrar Gasto
-                            </button>
-                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#annualExpenses">
-                                <i class="fa fa-dollar-sign"></i> Egresos Anuales
-                            </button>
-                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyExpenses">
-                                <i class="fa fa-dollar-sign"></i> Egresos Semanales
-                            </button>
-                            <button type="button" class="btn bg-navy" data-toggle="modal" target="_blank"  data-target="#weeklyGains">
-                                <i class="fa fa-dollar-sign"></i> Ganancias Semanales
-                            </button>
-                            <button type="button" class="btn btn-primary" data-toggle="modal" target="_blank"  data-target="#annualGains">
-                                <i class="fa fa-dollar-sign"></i> Ganancias Anuales
                             </button>
                         </div>
                     </div>
