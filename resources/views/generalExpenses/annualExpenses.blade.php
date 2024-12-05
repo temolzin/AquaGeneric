@@ -7,11 +7,11 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="yearForm">
+            <form id="yearExpensesForm">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="year" class="form-label">Año(*)</label>
-                        <input type="number" id="year" name="year" class="form-control"  min="1900" max="{{ date('Y') }}" 
+                        <label for="yearExpenses" class="form-label">Año(*)</label>
+                        <input type="number" id="yearExpenses" name="yearExpenses" class="form-control"  min="1900" max="{{ date('Y') }}"
                                required placeholder="Ingrese el año ejemplo 2024" value="{{ old('year') }}" />
                     </div>
                 </div>
@@ -32,9 +32,9 @@
 </style>
 
 <script>
-    document.getElementById('yearForm').addEventListener('submit', function(event) {
+    document.getElementById('yearExpensesForm').addEventListener('submit', function(event) {
         event.preventDefault();
-        const year = document.getElementById('year').value;
+        const year = document.getElementById('yearExpenses').value;
         window.open(`/annual-expenses-report/${year}`, '_blank');
         $('#annualExpenses').modal('hide');
     });
