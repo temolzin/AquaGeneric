@@ -196,5 +196,19 @@ $('#clientPayments').on('shown.bs.modal', function(){
         dropdownParent: $('#clientPayments')
     });
 });
+
+$('form').on('submit', function(e) {
+    var period = $('#searchPeriod').val();
+    var regex = /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\/\d{4}$/i;
+
+    if (!regex.test(period)) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Formato inválido',
+            text: 'El formato debe ser "mes/año".'
+        });
+    }
+});
 </script>
 @endsection
