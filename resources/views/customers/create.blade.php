@@ -230,5 +230,14 @@
             responsibleField.style.display = 'none';
         }
     }
+    document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('#createCustomer form');
+    const saveButton = document.getElementById('save');
+
+    form.addEventListener('submit', function() {
+        saveButton.disabled = true;
+        saveButton.innerHTML = 'Guardando...';
+    });
+});
 </script>
 
