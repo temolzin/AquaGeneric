@@ -230,5 +230,20 @@
             responsibleField.style.display = 'none';
         }
     }
+
+    function allowOnlyLetters(event) {
+        const key = event.key;
+        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/;
+
+        if (!regex.test(key)) {
+            event.preventDefault();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('name').addEventListener('keypress', allowOnlyLetters);
+        document.getElementById('last_name').addEventListener('keypress', allowOnlyLetters);
+        document.getElementById('state').addEventListener('keypress', allowOnlyLetters);
+    });
 </script>
 
