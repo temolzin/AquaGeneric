@@ -57,7 +57,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label>Estado</label>
+                                        <label>Estatus</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->state ?? 'Desconocido' }}" />
                                     </div>
                                 </div>
