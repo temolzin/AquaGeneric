@@ -230,5 +230,45 @@
             responsibleField.style.display = 'none';
         }
     }
+    
+  document.addEventListener('DOMContentLoaded', function () {
+        function addValidSpace(formSelector) {
+            const form = document.querySelector(formSelector);
+            if (!form) return;
+            form.addEventListener('submit', function (e) {
+                let valid = true;
+                let message = "<ul style='text-align:left;'>";
+                const fieldsToValidate = [
+                    'name',
+                    'last_name',
+                    'street',
+                    'block',
+                    'locality',
+                    'state',
+                    'zip_code',
+                    'exterior_number',
+                    'interior_number'
+                ];
+                fieldsToValidate.forEach(function (id) {
+                    const field = form.querySelector(`#${id}`);
+                    if (field && field.value.trim() === '') {
+                        valid = false;
+                        let labelText = field.previousElementSibling.innerText.replace('(*)', '').trim();
+                        message += `⚠️ El campo <strong>${labelText}</strong> tiene caracteres invalidos.<br><br>`;
+                    }
+                });
+                message += "</ul>";
+                if (!valid) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Revisa los campos',
+                        html: message,
+                        confirmButtonText: 'Corregir'
+                    });
+                }
+            });
+        }
+  addValidSpace('#createCustomer form');
+    });
 </script>
-
