@@ -1,4 +1,3 @@
-
 <div class="modal fade" id="createCustomer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -168,5 +167,19 @@
             responsibleField.style.display = 'none';
         }
     }
-</script>
 
+function allowOnlyLetters(event) {
+        const key = event.key;
+        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/;
+
+        if (!regex.test(key)) {
+            event.preventDefault();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('name').addEventListener('keypress', allowOnlyLetters);
+        document.getElementById('last_name').addEventListener('keypress', allowOnlyLetters);
+        document.getElementById('state').addEventListener('keypress', allowOnlyLetters);
+    });
+</script>
