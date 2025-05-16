@@ -123,7 +123,7 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label>Status</label>
+                                        <label>Estatus</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->status ? 'Con vida' : 'Fallecido' }}" />
                                     </div>
                                 </div>
