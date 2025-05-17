@@ -39,6 +39,18 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite ver los Costos.'
         ])->assignRole([$roleSupervisor, $roleSecretariat ]);
         Permission::create([
+            'name' => 'viewWaterConnection',
+            'description' => 'Permite ver las Tomas de Agua.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        Permission::create([
+            'name' => 'deleteWaterConnection',
+            'description' => 'Permite eliminar las Tomas de Agua.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::create([
+            'name' => 'editWaterConnection',
+            'description' => 'Permite editar las Tomas de Agua.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::create([
             'name' => 'deleteCost',
             'description' => 'Permite eliminar los Costos.'
         ])->assignRole([$roleSupervisor]);
@@ -90,5 +102,17 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'viewLocalityCharts',
             'description' => 'Permite ver las gráficas correspondientes a una localidad en el dashboard.'
         ])->assignRole($roleAdmin);
+        Permission::create([
+            'name' => 'viewGeneralExpense',
+            'description' => 'Permite ver los Gastos.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        Permission::create([
+            'name' => 'deleteGeneralExpense',
+            'description' => 'Permite eliminar los Gastos.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::create([
+            'name' => 'editGeneralExpense',
+            'description' => 'Permite editar los Gastos.'
+        ])->assignRole([$roleSupervisor]);
     }
 }

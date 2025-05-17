@@ -43,7 +43,8 @@
                                             <th>ID</th>
                                             <th>FOTO</th>
                                             <th>NOMBRE</th>
-                                            <th>TIENE TOMA</th>
+                                            <th>DIRECCION</th>
+                                            <th>ESTADO</th>
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
@@ -66,7 +67,19 @@
                                             @endif
                                             </td>
                                             <td>{{$customer->name}} {{$customer->last_name}}</td>
-                                            <td>{{ $customer->has_water_connection ? 'SI' : 'NO' }}</td>
+                                            <td>{{$customer->state}}, {{$customer->locality}}</td>
+                                            <td>
+                                                @switch($customer->status)
+                                                    @case(0)
+                                                        Fallecido
+                                                        @break
+                                                    @case(1)
+                                                        Con Vida
+                                                        @break
+                                                    @default
+                                                        Desconocido
+                                                        @break
+                                                @endswitch
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
                                                     <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{$customer->id}}">
@@ -77,6 +90,12 @@
                                                         <i class="fas fa-edit"></i>
                                                     </button>
                                                     @endcan
+                                                    <button type="button" class="btn bg-purple mr-2" data-toggle="modal" title="Ver Tomas de Agua" data-target="#waterConnections{{$customer->id}}">
+                                                        <i class="fas fa-fw fa-water"></i>
+                                                    </button>
+                                                    <button type="button" class="btn bg-blue mr-2" data-toggle="modal" title="Ver Deudas Por Toma de Agua" data-target="#showDebtsPerWaterConnection{{$customer->id}}">
+                                                        <i class="fa fa-dollar-sign"></i>
+                                                    </button>
                                                     @can('deleteCustomer')
                                                         @if($customer->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
@@ -93,6 +112,8 @@
                                             @include('customers.edit')
                                             @include('customers.delete')
                                             @include('customers.show')
+                                            @include('customers.waterConnections')
+                                            @include('customers.showDebtsPerWaterConnection')
                                         </tr>
                                         @endforeach
                                         @endif

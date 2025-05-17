@@ -3,6 +3,6 @@ $(document).ready(function() {
         language: {
             url: '/lang/datatables/datatable-lang-es.json'
         },
-        order: [[0, "desc"]]
+        order: []
     });
 });

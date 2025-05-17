@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Debt;
 use App\Models\Customer;
+use App\Models\WaterConnection;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
@@ -20,8 +21,8 @@ class PaymentController extends Controller
 
         if ($request->filled('name')) {
             $query->whereHas('debt.customer', function ($q) use ($request) {
-                $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $request->name . '%'])
-                    ->orWhereRaw("CONCAT(last_name, ' ', name) LIKE ?", ['%' . $request->name . '%']);
+            $q->whereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ['%' . $request->name . '%'])
+                ->orWhereRaw("CONCAT(customers.last_name, ' ', customers.name) LIKE ?", ['%' . $request->name . '%']);
             });
         }
 
@@ -65,26 +66,40 @@ class PaymentController extends Controller
         return view('payments.index', compact('payments', 'customers'));
     }
 
-    public function getCustomerDebts(Request $request)
+    public function getWaterConnectionsByCustomer(Request $request)
     {
         $authUser = auth()->user();
-        $customerId = $request->input('customer_id');
-        $debts = Debt::where('customer_id', $customerId)
-            ->where('status', '!=', 'paid')
-            ->where('locality_id', $authUser->locality_id)
-            ->orderBy('start_date', 'asc')
-            ->get()
-            ->map(function ($debt) {
-                $remainingAmount = $debt->amount - $debt->debt_current;
-                
-                return [
-                    'id' => $debt->id,
-                    'start_date' => $debt->start_date,
-                    'end_date' => $debt->end_date,
-                    'amount' => $debt->amount,
-                    'remaining_amount' => $remainingAmount,
-                ];
-            });
+        $customerId = $request->input('waterCustomerId');
+        $waterConnections = WaterConnection::where('customer_id', $customerId)
+                                            ->where('locality_id', $authUser->locality_id)
+                                            ->get()
+                                            ->map(function ($waterConnection) {
+                                                return [
+                                                    'id' => $waterConnection->id,
+                                                    'name' => $waterConnection->name,
+                                                ];
+                                            });
+
+        return response()->json(['waterConnections' => $waterConnections]);
+    }
+
+    public function getDebtsByWaterConnection(Request $request)
+    {
+        $waterConnectionId = $request->input('water_connection_id');
+        $debts = Debt::where('water_connection_id', $waterConnectionId)
+                 ->where('status', '!=', 'paid')
+                 ->orderBy('start_date', 'asc')
+                 ->get()
+                 ->map(function ($debt) {
+                     $remainingAmount = $debt->amount - $debt->debt_current;
+                     return [
+                         'id' => $debt->id,
+                         'start_date' => $debt->start_date,
+                         'end_date' => $debt->end_date,
+                         'amount' => $debt->amount,
+                         'remaining_amount' => $remainingAmount,
+                     ];
+                 });
 
         return response()->json(['debts' => $debts]);
     }
@@ -105,6 +120,7 @@ class PaymentController extends Controller
         }
 
         Payment::create([
+            'customer_id' => $request->customer_id,
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
@@ -197,6 +213,55 @@ class PaymentController extends Controller
         return $pdf->stream('annual_earnings_' . $year . '.pdf');
     }
 
+    public function weeklyEarningsReport(Request $request)
+    {
+        $authUser = auth()->user();
+        $startDate = Carbon::parse($request->input('weekStartDate'));
+        $endDate = Carbon::parse($request->input('weekEndDate'));
+
+        $weeks = [];
+        $currentStart = $startDate->copy();
+        $totalPeriodEarnings = 0;
+        
+        while ($currentStart->lte($endDate)) {
+            $currentEnd = $currentStart->copy()->endOfWeek();
+            if ($currentEnd->gt($endDate)) {
+                $currentEnd = $endDate;
+            }
+
+            $dailyEarnings = [];
+
+            $day = $currentStart->copy();
+            while ($day->lte($currentEnd)) {
+                if ($day->between($startDate, $endDate)) {
+                    $earnings = Payment::where('locality_id', $authUser->locality_id)
+                        ->whereDate('created_at', $day->toDateString())
+                        ->sum('amount');
+                } else {
+                    $earnings = 'N/A';
+                }
+
+                $dailyEarnings[$day->format('l')] = $earnings;
+                $day->addDay();
+            }
+
+            $totalPeriodEarnings += array_sum($dailyEarnings);
+
+            $weeks[] = [
+                'start' => $currentStart->toDateString(),
+                'end' => $currentEnd->toDateString(),
+                'dailyEarnings' => $dailyEarnings,
+            ];
+
+            $currentStart = $currentEnd->copy()->addDay();
+        }
+
+        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('weekly_earnings_' . now()->format('Ymd') . '.pdf');
+    }
+
     public function receiptPayment($paymentId)
     {
         $decryptedId = Crypt::decrypt($paymentId);
@@ -251,8 +316,8 @@ class PaymentController extends Controller
         $customer = Customer::findOrFail($customerId);
         $authUser = auth()->user();
 
-        $payments = Payment::whereHas('debt.customer', function ($query) use ($customerId) {
-            $query->where('id', $customerId);
+        $payments = Payment::whereHas('debt.waterConnection', function ($query) use ($customerId) {
+            $query->where('customer_id', $customerId);
         })
         ->whereBetween('created_at', [$startDate, $endDate])
         ->get();
@@ -263,5 +328,39 @@ class PaymentController extends Controller
         ->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_pagos_cliente.pdf');
+    }
+
+    public function waterConnectionPaymentsReport(Request $request)
+    {
+        $customerId = $request->input('waterCustomerId');
+        $waterConnectionId = $request->input('waterConnectionId');
+        $startDate = $request->input('waterStartDate');
+        $endDate = $request->input('waterEndDate');
+
+        $customer = Customer::findOrFail($customerId);
+        $authUser = auth()->user();
+
+        $waterConnection = WaterConnection::where('id', $waterConnectionId)
+                                        ->where('customer_id', $customerId)
+                                        ->firstOrFail();
+
+        $payments = Payment::select('id', 'debt_id', 'amount', 'created_at')
+            ->where('locality_id', $authUser->locality_id)
+            ->whereHas('debt', function ($query) use ($waterConnectionId) {
+                $query->where('water_connection_id', $waterConnectionId);
+            })
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('debt_id');
+
+        $totalPayments = $payments->flatMap(function ($group) {
+            return $group;
+        })->sum('amount');
+
+        $pdf = PDF::loadView('reports.waterConnectionPayments', compact('customer', 'waterConnection', 'startDate', 'endDate', 'payments', 'authUser', 'totalPayments'))
+                ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('reporte_pagos_tomas.pdf');
     }
 }

@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Reporte Anual de Ganancias</title>
+        <title>Reporte Anual de Ingresos</title>
         <style>
             html{
                 margin: 0;
@@ -92,7 +92,7 @@
                 padding: 5px;
             }
 
-            #detalle_ganancias tr {
+            #detalle_ingresos tr {
                 border-top: 1px solid #bfc9ff;
             }
 
@@ -167,16 +167,16 @@
                 </p>
             </div>
             <div class="title">
-                <h3>GANANCIAS DEL {{ $year }}</h3>
+                <h3>INGRESOS DEL {{ $year }}</h3>
             </div>
             <table id="reporte_detalle">
                 <thead>
                     <tr>
                         <th class="textable">MES</th>
-                        <th class="textable">GANANCIA</th>
+                        <th class="textable">INGRESOS</th>
                     </tr>
                 </thead>
-                <tbody id="detalle_ganancias">'
+                <tbody id="detalle_ingresos">'
                     @php
                         $months = [
                             1 => 'Enero',

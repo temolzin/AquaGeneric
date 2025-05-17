@@ -47,17 +47,41 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="blockUpdate" class="form-label">Bloque(*)</label>
-                                            <input type="text" class="form-control" name="blockUpdate" id="blockUpdate" value="{{ $customer->block }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
                                             <label for="streetUpdate" class="form-label">Calle(*)</label>
                                             <input type="text" class="form-control" name="streetUpdate" id="streetUpdate" value="{{ $customer->street }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="blockUpdate" class="form-label">Colonia(*)</label>
+                                            <input type="text" class="form-control" name="blockUpdate" id="blockUpdate" value="{{ $customer->block }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="localityUpdate" class="form-label">Localidad(*)</label>
+                                            <input type="text" class="form-control" name="localityUpdate" id="localityUpdate" value="{{ $customer->locality }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="stateUpdate" class="form-label">Estado(*)</label>
+                                            <input type="text" class="form-control" name="stateUpdate" id="stateUpdate" value="{{ $customer->state }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="zipCodeUpdate" class="form-label">Código Postal(*)</label>
+                                            <input type="text" class="form-control" name="zipCodeUpdate" id="zipCodeUpdate" value="{{ $customer->zip_code }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="exteriorNumberUpdate" class="form-label">Manzana(*)</label>
+                                            <input type="text" class="form-control" name="exteriorNumberUpdate" id="exteriorNumberUpdate" value="{{ $customer->exterior_number }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="interiorNumberUpdate" class="form-label">Número Interior(*)</label>
                                             <input type="text" class="form-control" name="interiorNumberUpdate" id="interiorNumberUpdate" value="{{ $customer->interior_number }}" required>
@@ -75,111 +99,32 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="partnerNameUpdate" class="form-label">Nombre del Pareja</label>
-                                            <input type="text" class="form-control" name="partnerNameUpdate" id="partnerNameUpdate" value="{{ $customer->partner_name }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="hasWaterConnectionUpdate" class="form-label">¿Tiene Toma de agua?</label>
-                                            <select class="form-control" id="hasWaterConnectionUpdate" name="hasWaterConnectionUpdate" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ $customer->has_water_connection == 1 ? 'selected' : '' }}>Sí</option>
-                                                <option value="0" {{ $customer->has_water_connection == 0 ? 'selected' : '' }}>No</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="hasStoreUpdate" class="form-label">¿Tiene Local?</label>
-                                            <select class="form-control" id="hasStoreUpdate" name="hasStoreUpdate" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ $customer->has_store == 1 ? 'selected' : '' }}>Sí</option>
-                                                <option value="0" {{ $customer->has_store == 0 ? 'selected' : '' }}>No</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="hasAllPaymentsUpdate" class="form-label">¿Está al día?</label>
-                                            <select class="form-control" id="hasAllPaymentsUpdate" name="hasAllPaymentsUpdate" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ $customer->up_to_date == 1 ? 'selected' : '' }}>Sí</option>
-                                                <option value="0" {{ $customer->up_to_date == 0 ? 'selected' : '' }}>No</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="hasWaterDayNightUpdate" class="form-label">¿Tiene agua día y noche?</label>
-                                            <select class="form-control" id="hasWaterDayNightUpdate" name="hasWaterDayNightUpdate" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ $customer->has_water_day_night == 1 ? 'selected' : '' }}>Día si noche no</option>
-                                                <option value="0" {{ $customer->has_water_day_night == 0 ? 'selected' : '' }}>Noche si día no</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="occupantsNumberUpdate" class="form-label">Número de Ocupantes(*)</label>
-                                            <input type="number" min="1" class="form-control" name="occupantsNumberUpdate" id="occupantsNumberUpdate" value="{{ $customer->occupants_number }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="waterDaysUpdate" class="form-label">Días de Agua(*)</label>
-                                            <input type="number" min="0" class="form-control" name="waterDaysUpdate" id="waterDaysUpdate" value="{{ $customer->water_days }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="hasWaterPressureUpdate" class="form-label">¿Tiene presión de agua?</label>
-                                            <select class="form-control" id="hasWaterPressureUpdate" name="hasWaterPressureUpdate" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ $customer->has_water_pressure == 1 ? 'selected' : '' }}>Día si noche no</option>
-                                                <option value="0" {{ $customer->has_water_pressure == 0 ? 'selected' : '' }}>Noche si día no</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <div class="form-group">
-                                            <label for="hasCisternUpdate" class="form-label">¿Tiene cisterna?</label>
-                                            <select class="form-control" id="hasCisternUpdate" name="hasCisternUpdate" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ $customer->has_cistern == 1 ? 'selected' : '' }}>Sí</option>
-                                                <option value="0" {{ $customer->has_cistern == 0 ? 'selected' : '' }}>No</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-5">
-                                        <div class="form-group">
-                                            <label for="costIdUpdate" class="form-label">Costo(*)</label>
-                                            <select class="form-control" id="costIdUpdate" name="costIdUpdate" required>
-                                                <option value="">Selecciona una opción</option>
-                                                @foreach($costs as $cost)
-                                                    <option value="{{ $cost->id }}" {{ $customer->cost_id == $cost->id ? 'selected' : '' }}>{{ $cost->category }} - {{ $cost->price }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
                                             <label for="status" class="form-label">Estado del titular(*)</label>
-                                            <select class="form-control" id="statusUpdate" name="statusUpdate">
+                                            <select class="form-control"
+                                                    id="statusUpdate-{{ $customer->id }}"
+                                                    name="statusUpdate"
+                                                    onchange="toggleResponsibleFieldUpdate({{ $customer->id }})">
                                                 <option value="">Selecciona una opción</option>
                                                 <option value="1" {{ $customer->status == 1 ? 'selected' : '' }}>Con Vida</option>
                                                 <option value="0" {{ $customer->status == 0 ? 'selected' : '' }}>Fallecido</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-12" id="responsibleNameUpdate">
+                                    <div class="col-lg-12"
+                                        id="responsibleNameUpdate-{{ $customer->id }}"
+                                        style="display: {{ $customer->status == 0 ? 'block' : 'none' }};">
                                         <div class="form-group">
-                                            <label for="responsibleNameUpdate" class="form-label">Nombre de la persona que será responsable</label>
-                                            <input type="text" class="form-control" name="responsibleNameUpdate" 
-                                            placeholder="Nombre de la persona responsable si el titular fallecio, si no hay dejalo vacio"  id="responsibleNameUpdate" value="{{ $customer->responsible_name }}">
+                                            <label for="responsibleNameUpdate-{{ $customer->id }}" class="form-label"> Nombre de la persona que será responsable </label>
+                                            <input type="text" class="form-control" name="responsibleNameUpdate"
+                                                placeholder="Nombre de la persona responsable si el titular falleció, si no hay déjalo vacío" id="responsibleNameUpdate-{{ $customer->id }}" value="{{ $customer->responsible_name }}">
                                         </div>
                                     </div>
-                                    
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="noteUpdate" class="form-label">Nota</label>
+                                            <textarea class="form-control" id="noteUpdate" name="noteUpdate" placeholder="Ingresa una nota">{{ $customer->note }}</textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -227,4 +172,25 @@
         var customerGalleryUrl = "{{ $customer->getFirstMediaUrl('customerGallery') ? $customer->getFirstMediaUrl('customerGallery') : asset('img/userDefault.png') }}";
         photoPreview.src = customerGalleryUrl;
     }
+
+    function toggleResponsibleFieldUpdate(id) {
+        const statusSelect = document.getElementById('statusUpdate-' + id);
+        const responsibleField = document.getElementById('responsibleNameUpdate-' + id);
+
+        responsibleField.style.display = statusSelect.value === '0' ? 'block' : 'none';
+    }
+
+    function initializeModal(id) {
+        toggleResponsibleFieldUpdate(id);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('show.bs.modal', function () {
+                const customerId = modal.id.replace('edit', '');
+                initializeModal(customerId);
+            });
+        });
+    });
 </script>

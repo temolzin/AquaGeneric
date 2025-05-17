@@ -10,17 +10,22 @@ class Debt extends Model
     use HasFactory , SoftDeletes;
 
     protected $fillable = [
-        'customer_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note'
+        'water_connection_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note'
     ];
 
-    public function hasDependencies()
+    public function waterConnection()
     {
-        return $this->payments()->exists();
+        return $this->belongsTo(WaterConnection::class);
     }
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'customer_id');
+        return $this->hasOneThrough(Customer::class, WaterConnection::class, 'id', 'id', 'water_connection_id', 'customer_id');
+    }
+
+    public function hasDependencies()
+    {
+        return $this->payments()->exists();
     }
 
     public function locality()

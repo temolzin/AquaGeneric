@@ -21,24 +21,19 @@ class Customer extends Model implements HasMedia
     protected $fillable = [
         'name',
         'last_name',
+        'locality',
+        'state',
+        'zip_code',
         'block',
         'street',
+        'exterior_number',
         'interior_number',
         'marital_status',
-        'partner_name',
-        'has_water_connection',
-        'has_store',
-        'has_all_payments',
-        'has_water_day_night',
-        'occupants_number',
-        'water_days',
-        'has_water_pressure',
-        'has_cistern',
-        'cost_id',
         'status',
         'responsible_name',
         'locality_id',
         'created_by',
+        'note',
     ];
 
 
@@ -49,7 +44,12 @@ class Customer extends Model implements HasMedia
 
     public function hasDependencies()
     {
-        return $this->debts()->exists();
+        return $this->waterConnections()->whereHas('debts')->exists();
+    }
+
+    public function waterConnections()
+    {
+        return $this->hasMany(WaterConnection::class);
     }
 
     public function debts()
@@ -71,11 +71,11 @@ class Customer extends Model implements HasMedia
     {
         parent::boot();
 
-        static::deleting(function ($user) {
-            $user->debts->each(function ($debt) {
-                $debt->payments()->delete();
+        static::deleting(function ($customer) {
+            $customer->waterConnections()->each(function ($waterConnection) {
+                $waterConnection->debts()->delete();
             });
-            $user->debts()->delete();
+            $customer->waterConnections()->delete();
         });
     }
 }
