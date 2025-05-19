@@ -30,7 +30,7 @@
                             </div>
                             <div class="clearfix"></div>
                             <div class="col-lg-8">
-                                <form method="GET" action="{{ route('payments.index') }}" class="my-3">
+                                <form id="form" method="GET" action="{{ route('payments.index') }}" class="my-3">
                                     <div class="input-group my-3">
                                         <span class="input-group-text">
                                             <i class="fas fa-search"></i>
@@ -264,5 +264,21 @@ $('#customer_id').on('change', function() {
                 $('#water_connection_id').empty().append('<option value="">Selecciona una toma</option>');
             }
         });
+
+$(document).ready(function() {
+    $('#form').on('submit', function(e) {
+        var period = $('#searchPeriod').val();
+        var regex = /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\/\d{4}$/i;
+
+        if (!regex.test(period)) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Formato inválido',
+                text: 'El formato debe ser "mes/año"'
+            });
+        }
+    });
+});        
 </script>
 @endsection
