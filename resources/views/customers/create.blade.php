@@ -168,5 +168,18 @@
             responsibleField.style.display = 'none';
         }
     }
+
+        const form = document.getElementById('createCustomer');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        const submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+        submitButtons.forEach(button => {
+          button.disabled = true;
+          if (button.innerHTML) {
+            button.innerHTML = 'Guardando...';
+          }
+        });
+      });
+    }
 </script>
 
