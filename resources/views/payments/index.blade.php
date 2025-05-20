@@ -221,7 +221,7 @@ $(document).ready(function() {
         var period = $('#searchPeriod').val();
         var regex = /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\/\d{4}$/i;
 
-        if (!regex.test(period)) {
+        if (period && !regex.test(period)) {
             e.preventDefault();
             Swal.fire({
                 icon: 'error',
