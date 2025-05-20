@@ -42,7 +42,7 @@
                                         </div>
                                     </div>
                                 </form>
-                            </div>                        
+                            </div>
                         </div>
                     </div>
                     <div class="x_content">
@@ -70,7 +70,7 @@
                                                         <td>{{ $payment->id }}</td>
                                                         <td>{{ $payment->debt->customer->name ?? 'Desconocido' }} {{ $payment->debt->customer->last_name ?? 'Desconocido' }}</td>
                                                         <td>
-                                                            {{ \Carbon\Carbon::parse($payment->debt->start_date)->locale('es')->isoFormat('MMMM [/] YYYY')}} - 
+                                                            {{ \Carbon\Carbon::parse($payment->debt->start_date)->locale('es')->isoFormat('MMMM [/] YYYY')}} -
                                                             {{ \Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('MMMM [/] YYYY') }}
                                                             | Deuda: ${{ number_format($payment->debt->amount, 2) }}
                                                         </td>
@@ -138,7 +138,6 @@ $(document).ready(function() {
                 method: 'GET',
                 data: { waterCustomerId: customerId },
                 success: function(response) {
-
                     $.each(response.waterConnections, function(index, connection) {
                         const connectionId = connection.id;
                         const connectionName = connection.name;
@@ -154,34 +153,34 @@ $(document).ready(function() {
             });
         }
     });
-    
+
     $('#water_connection_id').change(function() {
-    var waterConnectionId = $(this).val();
-    if (waterConnectionId) {
-        $.ajax({
-            url: '{{ route("getDebtsByWaterConnection") }}',
-            type: 'GET',
-            data: { water_connection_id: waterConnectionId },
-            success: function(response) {
-                $('#debt_id').empty();
-                $('#debt_id').append('<option value="">Selecciona una deuda</option>');
-                $.each(response.debts, function(index, debt) {
-                    $('#debt_id').append('<option value="' + debt.id + '" data-remaining-amount="' + debt.remaining_amount + '">' + debt.start_date + ' - ' + debt.end_date + ' | Monto: ' + debt.amount + '</option>');
-                });
-            },
-            error: function(xhr) {
-                console.log('Error:', xhr.responseText);
-            }
-        });
-    } else {
-        $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>');
-    }
-});
+        var waterConnectionId = $(this).val();
+        if (waterConnectionId) {
+            $.ajax({
+                url: '{{ route("getDebtsByWaterConnection") }}',
+                type: 'GET',
+                data: { water_connection_id: waterConnectionId },
+                success: function(response) {
+                    $('#debt_id').empty();
+                    $('#debt_id').append('<option value="">Selecciona una deuda</option>');
+                    $.each(response.debts, function(index, debt) {
+                        $('#debt_id').append('<option value="' + debt.id + '" data-remaining-amount="' + debt.remaining_amount + '">' + debt.start_date + ' - ' + debt.end_date + ' | Monto: ' + debt.amount + '</option>');
+                    });
+                },
+                error: function(xhr) {
+                    console.log('Error:', xhr.responseText);
+                }
+            });
+        } else {
+            $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>');
+        }
+    });
 
     $('#debt_id').change(function() {
         var selectedOption = $(this).find('option:selected');
         var remainingAmount = selectedOption.data('remaining-amount');
-        
+
         if (remainingAmount !== undefined) {
             var roundedAmount = parseFloat(remainingAmount).toFixed(2);
             $('#suggested_amount').text('Saldo pendiente: $' + roundedAmount);
@@ -217,6 +216,20 @@ $(document).ready(function() {
             confirmButtonText: 'Aceptar'
         });
     }
+
+    $('#formSearch').on('submit', function(e) {
+        var period = $('#searchPeriod').val();
+        var regex = /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\/\d{4}$/i;
+
+        if (!regex.test(period)) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Formato inválido',
+                text: 'El formato debe ser "mes/año".'
+            });
+        }
+    });
 });
 
 $('#clientPayments').on('shown.bs.modal', function(){
@@ -232,53 +245,37 @@ $('#waterConnectionPayments').on('shown.bs.modal', function(){
 });
 
 $('#customer_id').on('change', function() {
-            var customerId = $(this).val();
+    var customerId = $(this).val();
 
-            if (customerId) {
-                $.ajax({
-                    url: "{{ route('getWaterConnections') }}",
-                    type: "GET",
-                    data: { customer_id: customerId },
-                    success: function(response) {
-                        var waterConnectionSelect = $('#water_connection_id');
-                        waterConnectionSelect.empty();
-                        waterConnectionSelect.append('<option value="">Selecciona una toma</option>');
+    if (customerId) {
+        $.ajax({
+            url: "{{ route('getWaterConnections') }}",
+            type: "GET",
+            data: { customer_id: customerId },
+            success: function(response) {
+                var waterConnectionSelect = $('#water_connection_id');
+                waterConnectionSelect.empty();
+                waterConnectionSelect.append('<option value="">Selecciona una toma</option>');
 
-                        $.each(response.waterConnections, function(index, waterConnection) {
-                            waterConnectionSelect.append(
-                                '<option value="' + waterConnection.id + '">' + waterConnection.id + ' - ' + waterConnection.name + '</option>'
-                            );
-                        });
-                        waterConnectionSelect.trigger('change');
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'No se pudieron cargar las tomas de agua para el cliente seleccionado.',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
+                $.each(response.waterConnections, function(index, waterConnection) {
+                    waterConnectionSelect.append(
+                        '<option value="' + waterConnection.id + '">' + waterConnection.id + ' - ' + waterConnection.name + '</option>'
+                    );
                 });
-            } else {
-                $('#water_connection_id').empty().append('<option value="">Selecciona una toma</option>');
+                waterConnectionSelect.trigger('change');
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron cargar las tomas de agua para el cliente seleccionado.',
+                    confirmButtonText: 'Aceptar'
+                });
             }
         });
-        
-$(document).ready(function() {
-    $('#formSearch').on('submit', function(e) {
-        var period = $('#searchPeriod').val();
-        var regex = /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\/\d{4}$/i;
-
-        if (!regex.test(period)) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Formato inválido',
-                text: 'El formato debe ser "mes/año".'
-            });
-        }
-    });
-}); 
+    } else {
+        $('#water_connection_id').empty().append('<option value="">Selecciona una toma</option>');
+    }
+});
 </script>
 @endsection
