@@ -169,17 +169,19 @@
         }
     }
 
-        const form = document.getElementById('createCustomer');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        const submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
-        submitButtons.forEach(button => {
-          button.disabled = true;
-          if (button.innerHTML) {
-            button.innerHTML = 'Guardando...';
-          }
-        });
-      });
-    }
+    const customerForm = document.getElementById('createCustomer');
+
+        if (customerForm) {
+            customerForm.addEventListener('submit', function(e) {
+                const submitButtons = customerForm.querySelectorAll('button[type="submit"], input[type="submit"]');
+                submitButtons.forEach(button => {
+                    button.disabled = true;
+
+                    if (button.innerHTML) {
+                        button.innerHTML = 'Guardando...';
+                    }
+                });
+            });
+        }
 </script>
 
