@@ -32,17 +32,16 @@ class CustomerController extends Controller
         $authUser = auth()->user();
 
         $validatedData = $request->validate([
-    'name' => ['required', 'regex:/^(?!\s*$)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
-    'last_name' => ['required', 'regex:/^(?!\s*$)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
-    'street' => ['required', 'regex:/^(?!\s*$).+/'],
-    'block' => ['required', 'regex:/^(?!\s*$).+/'],
-    'locality' => ['required', 'regex:/^(?!\s*$).+/'],
-    'state' => ['required', 'regex:/^(?!\s*$)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
-    'zip_code' => ['required', 'regex:/^(?!\s*$).+/'],
-    'exterior_number' => ['required', 'regex:/^(?!\s*$).+/'],
-    'interior_number' => ['required', 'regex:/^(?!\s*$).+/'],
-    'state' => ['required', 'regex:/^(?!\s*$)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
-    ]);
+            'name' => 'required|string',
+            'last_name' => 'required|string',
+            'street' => 'required|string',
+            'block' => 'required|string',
+            'locality' => 'required|string',
+            'state' => 'required|string',
+            'zip_code' => 'required|string',
+            'exterior_number' => 'required|string',
+            'interior_number' => 'required|string',
+        ]);
 
         $customerData = $request->all();
         $customerData['locality_id'] = $authUser->locality_id;
