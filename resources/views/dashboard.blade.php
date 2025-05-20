@@ -73,6 +73,44 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            @include('payments.annualEarnings')
+                            @include('payments.weeklyEarnings')
+                            @include('generalExpenses.weeklyExpenses')
+                            @include('generalExpenses.weeklyGains')
+                            @include('generalExpenses.annualExpenses')
+                            @include('generalExpenses.annualGains')
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Reportes</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="column">
+                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#annualEarnings">
+                                                <i class="fa fa-dollar-sign"></i> Ingresos Anuales
+                                            </button>
+                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyEarnings">
+                                                <i class="fa fa-dollar-sign"></i> Ingresos Semanales
+                                            </button>
+                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#annualExpenses">
+                                                <i class="fa fa-dollar-sign"></i> Egresos Anuales
+                                            </button>
+                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyExpenses">
+                                                <i class="fa fa-dollar-sign"></i> Egresos Semanales
+                                            </button>
+                                            <button type="button" class="btn btn-info" data-toggle="modal" target="_blank"  data-target="#annualGains">
+                                                <i class="fa fa-dollar-sign"></i> Ganancias Anuales
+                                            </button>
+                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyGains">
+                                                <i class="fa fa-dollar-sign"></i> Ganancias Semanales
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endcan
 
                     @can('viewLocalityCharts')
@@ -95,7 +133,7 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Ganancias Mensuales<span id="localityInfoMonthly"></h3>
+                                    <h3 class="card-title">Ingresos Mensuales<span id="localityInfoMonthly"></h3>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="earningsChart" width="400" height="200"></canvas>
@@ -105,7 +143,7 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Ganancias Anuales por Mes<span id="localityInfoAnnual"></h3>
+                                    <h3 class="card-title">Ingresos Anuales por Mes<span id="localityInfoAnnual"></h3>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="annualEarningsChart" width="400" height="200"></canvas>
@@ -178,7 +216,7 @@
             data: {
                 labels: @json($data['months']),
                 datasets: [{
-                    label: 'Ganancias en $',
+                    label: 'Ingresos en $',
                     data: @json($data['earningsPerMonth']),
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgba(54, 162, 235, 1)',
@@ -200,7 +238,7 @@
             data: {
                 labels: @json($data['months']),
                 datasets: [{
-                    label: 'Ganancias Anuales en $',
+                    label: 'Ingresos Anuales en $',
                     data: @json($data['earningsPerMonth']),
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgba(255, 99, 132, 1)',

@@ -16,6 +16,7 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('debt_id');
             $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('created_by');
@@ -25,6 +26,7 @@ class CreatePaymentsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
        
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->foreign('debt_id')->references('id')->on('debts')->onDelete('cascade');
             $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');

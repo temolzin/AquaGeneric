@@ -7,6 +7,8 @@ use App\Models\Cost;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Mpdf\Mpdf;
+use App\Models\Debt;
+use Illuminate\Support\Facades\Crypt;
 
 class CustomerController extends Controller
 {
@@ -17,12 +19,12 @@ class CustomerController extends Controller
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+            $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                ->orWhere('id', 'LIKE', "%{$search}%");
         }
 
         $customers = $query->paginate(10);
-        $costs = Cost::where('locality_id', $authUser->locality_id)->get();
-        return view('customers.index', compact('customers', 'costs'));
+        return view('customers.index', compact('customers'));
     }
 
     public function store(Request $request)
@@ -39,7 +41,7 @@ class CustomerController extends Controller
             $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
         }
 
-        return redirect()->route('customers.index')->with('success', 'Usuario registrado correctamente.');
+        return redirect()->route('customers.index')->with('success', 'Cliente registrado correctamente.');
     }
 
     public function update(Request $request, $id)
@@ -49,22 +51,17 @@ class CustomerController extends Controller
         if ($customer) {
             $customer->name = $request->input('nameUpdate');
             $customer->last_name = $request->input('lastNameUpdate');
+            $customer->locality = $request->input('localityUpdate');
+            $customer->state = $request->input('stateUpdate');
+            $customer->zip_code = $request->input('zipCodeUpdate');
             $customer->block = $request->input('blockUpdate');
             $customer->street = $request->input('streetUpdate');
+            $customer->exterior_number = $request->input('exteriorNumberUpdate');
             $customer->interior_number = $request->input('interiorNumberUpdate');
             $customer->marital_status = $request->input('maritalStatusUpdate');
-            $customer->partner_name = $request->input('partnerNameUpdate');
-            $customer->has_water_connection = $request->input('hasWaterConnectionUpdate');
-            $customer->has_store = $request->input('hasStoreUpdate');
-            $customer->has_all_payments = $request->input('hasAllPaymentsUpdate');
-            $customer->has_water_day_night = $request->input('hasWaterDayNightUpdate');
-            $customer->occupants_number = $request->input('occupantsNumberUpdate');
-            $customer->water_days = $request->input('waterDaysUpdate');
-            $customer->has_water_pressure = $request->input('hasWaterPressureUpdate');
-            $customer->has_cistern = $request->input('hasCisternUpdate');
-            $customer->cost_id = $request->input('costIdUpdate');
             $customer->status = $request->input('statusUpdate');
             $customer->responsible_name = $request->input('responsibleNameUpdate');
+            $customer->note = $request->input('noteUpdate');
 
             $customer->save();
 
@@ -74,10 +71,10 @@ class CustomerController extends Controller
             }
 
 
-            return redirect()->route('customers.index')->with('success', 'Usuario actualizado correctamente.');
+            return redirect()->route('customers.index')->with('success', 'Cliente actualizado correctamente.');
         }
 
-        return redirect()->back()->with('error', 'Usuario no encontrado.');
+        return redirect()->back()->with('error', 'Cliente no encontrado.');
     }
 
     public function show($id)
@@ -90,7 +87,7 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         $customer->delete();
-        return redirect()->route('customers.index')->with('success', 'Usuario eliminado correctamente.');
+        return redirect()->route('customers.index')->with('success', 'Cliente eliminado correctamente.');
     }
 
     public function pdfCustomers()
@@ -107,7 +104,7 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)
-            ->whereDoesntHave('debts', function ($query) {
+            ->whereDoesntHave('waterConnections.debts', function ($query) {
             $query->where('status', '!=', 'paid');
         })->get();
     
@@ -119,12 +116,36 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)
-            ->whereHas('debts', function ($query) {
+            ->whereHas('waterConnections.debts', function ($query) {
             $query->where('status', '!=', 'paid');
         })->get();
 
         $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers', 'authUser'))
         ->setPaper('A4', 'portrait');
         return $pdf->stream('reporte_clientes_con_deudas.pdf');
+    }
+
+    public function generatePaymentHistoryReport($debt_id)
+    {
+        $authUser = auth()->user();
+        $debtId = Crypt::decrypt($debt_id);
+
+        $debt = Debt::with(['waterConnection', 'customer'])->findOrFail($debtId);
+        $customer = $debt->customer;
+
+        $payments = $debt->payments()
+                         ->orderBy('created_at', 'desc')
+                         ->get();
+
+        $totalDebt = $debt->amount;
+
+        $totalPayments = $payments->sum('amount');
+
+        $pendingBalance = $totalDebt - $totalPayments;
+
+        $pdf = Pdf::loadView('reports.paymentHistoryReport', compact('debt', 'customer', 'payments', 'totalDebt', 'authUser', 'totalPayments', 'pendingBalance'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('reporte_historial_pagos.pdf');
     }
 }

@@ -47,17 +47,41 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="block" class="form-label">Manzana(*)</label>
-                                            <input type="text" class="form-control" id="block" name="block" placeholder="Ingresa bloque" value="{{ old('block') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
                                             <label for="street" class="form-label">Calle(*)</label>
                                             <input type="text" class="form-control" id="street" name="street" placeholder="Ingresa calle" value="{{ old('street') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="block" class="form-label">Colonia(*)</label>
+                                            <input type="text" class="form-control" id="block" name="block" placeholder="Ingresa colonia" value="{{ old('block') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="locality" class="form-label">Localidad(*)</label>
+                                            <input type="text" class="form-control" id="locality" name="locality" placeholder="Ingresa localidad" value="{{ old('locality') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="state" class="form-label">Estado(*)</label>
+                                            <input type="text" class="form-control" id="state" name="state" placeholder="Ingresa estado" value="{{ old('state') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="zip_code" class="form-label">Código Postal(*)</label>
+                                            <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Ingresa código postal" value="{{ old('zip_code') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="exterior_number" class="form-label">Número Exterior(*)</label>
+                                            <input type="text" class="form-control" id="exterior_number" name="exterior_number" placeholder="Ingresa número exterior" value="{{ old('exterior_number') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="interior_number" class="form-label">Número Interior(*)</label>
                                             <input type="text" class="form-control" id="interior_number" name="interior_number" placeholder="Ingresa número interior" value="{{ old('interior_number') }}" required />
@@ -72,100 +96,8 @@
                                                 <option value="0" {{ old('marital_status') == '0' ? 'selected' : '' }}>Soltero</option>
                                             </select>
                                         </div>
-                                    </div>                                    
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="partner_name" class="form-label">Nombre de la Pareja</label>
-                                            <input type="text" class="form-control" id="partner_name" name="partner_name" placeholder="Ingresa nombre de la pareja" value="{{ old('partner_name') }}" />
-                                        </div>
                                     </div>
                                     <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="has_water_connection" class="form-label">¿Tiene Toma de agua?</label>
-                                            <select class="form-control" id="has_water_connection" name="has_water_connection" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ old('has_water_connection') == '1' ? 'selected' : '' }}>Sí</option>
-                                                <option value="0" {{ old('has_water_connection') == '0' ? 'selected' : '' }}>No</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="has_store" class="form-label">¿Tiene local?</label>
-                                            <select class="form-control" id="has_store" name="has_store" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ old('has_store') == '1' ? 'selected' : '' }}>Sí</option>
-                                                <option value="0" {{ old('has_store') == '0' ? 'selected' : '' }}>No</option>
-                                            </select>
-                                        </div>
-                                    </div>                                  
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="has_all_payments" class="form-label">¿Está al día?</label>
-                                            <select class="form-control" id="has_all_payments" name="has_all_payments" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ old('up_to_date') == '1' ? 'selected' : '' }}>Sí</option>
-                                                <option value="0" {{ old('up_to_date') === '0' ? 'selected' : '' }}>No</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="has_water_day_night" class="form-label">¿Tiene agua día y noche?</label>
-                                            <select class="form-control" id="has_water_day_night" name="has_water_day_night" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ old('has_water_day_night') == '1' ? 'selected' : '' }}>Día si noche no</option>
-                                                <option value="0" {{ old('has_water_day_night') == '0' ? 'selected' : '' }}>Noche si día no</option>
-                                            </select>
-                                        </div>
-                                    </div>                                    
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="occupants_number" class="form-label">Número de Ocupantes(*)</label>
-                                            <input type="number" min="1" class="form-control" id="occupants_number" name="occupants_number" placeholder="Ingresa número de ocupantes" value="{{ old('occupants_number') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="water_days" class="form-label">Días de Agua(*)</label>
-                                            <input type="number" min="0" class="form-control" id="water_days" name="water_days" placeholder="Ingresa días de agua" value="{{ old('water_days') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="has_water_pressure" class="form-label">¿Tiene presión de agua?</label>
-                                            <select class="form-control" id="has_water_pressure" name="has_water_pressure" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ old('has_water_pressure') === '1' ? 'selected' : '' }}>Día si noche no</option>
-                                                <option value="0" {{ old('has_water_pressure') === '0' ? 'selected' : '' }}>Noche si día no</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <div class="form-group">
-                                            <label for="has_cistern" class="form-label">¿Tiene cisterna?</label>
-                                            <select class="form-control" id="has_cistern" name="has_cistern" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ old('has_cistern') === '1' ? 'selected' : '' }}>Sí</option>
-                                                <option value="0" {{ old('has_cistern') === '0' ? 'selected' : '' }}>No</option>
-                                            </select>
-                                        </div>
-                                    </div>  
-                                    <div class="col-lg-5">
-                                        <div class="form-group">
-                                            <label for="cost" class="form-label">Costo</label>
-                                            <select class="form-control" name="cost_id" id="cost" required>
-                                                <option value="">Selecciona el costo</option>
-                                                @foreach ($costs as $cost)
-                                                    <option value="{{ $cost->id }}" {{ old('cost_id') == $cost->id ? 'selected' : '' }}>
-                                                        {{ $cost->category }} - {{ $cost->price }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estado del titular(*)</label>
                                             <select class="form-control" id="status" name="status" required onchange="toggleResponsibleField()">
@@ -180,7 +112,13 @@
                                             <label for="responsible_name" class="form-label">Nombre de la persona que será responsable de la toma</label>
                                             <input type="text" class="form-control" id="responsible_name" name="responsible_name" placeholder="Ingresa nombre de la persona responsable, si no hay dejalo vacio" value="{{ old('responsible_name') }}" />
                                         </div>
-                                    </div>                                                                                             
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="note" class="form-label">Nota</label>
+                                            <textarea class="form-control" id="note" name="note" placeholder="Ingresa una nota"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -229,6 +167,19 @@
         } else {
             responsibleField.style.display = 'none';
         }
+    }
+
+        const form = document.getElementById('createCustomer');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        const submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+        submitButtons.forEach(button => {
+          button.disabled = true;
+          if (button.innerHTML) {
+            button.innerHTML = 'Guardando...';
+          }
+        });
+      });
     }
 </script>
 

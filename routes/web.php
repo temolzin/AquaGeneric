@@ -9,8 +9,10 @@ use App\Http\Controllers\CostController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GeneralExpenseController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WaterConnectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +59,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/customers-with-debts', [CustomerController::class, 'customersWithDebts'])->name('report.with-debts');
         Route::get('/report/pdfCustomers', [CustomerController::class, 'pdfCustomers'])->name('customers.pdfCustomers');
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
+        Route::get('/payment-history/{id}', [CustomerController::class, 'generatePaymentHistoryReport'])->name('reports.paymentHistoryReport');
     });
 
     Route::group(['middleware' => ['can:viewRoles']], function () {
@@ -72,14 +75,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['can:viewDebts']], function () {
         Route::post('/debts/assign-all', [DebtController::class, 'assignAll'])->name('debts.assignAll');
         Route::resource('debts', DebtController::class);
+        Route::get('/getWaterConnections', [DebtController::class, 'getWaterConnections'])->name('getWaterConnections');
     });
 
     Route::group(['middleware' => ['can:viewPayments']], function () {
         Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
         Route::resource('payments', PaymentController::class);
-        Route::get('/getCustomerDebts', [PaymentController::class, 'getCustomerDebts'])->name('getCustomerDebts');
+        Route::get('/getWaterConnectionsByCustomer', [PaymentController::class, 'getWaterConnectionsByCustomer'])->name('getWaterConnectionsByCustomer');
+        Route::get('/getDebtsByWaterConnection', [PaymentController::class, 'getDebtsByWaterConnection'])->name('getDebtsByWaterConnection');
         Route::get('/receipt-payment/{id}', [PaymentController::class, 'receiptPayment'])->name('reports.receiptPayment');
         Route::get('/client-payments', [PaymentController::class, 'clientPaymentReport'])->name('report.client-payments');
+        Route::get('/weekly-earnings-report', [PaymentController::class, 'weeklyEarningsReport'])->name('report.weeklyEarningsReport');
+        Route::get('/water-connection-payments', [PaymentController::class, 'waterConnectionPaymentsReport'])->name('report.waterConnectionPayments');
         Route::get('/annual-earnings-report/{year}', [PaymentController::class, 'annualEarningsReport']);
     });
 
@@ -90,4 +97,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
     });
 
+    Route::group(['middleware' => ['can:viewWaterConnection']], function () {
+        Route::get('/waterConnections', [WaterConnectionController::class, 'index'])->name('connections.index');
+        Route::resource('waterConnections', WaterConnectionController::class);
+    });
+
+    Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
+        Route::get('/generalExpenses', [GeneralExpenseController::class, 'index'])->name('expenses.index');
+        Route::resource('generalExpenses', GeneralExpenseController::class);
+        Route::get('/weekly-expenses-report', [GeneralExpenseController::class, 'weeklyExpensesReport'])->name('report.weeklyExpensesReport');
+        Route::get('/annual-expenses-report/{year}', [GeneralExpenseController::class, 'annualExpensesReport'])->name('report.annualExpensesReport');
+        Route::get('/weekly-gains-report', [GeneralExpenseController::class, 'weeklyGainsReport'])->name('report.weeklyGainsReport');
+        Route::get('/annual-gains-report/{year}', [GeneralExpenseController::class, 'annualGainsReport'])->name('report.annualGainsReport');
+    });
 });

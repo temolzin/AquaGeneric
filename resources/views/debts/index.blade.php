@@ -53,20 +53,38 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $shownCustomers = [];
+                                        @endphp
                                         @forelse ($debts as $debt)
-                                            <tr>
-                                                <td>{{ $debt->customer->id }}</td>
-                                                <td>{{ $debt->customer->name }} {{ $debt->customer->last_name }}</td>
-                                                <td>{{ $debt->total_amount }}</td>
-                                                <td>
-                                                    <div class="btn-group" role="group" aria-label="Opciones">
-                                                        <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" 
-                                                            data-target="#viewDebts{{ $debt->customer->id }}"> <i class="fas fa-eye"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            @include('debts.showDebts')
+                                            @if (!in_array($debt->waterConnection->customer_id, $shownCustomers))
+                                                <tr>
+                                                    <td>{{ $debt->waterConnection->customer->id }}</td>
+                                                    <td>{{ $debt->waterConnection->customer->name }} {{ $debt->waterConnection->customer->last_name }}</td>
+                                                    <td>
+                                                        @php
+                                                            $unpaidDebts = collect($debt->waterConnection->customer->waterConnections)->flatMap(function ($waterConnection) {
+                                                                return $waterConnection->debts->where('status', '!=', 'paid');
+                                                            });
+                                                            $totalDebt = $unpaidDebts->sum('amount');
+                                                            $totalPaid = $unpaidDebts->sum('debt_current');
+                                                            $pendingBalance = $totalDebt - $totalPaid;
+                                                        @endphp
+                                                        ${{ number_format($pendingBalance, 2, '.', ',') }}
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group" role="group" aria-label="Opciones">
+                                                            <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles"
+                                                                data-target="#viewDebts{{ $debt->waterConnection->customer_id }}"> <i class="fas fa-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                @include('debts.showDebts')
+                                                @php
+                                                    $shownCustomers[] = $debt->waterConnection->customer_id;
+                                                @endphp
+                                            @endif
                                         @empty
                                             <tr>
                                                 <td colspan="4">No hay deudas registradas.</td>
@@ -124,16 +142,46 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-    });
 
-    $('#createDebt').on('shown.bs.modal', function() {
-        $('.select2').select2({
+        $('#createDebt').on('shown.bs.modal', function() {
+            $('.select2').select2({
                 dropdownParent: $('#createDebt')
+            });
+        });
+
+        $('#customer_id').on('change', function() {
+            var customerId = $(this).val();
+
+            if (customerId) {
+                $.ajax({
+                    url: "{{ route('getWaterConnections') }}",
+                    type: "GET",
+                    data: { customer_id: customerId },
+                    success: function(response) {
+                        var waterConnectionSelect = $('#water_connection_id');
+                        waterConnectionSelect.empty();
+                        waterConnectionSelect.append('<option value="">Selecciona una toma</option>');
+
+                        $.each(response.waterConnections, function(index, waterConnection) {
+                            waterConnectionSelect.append(
+                                '<option value="' + waterConnection.id + '">' + waterConnection.id + ' - ' + waterConnection.name + '</option>'
+                            );
+                        });
+                        waterConnectionSelect.trigger('change');
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudieron cargar las tomas de agua para el cliente seleccionado.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                });
+            } else {
+                $('#water_connection_id').empty().append('<option value="">Selecciona una toma</option>');
+            }
         });
     });
-
-    function closeCurrentModal(modalId) {
-        $(modalId).modal('hide');
-    }
 </script>
 @endsection

@@ -10,7 +10,7 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('debts.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('debts.store') }}" method="post" enctype="multipart/form-data" id="createDebtForm">
                     @csrf
                     <div class="card-body">
                         <div class="card">
@@ -26,11 +26,11 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="customer_id" class="form-label">Cliente(*)</label>
-                                            <select id="mySelect" class="form-control select2" name="customer_id" required>
-                                                <option value="">Seleccione un cliente</option>
+                                            <label for="customer_id" class="form-label">Seleccionar Cliente(*)</label>
+                                            <select class="form-control select2" name="customer_id" id="customer_id" required>
+                                                <option value="">Selecciona un cliente</option>
                                                 @foreach($customers as $customer)
-                                                    <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                                                    <option value="{{ $customer->id }}">
                                                         {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
                                                     </option>
                                                 @endforeach
@@ -39,13 +39,10 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="amount" class="form-label">Monto(*)</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
-                                                </div>
-                                                <input type="number" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
-                                            </div>
+                                            <label for="water_connection_id" class="form-label">Seleccionar Toma(*)</label>
+                                            <select class="form-control select2" name="water_connection_id" id="water_connection_id" required>
+                                                <option value="">Selecciona una toma</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -59,7 +56,18 @@
                                             <label for="end_date" class="form-label">Fecha de Fin(*)</label>
                                             <input type="month" class="form-control" name="end_date" value="{{ old('end_date') }}" required />
                                         </div>
-                                    </div>                                  
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="amount" class="form-label">Monto(*)</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
+                                                </div>
+                                                <input type="number" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="note" class="form-label">Observación</label>
@@ -79,6 +87,7 @@
         </div>
     </div>
 </div>
+
 <style>
     .select2-container .select2-selection--single {
         height: 40px;
@@ -86,3 +95,34 @@
         align-items: center;
     }
 </style>
+
+<script>
+    document.getElementById('createDebtForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            const data = await response.json();
+
+            Swal.fire({
+                icon: data.error ? 'error' : 'success',
+                title: data.error ? 'Error' : 'Éxito',
+                text: data.error || data.success,
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                if (data.success) window.location.href = "{{ route('debts.index') }}";
+            });
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+</script>
