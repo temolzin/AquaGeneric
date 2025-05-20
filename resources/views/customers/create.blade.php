@@ -169,11 +169,11 @@
         }
     }
 
-    const customerForm = document.getElementById('createCustomer');
+    const createCustomerForm = document.getElementById('createCustomer');
 
-        if (customerForm) {
-            customerForm.addEventListener('submit', function(e) {
-                const submitButtons = customerForm.querySelectorAll('button[type="submit"], input[type="submit"]');
+        if (createCustomerForm) {
+            createCustomerForm.addEventListener('submit', function(e) {
+                const submitButtons = createCustomerForm.querySelectorAll('button[type="submit"], input[type="submit"]');
                 submitButtons.forEach(button => {
                     button.disabled = true;
 
