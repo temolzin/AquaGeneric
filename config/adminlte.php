@@ -330,11 +330,23 @@ return [
             'can'  =>'viewCustomers'
         ],
         [
-            'text' => 'Pagos',
-            'url' => '/payments',
+            'text' => 'Gestión de Pagos',
             'icon' => 'fas fa-fw fa-dollar-sign',
-            'can'  =>'viewPayments'
+            'submenu' => [
+        [
+            'text' => 'Pagos',
+            'url'  => '/payments',
+            'icon' => 'fas fa-fw fa-money-check-alt',
+            'can'  => 'viewPayments',
         ],
+        [
+            'text' => 'Pagos Adelantados',
+            'url'  => '/advancePayments',
+            'icon' => 'fas fa-fw fa-calendar-plus'
+        ],
+    ],
+],
+
         [
             'text' => 'Deudas',
             'url' => '/debts',
