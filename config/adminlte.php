@@ -343,7 +343,8 @@ return [
         [
             'text' => 'Pagos Adelantados',
             'url'  => '/advancePayments',
-            'icon' => 'fas fa-fw fa-calendar-plus'
+            'icon' => 'fas fa-fw fa-calendar-plus',
+            'can'  => 'viewPayments',
         ],
         ],
         ],
