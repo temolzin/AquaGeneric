@@ -112,4 +112,6 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+    Route::get('/advance-debt-dates', [AdvancePaymentController::class, 'getAdvanceDebtDates'])->name('getAdvanceDebtDates');
+    Route::get('/advance-water-connections', [AdvancePaymentController::class, 'getAdvanceWaterConnections'])->name('getWaterConnections');
 });
