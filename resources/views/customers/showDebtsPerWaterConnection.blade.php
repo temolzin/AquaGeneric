@@ -27,10 +27,19 @@
                                     </div>
                                 </div>
                                 @php
+                                    use Carbon\Carbon;
+                                    $today = Carbon::today();
+
                                     $unpaidDebts = $customer->waterConnections->flatMap->debts->where('status', '!=', 'paid');
                                     $totalDebt = $unpaidDebts->sum('amount');
                                     $totalPaid = $unpaidDebts->sum('debt_current');
                                     $pendingBalance = $totalDebt - $totalPaid;
+
+                                    $futurePaidDebts = $customer->waterConnections->flatMap->debts->filter(function ($debt) use ($today) {
+                                    return $debt->status === 'paid' && Carbon::parse($debt->start_date)->gt($today);
+                                    });
+
+                                    $hasAdvancePayment = $futurePaidDebts->isNotEmpty();
                                 @endphp
                                 <div class="col-lg-12">
                                     @if ($pendingBalance > 0)
@@ -41,7 +50,24 @@
                                                 <span class="info-box-number">${{ number_format($pendingBalance, 2, '.', ',') }}</span>
                                             </div>
                                         </div>
-                                    @else
+                                    @endif
+                                    @if ($hasAdvancePayment)
+                                    <div class="info-box">
+                                        <span class="info-box-icon" style="background-color: #6f42c1; color: white;"><i class="fa fa-dollar-sign"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Pago Anticipado</span>
+                                            @foreach ($futurePaidDebts as $debt)
+                                                <span class="info-box-number">
+                                                    {{ $debt->waterConnection->name ?? 'Desconocida' }} — Pagada del 
+                                                    {{ \Carbon\Carbon::parse($debt->start_date)->locale('es')->isoFormat('D [de] MMMM') }} 
+                                                    al 
+                                                    {{ \Carbon\Carbon::parse($debt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endif
+                                @if ($pendingBalance <= 0 && !$hasAdvancePayment)
                                     <div class="info-box">
                                         <span class="info-box-icon bg-success"><i class="fa fa-dollar-sign"></i></span>
                                         <div class="info-box-content">
@@ -49,8 +75,8 @@
                                             <span class="info-box-number">Este cliente no tiene deudas pendientes</span>
                                         </div>
                                     </div>
-                                    @endif
-                                </div>
+                                @endif
+                            </div>
                             </div>
                             <hr>
                             <h5>Deudas Asociadas Por Tomas</h5>
