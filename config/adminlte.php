@@ -336,6 +336,12 @@ return [
             'can'  =>'viewPayments'
         ],
         [
+            'text' => 'adelantados',
+            'url' => '/advancePayment',
+            'icon' => 'fas fa-fw fa-dollar-sign',
+            'can'  =>'viewPayments'
+        ],
+        [
             'text' => 'Deudas',
             'url' => '/debts',
             'icon' => 'fas fa-fw fa-credit-card',

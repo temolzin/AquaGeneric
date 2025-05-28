@@ -13,6 +13,7 @@ use App\Http\Controllers\GeneralExpenseController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
+use App\Http\Controllers\paymentGraphController;
 
 /*
 |--------------------------------------------------------------------------
@@ -109,5 +110,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/annual-expenses-report/{year}', [GeneralExpenseController::class, 'annualExpensesReport'])->name('report.annualExpensesReport');
         Route::get('/weekly-gains-report', [GeneralExpenseController::class, 'weeklyGainsReport'])->name('report.weeklyGainsReport');
         Route::get('/annual-gains-report/{year}', [GeneralExpenseController::class, 'annualGainsReport'])->name('report.annualGainsReport');
+    });
+    Route::group(['middleware' => ['can:viewPayments']], function () {
+        Route::get('/advancePayment', [paymentGraphController::class, 'index'])->name('advancePayment.index');
+        Route::post('/reports/saveCharts', [paymentGraphController::class, 'saveCharts'])->name('reports.saveCharts');
+        Route::get('/reports/paymentGraphPdf', [PaymentGraphController::class, 'paymentGraphPdf'])->name('reports.paymentGraph');
     });
 });
