@@ -36,7 +36,7 @@
                                     $pendingBalance = $totalDebt - $totalPaid;
 
                                     $futurePaidDebts = $customer->waterConnections->flatMap->debts->filter(function ($debt) use ($today) {
-                                    return $debt->status === 'paid' && Carbon::parse($debt->start_date)->gt($today);
+                                        return $debt->status === 'paid' && Carbon::parse($debt->start_date)->gt($today);
                                     });
 
                                     $hasAdvancePayment = $futurePaidDebts->isNotEmpty();
@@ -77,7 +77,7 @@
                                     </div>
                                 @endif
                             </div>
-                            </div>
+                        </div>
                             <hr>
                             <h5>Deudas Asociadas Por Tomas</h5>
                             <div class="form-group">
