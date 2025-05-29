@@ -24,15 +24,4 @@
     </div>
 </div>
 
-<div class="col-lg-4 mt-3">
-    <form method="GET" action="" class="my-3">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Buscar por nombre o apellido" value="{{ request('search') }}">
-            <div class="input-group-append">
-                <button type="submit" class="btn btn-primary">Buscar</button>
-            </div>
-        </div>
-    </form> 
-</div>
-
 @endsection
