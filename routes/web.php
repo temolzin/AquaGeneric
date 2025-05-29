@@ -112,4 +112,6 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+    Route::get('/report', [AdvancePaymentController::class, 'report'])->name('advancePayments.report');
+    
 });
