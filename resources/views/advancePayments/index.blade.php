@@ -56,10 +56,8 @@
 @endsection
 
 @section('js')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-     const labels = @json($months);
+    const labels = @json($months);
     const data = @json($totals);
 
     new Chart(document.getElementById('barChart'), {
