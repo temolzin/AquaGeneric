@@ -110,8 +110,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/weekly-gains-report', [GeneralExpenseController::class, 'weeklyGainsReport'])->name('report.weeklyGainsReport');
         Route::get('/annual-gains-report/{year}', [GeneralExpenseController::class, 'annualGainsReport'])->name('report.annualGainsReport');
     });
-
-    Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
-    Route::get('/advance-debt-dates', [AdvancePaymentController::class, 'getAdvanceDebtDates'])->name('getAdvanceDebtDates');
-    Route::get('/advance-water-connections', [AdvancePaymentController::class, 'getAdvanceWaterConnections'])->name('getWaterConnections');
+    
+    Route::group(['middleware' => ['auth']], function () {
+        Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+        Route::get('/advancePayments/data', [AdvancePaymentController::class, 'getAdvanceCustomersAndConnections'])->name('advancePayments.getAdvanceData');
+        Route::get('/advance-debt-dates', [AdvancePaymentController::class, 'getAdvanceDebtDates'])->name('getAdvanceDebtDates');
+    });
+   
+   
 });

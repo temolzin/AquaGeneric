@@ -13,7 +13,7 @@
                 <i class="fa fa-money-bill"></i> Gráfica de pagos
             </button>
 
-            <a class="btn btn-success mr-2" data-toggle="modal" data-target="#advancePaymentsModal" title="Historial de pagos">
+            <a class="btn btn-success mr-2" data-toggle="modal" data-target="#paymentHistoryModal" title="Historial de pagos">
                 <i class="fas fa-clipboard"></i> Historial de pagos
             </a>
 
@@ -34,7 +34,6 @@
         </div>
     </form> 
 </div>
-@include('advancePayments.advancePaymentsModal')
+@include('advancePayments.paymentHistoryModal')
 
 @endsection
-
