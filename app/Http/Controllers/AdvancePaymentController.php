@@ -19,32 +19,26 @@ class AdvancePaymentController extends Controller
 
     public function create()
     {
-        // Implementación pendiente
     }
 
     public function store(Request $request)
     {
-        // Implementación pendiente
     }
 
     public function show($id)
     {
-        // Implementación pendiente
     }
 
     public function edit($id)
     {
-        // Implementación pendiente
     }
 
     public function update(Request $request, $id)
     {
-        // Implementación pendiente
     }
 
     public function destroy($id)
     {
-        // Implementación pendiente
     }
 
     public function advancedPaymentReport(Request $request)
