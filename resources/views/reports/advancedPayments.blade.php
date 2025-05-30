@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -82,7 +82,7 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        .info_reporte {
+        .date_now {
             padding: 15px;
             border: 1px solid #0B1C80;
             border-radius: 8px;
@@ -96,22 +96,18 @@
             padding-left: 15px;
         }
 
-        .datos_cliente {
+        .client_data {
             padding: 0;
             width: 100%;
         }
 
-        .datos_cliente td {
-            width: 50%;
-        }
-
-        .datos_cliente label {
+        .client_data label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
         }
 
-        .datos_cliente p {
+        .client_data p {
             margin: 0;
             font-weight: normal;
         }
@@ -149,19 +145,19 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        #reporte_detalle {
+        #detail_report {
             border-collapse: collapse;
             width: 100%;
             margin: 0;
         }
 
-        #reporte_detalle thead th {
+        #detail_report thead th {
             background: #0B1C80;
             color: #FFF;
             padding: 5px;
         }
 
-        #detalle_productos tr {
+        #detail_advancedPayment tr {
             border-top: 1px solid #bfc9ff;
         }
 
@@ -206,73 +202,89 @@
             font-family: 'Montserrat', sans-serif;
             color: black;
         }
-
-        .highlight {
-            background-color: #e6f7ff;
-            font-weight: bold;
-        }
     </style>
 </head>
 
 <body>
     <div id="page_pdf">
         <div class="logo">
-            @if ($authUser->locality->hasMedia('localityGallery'))
-                <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}"
-                    alt="Photo of {{ $authUser->locality->name }}">
+            @if (auth()->user()->locality->hasMedia('localityGallery'))
+                <img 
+                    src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}"
+                    alt="Photo of {{ $authUser->locality->name }}"
+                >
             @else
-                <img src='img/localityDefault.png' alt="Default Photo">
+                <img 
+                    src="img/localityDefault.png" 
+                    alt="Default Photo"
+                >
             @endif
         </div>
+
         <table id="reporte_head">
             <tr>
                 <td class="info_empresa">
                     <div>
-                        <p class="aqua_titulo"> COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }},
+                        <p class="aqua_titulo">
+                            COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }},
                             {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
-                        </p><br>
-                        <a class="link_Whats" href="https://wa.me/525623640302">WhatsApp: +52 56 2364 0302</a><br>
-                        <a class="link_Email" href="mailto:info@rootheim.com">Email: info@rootheim.com</a>
+                        </p>
+                        <br>
+                        <a class="link_Whats" href="https://wa.me/525623640302">
+                            WhatsApp: +52 56 2364 0302
+                        </a>
+                        <br>
+                        <a class="link_Email" href="mailto:info@rootheim.com">
+                            Email: info@rootheim.com
+                        </a>
                     </div>
                 </td>
-                <td class="info_reporte">
+                <td class="date_now">
                     <div class="round">
                         <span class="h3">Historial de Pagos Adelantados</span>
-                        <p><strong>Fecha: </strong>{{ \Carbon\Carbon::now()->translatedFormat('j \d\e F \d\e Y') }}</p>
+                        <p>
+                            <strong>Fecha: </strong>
+                            {{ \Carbon\Carbon::now()->translatedFormat('j \d\e F \d\e Y') }}
+                        </p>
                     </div>
                 </td>
             </tr>
         </table>
+
         <table id="reporte_cliente">
             <tr>
                 <td class="info_cliente">
                     <div class="round">
                         <span class="h3">Cliente</span>
-                        <table class="datos_cliente">
+                        <table class="client_data">
                             <tr>
-                                <td><label>Nombre:</label>
+                                <td>
+                                    <label>Nombre:</label>
                                     <p>{{ $customer->name }} {{ $customer->last_name }}</p>
                                 </td>
-                                <td><label>Dirección:</label>
+                                <td>
+                                    <label>Dirección:</label>
                                     <p>{{ $customer->street }}, #{{ $customer->interior_number }}</p>
                                 </td>
                             </tr>
                         </table>
                         <br>
                         <span class="h3">Toma de Agua</span>
-                        <table class="datos_cliente">
+                        <table class="client_data">
                             <tr>
-                                <td><label>Nombre:</label>
+                                <td>
+                                    <label>Nombre:</label>
                                     <p>{{ $waterConnection->name }}</p>
                                 </td>
                                 @php
-                                    $tipos = [
+                                    $types = [
                                         'commercial' => 'Comercial',
                                         'residencial' => 'Residencial',
                                     ];
                                 @endphp
-                                <td><label>Tipo:</label>
-                                    <p>{{ $tipos[$waterConnection->type] ?? ucfirst($waterConnection->type) }}</p>
+                                <td style="width: 57%;">
+                                    <label>Tipo:</label>
+                                    <p>{{ $types[$waterConnection->type] ?? ucfirst($waterConnection->type) }}</p>
                                 </td>
                             </tr>
                         </table>
@@ -280,7 +292,8 @@
                 </td>
             </tr>
         </table>
-        <table id="reporte_detalle">
+
+        <table id="detail_report">
             <thead>
                 <tr>
                     <th class="textable">Folio Pago</th>
@@ -289,7 +302,7 @@
                     <th class="textable">Monto</th>
                 </tr>
             </thead>
-            <tbody id="detalle_productos">
+            <tbody id="detail_advancedPayment">
                 @foreach ($payments as $debtId => $debtPayments)
                     @foreach ($debtPayments as $payment)
                         <tr class="{{ $payment->debt->end_date > now() ? 'highlight' : '' }}">
@@ -306,16 +319,25 @@
                     @endforeach
                 @endforeach
                 <tr>
-                    <td colspan="3" class="total_payment"><strong>Total Pagos Adelantados:</strong></td>
-                    <td class="textcenter"><strong>$ {{ number_format($totalPayments, 2) }}</strong></td>
+                    <td colspan="3" class="total_payment">
+                        <strong>Total Pagos Adelantados:</strong>
+                    </td>
+                    <td class="textcenter">
+                        <strong>$ {{ number_format($totalPayments, 2) }}</strong>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
     <div class="info_Eabajo">
-        <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
-        <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img
-            src="img/rootheim.png" width="15px" height="15px">
+        <a class="text_infoE" href="https://aquacontrol.rootheim.com/">
+            <strong>AquaControl</strong>
+        </a>
+        <a class="text_infoE" href="https://rootheim.com/">
+            powered by<strong> Root Heim Company </strong>
+        </a>
+        <img src="img/rootheim.png" width="15px" height="15px">
     </div>
 </body>
 

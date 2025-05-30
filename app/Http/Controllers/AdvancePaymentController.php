@@ -2,125 +2,130 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\WaterConnection;
-use App\Models\Customer;
-use App\Models\Payment;
+use App\Models\{Payment, Customer};
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Str;
 
 class AdvancePaymentController extends Controller
 {
     public function index(Request $request)
     {
-        $authUser = auth()->user();
-
-        $query = Payment::with(['debt.customer', 'debt.waterConnection'])
-            ->whereHas('debt', function ($q) {
-                $q->where('end_date', '>', now())
-                    ->where('status', '!=', 'pending');
-            })
-            ->where('locality_id', $authUser->locality_id)
-            ->orderBy('created_at', 'desc');
-
-        if ($request->filled('name')) {
-            $query->whereHas('debt.customer', function ($q) use ($request) {
-                $q->whereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ['%' . $request->name . '%'])
-                    ->orWhereRaw("CONCAT(customers.last_name, ' ', customers.name) LIKE ?", ['%' . $request->name . '%']);
-            });
-        }
-
-        if ($request->filled('period')) {
-            $periodParts = explode('/', $request->period);
-            $monthName = strtolower(trim($periodParts[0]));
-            $year = trim($periodParts[1]);
-
-            $months = [
-                'enero' => 1,
-                'febrero' => 2,
-                'marzo' => 3,
-                'abril' => 4,
-                'mayo' => 5,
-                'junio' => 6,
-                'julio' => 7,
-                'agosto' => 8,
-                'septiembre' => 9,
-                'octubre' => 10,
-                'noviembre' => 11,
-                'diciembre' => 12
-            ];
-
-            $monthNumber = $months[$monthName] ?? null;
-
-            if ($monthNumber && $year) {
-                $query->whereHas('debt', function ($q) use ($year, $monthNumber) {
-                    $q->whereYear('start_date', $year)
-                        ->whereMonth('start_date', $monthNumber)
-                        ->orWhere(function ($q) use ($year, $monthNumber) {
-                            $q->whereYear('end_date', $year)
-                                ->whereMonth('end_date', $monthNumber);
-                        });
-                });
-            }
-        }
-
-        $payments = $query->paginate(10);
-        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
-
-        return view('advancePayments.index', compact('payments', 'customers'));
+        return view('advancePayments.index', [
+            'payments' => $this->getAdvancePayments($request),
+            'customers' => Customer::where('locality_id', auth()->user()->locality_id)->get(),
+        ]);
     }
 
-    public function create() {}
-
-    public function store(Request $request) {}
-
-    public function show($id) {}
-
-    public function edit($id) {}
-
-    public function update(Request $request, $id) {}
-
-    public function destroy($id) {}
-
-    public function report(Request $request)
+    public function create()
     {
-        $request->validate([
+        // Implementación pendiente
+    }
+
+    public function store(Request $request)
+    {
+        // Implementación pendiente
+    }
+
+    public function show($id)
+    {
+        // Implementación pendiente
+    }
+
+    public function edit($id)
+    {
+        // Implementación pendiente
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Implementación pendiente
+    }
+
+    public function destroy($id)
+    {
+        // Implementación pendiente
+    }
+
+    public function advancedPaymentReport(Request $request)
+    {
+        $data = $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'water_connection_id' => 'required|exists:water_connections,id'
+            'water_connection_id' => 'required|exists:water_connections,id',
         ]);
 
-        $customer = Customer::findOrFail($request->customer_id);
-        $authUser = auth()->user();
+        $customer = Customer::with([
+            'waterConnections' => fn ($q) => $q->findOrFail($data['water_connection_id']),
+        ])->findOrFail($data['customer_id']);
 
-        $waterConnection = WaterConnection::where('id', $request->water_connection_id)
-            ->where('customer_id', $request->customer_id)
-            ->firstOrFail();
-
-        $payments = Payment::with(['debt', 'customer'])
-            ->whereHas('debt', function ($query) {
-                $query->where('end_date', '>', now())
-                    ->where('status', '!=', 'pending');
-            })
-            ->where('customer_id', $customer->id)
-            ->whereHas('debt', function ($query) use ($waterConnection) {
-                $query->where('water_connection_id', $waterConnection->id);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get()
+        $payments = $this->getCustomerAdvancePayments($customer, $data['water_connection_id'])
             ->groupBy('debt_id');
 
-        $totalPayments = $payments->flatten()->sum('amount');
-
-        $pdf = PDF::loadView('reports.advancedPayments', [
+        $pdf = Pdf::loadView('reports.advancedPayments', [
             'customer' => $customer,
-            'waterConnection' => $waterConnection,
+            'waterConnection' => $customer->waterConnections->first(),
             'payments' => $payments,
-            'totalPayments' => $totalPayments,
-            'authUser' => $authUser
-        ])->setPaper('a4', 'portrait');
+            'totalPayments' => $payments->flatten()->sum('amount'),
+            'authUser' => auth()->user(),
+        ]);
 
-        $fileName = 'pagos_adelantados_' . $customer->id . '_' . $waterConnection->id . '.pdf';
+        return $pdf->stream($this->generateReportFilename($customer, $customer->waterConnections->first()));
+    }
 
-        return $pdf->stream($fileName);
+    private function getAdvancePayments(Request $request)
+    {
+        $query = Payment::with(['debt.customer', 'debt.waterConnection'])
+            ->whereHas('debt', fn ($q) => $q->where('end_date', '>', now())->where('status', '!=', 'pending'))
+            ->where('locality_id', auth()->user()->locality_id)
+            ->latest();
+
+        $request->whenFilled('name', fn () => $this->filterByCustomerName($query, $request->name));
+        $request->whenFilled('period', fn () => $this->filterByPeriod($query, $request->period));
+
+        return $query->paginate(10);
+    }
+
+    private function getCustomerAdvancePayments(Customer $customer, int $waterConnectionId)
+    {
+        return Payment::whereHas('debt', fn ($q) => $q->where('customer_id', $customer->id)
+            ->where('water_connection_id', $waterConnectionId)
+            ->where('end_date', '>', now())
+            ->where('status', '!=', 'pending'))
+            ->where('locality_id', auth()->user()->locality_id)
+            ->with(['debt'])
+            ->latest()
+            ->get();
+    }
+
+    private function filterByCustomerName($query, string $name)
+    {
+        $query->whereHas('debt.customer', fn ($q) => $q->where(function ($q) use ($name) {
+            $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$name}%"])
+                ->orWhereRaw("CONCAT(last_name, ' ', name) LIKE ?", ["%{$name}%"]);
+        }));
+    }
+
+    private function filterByPeriod($query, string $period)
+    {
+        [$monthName, $year] = explode('/', $period);
+        $monthNumber = self::MONTHS[strtolower(trim($monthName))] ?? null;
+
+        if ($monthNumber && $year) {
+            $query->whereHas('debt', fn ($q) => $q->whereYear('start_date', $year)
+                ->whereMonth('start_date', $monthNumber)
+                ->orWhere(fn ($q) => $q->whereYear('end_date', $year)
+                    ->whereMonth('end_date', $monthNumber))
+            );
+        }
+    }
+
+    private function generateReportFilename(Customer $customer, $waterConnection): string
+    {
+        return sprintf(
+            'Reporte_Pagos_Adelantados_%s_%s_%s.pdf',
+            Str::slug($customer->name),
+            Str::slug($waterConnection->name),
+            now()->format('Y-m-d')
+        );
     }
 }
