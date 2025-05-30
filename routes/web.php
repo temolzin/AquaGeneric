@@ -70,7 +70,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['can:viewCost']], function () {
-        Route:: resource('costs', CostController::class);
+        Route::resource('costs', CostController::class);
         Route::get('/costs', [CostController::class, 'index'])->name('costs.index');
     });
 
@@ -113,9 +113,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/annual-gains-report/{year}', [GeneralExpenseController::class, 'annualGainsReport'])->name('report.annualGainsReport');
     });
 
+
+    Route::group(['middleware' => ['auth']], function () {
+        Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+        Route::get('/advanced-payments-report', [AdvancePaymentController::class, 'AdvancedPaymentReport'])->name('advancePayments.report');
+
+    });
     Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
-
     Route::get('/incidentCategories', [IncidentCategoriesController::class, 'index'])->name('incidentCategories.index');
-
     Route::get('/incidents', [IncidentController::class, 'index'])->name('incidents.index');
 });
