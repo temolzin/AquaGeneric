@@ -24,16 +24,16 @@
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="customer_id">Seleccionar Cliente(*)</label>
-                                        <select class="form-control select2" name="customer_id" id="customer_id" required>
+                                        <label for="customerId">Seleccionar Cliente(*)</label>
+                                        <select class="form-control select2" name="customerId" id="customerId" required>
                                             <option value="">Selecciona un cliente</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="water_connection_id">Seleccionar Toma(*)</label>
-                                        <select class="form-control select2" name="water_connection_id" id="water_connection_id" required>
+                                        <label for="waterConnectionId">Seleccionar Toma(*)</label>
+                                        <select class="form-control select2" name="waterConnectionId" id="waterConnectionId" required>
                                             <option value="">Selecciona una toma</option>
                                         </select>
                                     </div>
@@ -52,8 +52,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="bg-light p-2 rounded text-right">
-                                        <p class="mb-1"><strong>Fecha de Inicio:</strong> <span class="start-date"></span></p>
-                                        <p class="mb-0"><strong>Fecha de Fin:</strong> <span class="end-date"></span></p>
+                                        <p class="mb-1"><strong>Fecha de Inicio:</strong> <span class="starDate"></span></p>
+                                        <p class="mb-0"><strong>Fecha de Fin:</strong> <span class="endDate"></span></p>
                                         <a href="#" class="btn btn-success btn-sm mt-2 shadow-sm" id="btn-download-pdf">
                                             <i class="fas fa-file-download mr-1"></i> Descargar PDF
                                         </a>
@@ -78,7 +78,7 @@
         align-items: center;
     }
 
-    #calendar {
+    #calendarContainer {
         width: 100%;
         margin: 0 auto; 
         padding: 10px;
@@ -107,10 +107,10 @@
 <script>
     $(document).ready(function () {
     const modal = $('#paymentHistoryModal');
-    const customerSelect = $('#customer_id');
-    const connectionSelect = $('#water_connection_id');
-    const startDateLabel = $('.start-date');
-    const endDateLabel = $('.end-date');
+    const customerSelect = $('#customerId');
+    const connectionSelect = $('#waterConnectionId');
+    const startDateLabel = $('.starDate');
+    const endDateLabel = $('.endDate');
 
     let calendar;
 
@@ -137,8 +137,8 @@
             url: '{{ route("getAdvanceDebtDates") }}',
             type: 'GET',
             data: {
-                customer_id: customerId,
-                water_connection_id: connectionId
+                customerId: customerId,
+                waterConnectionId: connectionId
             },
             success: function (response) {
                 startDateLabel.text(formatDate(response.start_date));
@@ -207,7 +207,7 @@
         }
 
         $.ajax({
-            url: '{{ route("advancePayments.getAdvanceData") }}',
+            url: '{{ route("customers.advancePayments") }}',
             type: 'GET',
             success: function (response) {
                 customerSelect.empty().append('<option value="">Selecciona un cliente</option>');
@@ -245,9 +245,9 @@
 
         if (customerId) {
             $.ajax({
-                url: '{{ route("advancePayments.getAdvanceData") }}',
+                url: '{{ route("customers.advancePayments") }}',
                 type: 'GET',
-                data: { customer_id: customerId },
+                data: {  customerId: customerId },
                 success: function (response) {
                     connectionSelect.empty().append('<option value="">Selecciona una toma</option>');
                     $.each(response.waterConnections, function (index, connection) {

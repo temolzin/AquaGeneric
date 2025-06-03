@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Payment; 
+use App\Models\Debt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -46,17 +47,19 @@ class AdvancePaymentController extends Controller
     
     }
     
-    public function getAdvanceCustomersAndConnections(Request $request)
+    public function getCustomersWithAdvancePayments(Request $request)
     {
         $currentMonthStart = Carbon::now()->startOfMonth();
     
         $paymentsQuery = Payment::with(['customer', 'debt.waterConnection'])
             ->whereHas('debt', function($debtQuery) use ($currentMonthStart) {
-                $debtQuery->where('status', 'paid')
+                $debtQuery->where('status', Debt::STATUS_PAID)
                     ->where('end_date', '>', $currentMonthStart);
             });
 
-        if (!$request->has('customer_id')) {
+        $customerId = $request->input('customerId');
+
+        if (!$customerId) {
             $customers = $paymentsQuery->get()
                 ->pluck('customer')
                 ->unique('id')
@@ -65,7 +68,7 @@ class AdvancePaymentController extends Controller
         }
 
         $connections = $paymentsQuery->whereHas('customer', function($customerQuery) use ($request) {
-            $customerQuery->where('id', $request->customer_id);
+            $customerQuery->where('id', $request->customerId);
         })
             ->get()
             ->pluck('debt.waterConnection')
@@ -77,10 +80,10 @@ class AdvancePaymentController extends Controller
 
     public function getAdvanceDebtDates(Request $request)
     {
-        $connectionId = $request->input('water_connection_id');
+        $connectionId = $request->input('waterConnectionId');
 
         Log::info('getAdvanceDebtDates', [
-            'water_connection_id' => $connectionId
+            'waterConnectionId' => $connectionId
         ]);
 
         $now = Carbon::now()->startOfMonth();
