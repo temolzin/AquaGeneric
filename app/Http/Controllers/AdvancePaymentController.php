@@ -45,7 +45,7 @@ class AdvancePaymentController extends Controller
     
     }
 
-    public function paymentGraphReport(Request $request)
+    public function generatePaymentGraphReport(Request $request)
     {
         $authUser = auth()->user();
 
@@ -55,13 +55,13 @@ class AdvancePaymentController extends Controller
             YEAR(end_date) as end_year,
             amount
         ')
-        ->where('status', 'paid') 
+        ->where('status', Debt::STATUS_PAID) 
         ->where('start_date', '>', now())
         ->first();
 
         Carbon::setLocale('es');
-        $debt->start_month_name = Carbon::create()->month($debt->start_month)->translatedFormat('F');
-        $debt->end_month_name = Carbon::create()->month($debt->end_month)->translatedFormat('F');
+        $debt->startMonthName = Carbon::create()->month($debt->start_month)->translatedFormat('F');
+        $debt->endMonthName = Carbon::create()->month($debt->end_month)->translatedFormat('F');
 
         $chartImages = $request->input('charts');
 

@@ -30,7 +30,7 @@
                 padding-bottom: 10px;
             }
 
-            .aqua_titulo {
+            .aquaTitle {
                 font-family: 'Montserrat', sans-serif;
                 font-size: 20pt;
                 font-weight: bold;
@@ -71,7 +71,7 @@
                 margin-bottom: 5px;
             }
 
-            #reporte_cliente {
+            #reportCustomer {
                 width: 100%;
                 padding: 15px;
                 margin: 10px 0;
@@ -80,14 +80,14 @@
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             }
 
-            .info_empresa {
+            .informationCompany {
                 width: 50%;
                 text-align: center;
                 align-content: stretch;
                 font-family: 'Montserrat', sans-serif;
             }
 
-            .info_reporte {
+            .informationReport {
                 padding: 15px;
                 border: 1px solid #0B1C80;
                 border-radius: 8px;
@@ -95,36 +95,36 @@
                 font-family: 'Montserrat', sans-serif;
             }
 
-            .info_cliente {
+            .informationCustomer {
                 width: 100%;
                 height: auto;
                 padding-left: 15px;
             }
 
-            .datos_cliente {
+            .dataCustomer {
                 padding: 0;
                 width: 100%;
             }
 
-            .datos_cliente label {
+            .dataCustomer label {
                 display: block;
                 font-weight: bold;
                 margin-bottom: 5px;
             }
 
-            .datos_cliente p {
+            .dataCustomer p {
                 margin: 0;
                 font-weight: normal;
             }
 
-            .textable {
+            .texTable {
                 text-align: center;
                 font-family: 'Montserrat', sans-serif;
                 font-size: 12pt;
                 color: #FFF;
             }
 
-            .total_payment{
+            .totalPayment{
                 padding: 20px;
                 font-size: 15pt;
                 text-align: right;
@@ -132,41 +132,37 @@
                 font-weight: bold;
             }
 
-            .textcenter {
+            .textCenter {
                 text-align: center;
                 font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
             }
 
-            .textright {
+            .textRight {
                 text-align: right;
                 font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
             }
 
-            .textleft {
+            .textLeft {
                 text-align: left;
                 font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
             }
 
-            #reporte_detalle {
+            #reportDetail {
                 border-collapse: collapse;
                 width: 100%;
                 margin: 0;
             }
 
-            #reporte_detalle thead th {
+            #reportDetail thead th {
                 background: #0B1C80;
                 color: #FFF;
                 padding: 5px;
             }
 
-            #detalle_productos tr {
-                border-top: 1px solid #bfc9ff;
-            }
-
-            .info_Eabajo {
+            .informationEadown {
                 text-align: center;
                 margin-top: 20px;
                 padding: 10px;
@@ -176,7 +172,7 @@
                 right: 20px; 
             }
 
-            .text_infoE {
+            .textInformationE {
                 text-align: center;
                 font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
@@ -199,8 +195,8 @@
                 height: 140px;
             }
 
-            .link_Whats,
-            .link_Email {
+            .linkWhats,
+            .linkEmail {
                 display: inline-block;
                 text-decoration: none;
                 border-radius: 5px;
@@ -220,30 +216,30 @@
             </div>
             <table id="reportHead">
                 <tr>
-                    <td class="info_empresa">
+                    <td class="informationCompany">
                         <div>
-                            <p class="aqua_titulo"> COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
+                            <p class="aquaTitle"> COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
                             </p><br>
-                            <a class="link_Whats" href="https://wa.me/525623640302">WhatsApp: +52 56 2364 0302</a><br>
-                            <a class="link_Email" href="mailto:info@rootheim.com">Email: info@rootheim.com</a>
+                            <a class="linkWhats" href="https://wa.me/525623640302">WhatsApp: +52 56 1966 0990</a><br>
+                            <a class="linkEmail" href="mailto:info@rootheim.com">Email: info@rootheim.com</a>
                         </div>
                     </td>
-                    <td class="info_reporte">
+                    <td class="informationReport">
                         <div class="round">
                             <span class="h4">Gráfica de pagos por Adelantados</span>
                         </div>
                     </td>
                 </tr>
             </table>
-            <table id="reporte_cliente">
+            <table id="reportCustomer">
                 <tr>
-                    <td class="info_cliente">
+                    <td class="informationCustomer">
                         <div class="round">
                             <span class="h3">Análisis de Pagos Adelantados</span>
-                            <table class="datos_cliente">
+                            <table class="dataCustomer">
                                 <tr>
-                                    <td><label>Mes de Inicio:</label> <p>{{ $debt->start_month_name }}</p></td>
-                                    <td><label>Mes de Término:</label> <p>{{ $debt->end_month_name }}</p></td>
+                                    <td><label>Mes de Inicio:</label> <p>{{ $debt->startMonthName }}</p></td>
+                                    <td><label>Mes de Término:</label> <p>{{ $debt->endMonthName }}</p></td>
                                     <td><label>Año:</label> <p>{{ $debt->end_year }}</p></td>
                                     <td><label>Total Adelantado:</label> <p>${{ number_format($debt->amount, 2) }}</p></td>
                                 </tr>
@@ -271,9 +267,9 @@
             </table>
         </div>
         <center>
-            <div class="info_Eabajo">
-                <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
-                <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="15px" height="15px">
+            <div class="informationEadown">
+                <a class="textInformationE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+                <a class="textInformationE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="15px" height="15px">
             </div>
         </center>
     </body>
