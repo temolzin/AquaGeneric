@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Debt;
 
-
 class AdvancePaymentController extends Controller
 {
     public function index()
