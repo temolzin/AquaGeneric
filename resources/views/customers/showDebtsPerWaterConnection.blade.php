@@ -28,6 +28,7 @@
                                 </div>
                                 @php
                                     use Carbon\Carbon;
+                                    use App\Models\Debt;
                                     $today = Carbon::today();
 
                                     $unpaidDebts = $customer->waterConnections->flatMap->debts->where('status', '!=', 'paid');
@@ -36,7 +37,7 @@
                                     $pendingBalance = $totalDebt - $totalPaid;
 
                                     $futurePaidDebts = $customer->waterConnections->flatMap->debts->filter(function ($debt) use ($today) {
-                                        return $debt->status === 'paid' && Carbon::parse($debt->start_date)->gt($today);
+                                        return $debt->status === Debt::STATUS_PAID && Carbon::parse($debt->start_date)->gt($today);
                                     });
 
                                     $hasAdvancePayment = $futurePaidDebts->isNotEmpty();
@@ -59,9 +60,9 @@
                                             @foreach ($futurePaidDebts as $debt)
                                                 <span class="info-box-number">
                                                     {{ $debt->waterConnection->name ?? 'Desconocida' }} — Pagada del 
-                                                    {{ \Carbon\Carbon::parse($debt->start_date)->locale('es')->isoFormat('D [de] MMMM') }} 
+                                                    {{ Carbon::parse($debt->start_date)->locale('es')->isoFormat('D [de] MMMM') }} 
                                                     al 
-                                                    {{ \Carbon\Carbon::parse($debt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                                    {{ Carbon::parse($debt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
                                                 </span>
                                             @endforeach
                                         </div>
