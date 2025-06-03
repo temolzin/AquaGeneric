@@ -17,12 +17,10 @@ class IncidentCategory extends Model
         'locality_id',
     ];
 
-
     public function locality()
     {
         return $this->belongsTo(Locality::class);
     }
-
  
     public function creator()
     {
