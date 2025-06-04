@@ -66,7 +66,7 @@
             margin-bottom: 5px;
         }
 
-        #clientReport {
+        #reportClient {
             width: 100%;
             padding: 15px;
             margin: 10px 0;
@@ -247,7 +247,7 @@
             </tr>
         </table>
 
-        <table id="clientReport">
+        <table id="reportClient">
             <tr>
                 <td class="infoClient">
                     <div class="round">
