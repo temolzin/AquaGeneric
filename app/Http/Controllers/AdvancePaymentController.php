@@ -41,7 +41,7 @@ class AdvancePaymentController extends Controller
     {
     }
 
-    public function advancedPaymentReport(Request $request)
+    public function generateAdvancedPaymentReport(Request $request)
     {
         $data = $request->validate([
             'customer_id' => 'required|exists:customers,id',
@@ -112,8 +112,7 @@ class AdvancePaymentController extends Controller
             );
         }
     }
-
-    private function generateReportFilename(Customer $customer, $waterConnection): string
+    private function generateReportFileName(Customer $customer, $waterConnection): string  
     {
         return sprintf(
             'Reporte_Pagos_Adelantados_%s_%s_%s.pdf',

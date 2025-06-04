@@ -22,16 +22,16 @@
             padding: 0;
         }
 
-        #page_pdf {
+        #pagePdf {
             margin: 30px;
         }
 
-        #reporte_head {
+        #reportHead {
             margin: 0;
             padding-bottom: 10px;
         }
 
-        .aqua_titulo {
+        .aquaTitle {
             font-family: 'Montserrat', sans-serif;
             font-size: 20pt;
             font-weight: bold;
@@ -66,7 +66,7 @@
             margin-bottom: 5px;
         }
 
-        #reporte_cliente {
+        #clientReport {
             width: 100%;
             padding: 15px;
             margin: 10px 0;
@@ -75,14 +75,14 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .info_empresa {
+        .companyInfo {
             width: 50%;
             text-align: center;
             align-content: stretch;
             font-family: 'Montserrat', sans-serif;
         }
 
-        .date_now {
+        .dateNow {
             padding: 15px;
             border: 1px solid #0B1C80;
             border-radius: 8px;
@@ -90,24 +90,24 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        .info_cliente {
+        .infoClient {
             width: 100%;
             height: auto;
             padding-left: 15px;
         }
 
-        .client_data {
+        .dataClient {
             padding: 0;
             width: 100%;
         }
 
-        .client_data label {
+        .dataClient label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
         }
 
-        .client_data p {
+        .dataClient p {
             margin: 0;
             font-weight: normal;
         }
@@ -119,7 +119,7 @@
             color: #FFF;
         }
 
-        .total_payment {
+        .totalPayment {
             padding: 20px;
             font-size: 15pt;
             text-align: right;
@@ -127,41 +127,41 @@
             font-weight: bold;
         }
 
-        .textcenter {
+        .textCenter {
             text-align: center;
             font-size: 12pt;
             font-family: 'Montserrat', sans-serif;
         }
 
-        .textright {
+        .textRight {
             text-align: right;
             font-size: 12pt;
             font-family: 'Montserrat', sans-serif;
         }
 
-        .textleft {
+        .textLeft {
             text-align: left;
             font-size: 12pt;
             font-family: 'Montserrat', sans-serif;
         }
 
-        #detail_report {
+        #detailReport {
             border-collapse: collapse;
             width: 100%;
             margin: 0;
         }
 
-        #detail_report thead th {
+        #detailReport thead th {
             background: #0B1C80;
             color: #FFF;
             padding: 5px;
         }
 
-        #detail_advancedPayment tr {
+        #detailAdvancedPayment tr {
             border-top: 1px solid #bfc9ff;
         }
 
-        .info_Eabajo {
+        .infoEabajo {
             text-align: center;
             margin-top: 20px;
             padding: 10px;
@@ -171,7 +171,7 @@
             right: 20px;
         }
 
-        .text_infoE {
+        .textInfoE {
             text-align: center;
             font-size: 12pt;
             font-family: 'Montserrat', sans-serif;
@@ -194,8 +194,8 @@
             height: 140px;
         }
 
-        .link_Whats,
-        .link_Email {
+        .linkWhats,
+        .linkEmail {
             display: inline-block;
             text-decoration: none;
             border-radius: 5px;
@@ -206,40 +206,36 @@
 </head>
 
 <body>
-    <div id="page_pdf">
+    <div id="pagePdf">
         <div class="logo">
             @if (auth()->user()->locality->hasMedia('localityGallery'))
-                <img 
-                    src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}"
-                    alt="Photo of {{ $authUser->locality->name }}"
-                >
+                <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}"
+                    alt="Photo of {{ $authUser->locality->name }}">
             @else
-                <img 
-                    src="img/localityDefault.png" 
-                    alt="Default Photo"
-                >
+                <img src="img/localityDefault.png" alt="Default Photo">
             @endif
         </div>
 
-        <table id="reporte_head">
+        <table id="reportHead">
             <tr>
-                <td class="info_empresa">
+                <td class="companyInfo">
                     <div>
-                        <p class="aqua_titulo">
+                        <p class="aquaTitle">
                             COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }},
                             {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
                         </p>
                         <br>
-                        <a class="link_Whats" href="https://wa.me/525623640302">
-                            WhatsApp: +52 56 2364 0302
+                        <a class="linkWhats" href="https://wa.me/525623640302">
+                            WhatsApp: +52 56 1966 0990
+
                         </a>
                         <br>
-                        <a class="link_Email" href="mailto:info@rootheim.com">
+                        <a class="linkEmail" href="mailto:info@rootheim.com">
                             Email: info@rootheim.com
                         </a>
                     </div>
                 </td>
-                <td class="date_now">
+                <td class="dateNow">
                     <div class="round">
                         <span class="h3">Historial de Pagos Adelantados</span>
                         <p>
@@ -251,12 +247,12 @@
             </tr>
         </table>
 
-        <table id="reporte_cliente">
+        <table id="clientReport">
             <tr>
-                <td class="info_cliente">
+                <td class="infoClient">
                     <div class="round">
                         <span class="h3">Cliente</span>
-                        <table class="client_data">
+                        <table class="dataClient">
                             <tr>
                                 <td>
                                     <label>Nombre:</label>
@@ -270,7 +266,7 @@
                         </table>
                         <br>
                         <span class="h3">Toma de Agua</span>
-                        <table class="client_data">
+                        <table class="dataClient">
                             <tr>
                                 <td>
                                     <label>Nombre:</label>
@@ -293,7 +289,7 @@
             </tr>
         </table>
 
-        <table id="detail_report">
+        <table id="detailReport">
             <thead>
                 <tr>
                     <th class="textable">Folio Pago</th>
@@ -302,27 +298,27 @@
                     <th class="textable">Monto</th>
                 </tr>
             </thead>
-            <tbody id="detail_advancedPayment">
+            <tbody id="detailAdvancedPayment">
                 @foreach ($payments as $debtId => $debtPayments)
                     @foreach ($debtPayments as $payment)
                         <tr class="{{ $payment->debt->end_date > now() ? 'highlight' : '' }}">
-                            <td class="textcenter">{{ $payment->id }}</td>
-                            <td class="textcenter">
+                            <td class="textCenter">{{ $payment->id }}</td>
+                            <td class="textCenter">
                                 {{ \Carbon\Carbon::parse($payment->created_at)->translatedFormat('j \d\e F \d\e Y') }}
                             </td>
-                            <td class="textcenter">
+                            <td class="textCenter">
                                 {{ \Carbon\Carbon::parse($payment->debt->start_date)->translatedFormat('F Y') }} -
                                 {{ \Carbon\Carbon::parse($payment->debt->end_date)->translatedFormat('F Y') }}
                             </td>
-                            <td class="textcenter">$ {{ number_format($payment->amount, 2) }}</td>
+                            <td class="textCenter">$ {{ number_format($payment->amount, 2) }}</td>
                         </tr>
                     @endforeach
                 @endforeach
                 <tr>
-                    <td colspan="3" class="total_payment">
+                    <td colspan="3" class="totalPayment">
                         <strong>Total Pagos Adelantados:</strong>
                     </td>
-                    <td class="textcenter">
+                    <td class="textCenter">
                         <strong>$ {{ number_format($totalPayments, 2) }}</strong>
                     </td>
                 </tr>
@@ -330,11 +326,11 @@
         </table>
     </div>
 
-    <div class="info_Eabajo">
-        <a class="text_infoE" href="https://aquacontrol.rootheim.com/">
+    <div class="infoEabajo">
+        <a class="textInfoE" href="https://aquacontrol.rootheim.com/">
             <strong>AquaControl</strong>
         </a>
-        <a class="text_infoE" href="https://rootheim.com/">
+        <a class="textInfoE" href="https://rootheim.com/">
             powered by<strong> Root Heim Company </strong>
         </a>
         <img src="img/rootheim.png" width="15px" height="15px">
