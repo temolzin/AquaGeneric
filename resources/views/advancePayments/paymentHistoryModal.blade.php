@@ -25,7 +25,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="customerId">Seleccionar Cliente(*)</label>
-                                        <select class="form-control select2" name="customerId" id="customerId" required>
+                                        <select class="form-control select2" name="selectCustomerId" id="selectCustomerId" required>
                                             <option value="">Selecciona un cliente</option>
                                         </select>
                                     </div>
@@ -33,7 +33,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="waterConnectionId">Seleccionar Toma(*)</label>
-                                        <select class="form-control select2" name="waterConnectionId" id="waterConnectionId" required>
+                                        <select class="form-control select2" name="selectWaterConnectionId" id="selectWaterConnectionId" required>
                                             <option value="">Selecciona una toma</option>
                                         </select>
                                     </div>
@@ -52,8 +52,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="bg-light p-2 rounded text-right">
-                                        <p class="mb-1"><strong>Fecha de Inicio:</strong> <span class="starDate"></span></p>
-                                        <p class="mb-0"><strong>Fecha de Fin:</strong> <span class="endDate"></span></p>
+                                        <p class="mb-1"><strong>Fecha de Inicio:</strong> <span class="labelStarDate"></span></p>
+                                        <p class="mb-0"><strong>Fecha de Fin:</strong> <span class="labelEndDate"></span></p>
                                         <a href="#" class="btn btn-success btn-sm mt-2 shadow-sm" id="btn-download-pdf">
                                             <i class="fas fa-file-download mr-1"></i> Descargar PDF
                                         </a>
@@ -107,10 +107,10 @@
 <script>
     $(document).ready(function () {
     const modal = $('#paymentHistoryModal');
-    const customerSelect = $('#customerId');
-    const connectionSelect = $('#waterConnectionId');
-    const startDateLabel = $('.starDate');
-    const endDateLabel = $('.endDate');
+    const customerSelect = $('#selectCustomerId');
+    const connectionSelect = $('#selectWaterConnectionId');
+    const startDateLabel = $('.labelStarDate');
+    const endDateLabel = $('.labelEndDate');
 
     let calendar;
 
@@ -207,7 +207,7 @@
         }
 
         $.ajax({
-            url: '{{ route("customers.advancePayments") }}',
+            url: '{{ route("getCustomersWithAdvancePayments") }}',
             type: 'GET',
             success: function (response) {
                 customerSelect.empty().append('<option value="">Selecciona un cliente</option>');
@@ -245,9 +245,9 @@
 
         if (customerId) {
             $.ajax({
-                url: '{{ route("customers.advancePayments") }}',
+                url: '{{ route("getCustomersWithAdvancePayments") }}',
                 type: 'GET',
-                data: {  customerId: customerId },
+                data: { customerId: customerId },
                 success: function (response) {
                     connectionSelect.empty().append('<option value="">Selecciona una toma</option>');
                     $.each(response.waterConnections, function (index, connection) {
