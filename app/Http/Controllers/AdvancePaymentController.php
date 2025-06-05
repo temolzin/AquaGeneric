@@ -14,7 +14,7 @@ class AdvancePaymentController extends Controller
     public function index()
     {
         $advancePayments = DB::table('debts')
-            ->where('status',Debt::STATUS_PAID)
+            ->where('status', Debt::STATUS_PAID)
             ->whereColumn('created_at', '<=', DB::raw('DATE_ADD(start_date, INTERVAL 1 MONTH)'))
             ->select(
                 DB::raw("YEAR(start_date) as year"),
