@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\{Payment, Customer};
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use App\Models\Debt;
 use Str;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\Debt;
 
 class AdvancePaymentController extends Controller
 {
