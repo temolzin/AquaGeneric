@@ -9,7 +9,7 @@
 <div class="row mb-4">
     <div class="col-lg-12 text-right">
         <div class="btn-group" role="group" aria-label="Acciones de gráfica de pagos">
-            <button class="btn btn-primary mr-2" data-toggle='modal' data-target="#paymentChart">
+            <button class="btn btn-primary mr-2" id="btnGenerateReportGraph" data-toggle='modal' data-target="#paymentChart">
                 <i class="fa fa-money-bill"></i> Gráfica de pagos
             </button>
 
@@ -141,6 +141,33 @@
             link.download = `${canvasId}.png`;
             link.click();
         });
+    });
+</script>
+@endsection
+
+@section('js')
+<script>
+    document.getElementById('btnGenerateReportGraph').addEventListener('click', async () => {
+        const chartIds = ['barChart', 'lineChart', 'pieChart'];
+        const chartImages = chartIds.map(id => {
+            const canvas = document.getElementById(id);
+            return canvas.toDataURL('image/png');
+        });
+
+        const response = await fetch('{{ route('report.advancePaymentGraphReport') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ charts: chartImages })
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        } 
     });
 </script>
 @endsection

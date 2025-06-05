@@ -114,6 +114,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+    Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
 
     Route::resource('incidentCategories', IncidentCategoriesController::class);
 
