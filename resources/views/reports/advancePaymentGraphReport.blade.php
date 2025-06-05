@@ -162,7 +162,7 @@
                 padding: 5px;
             }
 
-            .informationEadown {
+            .informationFooter {
                 text-align: center;
                 margin-top: 20px;
                 padding: 10px;
@@ -172,7 +172,7 @@
                 right: 20px; 
             }
 
-            .textInformationE {
+            .textInformationFooter {
                 text-align: center;
                 font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
@@ -220,7 +220,7 @@
                         <div>
                             <p class="aquaTitle"> COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
                             </p><br>
-                            <a class="linkWhats" href="https://wa.me/525623640302">WhatsApp: +52 56 1966 0990</a><br>
+                            <a class="linkWhats" href="https://wa.me/525619660990">WhatsApp: +52 56 1966 0990</a><br>
                             <a class="linkEmail" href="mailto:info@rootheim.com">Email: info@rootheim.com</a>
                         </div>
                     </td>
@@ -267,9 +267,9 @@
             </table>
         </div>
         <center>
-            <div class="informationEadown">
-                <a class="textInformationE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
-                <a class="textInformationE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="15px" height="15px">
+            <div class="informationFooter">
+                <a class="textInformationFooter" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+                <a class="textInformationFooter" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="15px" height="15px">
             </div>
         </center>
     </body>
