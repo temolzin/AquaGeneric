@@ -40,7 +40,58 @@ class AdvancePaymentController extends Controller
     public function destroy($id)
     {
     }
+    private function filterByCustomerName($query, string $name)
+    {
+        $query->whereHas('debt.customer', fn($q) => $q->where(function ($q) use ($name) {
+            $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$name}%"])
+                ->orWhereRaw("CONCAT(last_name, ' ', name) LIKE ?", ["%{$name}%"]);
+        }));
+    }
+    private function filterByPeriod($query, string $period)
+    {
+        [$monthName, $year] = explode('/', $period);
+        $monthNumber = self::MONTHS[strtolower(trim($monthName))] ?? null;
 
+        if ($monthNumber && $year) {
+            $query->whereHas('debt', fn($q) => $q->whereYear('start_date', $year)
+                ->whereMonth('start_date', $monthNumber)
+                ->orWhere(fn($q) => $q->whereYear('end_date', $year)
+                    ->whereMonth('end_date', $monthNumber))
+            );
+        }
+    }
+    private function getAdvancePayments(Request $request)
+    {
+        $query = Payment::with(['debt.customer', 'debt.waterConnection'])
+            ->whereHas('debt', fn($q) => $q->where('end_date', '>', now())->where('status', '!=', 'pending'))
+            ->where('locality_id', auth()->user()->locality_id)
+            ->latest();
+
+        $request->whenFilled('name', fn() => $this->filterByCustomerName($query, $request->name));
+        $request->whenFilled('period', fn() => $this->filterByPeriod($query, $request->period));
+
+        return $query->paginate(10);
+    }
+    private function getCustomerAdvancePayments(Customer $customer, int $waterConnectionId)
+    {
+        return Payment::whereHas('debt', fn($q) => $q->where('customer_id', $customer->id)
+            ->where('water_connection_id', $waterConnectionId)
+            ->where('end_date', '>', now())
+            ->where('status', '!=', 'pending'))
+            ->where('locality_id', auth()->user()->locality_id)
+            ->with(['debt'])
+            ->latest()
+            ->get();
+    }
+    private function generateReportFileName(Customer $customer, $waterConnection): string
+    {
+        return sprintf(
+            'Reporte_Pagos_Adelantados_%s_%s_%s.pdf',
+            Str::slug($customer->name),
+            Str::slug($waterConnection->name),
+            now()->format('Y-m-d')
+        );
+    }
     public function generateAdvancedPaymentReport(Request $request)
     {
         $data = $request->validate([
@@ -49,7 +100,7 @@ class AdvancePaymentController extends Controller
         ]);
 
         $customer = Customer::with([
-            'waterConnections' => fn ($q) => $q->findOrFail($data['water_connection_id']),
+            'waterConnections' => fn($q) => $q->findOrFail($data['water_connection_id']),
         ])->findOrFail($data['customer_id']);
 
         $payments = $this->getCustomerAdvancePayments($customer, $data['water_connection_id'])
@@ -66,59 +117,5 @@ class AdvancePaymentController extends Controller
         return $pdf->stream($this->generateReportFilename($customer, $customer->waterConnections->first()));
     }
 
-    private function getAdvancePayments(Request $request)
-    {
-        $query = Payment::with(['debt.customer', 'debt.waterConnection'])
-            ->whereHas('debt', fn ($q) => $q->where('end_date', '>', now())->where('status', '!=', 'pending'))
-            ->where('locality_id', auth()->user()->locality_id)
-            ->latest();
 
-        $request->whenFilled('name', fn () => $this->filterByCustomerName($query, $request->name));
-        $request->whenFilled('period', fn () => $this->filterByPeriod($query, $request->period));
-
-        return $query->paginate(10);
-    }
-
-    private function getCustomerAdvancePayments(Customer $customer, int $waterConnectionId)
-    {
-        return Payment::whereHas('debt', fn ($q) => $q->where('customer_id', $customer->id)
-            ->where('water_connection_id', $waterConnectionId)
-            ->where('end_date', '>', now())
-            ->where('status', '!=', 'pending'))
-            ->where('locality_id', auth()->user()->locality_id)
-            ->with(['debt'])
-            ->latest()
-            ->get();
-    }
-
-    private function filterByCustomerName($query, string $name)
-    {
-        $query->whereHas('debt.customer', fn ($q) => $q->where(function ($q) use ($name) {
-            $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$name}%"])
-                ->orWhereRaw("CONCAT(last_name, ' ', name) LIKE ?", ["%{$name}%"]);
-        }));
-    }
-
-    private function filterByPeriod($query, string $period)
-    {
-        [$monthName, $year] = explode('/', $period);
-        $monthNumber = self::MONTHS[strtolower(trim($monthName))] ?? null;
-
-        if ($monthNumber && $year) {
-            $query->whereHas('debt', fn ($q) => $q->whereYear('start_date', $year)
-                ->whereMonth('start_date', $monthNumber)
-                ->orWhere(fn ($q) => $q->whereYear('end_date', $year)
-                    ->whereMonth('end_date', $monthNumber))
-            );
-        }
-    }
-    private function generateReportFileName(Customer $customer, $waterConnection): string  
-    {
-        return sprintf(
-            'Reporte_Pagos_Adelantados_%s_%s_%s.pdf',
-            Str::slug($customer->name),
-            Str::slug($waterConnection->name),
-            now()->format('Y-m-d')
-        );
-    }
 }

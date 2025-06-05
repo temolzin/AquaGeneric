@@ -161,7 +161,7 @@
             border-top: 1px solid #bfc9ff;
         }
 
-        .infoEabajo {
+        .infoDown {
             text-align: center;
             margin-top: 20px;
             padding: 10px;
@@ -171,7 +171,7 @@
             right: 20px;
         }
 
-        .textInfoE {
+        .textInfo {
             text-align: center;
             font-size: 12pt;
             font-family: 'Montserrat', sans-serif;
@@ -203,6 +203,10 @@
             color: black;
         }
     </style>
+    @php
+        use Carbon\Carbon;
+        use App\Models\Debt;
+    @endphp
 </head>
 
 <body>
@@ -225,7 +229,7 @@
                             {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
                         </p>
                         <br>
-                        <a class="linkWhats" href="https://wa.me/525623640302">
+                        <a class="linkWhats" href="https://wa.me/525619660990">
                             WhatsApp: +52 56 1966 0990
 
                         </a>
@@ -240,7 +244,7 @@
                         <span class="h3">Historial de Pagos Adelantados</span>
                         <p>
                             <strong>Fecha: </strong>
-                            {{ \Carbon\Carbon::now()->translatedFormat('j \d\e F \d\e Y') }}
+                            {{Carbon::now()->translatedFormat('j \d\e F \d\e Y') }}
                         </p>
                     </div>
                 </td>
@@ -304,11 +308,11 @@
                         <tr class="{{ $payment->debt->end_date > now() ? 'highlight' : '' }}">
                             <td class="textCenter">{{ $payment->id }}</td>
                             <td class="textCenter">
-                                {{ \Carbon\Carbon::parse($payment->created_at)->translatedFormat('j \d\e F \d\e Y') }}
+                                {{Carbon::parse($payment->created_at)->translatedFormat('j \d\e F \d\e Y') }}
                             </td>
                             <td class="textCenter">
-                                {{ \Carbon\Carbon::parse($payment->debt->start_date)->translatedFormat('F Y') }} -
-                                {{ \Carbon\Carbon::parse($payment->debt->end_date)->translatedFormat('F Y') }}
+                                {{Carbon::parse($payment->debt->start_date)->translatedFormat('F Y') }} -
+                                {{Carbon::parse($payment->debt->end_date)->translatedFormat('F Y') }}
                             </td>
                             <td class="textCenter">$ {{ number_format($payment->amount, 2) }}</td>
                         </tr>
@@ -326,11 +330,11 @@
         </table>
     </div>
 
-    <div class="infoEabajo">
-        <a class="textInfoE" href="https://aquacontrol.rootheim.com/">
+    <div class="infoDown">
+        <a class="textInfo" href="https://aquacontrol.rootheim.com/">
             <strong>AquaControl</strong>
         </a>
-        <a class="textInfoE" href="https://rootheim.com/">
+        <a class="textInfo" href="https://rootheim.com/">
             powered by<strong> Root Heim Company </strong>
         </a>
         <img src="img/rootheim.png" width="15px" height="15px">
