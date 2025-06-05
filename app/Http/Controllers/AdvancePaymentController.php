@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\{Payment, Customer};
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use App\Models\Debt;
 use Str;
 
 class AdvancePaymentController extends Controller
@@ -77,7 +78,7 @@ class AdvancePaymentController extends Controller
         return Payment::whereHas('debt', fn($q) => $q->where('customer_id', $customer->id)
             ->where('water_connection_id', $waterConnectionId)
             ->where('end_date', '>', now())
-            ->where('status', '!=', 'pending'))
+            ->where('status', '!=',  Debt::STATUS_PENDING))
             ->where('locality_id', auth()->user()->locality_id)
             ->with(['debt'])
             ->latest()
