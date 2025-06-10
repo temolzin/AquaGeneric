@@ -117,5 +117,5 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::resource('incidentCategories', IncidentCategoriesController::class);
 
-    Route::get('/incidents', [IncidentController::class, 'index'])->name('incidents.index');
+    Route::resource('incidents', IncidentController::class);
 });
