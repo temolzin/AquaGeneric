@@ -31,6 +31,6 @@ class Incident extends Model
 
     public function incidentCategory()
     {
-        return $this->belongsTo(IncidentCategory::class, 'category_id'); // category_id es la clave foránea
+        return $this->belongsTo(IncidentCategory::class, 'category_id');
     }
 }
