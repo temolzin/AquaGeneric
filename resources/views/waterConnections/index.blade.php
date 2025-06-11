@@ -52,7 +52,7 @@
                                                     <td scope="row">{{ $connection->id }}</td>
                                                     <td>{{ $connection->name }}</td>
                                                     <td>{{ $connection->customer->name }} {{ $connection->customer->last_name }}</td>
-                                                    <td>${{ $connection->cost->price}}</td>
+                                                    <td>${{ $connection->cost->price }}</td>
                                                     @if ($connection->type === 'residencial')
                                                         <td>Residencial</td>
                                                     @elseif ($connection->type === 'commercial')
@@ -65,22 +65,82 @@
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
                                                             @endcan
+
                                                             @can('editWaterConnection')
                                                             <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $connection->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
                                                             @endcan
+
                                                             @can('deleteWaterConnection')
                                                             <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $connection->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                             @endcan
+
+                                                            <button type="button" class="btn {{ $connection->cancellation_reason ? 'btn-secondary' : 'btn-danger' }} mr-2" data-toggle="modal" title="{{ $connection->cancellation_reason ? 'Toma ya cancelada' : 'Cancelar Toma' }}"
+                                                                data-target="#cancel{{ $connection->id }}" {{ $connection->cancellation_reason ? 'disabled' : '' }}>
+                                                                    <i class="fas fa-times-circle"></i>
+                                                            </button>
+
+                                                            @if($connection->cancellation_reason)
+                                                                <button type="button" class="btn btn-info" data-toggle="modal" title="Ver motivo de cancelación" data-target="#viewCancellationReason{{ $connection->id }}">
+                                                                    <i class="fas fa-info-circle"></i>
+                                                                </button>
+                                                            @endif
                                                         </div>
                                                     </td>
                                                 </tr>
+
                                                 @include('waterConnections.show')
                                                 @include('waterConnections.edit')
                                                 @include('waterConnections.delete')
+
+                                                <div class="modal fade" id="cancel{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="cancelLabel{{ $connection->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <form action="{{ route('waterConnections.cancel', $connection->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="cancelLabel{{ $connection->id }}">Cancelar Toma</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <label for="cancellation_reason_{{ $connection->id }}">Motivo de cancelación</label>
+                                                                    <textarea id="cancellation_reason_{{ $connection->id }}" name="cancellation_reason" class="form-control" required></textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-danger">Cancelar Toma</button>
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+
+                                                @if($connection->cancellation_reason)
+                                                <div class="modal fade" id="viewCancellationReason{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="viewCancellationReasonLabel{{ $connection->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="viewCancellationReasonLabel{{ $connection->id }}">Motivo de Cancelación</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>{{ $connection->cancellation_reason }}</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endif
                                             @endforeach
                                         @endif
                                     </tbody>
@@ -97,6 +157,27 @@
         </div>
     </div>
 </section>
+
+@if(session('debt_error'))
+<div class="modal fade" id="debtErrorModal" tabindex="-1" role="dialog" aria-labelledby="debtErrorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="debtErrorModalLabel">No se puede cancelar</h5>
+                <button type="button" class="close text-dark" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                La toma <strong>{{ session('connection_name') }}</strong> tiene deudas activas. Debe saldarlas antes de cancelarla.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 @endsection
 
 @section('js')
@@ -133,7 +214,7 @@
 
     $('#createWaterConnections').on('shown.bs.modal', function() {
         $('.select2').select2({
-                dropdownParent: $('#createWaterConnections')
+            dropdownParent: $('#createWaterConnections')
         });
     });
 
@@ -142,5 +223,9 @@
             dropdownParent: $(this)
         });
     });
+
+    @if(session('debt_error'))
+        $('#debtErrorModal').modal('show');
+    @endif
 </script>
 @endsection

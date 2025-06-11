@@ -98,4 +98,21 @@ class WaterConnectionController extends Controller
         $connection->delete();
         return redirect()->route('waterConnections.index')->with('success', 'Toma de Agua eliminada correctamente.');
     }
+
+    public function cancel(Request $request, $id)
+    {
+        $connection = WaterConnection::findOrFail($id);
+
+        if ($connection->hasDebt()) {
+            return redirect()->route('waterConnections.index')
+                ->with('debt_error', true)
+                ->with('connection_name', $connection->name);
+        }
+
+        $connection->cancellation_reason = $request->input('cancellation_reason');
+        $connection->canceled_at = now();
+        $connection->save();
+
+        return redirect()->route('waterConnections.index')->with('success', 'Toma cancelada correctamente.');
+    }
 }

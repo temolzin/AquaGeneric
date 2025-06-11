@@ -51,4 +51,9 @@ class WaterConnection extends Model
     {
         return $this->hasMany(Debt::class, 'water_connection_id');
     }
+
+    public function hasDebt()
+    {
+        return $this->debts()->where('status', '!=', 'paid')->exists();
+    }
 }
