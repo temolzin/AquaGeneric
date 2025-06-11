@@ -16,6 +16,7 @@ use App\Http\Controllers\WaterConnectionController;
 use App\Http\Controllers\AdvancePaymentController;
 use App\Http\Controllers\IncidentCategoriesController;
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\EmployeeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -114,12 +115,12 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
 
-    Route::group(['middleware' => ['auth']], function () {
-        Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
-        Route::get('/advancedPaymentsReport', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
-
-    });
     Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
-    Route::get('/incidentCategories', [IncidentCategoriesController::class, 'index'])->name('incidentCategories.index');
-    Route::get('/incidents', [IncidentController::class, 'index'])->name('incidents.index');
+    Route::get('/advancedPaymentsReport', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
+
+    
+    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::resource('employees', EmployeeController::class);
+    Route::get('/reports/generateEmployeeListPDF', [EmployeeController::class, 'generateEmployeeListPDF'])->name('report.generateEmployeeListPDF');
+
 });
