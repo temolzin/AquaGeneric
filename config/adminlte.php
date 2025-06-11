@@ -378,24 +378,6 @@ return [
             'can' => 'viewGeneralExpense'
         ],
         [
-            'text' => 'Gestión de Incidencias',
-            'icon' => 'fas fa-fw fa-exclamation-triangle',
-            'submenu' => [
-                [
-                    'text' => 'Incidencias',
-                    'url' => '/incidents',
-                    'icon' => 'fas fa-fw fa-bug',
-                    //'can'  => 'viewIncidents',
-                ],
-                [
-                    'text' => 'Categoría de Incidencias',
-                    'url' => '/incidentCategories',
-                    'icon' => 'fas fa-fw fa-tags',
-                    //'can'  => 'viewIncidentCategories',
-                ],
-            ],
-        ],
-        [
             'text' => 'Empleados',
             'url' => '/employees',
             'icon' => 'fas fa-solid fa-users',
