@@ -9,15 +9,15 @@ class AddCancellationFieldsToWaterConnectionsTable extends Migration
     public function up()
     {
         Schema::table('water_connections', function (Blueprint $table) {
-        $table->timestamp('canceled_at')->nullable();
-        $table->text('cancellation_reason')->nullable();
+            $table->timestamp('canceled_at')->nullable();
+            $table->text('cancellation_reason')->nullable();
         });
     }
 
     public function down()
     {
         Schema::table('water_connections', function (Blueprint $table) {
-            //
+            $table->dropColumn(['canceled_at', 'cancellation_reason']);
         });
     }
 }

@@ -109,7 +109,7 @@ class WaterConnectionController extends Controller
                 ->with('connection_name', $connection->name);
         }
 
-        $connection->cancellation_reason = $request->input('cancellation_reason');
+        $connection->cancellation_reason = $request->input('cancelDescription');
         $connection->canceled_at = now();
         $connection->save();
 

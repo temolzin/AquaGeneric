@@ -78,14 +78,14 @@
                                                             </button>
                                                             @endcan
 
-                                                            <button type="button" class="btn {{ $connection->cancellation_reason ? 'btn-secondary' : 'btn-danger' }} mr-2" data-toggle="modal" title="{{ $connection->cancellation_reason ? 'Toma ya cancelada' : 'Cancelar Toma' }}"
-                                                                data-target="#cancel{{ $connection->id }}" {{ $connection->cancellation_reason ? 'disabled' : '' }}>
-                                                                    <i class="fas fa-times-circle"></i>
+                                                            <button type="button" class="btn {{ $connection->cancelDescription ? 'btn-secondary' : 'btn-danger' }} mr-2" data-toggle="modal" title="{{ $connection->cancelDescription ? 'Toma ya cancelada' : 'Cancelar Toma' }}"
+                                                                data-target="#cancel{{ $connection->id }}" {{ $connection->cancelDescription ? 'disabled' : '' }}>
+                                                                <i class="fas fa-times-circle"></i>
                                                             </button>
 
-                                                            @if($connection->cancellation_reason)
+                                                            @if($connection->cancelDescription)
                                                                 <button type="button" class="btn btn-info" data-toggle="modal" title="Ver motivo de cancelación" data-target="#viewCancellationReason{{ $connection->id }}">
-                                                                    <i class="fas fa-info-circle"></i>
+                                                                <i class="fas fa-info-circle"></i>
                                                                 </button>
                                                             @endif
                                                         </div>
@@ -109,8 +109,8 @@
                                                                     </button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <label for="cancellation_reason_{{ $connection->id }}">Motivo de cancelación</label>
-                                                                    <textarea id="cancellation_reason_{{ $connection->id }}" name="cancellation_reason" class="form-control" required></textarea>
+                                                                    <label for="cancelDescription{{ $connection->id }}">Motivo de cancelación</label>
+                                                                    <textarea id="cancelDescription{{ $connection->id }}" name="cancelDescription" class="form-control" required></textarea>
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="submit" class="btn btn-danger">Cancelar Toma</button>
@@ -121,7 +121,7 @@
                                                     </div>
                                                 </div>
 
-                                                @if($connection->cancellation_reason)
+                                                @if($connection->cancelDescription)
                                                 <div class="modal fade" id="viewCancellationReason{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="viewCancellationReasonLabel{{ $connection->id }}" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
@@ -132,7 +132,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>{{ $connection->cancellation_reason }}</p>
+                                                                <p>{{ $connection->cancelDescription }}</p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
