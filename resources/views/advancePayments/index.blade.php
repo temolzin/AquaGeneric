@@ -13,7 +13,7 @@
                 <i class="fa fa-money-bill"></i> Gráfica de pagos
             </button>
 
-            <a type="button" class="btn btn-success mr-2" target="_blank" title="Historial de pagos" href="#">
+            <a class="btn btn-success mr-2" data-toggle="modal" data-target="#paymentHistoryModal" title="Historial de pagos">
                 <i class="fas fa-clipboard"></i> Historial de pagos
             </a>
 
@@ -23,6 +23,8 @@
         </div>
     </div>
 </div>
+
+@include('advancePayments.paymentHistoryModal')
 
 @php
     $chartHeight = '250px';
