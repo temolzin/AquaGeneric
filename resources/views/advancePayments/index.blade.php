@@ -41,7 +41,6 @@
         </form>
     </div>
 @endsection
-
 @section('js')
     <script>
         $('#generateAdvancePaymentsReportModal').on('shown.bs.modal', function () {
@@ -49,6 +48,9 @@
                 dropdownParent: $('#generateAdvancePaymentsReportModal')
             });
         });
+            <a class="btn btn-success mr-2" data-toggle="modal" data-target="#paymentHistoryModal" title="Historial de pagos">
+                <i class="fas fa-clipboard"></i> Historial de pagos
+            </a>
 
         $('#advancePaymentsCustomerSelect').on('change', function () {
             const customerId = $(this).val();
@@ -78,6 +80,8 @@
         });
     </script>
 </div>
+
+@include('advancePayments.paymentHistoryModal')
 
 @php
     $chartHeight = '250px';
