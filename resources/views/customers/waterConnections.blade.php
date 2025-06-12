@@ -53,47 +53,10 @@
                                 @php $connectionCounter = 0; @endphp
                                 @foreach ($customer->waterConnections as $waterConnection)
                                     @if ($waterConnection)
-                                        @php $connectionCounter++; 
-                                            $today = \Carbon\Carbon::today();
-
-                                            $debts = $waterConnection->debts;
-                                            $unpaidDebts = $debts->where('status', '!=', \App\Models\Debt::STATUS_PAID);
-                                            $hasDebt = $unpaidDebts->isNotEmpty();
-
-                                            $futurePaidDebts = $debts->filter(function ($debt) use ($today) {
-                                                return $debt->status === \App\Models\Debt::STATUS_PAID && \Carbon\Carbon::parse($debt->start_date)->gt($today);
-                                            });
-                                            $hasAdvance = $futurePaidDebts->isNotEmpty();
-
-                                            if ($waterConnection->status === 'suspendido') {
-                                                $status = 'suspender';
-                                            } elseif ($hasDebt) {
-                                                $status = 'adeudo';
-                                            } elseif ($hasAdvance) {
-                                                $status = 'adelantado';
-                                            } else {
-                                                $status = 'pagado';
-                                            }
-
-                                            $statusLabels = [
-                                                'pagado' => 'Pagado',
-                                                'adeudo' => 'Adeudo',
-                                                'adelantado' => 'Adelantado',
-                                                'suspender' => 'Suspendida',
-                                            ];
-
-                                            $statusStyles = [
-                                                'pagado' => 'background-color: #28a745; color: white;',
-                                                'adeudo' => 'background-color: #dc3545; color: white;',
-                                                'adelantado' => 'background-color: #6f42c1; color: white;',
-                                                'suspender' => 'background-color: #6c757d; color: white;',
-                                            ];
-                                        @endphp
-
+                                        @php $connectionCounter++; @endphp
                                         @if ($connectionCounter > 1)
                                             <hr style="border: none; border-top: 2px solid rgba(112, 68, 196, 0.8); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
                                         @endif
-
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-lg-2">
                                                 <div class="form-group">
@@ -111,8 +74,8 @@
                                                 <div class="form-group">
                                                     <label>Estatus</label>
                                                     <div>
-                                                        <div style="display: inline-block; padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; text-align: center; {!! $statusStyles[$status] !!}">
-                                                            {{ $statusLabels[$status] }}
+                                                        <div style="display: inline-block; padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; text-align: center; {!! $waterConnection->calculated_style !!}">
+                                                            {{ ucfirst($waterConnection->calculated_status === 'suspender' ? 'suspendida' : $waterConnection->calculated_status) }}
                                                         </div>
                                                     </div>
                                                 </div>

@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
+
 class WaterConnection extends Model
 {
-    use HasFactory,  SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'locality_id',
@@ -50,5 +52,49 @@ class WaterConnection extends Model
     public function debts()
     {
         return $this->hasMany(Debt::class, 'water_connection_id');
+    }
+
+    public function getCalculatedStatusAttribute()
+    {
+        $today = Carbon::today();
+        $debts = $this->debts;
+
+        $unpaidDebts = $debts->where('status', '!=', \App\Models\Debt::STATUS_PAID);
+        $hasDebt = $unpaidDebts->isNotEmpty();
+
+        $futurePaidDebts = $debts->filter(function ($debt) use ($today) 
+        {
+            return $debt->status === \App\Models\Debt::STATUS_PAID &&
+            Carbon::parse($debt->start_date)->gt($today);
+        });
+
+        $hasAdvance = $futurePaidDebts->isNotEmpty();
+
+        if ($this->status === 'suspendido') 
+        {
+            return 'suspender';
+        }
+        if ($hasDebt) 
+        {
+            return 'adeudo';
+        }
+        if ($hasAdvance) 
+        {
+            return 'adelantado';
+        }
+
+        return 'pagado';
+    }
+
+    public function getCalculatedStyleAttribute()
+    {
+        $styles = [
+            'pagado' => 'background-color: #28a745; color: white;',
+            'adeudo' => 'background-color: #dc3545; color: white;',
+            'adelantado' => 'background-color: #6f42c1; color: white;',
+            'suspender' => 'background-color: #6c757d; color: white;',
+        ];
+
+        return $styles[$this->calculated_status] ?? '';
     }
 }
