@@ -57,13 +57,13 @@ class WaterConnection extends Model
         return $this->debts()->where('status', '!=', 'paid')->exists();
     }
 
-    public function getCancelDescriptionAttribute()
+   public function getCancelDescriptionAttribute()
     {
-        return $this->cancellation_reason;
+        return $this->attributes['cancel_description'];
     }
-
+    
     public function setCancelDescriptionAttribute($value)
     {
-        $this->attributes['cancellation_reason'] = $value;
+        $this->attributes['cancel_description'] = $value;
     }
 }
