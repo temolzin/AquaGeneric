@@ -47,12 +47,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="status" class="form-label">Estado(*)</label>
-                                        <select class="form-control" disabled onchange="toggleResponsibleFieldView({{ $incident->id }})">
-                                            <option value="">Selecciona una opción</option>
-                                            <option value="2" {{ $incident->status == 2 ? 'selected' : '' }}>Pendiente</option>
-                                            <option value="1" {{ $incident->status == 1 ? 'selected' : '' }}>Proceso</option>
-                                            <option value="0" {{ $incident->status == 0 ? 'selected' : '' }}>Terminada</option>
-                                        </select>
+                                        <input type="text" disabled class="form-control" value="{{ $incident->status }}" />
                                     </div>
                                 </div>
                             </div>
@@ -66,16 +61,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    function toggleResponsibleFieldView(id) {
-        const statusSelect = document.getElementById('statusUpdate-' + id);
-        const responsibleField = document.getElementById('responsibleNameUpdate-' + id);
-
-        responsibleField.style.display = statusSelect.value === '0' ? 'block' : 'none';
-    }
-
-    function initializeModal(id) {
-        toggleResponsibleFieldView(id);
-    }
-</script>

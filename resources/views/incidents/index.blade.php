@@ -55,17 +55,7 @@
                                                             {{$incident->incidentCategory->name}}
                                                         </td>
                                                         <td>
-                                                            @switch($incident->status)
-                                                                @case(2)
-                                                                    Pendiente
-                                                                    @break
-                                                                @case(1)
-                                                                    Proceso
-                                                                    @break
-                                                                @default
-                                                                    Terminada
-                                                                    @break
-                                                            @endswitch
+                                                            {{$incident->status}}
                                                         </td>
                                                         <td>
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{$incident->id}}">

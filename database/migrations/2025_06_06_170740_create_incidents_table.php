@@ -21,7 +21,7 @@ class CreateIncidentsTable extends Migration
             $table->date('start_date');
             $table->string('description');
             $table->unsignedBigInteger('category_id');
-            $table->boolean('status');
+            $table->string('status');
             $table->timestamps();
 
             $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');

@@ -25,29 +25,29 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="nameUpdate" class="form-label">Nombre(*)</label>
+                                            <label for="name" class="form-label">Nombre(*)</label>
                                             <input type="text" class="form-control" name="nameUpdate" value="{{ $incident->name }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="startDateUpdate" class="form-label">Fecha de Inicio(*)</label>
+                                            <label for="startDate" class="form-label">Fecha de Inicio(*)</label>
                                             <input type="date" class="form-control" name="startDateUpdate" value="{{ \Carbon\Carbon::parse($incident->start_date)->format('Y-m-d') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="descriptionUpdate" class="form-label">Descripción(*)</label>
+                                            <label for="description" class="form-label">Descripción(*)</label>
                                             <input type="text" class="form-control" name="descriptionUpdate" value="{{ $incident->description }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6"></div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="CategoryUpdate" class="form-label">Categoria(*)</label>
+                                            <label for="category" class="form-label">Categoria(*)</label>
                                             <select class="form-control" name="categoryUpdate" required>
                                                 <option value="">Selecciona una opción</option>
-                                                 @foreach($incident->incidentCategory->all() as $category)
+                                                @foreach($incident->incidentCategory->all() as $category)
                                                     <option value="{{ $category->id }}" {{ $incident->category_id == $category->id ? 'selected' : '' }}>
                                                         {{ $category->name }}
                                                     </option>
@@ -58,13 +58,11 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estado(*)</label>
-                                            <select class="form-control"
-                                                    name="statusUpdate"
-                                                    onchange="toggleResponsibleFieldUpdate({{ $incident->id }})">
+                                            <select class="form-control" name="statusUpdate">
                                                 <option value="">Selecciona una opción</option>
-                                                <option value="2" {{ $incident->status == 2 ? 'selected' : '' }}>Pendiente</option>
-                                                <option value="1" {{ $incident->status == 1 ? 'selected' : '' }}>Proceso</option>
-                                                <option value="0" {{ $incident->status == 0 ? 'selected' : '' }}>Terminada</option>
+                                                <option value="Pendiente" {{ $incident->status == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
+                                                <option value="Proceso" {{ $incident->status == 'Proceso' ? 'selected' : '' }}>Proceso</option>
+                                                <option value="Terminado" {{ $incident->status == 'Terminado' ? 'selected' : '' }}>Terminado</option>
                                             </select>
                                         </div>
                                     </div>
@@ -81,16 +79,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    function toggleResponsibleFieldUpdate(id) {
-        const statusSelect = document.getElementById('statusUpdate-' + id);
-        const responsibleField = document.getElementById('responsibleNameUpdate-' + id);
-
-        responsibleField.style.display = statusSelect.value === '0' ? 'block' : 'none';
-    }
-
-    function initializeModal(id) {
-        toggleResponsibleFieldUpdate(id);
-    }
-</script>

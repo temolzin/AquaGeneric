@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Incident;
+use App\Models\IncidentCategory;
 
 class IncidentController extends Controller
 {
     public function index()
     {
         $incidents = Incident::with('incidentCategory')->paginate(10);
+        $categories = IncidentCategory::all();
 
-        return view('incidents.index',compact('incidents'));
+        return view('incidents.index', compact('incidents', 'categories'));
     }
 
     public function create()
@@ -56,15 +58,15 @@ class IncidentController extends Controller
             $incident->name = $request->input('nameUpdate');
             $incident->start_date = $request->input('startDateUpdate');
             $incident->description = $request->input('descriptionUpdate');
-            $incident->category = $request->input('categoryUpdate');
+            $incident->category_id = $request->input('categoryUpdate');
             $incident->status = $request->input('statusUpdate');
 
             $incident->save();
 
-            return redirect()->route('incidents.index')->with('success', 'Inci actualizado correctamente.');
+            return redirect()->route('incidents.index')->with('success', 'Incidencia actualizada correctamente.');
         }
 
-        return redirect()->back()->with('error', 'Cliente no encontrado.');
+        return redirect()->back()->with('error', 'Incidencia no encontrada.');
     }
 
     public function destroy(Incident $incident)
