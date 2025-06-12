@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Payment, Customer};
+use App\Models\Payment;
+use App\Models\Customer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Str;
 use Carbon\Carbon;
-use App\Models\Payment; 
 use App\Models\Debt;
 use Illuminate\Support\Facades\Log;
 
