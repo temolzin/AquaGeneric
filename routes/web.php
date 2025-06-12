@@ -13,7 +13,9 @@ use App\Http\Controllers\GeneralExpenseController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
-
+use App\Http\Controllers\AdvancePaymentController;
+use App\Http\Controllers\IncidentCategoriesController;
+use App\Http\Controllers\IncidentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -68,7 +70,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['can:viewCost']], function () {
-        Route:: resource('costs', CostController::class);
+        Route::resource('costs', CostController::class);
         Route::get('/costs', [CostController::class, 'index'])->name('costs.index');
     });
 
@@ -110,4 +112,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/weekly-gains-report', [GeneralExpenseController::class, 'weeklyGainsReport'])->name('report.weeklyGainsReport');
         Route::get('/annual-gains-report/{year}', [GeneralExpenseController::class, 'annualGainsReport'])->name('report.annualGainsReport');
     });
+
+    Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+    Route::get('/getAdavancedPaymentReportWithConnection', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
+    Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
 });
