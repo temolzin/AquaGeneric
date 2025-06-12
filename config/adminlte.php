@@ -294,96 +294,108 @@ return [
     |
     */
 
-    'menu' => [
-        // Navbar items:
-        [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => false,
-        ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
-        ['header' => 'MODULOS'],
-        [
-            'text' => 'Panel',
-            'url' => '/dashboard',
-            'icon' => 'fa fa-home',
-        ],
-        [
-            'text' => 'Usuarios',
-            'url' => '/users',
-            'icon' => 'fas fa-fw fa-user',
-            'can' => 'viewUser'
-        ],
-        [
-            'text' => 'Roles',
-            'url' => '/roles',
-            'icon' => 'fas fa-fw fa-user-shield',
-            'can' => 'viewRoles'
-        ],
-        [
-            'text' => 'Clientes',
-            'url' => '/customers',
-            'icon' => 'fas fa-fw fa-users',
-            'can' => 'viewCustomers'
-        ],
-        [
-            'text' => 'Gestión de Pagos',
-            'icon' => 'fas fa-fw fa-dollar-sign',
-            'submenu' => [
-                [
-                    'text' => 'Pagos',
-                    'url' => '/payments',
-                    'icon' => 'fas fa-fw fa-money-check-alt',
-                    'can' => 'viewPayments',
-                ],
-                [
-                    'text' => 'Pagos Adelantados',
-                    'url' => '/advancePayments',
-                    'icon' => 'fas fa-fw fa-calendar-plus',
-                    'can' => 'viewPayments',
-                ],
+'menu' => [
+    // Navbar items:
+    [
+        'type' => 'navbar-search',
+        'text' => 'search',
+        'topnav_right' => false,
+    ],
+    [
+        'type' => 'fullscreen-widget',
+        'topnav_right' => true,
+    ],
+    ['header' => 'MODULOS'],
+    [
+        'text' => 'Panel',
+        'url' => '/dashboard',
+        'icon' => 'fa fa-home',
+    ],
+    [
+        'text' => 'Usuarios',
+        'url' => '/users',
+        'icon' => 'fas fa-fw fa-user',
+        'can'  => 'viewUser'
+    ],
+    [
+        'text' => 'Roles',
+        'url' => '/roles',
+        'icon' => 'fas fa-fw fa-user-shield',
+        'can'  => 'viewRoles'
+    ],
+    [
+        'text' => 'Clientes',
+        'url' => '/customers',
+        'icon' => 'fas fa-fw fa-users',
+        'can'  => 'viewCustomers'
+    ],
+    [
+        'text' => 'Gestión de Pagos',
+        'icon' => 'fas fa-fw fa-dollar-sign',
+        'submenu' => [
+            [
+                'text' => 'Pagos',
+                'url'  => '/payments',
+                'icon' => 'fas fa-fw fa-money-check-alt',
+                'can'  => 'viewPayments',
+            ],
+            [
+                'text' => 'Pagos Adelantados',
+                'url'  => '/advancePayments',
+                'icon' => 'fas fa-fw fa-calendar-plus',
+                'can'  => 'viewPayments',
             ],
         ],
-        [
-            'text' => 'Deudas',
-            'url' => '/debts',
-            'icon' => 'fas fa-fw fa-credit-card',
-            'can' => 'viewDebts'
-        ],
-        [
-            'text' => 'Costos',
-            'url' => '/costs',
-            'icon' => 'fas fa-fw fa-money-bill-wave',
-            'can' => 'viewCost'
-        ],
-        [
-            'text' => 'Localidades',
-            'url' => '/localities',
-            'icon' => 'fas fa-fw fa-map-marker-alt',
-            'can' => 'viewLocality'
-        ],
-        [
-            'text' => 'Tomas de Agua',
-            'url' => '/waterConnections',
-            'icon' => 'fas fa-fw fa-water',
-            'can' => 'viewWaterConnection'
-        ],
-        [
-            'text' => 'Gastos',
-            'url' => '/generalExpenses',
-            'icon' => 'fas fa-fw fa-coins',
-            'can' => 'viewGeneralExpense'
-        ],
-        [
-            'text' => 'Empleados',
-            'url' => '/employees',
-            'icon' => 'fas fa-solid fa-users',
-            'can' => 'viewGeneralExpense'
+    ],
+    [
+        'text' => 'Deudas',
+        'url' => '/debts',
+        'icon' => 'fas fa-fw fa-credit-card',
+        'can'  => 'viewDebts'
+    ],
+    [
+        'text' => 'Costos',
+        'url' => '/costs',
+        'icon' => 'fas fa-fw fa-money-bill-wave',
+        'can'  => 'viewCost'
+    ],
+    [
+        'text' => 'Localidades',
+        'url' => '/localities',
+        'icon' => 'fas fa-fw fa-map-marker-alt',
+        'can'  => 'viewLocality'
+    ],
+    [
+        'text' => 'Tomas de Agua',
+        'url' => '/waterConnections',
+        'icon' => 'fas fa-fw fa-water',
+        'can'  => 'viewWaterConnection'
+    ],
+    [
+        'text' => 'Gastos',
+        'url' => '/generalExpenses',
+        'icon' => 'fas fa-fw fa-coins',
+        'can'  => 'viewGeneralExpense'
+    ],
+    [
+        'text' => 'Gestión de Incidencias',
+        'icon' => 'fas fa-fw fa-exclamation-triangle',
+        'submenu' => [
+            [
+                'text' => 'Incidencias',
+                'url'  => '/incidents',
+                'icon' => 'fas fa-fw fa-bug',
+                //'can'  => 'viewIncidents',
+            ],
+            [
+                'text' => 'Categoría de Incidencias',
+                'url'  => '/incidentCategories',
+                'icon' => 'fas fa-fw fa-tags',
+                //'can'  => 'viewIncidentCategories',
+            ],
         ],
     ],
+],
 
     /*
     |--------------------------------------------------------------------------
