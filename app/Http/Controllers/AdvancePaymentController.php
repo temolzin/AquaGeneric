@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\{Payment, Customer};
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Str;
 use Carbon\Carbon;
 use App\Models\Payment; 
 use App\Models\Debt;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+
 
 class AdvancePaymentController extends Controller
 {
@@ -175,5 +176,30 @@ class AdvancePaymentController extends Controller
 
         return $debt 
             ? response()->json(['start_date' => $debt->start_date,'end_date' => $debt->end_date,]) : response();
+    }
+
+    public function generatePaymentGraphReport(Request $request)
+    {
+        $authUser = auth()->user();
+
+        $debt = Debt::selectRaw('
+            MONTH(start_date) as start_month,
+            MONTH(end_date) as end_month,
+            YEAR(end_date) as end_year,
+            amount
+        ')
+        ->where('status', Debt::STATUS_PAID) 
+        ->where('start_date', '>', now())
+        ->first();
+
+        Carbon::setLocale('es');
+        $debt->startMonthName = Carbon::create()->month($debt->start_month)->translatedFormat('F');
+        $debt->endMonthName = Carbon::create()->month($debt->end_month)->translatedFormat('F');
+
+        $chartImages = $request->input('charts');
+
+        $pdf = PDF::loadView('reports.advancePaymentGraphReport', compact('authUser', 'chartImages', 'debt'))->setPaper('A4', 'portrait');
+
+        return $pdf->stream('advancePaymentGraphReport.pdf');
     }
 }

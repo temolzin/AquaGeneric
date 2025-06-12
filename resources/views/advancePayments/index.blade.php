@@ -13,6 +13,9 @@
                 <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#paymentChart">
                     <i class="fa fa-money-bill"></i> Gráfica de pagos
                 </button>
+                <a class="btn btn-success mr-2" data-toggle="modal" data-target="#paymentHistoryModal" title="Historial de pagos">
+                  <i class="fas fa-clipboard"></i> Historial de pagos
+                </a>
                 <button type="button" class="btn bg-teal mr-2" data-toggle="modal"
                     data-target="#generateAdvancePaymentsReportModal">
                     <i class="fas fa-fw fa-calendar-plus"></i> Pagos Adelantados
@@ -23,7 +26,6 @@
             </div>
         </div>
     </div>
-
     <div class="col-lg-4 mt-3">
         <form method="GET" action="" class="my-3">
             <div class="input-group">
@@ -200,6 +202,33 @@
             link.download = `${canvasId}.png`;
             link.click();
         });
+    });
+</script>
+@endsection
+
+@section('js')
+<script>
+    document.getElementById('btnGenerateReportGraph').addEventListener('click', async () => {
+        const chartIds = ['barChart', 'lineChart', 'pieChart'];
+        const chartImages = chartIds.map(id => {
+            const canvas = document.getElementById(id);
+            return canvas.toDataURL('image/png');
+        });
+
+        const response = await fetch('{{ route('report.advancePaymentGraphReport') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ charts: chartImages })
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        } 
     });
 </script>
 @endsection

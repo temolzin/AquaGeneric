@@ -113,8 +113,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/annual-gains-report/{year}', [GeneralExpenseController::class, 'annualGainsReport'])->name('report.annualGainsReport');
     });
 
-
     Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
     Route::get('/getAdavancedPaymentReportWithConnection', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
-
+    Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
 });
