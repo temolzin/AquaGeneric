@@ -16,6 +16,7 @@ use App\Http\Controllers\WaterConnectionController;
 use App\Http\Controllers\AdvancePaymentController;
 use App\Http\Controllers\IncidentCategoriesController;
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\EmployeeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -116,4 +117,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
     Route::get('/getAdavancedPaymentReportWithConnection', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
     Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
+    Route::get('/advancedPaymentsReport', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
+
+    Route::resource('employees', EmployeeController::class);
+    Route::get('/reports/generateEmployeeListPDF', [EmployeeController::class, 'generateEmployeeListPDF'])->name('report.generateEmployeeListPDF');
 });
