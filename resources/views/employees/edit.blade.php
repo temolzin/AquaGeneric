@@ -147,13 +147,25 @@
 </div>
 
 <script>
+<<<<<<< Updated upstream
     function previewImageEdit(event, id) {
+=======
+    function previewImageEdit(event, id) 
+    {
+>>>>>>> Stashed changes
         var input = event.target;
         var file = input.files[0];
         var reader = new FileReader();
 
+<<<<<<< Updated upstream
         if (!file.type.startsWith('image/')) {
             Swal.fire({
+=======
+        if (!file.type.startsWith('image/')) 
+        {
+            Swal.fire
+            ({
+>>>>>>> Stashed changes
                 icon: 'error',
                 title: 'Error',
                 text: 'Por favor, sube un archivo de imagen',
@@ -163,7 +175,12 @@
             return;
         }
 
+<<<<<<< Updated upstream
         reader.onload = function () {
+=======
+        reader.onload = function () 
+        {
+>>>>>>> Stashed changes
             var dataURL = reader.result;
             var output = document.getElementById('photo-preview-edit-' + id);
             output.src = dataURL;
@@ -172,7 +189,12 @@
         reader.readAsDataURL(input.files[0]);
     }
 
+<<<<<<< Updated upstream
     function resetForm(id) {
+=======
+    function resetForm(id) 
+    {
+>>>>>>> Stashed changes
         var form = document.getElementById('edit-employee-form-' + id);
         form.reset();
         var photoPreview = document.getElementById('photo-preview-edit-' + id);
@@ -180,10 +202,20 @@
         photoPreview.src = employeeGalleryUrl;
     }
 
+<<<<<<< Updated upstream
     document.addEventListener('DOMContentLoaded', function () {
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
             modal.addEventListener('show.bs.modal', function () {
+=======
+    document.addEventListener('DOMContentLoaded', function () 
+    {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => 
+        {
+            modal.addEventListener('show.bs.modal', function () 
+            {
+>>>>>>> Stashed changes
                 const employeeId = modal.id.replace('edit', '');
                 initializeModal(employeeId);
             });

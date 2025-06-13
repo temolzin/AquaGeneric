@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 <div class="modal fade" id="createEmployee" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -126,6 +129,7 @@
         var reader = new FileReader();
 
         if (!file.type.startsWith('image/')) {
+<<<<<<< Updated upstream
             Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -159,3 +163,40 @@
             });
         }
 </script>
+=======
+            Swal.fire
+                ({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Por favor, sube un archivo de imagen',
+                    confirmButtonText: 'Aceptar'
+                });
+            input.value = '';
+            return;
+        }
+        reader.onload = function () {
+            var output = document.getElementById('photo-preview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function handleFormSubmit(form) {
+        const submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+        submitButtons.forEach(button => {
+            button.disabled = true;
+            if (button.innerHTML) {
+                button.innerHTML = 'Guardando...';
+            }
+        });
+    }
+
+    const createEmployeeForm = document.getElementById('createEmployee');
+    if (createEmployeeForm) {
+        createEmployeeForm.addEventListener('submit', function (e) {
+            handleFormSubmit(createEmployeeForm);
+        });
+    }
+</script>
+>>>>>>> Stashed changes
