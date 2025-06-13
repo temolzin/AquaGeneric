@@ -117,6 +117,7 @@ Route::group(['middleware' => ['auth']], function () {
        Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
        Route::get('/getAdavancedPaymentReportWithConnection', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
        Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
+       Route::get('/getCustomersWithAdvancePayments', [AdvancePaymentController::class, 'getCustomersWithAdvancePayments'])->name('getCustomersWithAdvancePayments');
        Route::get('/getAdvanceDebtDates', [AdvancePaymentController::class, 'getAdvanceDebtDates'])->name('getAdvanceDebtDates');
     });
 
@@ -125,6 +126,6 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['can:viewIncidents']], function () {
-       Route::get('/incidents', [IncidentController::class, 'index'])->name('incidents.index');
+       Route::resource('incidents', IncidentController::class);
     });
 });
