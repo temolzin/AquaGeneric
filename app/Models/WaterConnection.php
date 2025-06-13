@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use App\Models\Debt;
 
 class WaterConnection extends Model
 {
@@ -59,12 +60,12 @@ class WaterConnection extends Model
         $today = Carbon::today();
         $debts = $this->debts;
 
-        $unpaidDebts = $debts->where('status', '!=', \App\Models\Debt::STATUS_PAID);
+        $unpaidDebts = $debts->where('status', '!=', Debt::STATUS_PAID);
         $hasDebt = $unpaidDebts->isNotEmpty();
 
         $futurePaidDebts = $debts->filter(function ($debt) use ($today) 
         {
-            return $debt->status === \App\Models\Debt::STATUS_PAID &&
+            return $debt->status === Debt::STATUS_PAID &&
             Carbon::parse($debt->start_date)->gt($today);
         });
 
