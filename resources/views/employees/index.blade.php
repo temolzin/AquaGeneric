@@ -115,15 +115,10 @@
 
 @section('js')
     <script>
-<<<<<<< Updated upstream
-        $(document).ready(function () {
-            $('#employees').DataTable({
-=======
         $(document).ready(function () 
         {
             $('#employees').DataTable
             ({
->>>>>>> Stashed changes
                 responsive: true,
                 paging: false,
                 info: false,
@@ -132,27 +127,18 @@
             var successMessage = "{{ session('success') }}";
             var errorMessage = "{{ session('error') }}";
             if (successMessage) {
-<<<<<<< Updated upstream
-                Swal.fire({
-=======
                 Swal.fire
                 ({
->>>>>>> Stashed changes
                     icon: 'success',
                     title: 'Éxito',
                     text: successMessage,
                     confirmButtonText: 'Aceptar'
                 });
             }
-<<<<<<< Updated upstream
-            if (errorMessage) {
-                Swal.fire({
-=======
             if (errorMessage) 
             {
                 Swal.fire
                 ({
->>>>>>> Stashed changes
                     icon: 'error',
                     title: 'Error',
                     text: errorMessage,
