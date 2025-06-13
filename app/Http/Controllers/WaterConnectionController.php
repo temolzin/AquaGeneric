@@ -12,7 +12,9 @@ class WaterConnectionController extends Controller
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = WaterConnection::where('water_connections.locality_id', $authUser->locality_id)
+
+        $query = WaterConnection::with(['debts', 'customer'])
+            ->where('locality_id', $authUser->locality_id)
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
             ->orderBy('water_connections.created_at', 'desc')
             ->select('water_connections.*');
@@ -32,6 +34,7 @@ class WaterConnectionController extends Controller
         $connections = $query->paginate(10);
         $customers = Customer::where('locality_id', $authUser->locality_id)->get();
         $costs = Cost::where('locality_id', $authUser->locality_id)->get();
+
         return view('waterConnections.index', compact('connections', 'customers', 'costs'));
     }
 
@@ -73,8 +76,8 @@ class WaterConnectionController extends Controller
         $connection->occupants_number = $request->input('occupantsNumberUpdate');
 
         $connection->water_days = json_encode(
-            $request->has('all_days_update')
-                ? 'all'
+            $request->has('all_days_update') 
+                ? 'all' 
                 : $request->input('days_update', [])
         );
 
