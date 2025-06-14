@@ -113,7 +113,6 @@ class WaterConnectionController extends Controller
         $connection->canceled_at = now();
         $connection->save();
 
-
         return redirect()->route('waterConnections.index')->with('success', 'Toma cancelada correctamente.');
     }
 }
