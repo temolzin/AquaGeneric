@@ -343,7 +343,7 @@ return [
                 'text' => 'Pagos Adelantados',
                 'url'  => '/advancePayments',
                 'icon' => 'fas fa-fw fa-calendar-plus',
-                'can'  => 'viewPayments',
+                'can'  => 'viewAdvancePayments',
             ],
         ],
     ],
@@ -385,13 +385,13 @@ return [
                 'text' => 'Incidencias',
                 'url'  => '/incidents',
                 'icon' => 'fas fa-fw fa-bug',
-                //'can'  => 'viewIncidents',
+                'can'  => 'viewIncidents',
             ],
             [
                 'text' => 'Categoría de Incidencias',
                 'url'  => '/incidentCategories',
                 'icon' => 'fas fa-fw fa-tags',
-                //'can'  => 'viewIncidentCategories',
+                'can'  => 'viewIncidentCategories',
             ],
         ],
     ],
@@ -518,12 +518,12 @@ return [
             ],
         ],
         'Chartjs' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js',
+                    'location' => 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
                 ],
             ],
         ],
@@ -549,6 +549,16 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+                ],
+            ],
+        ],
+        'FullCalendar' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js',
                 ],
             ],
         ],
