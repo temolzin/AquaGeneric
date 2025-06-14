@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Debt;
+
 class WaterConnection extends Model
 {
     use HasFactory,  SoftDeletes;
@@ -54,7 +56,7 @@ class WaterConnection extends Model
 
     public function hasDebt()
     {
-        return $this->debts()->where('status', '!=', 'paid')->exists();
+        return $this->debts()->where('status', '!=', Debt::STATUS_PAID)->exists();
     }
 
    public function getCancelDescriptionAttribute()

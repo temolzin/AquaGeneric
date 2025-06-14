@@ -158,7 +158,7 @@
     </div>
 </section>
 
-@if(session('debt_error'))
+@if(session('debtError'))
 <div class="modal fade" id="debtErrorModal" tabindex="-1" role="dialog" aria-labelledby="debtErrorModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -169,7 +169,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                La toma <strong>{{ session('connection_name') }}</strong> tiene deudas activas. Debe saldarlas antes de cancelarla.
+                La toma <strong>{{ session('connectionName') }}</strong> tiene deudas activas. Debe saldarlas antes de cancelarla.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -224,7 +224,7 @@
         });
     });
 
-    @if(session('debt_error'))
+    @if(session('debtError'))
         $('#debtErrorModal').modal('show');
     @endif
 </script>

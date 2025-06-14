@@ -105,13 +105,14 @@ class WaterConnectionController extends Controller
 
         if ($connection->hasDebt()) {
             return redirect()->route('waterConnections.index')
-                ->with('debt_error', true)
-                ->with('connection_name', $connection->name);
+                ->with('debtError', true)
+                ->with('connectionName', $connection->name);
         }
 
         $connection->cancel_description = $request->input('cancelDescription');
         $connection->canceled_at = now();
         $connection->save();
+
 
         return redirect()->route('waterConnections.index')->with('success', 'Toma cancelada correctamente.');
     }
