@@ -11,6 +11,7 @@ class CreateEmployeesTable extends Migration
      *
      * @return void
      */
+
     public function up()
     {
         Schema::create('employees', function (Blueprint $table) {
@@ -29,6 +30,7 @@ class CreateEmployeesTable extends Migration
             $table->string('email');
             $table->string('phone_number');
             $table->string('salary');
+            $table->string('rol');
             $table->timestamps();
             $table->softDeletes();
 
@@ -42,6 +44,7 @@ class CreateEmployeesTable extends Migration
      *
      * @return void
      */
+
     public function down()
     {
         Schema::dropIfExists('employees');

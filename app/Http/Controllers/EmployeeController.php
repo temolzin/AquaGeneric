@@ -23,26 +23,42 @@ class EmployeeController extends Controller
         $employees = $query->paginate(10);
         return view('employees.index', compact('employees'));
     }
+
     public function store(Request $request)
     {
         $authUser = auth()->user();
 
         $validateData = $request->validate([
             'name' => 'required|string',
-            'last_name' => 'required|string',
+            'lastName' => 'required|string',
             'locality' => 'required|string',
-            'zip_code' => 'required|string',
+            'zipCode' => 'required|string',
             'state' => 'required|string',
             'block' => 'required|string',
             'street' => 'required|string',
-            'exterior_number' => 'required|string',
-            'interior_number' => 'required|string',
+            'exteriorNumber' => 'required|string',
+            'interiorNumber' => 'required|string',
             'email' => 'required|email|unique:employees,email',
-            'phone_number' => 'nullable|string',
+            'phoneNumber' => 'nullable|string',
             'salary' => 'required',
+            'rol'=>'required|string',
         ]);
 
-        $employeeData = $request->all();
+        $employeeData = [
+            'name'=> $request->name,
+            'last_name' => $request -> lastName,
+            'locality'=> $request -> locality,
+            'zip_code'  => $request -> zipCode,
+            'state'  => $request -> state,
+            'block'  => $request -> block,
+            'street'=> $request -> street,
+            'exterior_number'  => $request -> exteriorNumber,
+            'interior_number'  => $request -> interiorNumber,
+            'email'  => $request -> email,
+            'phone_number'  => $request -> phoneNumber,
+            'salary'  => $request -> salary,
+            'rol'   => $request -> rol,
+        ];
         $employeeData['created_by'] = $authUser->id;
         $employeeData['locality_id'] = $authUser->locality_id;
 
@@ -72,6 +88,7 @@ class EmployeeController extends Controller
             $employee->email = $request->input('emailUpdate');
             $employee->phone_number = $request->input('phoneNumberUpdate');
             $employee->salary = $request->input('salaryUpdate');
+            $employee->rol = $request->input('rolUpdate');
 
             $employee->save();
 
@@ -91,16 +108,19 @@ class EmployeeController extends Controller
         $employee = Employee::findOrFail($id);
         return view('employees.show', compact('employee'));
     }
+
     public function destroy(Employee $employee)
     {
         $employee->delete();
         return redirect()->route('employees.index')->with('success', 'Empleado eliminado correctamente');
     }
+
     public function edit($id)
     {
         $employee = Employee::findOrFail($id);
         return view('employees.edit', compact('employee'));
     }
+
     public function generateEmployeeListPDF()
     {
         $authUser = auth()->user();

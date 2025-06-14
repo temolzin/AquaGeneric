@@ -97,6 +97,12 @@
                                         <input type="text" disabled class="form-control" value="{{ $employee->salary }}" />
                                     </div>
                                 </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Rol</label>
+                                        <input type="text" disabled class="form-control" value="{{ $employee->rol }}" />
+                                    </div>
+                                </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Registrado por</label>

@@ -40,8 +40,8 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="last_name" class="form-label">Apellido(*)</label>
-                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="last_name" name="last_name" placeholder="Ingresa apellido" value="{{ old('last_name') }}" required />
+                                            <label for="lastName" class="form-label">Apellido(*)</label>
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="lastName" name="lastName" placeholder="Ingresa apellido" value="{{ old('lastName') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -70,20 +70,20 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="zip_code" class="form-label">Código Postal(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="zip_code" name="zip_code" placeholder="Ingresa código postal" value="{{ old('zip_code') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
+                                            <label for="zipCode" class="form-label">Código Postal(*)</label>
+                                            <input type="text" pattern=".*\S.*" class="form-control" id="zipCode" name="zipCode" placeholder="Ingresa código postal" value="{{ old('zipCode') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="exterior_number" class="form-label">Número Exterior(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="exterior_number" name="exterior_number" placeholder="Ingresa número exterior" value="{{ old('exterior_number') }}" required />
+                                            <label for="exteriorNumber" class="form-label">Número Exterior(*)</label>
+                                            <input type="text" pattern=".*\S.*" class="form-control" id="exteriorNumber" name="exteriorNumber" placeholder="Ingresa número exterior" value="{{ old('exteriorNumber') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="interior_number" class="form-label">Número Interior(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="interior_number" name="interior_number" placeholder="Ingresa número interior" value="{{ old('interior_number') }}" required />
+                                            <label for="interiorNumber" class="form-label">Número Interior(*)</label>
+                                            <input type="text" pattern=".*\S.*" class="form-control" id="interiorNumber" name="interiorNumber" placeholder="Ingresa número interior" value="{{ old('interiorNumber') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -94,14 +94,26 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="phone_number" class="form-label">Número telefónico(*)</label>
-                                            <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Ingresa número telefónico" value="{{ old('phone_number') }}" required />
+                                            <label for="phoneNumber" class="form-label">Número telefónico(*)</label>
+                                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Ingresa número telefónico" value="{{ old('phoneNumber') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="salary" class="form-label">Salario(*)</label>
                                             <input type="number" class="form-control" id="salary" name="salary" placeholder="Ingresa salario" value="{{ old('salary') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="rol" class="form-label">Rol(*)</label>
+                                            <select class="form-control" name="rol" id="rol">
+                                                <option selected>Asigna un rol</option>
+                                                <option value="Administrador">Administrador</option>
+                                                <option value="Recepcionista">Recepcionista</option>
+                                                <option value="Encargado">Encargado</option>
+                                                <option value="Seguridad">Seguridad</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -119,27 +131,29 @@
 </div>
 
 <script>
-    function previewImage(event) {
+    function previewImage (event) {
         var input = event.target;
         var file = input.files[0];
         var reader = new FileReader();
 
-        if (!file.type.startsWith('image/')) {
-            Swal.fire
-                ({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Por favor, sube un archivo de imagen',
-                    confirmButtonText: 'Aceptar'
-                });
+        if (!file.type.startsWith ('image/')) {
+            Swal.fire ({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, sube un archivo de imagen',
+                confirmButtonText: 'Aceptar'
+            });
+
             input.value = '';
             return;
         }
+
         reader.onload = function () {
             var output = document.getElementById('photo-preview');
             output.src = reader.result;
             output.style.display = 'block';
         }
+
         reader.readAsDataURL(event.target.files[0]);
     }
 
@@ -154,6 +168,7 @@
     }
 
     const createEmployeeForm = document.getElementById('createEmployee');
+
     if (createEmployeeForm) {
         createEmployeeForm.addEventListener('submit', function (e) {
             handleFormSubmit(createEmployeeForm);

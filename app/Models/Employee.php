@@ -27,11 +27,14 @@ class Employee extends Model implements HasMedia
         'salary',
         'created_by',
         'locality_id',
+        'rol',
     ];
+
     public function locality()
     {
         return $this->belongsTo(Locality::class);
     }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

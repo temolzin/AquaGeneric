@@ -131,6 +131,18 @@
                                                 id="salaryUpdate" value="{{ $employee->salary }}" required>
                                         </div>
                                     </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="rolUpdate" class="form-label">Rol(*)</label>
+                                            <select class="form-control" name="rolUpdate" id="rolUpdate" required>
+                                                <option value="" disabled>Asigna un rol</option>
+                                                <option value="Administrador" {{ $employee->rol == 'Administrador' ? 'selected' : '' }}> Administrador </option>
+                                                <option value="Recepcionista" {{ $employee->rol == 'Recepcionista' ? 'selected' : '' }}> Recepcionista </option>
+                                                <option value="Encargado" {{ $employee->rol == 'Encargado' ? 'selected' : '' }}> Encargado </option>
+                                                <option value="Seguridad" {{ $employee->rol == 'Seguridad' ? 'selected' : '' }}> Seguridad </option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -147,37 +159,34 @@
 </div>
 
 <script>
-    function previewImageEdit(event, id) 
-    {
+    function previewImageEdit (event, id) {
         var input = event.target;
         var file = input.files[0];
         var reader = new FileReader();
 
-        if (!file.type.startsWith('image/')) 
-        {
-            Swal.fire
-            ({
+        if (!file.type.startsWith ('image/')) {
+            Swal.fire ({
                 icon: 'error',
                 title: 'Error',
                 text: 'Por favor, sube un archivo de imagen',
                 confirmButtonText: 'Aceptar'
             });
+
             input.value = '';
             return;
         }
 
-        reader.onload = function () 
-        {
+        reader.onload = function () {
             var dataURL = reader.result;
             var output = document.getElementById('photo-preview-edit-' + id);
             output.src = dataURL;
             output.style.display = 'block';
-        };
+        }
+
         reader.readAsDataURL(input.files[0]);
     }
 
-    function resetForm(id) 
-    {
+    function resetForm (id) {
         var form = document.getElementById('edit-employee-form-' + id);
         form.reset();
         var photoPreview = document.getElementById('photo-preview-edit-' + id);
@@ -185,13 +194,10 @@
         photoPreview.src = employeeGalleryUrl;
     }
 
-    document.addEventListener('DOMContentLoaded', function () 
-    {
+    document.addEventListener('DOMContentLoaded', function () {
         const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => 
-        {
-            modal.addEventListener('show.bs.modal', function () 
-            {
+        modals.forEach(modal => {
+            modal.addEventListener('show.bs.modal', function () {
                 const employeeId = modal.id.replace('edit', '');
                 initializeModal(employeeId);
             });
