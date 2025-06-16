@@ -47,12 +47,22 @@
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $category->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $category->id }}">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $category->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
+                                                            @can('editIncidentCategories')
+                                                                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $category->id }}">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                            @endcan
+                                                            @can('deleteIncidentCategories')
+                                                                @if($category->hasDependencies())
+                                                                    <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen incidencias asociadas a esta categoría." disabled>
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </button>
+                                                                @else
+                                                                    <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $category->id }}">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </button>
+                                                                @endif
+                                                            @endcan
                                                         </div>
                                                     </td>
                                                 </tr>
