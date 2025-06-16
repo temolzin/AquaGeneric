@@ -17,7 +17,6 @@ class WaterConnection extends Model
     public const STATUS_ADVANCED = 'Adelantado';
     public const STATUS_CANCELLED = 'Cancelado';
 
-
     protected $fillable = [
         'locality_id',
         'created_by',
