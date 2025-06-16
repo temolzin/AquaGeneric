@@ -12,6 +12,12 @@ class WaterConnection extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const STATUS_PAID = 'Pagado';
+    public const STATUS_DEBT = 'Adeudo';
+    public const STATUS_ADVANCED = 'Adelantado';
+    public const STATUS_CANCELLED = 'Cancelado';
+
+
     protected $fillable = [
         'locality_id',
         'created_by',
@@ -55,7 +61,7 @@ class WaterConnection extends Model
         return $this->hasMany(Debt::class, 'water_connection_id');
     }
 
-    public function getCalculatedStatusAttribute()
+    public function getStatusCalculatedAttribute()
     {
         $today = Carbon::today();
         $debts = $this->debts;
@@ -63,39 +69,37 @@ class WaterConnection extends Model
         $unpaidDebts = $debts->where('status', '!=', Debt::STATUS_PAID);
         $hasDebt = $unpaidDebts->isNotEmpty();
 
-        $futurePaidDebts = $debts->filter(function ($debt) use ($today) 
-        {
+        $futurePaidDebts = $debts->filter(function ($debt) use ($today) {
             return $debt->status === Debt::STATUS_PAID &&
-            Carbon::parse($debt->start_date)->gt($today);
+                Carbon::parse($debt->start_date)->gt($today);
         });
 
         $hasAdvance = $futurePaidDebts->isNotEmpty();
 
-        if ($this->status === 'suspendido') 
-        {
-            return 'suspender';
-        }
-        if ($hasDebt) 
-        {
-            return 'adeudo';
-        }
-        if ($hasAdvance) 
-        {
-            return 'adelantado';
+        $statusChecks = [
+            self::STATUS_CANCELLED => $this->status === 'cancelled',
+            self::STATUS_DEBT => $hasDebt,
+            self::STATUS_ADVANCED => $hasAdvance,
+        ];
+
+        foreach ($statusChecks as $status => $condition) {
+            if ($condition) {
+                return $status;
+            }
         }
 
-        return 'pagado';
+        return self::STATUS_PAID;
     }
 
     public function getCalculatedStyleAttribute()
     {
         $styles = [
-            'pagado' => 'background-color: #28a745; color: white;',
-            'adeudo' => 'background-color: #dc3545; color: white;',
-            'adelantado' => 'background-color: #6f42c1; color: white;',
-            'suspender' => 'background-color: #6c757d; color: white;',
+            self::STATUS_PAID => 'background-color: #28a745; color: white;',
+            self::STATUS_DEBT => 'background-color: #dc3545; color: white;',
+            self::STATUS_ADVANCED => 'background-color: #6f42c1; color: white;',
+            self::STATUS_CANCELLED => 'background-color: #6c757d; color: white;',
         ];
 
-        return $styles[$this->calculated_status] ?? '';
+        return $styles[$this->statusCalculated] ?? '';
     }
 }

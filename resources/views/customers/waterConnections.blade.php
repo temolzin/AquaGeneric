@@ -75,7 +75,7 @@
                                                     <label>Estatus</label>
                                                     <div>
                                                         <div style="display: inline-block; padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; text-align: center; {!! $waterConnection->calculated_style !!}">
-                                                            {{ ucfirst($waterConnection->calculated_status === 'suspender' ? 'suspendida' : $waterConnection->calculated_status) }}
+                                                            {{ ucfirst($waterConnection->statusCalculated === 'cancelled' ? 'Cancelada' : $waterConnection->statusCalculated) }}
                                                         </div>
                                                     </div>
                                                 </div>
