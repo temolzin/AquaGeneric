@@ -151,6 +151,39 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Períodos Proximos a Vencer</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Foto</th>
+                                        <th>Cliente</th>
+                                        <th>Toma de Agua</th>
+                                        <th>Fecha de Término</th>
+                                        <th>Días Restantes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($data['activePeriods'] as $period)
+                                        <tr>
+                                            <td>
+                                                <img src="{{ $period['customerPhoto'] }}"
+                                                    alt="Foto de cliente"
+                                                    style="width: 50px; height: 50px; border-radius: 50%;">
+                                            </td>
+                                            <td>{{ $period['customerName'] }}</td>
+                                            <td>{{ $period['waterConnectionName'] }}</td>
+                                            <td>{{ $period['endDate'] }}</td>
+                                            <td>{{ $period['daysRemaining'] }} días</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

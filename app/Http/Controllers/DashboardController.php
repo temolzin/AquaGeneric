@@ -63,6 +63,7 @@ class DashboardController extends Controller
             'months' => $months,
             'earningsPerMonth' => array_values($earningsPerMonth),
             'localities' => $localities,
+            'activePeriods' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
         ];
 
         return view('dashboard', compact('data', 'authUser'));
@@ -91,5 +92,44 @@ class DashboardController extends Controller
                 return ucfirst(Carbon::create()->month($month)->locale('es')->monthName);
             })
         ]);
+    }
+
+    public function getPaidDebtsExpiringSoon($localityId)
+    {
+        $today = Carbon::today();
+        $thresholdDate = $today->copy()->addDays(20);
+
+        $debtQuery = Debt::whereHas('waterConnection.customer', function ($query) use ($localityId) {
+            $query->where('locality_id', $localityId);
+        })
+            ->where('status', Debt::STATUS_PAID)
+            ->whereBetween('end_date', [$today, $thresholdDate])
+            ->with([
+                'waterConnection:id,name,customer_id',
+                'waterConnection.customer'
+            ])
+            ->orderBy('end_date', 'asc');
+
+        return $debtQuery->get()->map(function ($debt) use ($today) {
+            $waterConnection = $debt->waterConnection;
+            $customer = $waterConnection->customer ?? null;
+
+            $photoUrl = $customer && $customer->getFirstMediaUrl('customerGallery')
+            ? $customer->getFirstMediaUrl('customerGallery')
+            : asset('img/userDefault.png');
+
+            $endDate = $debt->end_date ? Carbon::parse($debt->end_date)->format('d/m/Y') : 'Fecha no disponible';
+            $endDateCarbon = $debt->end_date ? Carbon::parse($debt->end_date)->endOfDay() : $today;
+            $daysRemaining = $today->diffInDays($endDateCarbon);
+
+            return [
+                'customerId' => $customer->id ?? null,
+                'customerName' => $customer ? "{$customer->name} {$customer->last_name}" : 'Cliente no disponible',
+                'customerPhoto' => $photoUrl,
+                'waterConnectionName' => $waterConnection->name ?? 'Toma no disponible',
+                'endDate' => $endDate,
+                'daysRemaining' => $daysRemaining,
+            ];
+        });
     }
 }
