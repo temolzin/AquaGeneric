@@ -16,6 +16,7 @@ class WaterConnection extends Model
     public const STATUS_DEBT = 'Adeudo';
     public const STATUS_ADVANCED = 'Adelantado';
     public const STATUS_CANCELLED = 'Cancelado';
+    public const DB_STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
         'locality_id',
@@ -76,7 +77,7 @@ class WaterConnection extends Model
         $hasAdvance = $futurePaidDebts->isNotEmpty();
 
         $statusChecks = [
-            self::STATUS_CANCELLED => $this->status === 'cancelled',
+            self::STATUS_CANCELLED => $this->status === self::DB_STATUS_CANCELLED,
             self::STATUS_DEBT => $hasDebt,
             self::STATUS_ADVANCED => $hasAdvance,
         ];
@@ -92,13 +93,11 @@ class WaterConnection extends Model
 
     public function getCalculatedStyleAttribute()
     {
-        $styles = [
+        return [
             self::STATUS_PAID => 'background-color: #28a745; color: white;',
             self::STATUS_DEBT => 'background-color: #dc3545; color: white;',
             self::STATUS_ADVANCED => 'background-color: #6f42c1; color: white;',
             self::STATUS_CANCELLED => 'background-color: #6c757d; color: white;',
-        ];
-
-        return $styles[$this->statusCalculated] ?? '';
+        ][$this->statusCalculated] ?? '';
     }
 }

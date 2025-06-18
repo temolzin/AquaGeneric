@@ -74,8 +74,8 @@
                                                 <div class="form-group">
                                                     <label>Estatus</label>
                                                     <div>
-                                                        <div style="display: inline-block; padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; text-align: center; {!! $waterConnection->calculated_style !!}">
-                                                            {{ ucfirst($waterConnection->statusCalculated === 'cancelled' ? 'Cancelada' : $waterConnection->statusCalculated) }}
+                                                        <div style="display: inline-block; padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; text-align: center; {!! $waterConnection->getCalculatedStyleAttribute() !!}">
+                                                            {{ $waterConnection->statusCalculated }}
                                                         </div>
                                                     </div>
                                                 </div>
