@@ -63,7 +63,7 @@ class DashboardController extends Controller
             'months' => $months,
             'earningsPerMonth' => array_values($earningsPerMonth),
             'localities' => $localities,
-            'activePeriods' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
+            'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
         ];
 
         return view('dashboard', compact('data', 'authUser'));
@@ -97,7 +97,7 @@ class DashboardController extends Controller
     public function getPaidDebtsExpiringSoon($localityId)
     {
         $today = Carbon::today();
-        $thresholdDate = $today->copy()->addDays(20);
+        $thresholdDate = $today->copy()->addDays(Debt::DASHBOARD_EXPIRING_DAYS);
 
         $debtQuery = Debt::whereHas('waterConnection.customer', function ($query) use ($localityId) {
             $query->where('locality_id', $localityId);
@@ -112,21 +112,21 @@ class DashboardController extends Controller
 
         return $debtQuery->get()->map(function ($debt) use ($today) {
             $waterConnection = $debt->waterConnection;
-            $customer = $waterConnection->customer ?? null;
+            $customer = $waterConnection->customer;
 
             $photoUrl = $customer && $customer->getFirstMediaUrl('customerGallery')
             ? $customer->getFirstMediaUrl('customerGallery')
             : asset('img/userDefault.png');
 
-            $endDate = $debt->end_date ? Carbon::parse($debt->end_date)->format('d/m/Y') : 'Fecha no disponible';
+            $endDate = Carbon::parse($debt->end_date)->format('d/m/Y');
             $endDateCarbon = $debt->end_date ? Carbon::parse($debt->end_date)->endOfDay() : $today;
             $daysRemaining = $today->diffInDays($endDateCarbon);
 
             return [
-                'customerId' => $customer->id ?? null,
-                'customerName' => $customer ? "{$customer->name} {$customer->last_name}" : 'Cliente no disponible',
+                'customerId' => $customer->id,
+                'customerName' => "{$customer->name} {$customer->last_name}",
                 'customerPhoto' => $photoUrl,
-                'waterConnectionName' => $waterConnection->name ?? 'Toma no disponible',
+                'waterConnectionName' => $waterConnection->name,
                 'endDate' => $endDate,
                 'daysRemaining' => $daysRemaining,
             ];

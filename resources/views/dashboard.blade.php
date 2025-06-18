@@ -167,7 +167,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($data['activePeriods'] as $period)
+                                    @foreach($data['paidDebtsExpiringSoon'] as $period)
                                         <tr>
                                             <td>
                                                 <img src="{{ $period['customerPhoto'] }}"
