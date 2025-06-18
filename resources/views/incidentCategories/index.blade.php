@@ -53,15 +53,14 @@
                                                                 </button>
                                                             @endcan
                                                             @can('deleteIncidentCategories')
-                                                                @if($category->hasDependencies())
-                                                                    <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen incidencias asociadas a esta categoría." disabled>
-                                                                        <i class="fas fa-trash-alt"></i>
-                                                                    </button>
-                                                                @else
-                                                                    <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $category->id }}">
-                                                                        <i class="fas fa-trash-alt"></i>
-                                                                    </button>
-                                                                @endif
+                                                                <button
+                                                                    type="button"
+                                                                    class="btn {{ $category->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2"
+                                                                    title="{{ $category->hasDependencies() ? 'Eliminación no permitida: Existen incidencias asociadas a esta categoría.' : 'Eliminar Registro' }}"
+                                                                    {{ $category->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#delete' . $category->id }}
+                                                                >
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
                                                             @endcan
                                                         </div>
                                                     </td>
