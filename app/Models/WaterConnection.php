@@ -16,7 +16,6 @@ class WaterConnection extends Model
     public const VIEW_STATUS_DEBT = 'Adeudo';
     public const VIEW_STATUS_ADVANCED = 'Adelantado';
     public const VIEW_STATUS_CANCELED = 'Cancelado';
-    public const STATUS_CANCELED = 'canceled';
 
     protected $fillable = [
         'locality_id',
@@ -77,7 +76,7 @@ class WaterConnection extends Model
         $hasAdvance = $futurePaidDebts->isNotEmpty();
 
         $statusChecks = [
-            self::VIEW_STATUS_CANCELED => $this->status === self::STATUS_CANCELED,
+            self::VIEW_STATUS_CANCELED => $this->is_canceled,
             self::VIEW_STATUS_DEBT => $hasDebt,
             self::VIEW_STATUS_ADVANCED => $hasAdvance,
         ];
