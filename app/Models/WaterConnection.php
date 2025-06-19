@@ -12,11 +12,11 @@ class WaterConnection extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public const STATUS_PAID = 'Pagado';
-    public const STATUS_DEBT = 'Adeudo';
-    public const STATUS_ADVANCED = 'Adelantado';
-    public const STATUS_CANCELLED = 'Cancelado';
-    public const DB_STATUS_CANCELLED = 'cancelled';
+    public const VIEW_STATUS_PAID = 'Pagado';
+    public const VIEW_STATUS_DEBT = 'Adeudo';
+    public const VIEW_STATUS_ADVANCED = 'Adelantado';
+    public const VIEW_STATUS_CANCELLED = 'Cancelado';
+    public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
         'locality_id',
@@ -77,9 +77,9 @@ class WaterConnection extends Model
         $hasAdvance = $futurePaidDebts->isNotEmpty();
 
         $statusChecks = [
-            self::STATUS_CANCELLED => $this->status === self::DB_STATUS_CANCELLED,
-            self::STATUS_DEBT => $hasDebt,
-            self::STATUS_ADVANCED => $hasAdvance,
+            self::VIEW_STATUS_CANCELLED => $this->status === self::STATUS_CANCELLED,
+            self::VIEW_STATUS_DEBT => $hasDebt,
+            self::VIEW_STATUS_ADVANCED => $hasAdvance,
         ];
 
         foreach ($statusChecks as $status => $condition) {
@@ -88,16 +88,16 @@ class WaterConnection extends Model
             }
         }
 
-        return self::STATUS_PAID;
+        return self::VIEW_STATUS_PAID;
     }
 
     public function getCalculatedStyleAttribute()
     {
         return [
-            self::STATUS_PAID => 'background-color: #28a745; color: white;',
-            self::STATUS_DEBT => 'background-color: #dc3545; color: white;',
-            self::STATUS_ADVANCED => 'background-color: #6f42c1; color: white;',
-            self::STATUS_CANCELLED => 'background-color: #6c757d; color: white;',
-        ][$this->statusCalculated] ?? '';
+            self::VIEW_STATUS_PAID => 'background-color: #28a745; color: white;',
+            self::VIEW_STATUS_DEBT => 'background-color: #dc3545; color: white;',
+            self::VIEW_STATUS_ADVANCED => 'background-color: #6f42c1; color: white;',
+            self::VIEW_STATUS_CANCELLED => 'background-color: #6c757d; color: white;',
+        ][$this->getStatusCalculatedAttribute()] ?? '';
     }
 }
