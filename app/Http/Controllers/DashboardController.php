@@ -97,39 +97,30 @@ class DashboardController extends Controller
     public function getPaidDebtsExpiringSoon($localityId)
     {
         $today = Carbon::today();
-        $thresholdDate = $today->copy()->addDays(Debt::DASHBOARD_EXPIRING_DAYS);
+        $limit = $today->copy()->addDays(Debt::DASHBOARD_EXPIRING_DAYS);
 
-        $debtQuery = Debt::whereHas('waterConnection.customer', function ($query) use ($localityId) {
-            $query->where('locality_id', $localityId);
-        })
+        $result = [];
+
+        $debts = Debt::with(['waterConnection:id,name,customer_id', 'waterConnection.customer'])
+            ->whereHas('waterConnection.customer', fn($q) => $q->where('locality_id', $localityId))
             ->where('status', Debt::STATUS_PAID)
-            ->whereBetween('end_date', [$today, $thresholdDate])
-            ->with([
-                'waterConnection:id,name,customer_id',
-                'waterConnection.customer'
-            ])
-            ->orderBy('end_date', 'asc');
+            ->whereBetween('end_date', [$today, $limit])
+            ->orderBy('end_date')
+            ->get();
 
-        return $debtQuery->get()->map(function ($debt) use ($today) {
-            $waterConnection = $debt->waterConnection;
-            $customer = $waterConnection->customer;
+        foreach ($debts as $debt) {
+            $customer = $debt->waterConnection->customer;
 
-            $photoUrl = $customer && $customer->getFirstMediaUrl('customerGallery')
-            ? $customer->getFirstMediaUrl('customerGallery')
-            : asset('img/userDefault.png');
-
-            $endDate = Carbon::parse($debt->end_date)->format('d/m/Y');
-            $endDateCarbon = $debt->end_date ? Carbon::parse($debt->end_date)->endOfDay() : $today;
-            $daysRemaining = $today->diffInDays($endDateCarbon);
-
-            return [
+            $result[] = [
                 'customerId' => $customer->id,
                 'customerName' => "{$customer->name} {$customer->last_name}",
-                'customerPhoto' => $photoUrl,
-                'waterConnectionName' => $waterConnection->name,
-                'endDate' => $endDate,
-                'daysRemaining' => $daysRemaining,
+                'customerPhoto' => $customer?->getFirstMediaUrl('customerGallery') ?: asset('img/userDefault.png'),
+                'waterConnectionName' => $debt->waterConnection->name,
+                'endDate' => Carbon::parse($debt->end_date)->format('d/m/Y'),
+                'daysRemaining' => $today->diffInDays(Carbon::parse($debt->end_date)->endOfDay()) + 1,
             ];
-        });
+        }
+        
+        return $result;
     }
 }
