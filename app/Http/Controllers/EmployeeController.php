@@ -12,7 +12,7 @@ class EmployeeController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Employee::where('locality_id', $authUser->locality_id)->orderBy('created_at', 'desc');
+        $query = Employee::query()->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -124,7 +124,7 @@ class EmployeeController extends Controller
     public function generateEmployeeListPDF()
     {
         $authUser = auth()->user();
-        $employees = Employee::where('locality_id', $authUser->locality_id)->get();
+        $employees = Employee::all();
         $pdf = PDF::loadView('reports.generateEmployeeListPDF', compact('employees', 'authUser'))
             ->setPaper('A4', 'landscape');
 

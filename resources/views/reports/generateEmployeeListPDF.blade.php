@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Lista de Clientes</title>
+        <title>Lista de Empleados</title>
         <style>
             html {
                 margin: 0;
@@ -175,6 +175,7 @@
                         <th class="textable">NO. INT.</th>
                         <th class="textable">CORREO E.</th>
                         <th class="textable">NUM .TELEFÓNO</th>
+                        <th class="textable">ROL</th>
                     </tr>
                 </thead>
                 <tbody id="employeeDetails">
@@ -191,6 +192,7 @@
                             <td class="textcenter">{{ $employee->interior_number }}</td>
                             <td class="textcenter">{{ $employee->email }}</td>
                             <td class="textcenter">{{ $employee->phone_number }}</td>
+                            <td class="textcenter">{{ $employee->rol}}</td>
 
                         </tr>
                     @endforeach

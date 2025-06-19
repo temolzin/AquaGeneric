@@ -119,6 +119,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
     Route::get('/advancedPaymentsReport', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
 
-    Route::resource('employees', EmployeeController::class);
-    Route::get('/reports/generateEmployeeListPDF', [EmployeeController::class, 'generateEmployeeListPDF'])->name('report.generateEmployeeListPDF');
+    Route::group(['middleware' => ['can:viewEmployee']], function () {
+        Route::resource('employees', EmployeeController::class);
+        Route::get('/reports/generateEmployeeListPDF', [EmployeeController::class, 'generateEmployeeListPDF'])->name('report.generateEmployeeListPDF');
+    });
 });

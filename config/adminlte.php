@@ -399,7 +399,7 @@ return [
         'text' => 'Empleados',
         'url' => '/employees',
         'icon' => 'fas fa-solid fa-users',
-        'can' => 'viewGeneralExpense'
+        'can' => 'viewEmployee'
     ],
 ],
 

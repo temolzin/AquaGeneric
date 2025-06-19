@@ -79,16 +79,20 @@
                                                                     title="Ver Detalles" data-target="#view{{$employee->id}}">
                                                                     <i class="fas fa-eye"></i>
                                                                 </button>
+                                                                @can('editEmployee')
                                                                 <button type="button" class="btn btn-warning mr-2"
                                                                     data-toggle="modal" title="Editar Datos"
                                                                     data-target="#edit{{$employee->id}}">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
+                                                                @endcan
+                                                                @can('deleteEmployee')
                                                                 <button type="button" class="btn btn-danger mr-2"
                                                                     data-toggle="modal" title="Eliminar Registro"
                                                                     data-target="#delete{{$employee->id}}">
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
+                                                                @endcan
                                                             </div>
                                                         </td>
                                                         @include('employees.edit')
