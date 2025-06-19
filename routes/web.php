@@ -128,6 +128,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['can:viewIncidents']], function () {
        Route::resource('incidents', IncidentController::class);
-       Route::post('/incidentstatus', [IncidentController::class, 'changeStatus'])->name('incidents.changeStatus');
+       Route::post('/incidentsStatus', [IncidentController::class, 'changeStatus'])->name('incidents.changeStatus');
     });
 });
