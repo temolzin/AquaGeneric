@@ -9,7 +9,7 @@ class AddIsCanceledToWaterConnectionsTable extends Migration
     public function up()
     {
         Schema::table('water_connections', function (Blueprint $table) {
-            $table->boolean('is_canceled')->default(false)->after('canceled_at');
+            $table->boolean('is_canceled')->default(false)->before('canceled_at');
         });
     }
 
