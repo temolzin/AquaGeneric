@@ -10,7 +10,7 @@ use App\Models\Debt;
 
 class WaterConnection extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,  SoftDeletes;
 
     public const VIEW_STATUS_PAID = 'Pagado';
     public const VIEW_STATUS_DEBT = 'Adeudo';
@@ -60,6 +60,21 @@ class WaterConnection extends Model
         return $this->hasMany(Debt::class, 'water_connection_id');
     }
 
+    public function hasDebt()
+    {
+        return $this->debts()->where('status', '!=', Debt::STATUS_PAID)->exists();
+    }
+
+    public function getCancelDescriptionAttribute()
+    {
+        return $this->attributes['cancel_description'];
+    }
+    
+    public function setCancelDescriptionAttribute($value)
+    {
+        $this->attributes['cancel_description'] = $value;
+    }
+    
     public function getStatusCalculatedAttribute()
     {
         $today = Carbon::today();
