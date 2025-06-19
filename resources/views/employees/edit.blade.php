@@ -44,14 +44,14 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="nameUpdate" class="form-label">Nombre(*)</label>
-                                            <input type="text" class="form-control" name="nameUpdate" id="nameUpdate"
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="nameUpdate" id="nameUpdate"
                                                 value="{{ $employee->name }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="lastNameUpdate" class="form-label">Apellido(*)</label>
-                                            <input type="text" class="form-control" name="lastNameUpdate"
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="lastNameUpdate"
                                                 id="lastNameUpdate" value="{{ $employee->last_name }}" required>
                                         </div>
                                     </div>
@@ -72,21 +72,21 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="localityUpdate" class="form-label">Localidad(*)</label>
-                                            <input type="text" class="form-control" name="localityUpdate"
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="localityUpdate"
                                                 id="localityUpdate" value="{{ $employee->locality }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="stateUpdate" class="form-label">Estado(*)</label>
-                                            <input type="text" class="form-control" name="stateUpdate" id="stateUpdate"
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="stateUpdate" id="stateUpdate"
                                                 value="{{ $employee->state }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="zipCodeUpdate" class="form-label">Código Postal(*)</label>
-                                            <input type="text" class="form-control" name="zipCodeUpdate"
+                                            <input type="text" pattern="^[0-9]+" class="form-control" name="zipCodeUpdate"
                                                 id="zipCodeUpdate" value="{{ $employee->zip_code }}" maxlength="5"
                                                 pattern="\d{5}" inputmode="numeric" required>
                                         </div>
@@ -120,14 +120,14 @@
                                         <div class="form-group">
                                             <label for="phoneNumberUpdate" class="form-label">Número
                                                 Telefónico(*)</label>
-                                            <input type="text" class="form-control" name="phoneNumberUpdate"
+                                            <input type="tel" pattern="^[0-9]+" maxlength="10" minlength="10" class="form-control" name="phoneNumberUpdate"
                                                 id="phoneNumberUpdate" value="{{ $employee->phone_number }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="salaryUpdate" class="form-label">Salario(*)</label>
-                                            <input type="text" class="form-control" name="salaryUpdate"
+                                            <input type="text" pattern="^[0-9]+" maxlength="5" class="form-control" name="salaryUpdate"
                                                 id="salaryUpdate" value="{{ $employee->salary }}" required>
                                         </div>
                                     </div>

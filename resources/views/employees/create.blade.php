@@ -47,19 +47,19 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="street" class="form-label">Calle(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="street" name="street" placeholder="Ingresa calle" value="{{ old('street') }}" required />
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="street" name="street" placeholder="Ingresa calle" value="{{ old('street') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="block" class="form-label">Colonia(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="block" name="block" placeholder="Ingresa colonia" value="{{ old('block') }}" required />
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="block" name="block" placeholder="Ingresa colonia" value="{{ old('block') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="locality" class="form-label">Localidad(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="locality" name="locality" placeholder="Ingresa localidad" value="{{ old('locality') }}" required />
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="locality" name="locality" placeholder="Ingresa localidad" value="{{ old('locality') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -71,7 +71,7 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="zipCode" class="form-label">Código Postal(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="zipCode" name="zipCode" placeholder="Ingresa código postal" value="{{ old('zipCode') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
+                                            <input type="text" pattern="^[0-9]+"  class="form-control" id="zipCode" name="zipCode" placeholder="Ingresa código postal" value="{{ old('zipCode') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -95,13 +95,13 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="phoneNumber" class="form-label">Número telefónico(*)</label>
-                                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Ingresa número telefónico" value="{{ old('phoneNumber') }}" required />
+                                            <input type="tel" pattern="^[0-9]+" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Ingresa número telefónico" value="{{ old('phoneNumber') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="salary" class="form-label">Salario(*)</label>
-                                            <input type="number" class="form-control" id="salary" name="salary" placeholder="Ingresa salario" value="{{ old('salary') }}" required />
+                                            <input type="text" pattern="^[0-9]+" maxlength="5" class="form-control" id="salary" name="salary" placeholder="Ingresa salario" value="{{ old('salary') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
