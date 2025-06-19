@@ -5,11 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 use App\Models\Debt;
 
 class WaterConnection extends Model
 {
-    use HasFactory,  SoftDeletes;
+    use HasFactory, SoftDeletes;
+
+    public const VIEW_STATUS_PAID = 'Pagado';
+    public const VIEW_STATUS_DEBT = 'Adeudo';
+    public const VIEW_STATUS_ADVANCED = 'Adelantado';
+    public const VIEW_STATUS_CANCELED = 'Cancelado';
 
     protected $fillable = [
         'locality_id',
@@ -54,18 +60,43 @@ class WaterConnection extends Model
         return $this->hasMany(Debt::class, 'water_connection_id');
     }
 
-    public function hasDebt()
+    public function getStatusCalculatedAttribute()
     {
-        return $this->debts()->where('status', '!=', Debt::STATUS_PAID)->exists();
+        $today = Carbon::today();
+        $debts = $this->debts;
+
+        $unpaidDebts = $debts->where('status', '!=', Debt::STATUS_PAID);
+        $hasDebt = $unpaidDebts->isNotEmpty();
+
+        $futurePaidDebts = $debts->filter(function ($debt) use ($today) {
+            return $debt->status === Debt::STATUS_PAID &&
+                Carbon::parse($debt->start_date)->gt($today);
+        });
+
+        $hasAdvance = $futurePaidDebts->isNotEmpty();
+
+        $statusChecks = [
+            self::VIEW_STATUS_CANCELED => $this->is_canceled,
+            self::VIEW_STATUS_DEBT => $hasDebt,
+            self::VIEW_STATUS_ADVANCED => $hasAdvance,
+        ];
+
+        foreach ($statusChecks as $status => $condition) {
+            if ($condition) {
+                return $status;
+            }
+        }
+
+        return self::VIEW_STATUS_PAID;
     }
 
-   public function getCancelDescriptionAttribute()
+    public function getCalculatedStyleAttribute()
     {
-        return $this->attributes['cancel_description'];
-    }
-    
-    public function setCancelDescriptionAttribute($value)
-    {
-        $this->attributes['cancel_description'] = $value;
+        return [
+            self::VIEW_STATUS_PAID => 'background-color: #28a745; color: white;',
+            self::VIEW_STATUS_DEBT => 'background-color: #dc3545; color: white;',
+            self::VIEW_STATUS_ADVANCED => 'background-color: #6f42c1; color: white;',
+            self::VIEW_STATUS_CANCELED => 'background-color: #6c757d; color: white;',
+        ][$this->getStatusCalculatedAttribute()] ?? '';
     }
 }
