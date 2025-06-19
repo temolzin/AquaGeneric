@@ -26,4 +26,14 @@ class IncidentCategory extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function incidents()
+    {
+        return $this->hasMany(Incident::class, 'category_id');
+    }
+
+    public function hasDependencies()
+    {
+        return $this->incidents()->exists();
+    }
 }
