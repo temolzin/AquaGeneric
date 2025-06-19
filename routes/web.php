@@ -70,7 +70,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['can:viewCost']], function () {
-        Route:: resource('costs', CostController::class);
+        Route::resource('costs', CostController::class);
         Route::get('/costs', [CostController::class, 'index'])->name('costs.index');
     });
 
@@ -102,6 +102,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['can:viewWaterConnection']], function () {
         Route::get('/waterConnections', [WaterConnectionController::class, 'index'])->name('connections.index');
         Route::resource('waterConnections', WaterConnectionController::class);
+        Route::patch('/waterConnections/{id}/cancel', [WaterConnectionController::class, 'cancel'])->name('waterConnections.cancel');
     });
 
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
@@ -113,9 +114,19 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/annual-gains-report/{year}', [GeneralExpenseController::class, 'annualGainsReport'])->name('report.annualGainsReport');
     });
 
-    Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+    Route::group(['middleware' => ['can:viewAdvancePayments']], function () {
+       Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+       Route::get('/getAdavancedPaymentReportWithConnection', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
+       Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
+       Route::get('/getCustomersWithAdvancePayments', [AdvancePaymentController::class, 'getCustomersWithAdvancePayments'])->name('getCustomersWithAdvancePayments');
+       Route::get('/getAdvanceDebtDates', [AdvancePaymentController::class, 'getAdvanceDebtDates'])->name('getAdvanceDebtDates');
+    });
 
-    Route::resource('incidentCategories', IncidentCategoriesController::class);
+    Route::group(['middleware' => ['can:viewIncidentCategories']], function () {
+       Route::resource('incidentCategories', IncidentCategoriesController::class);
+    });
 
-    Route::get('/incidents', [IncidentController::class, 'index'])->name('incidents.index');
+    Route::group(['middleware' => ['can:viewIncidents']], function () {
+       Route::resource('incidents', IncidentController::class);
+    });
 });

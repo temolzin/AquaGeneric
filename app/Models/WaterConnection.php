@@ -98,5 +98,19 @@ class WaterConnection extends Model
             self::VIEW_STATUS_ADVANCED => 'background-color: #6f42c1; color: white;',
             self::VIEW_STATUS_CANCELED => 'background-color: #6c757d; color: white;',
         ][$this->getStatusCalculatedAttribute()] ?? '';
+
+    public function hasDebt()
+    {
+        return $this->debts()->where('status', '!=', Debt::STATUS_PAID)->exists();
+    }
+
+    public function getCancelDescriptionAttribute()
+    {
+        return $this->attributes['cancel_description'];
+    }
+    
+    public function setCancelDescriptionAttribute($value)
+    {
+        $this->attributes['cancel_description'] = $value;
     }
 }
