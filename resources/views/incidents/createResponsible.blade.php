@@ -27,10 +27,14 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="Responsible" class="form-label">Responsable(*)</label>
-                                            <select class="form-control" name="responsible" required>
+                                            <label for="employee" class="form-label">Responsable(*)</label>
+                                            <select class="form-control" name="employee" required>
                                                 <option value="">Selecciona una opción</option>
-                                                <option value="1">Luis Manuel</option>
+                                                @foreach ($employees as $employee)
+                                                    <option value="{{ $employee->id }}">
+                                                        {{ $employee->name }} - {{ $employee->rol }}
+                                                    </option>
+                                                @endforeach
                                             </select>    
                                         </div>
                                     </div>

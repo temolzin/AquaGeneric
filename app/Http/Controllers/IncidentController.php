@@ -7,15 +7,20 @@ use Illuminate\Http\Request;
 use App\Models\Incident;
 use App\Models\IncidentCategory;
 use App\Models\LogIncident;
+use App\Models\Employee;
 
 class IncidentController extends Controller
 {
     public function index()
     {
+        $authUser = auth()->user();
+
         $incidents = Incident::with('incidentCategory')->paginate(10);
         $categories = IncidentCategory::all();
 
-        return view('incidents.index', compact('incidents', 'categories'));
+        $employees = Employee::where('locality_id', $authUser->locality_id)->get();
+
+        return view('incidents.index', compact('incidents', 'categories','employees'));
     }
 
     public function create()
@@ -80,13 +85,15 @@ class IncidentController extends Controller
     {
         $authUser = auth()->user();
 
-        LogIncident::create(array_merge(
-            $request->all(),
-            [
-                'locality_id' => $authUser->locality_id,
-                'created_by' => $authUser->id
-            ]
-        ));
+        $logIncidentData = [
+            'locality_id' => $authUser->locality_id,
+            'created_by' => $authUser->id,
+            'employee_id' => $request->input('employee'),
+            'status' => $request->input('status'),
+            'description' => $request->input('description'),
+        ];
+
+        $logincident = LogIncident::create($logIncidentData);
 
         return redirect()->route('incidents.index')->with('success', 'Cambio de Estatus de Incidencia Exitoso');
     }

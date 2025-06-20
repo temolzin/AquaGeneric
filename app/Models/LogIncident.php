@@ -12,7 +12,7 @@ class LogIncident extends Model
     protected $fillable = [
         'locality_id',
         'created_by',
-        'responsible',
+        'employee_id',
         'status',
         'description',
     ];
