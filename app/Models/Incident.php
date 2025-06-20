@@ -4,36 +4,33 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class IncidentCategory extends Model
+class Incident extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
-        'name',
-        'description',
-        'created_by',
         'locality_id',
+        'created_by',
+        'name',
+        'start_date',
+        'description',
+        'category_id',
+        'status',
     ];
 
     public function locality()
     {
         return $this->belongsTo(Locality::class);
     }
- 
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function incidents()
+    public function incidentCategory()
     {
-        return $this->hasMany(Incident::class, 'category_id');
-    }
-
-    public function hasDependencies()
-    {
-        return $this->incidents()->exists();
+        return $this->belongsTo(IncidentCategory::class, 'category_id');
     }
 }

@@ -12,6 +12,7 @@ class Debt extends Model
     public const STATUS_PENDING = 'pending';
     public const STATUS_PARTIAL = 'partial';
     public const STATUS_PAID = 'paid';
+    public const DASHBOARD_EXPIRING_DAYS = 20;
 
     protected $fillable = [
         'water_connection_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note'

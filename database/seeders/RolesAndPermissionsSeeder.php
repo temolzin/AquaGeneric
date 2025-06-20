@@ -10,111 +10,139 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run()
     {
-        $roleAdmin = Role::create(['name' => 'Admin']);
-        $roleSecretariat = Role::create(['name' => 'Secretaria']);
-        $roleSupervisor = Role::create(['name' => 'Supervisor']);
+        $roleAdmin = Role::firstOrCreate(['name' => 'Admin']);
+        $roleSecretariat = Role::firstOrCreate(['name' => 'Secretaria']);
+        $roleSupervisor = Role::firstOrCreate(['name' => 'Supervisor']);
       
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewUser',
             'description' => 'Permite ver los Usuario.'
         ])->assignRole($roleAdmin);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewRoles',
             'description' => 'Permite ver los Roles.'
         ])->assignRole($roleAdmin);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewCustomers',
             'description' => 'Permite ver los Clientes.'
         ])->assignRole([$roleSupervisor, $roleSecretariat ]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewPayments',
             'description' => 'Permite ver los Pagos.'
         ])->assignRole([$roleSupervisor, $roleSecretariat ]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewDebts',
             'description' => 'Permite ver las Deudas.'
         ])->assignRole([$roleSupervisor, $roleSecretariat ]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewCost',
             'description' => 'Permite ver los Costos.'
         ])->assignRole([$roleSupervisor, $roleSecretariat ]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewWaterConnection',
             'description' => 'Permite ver las Tomas de Agua.'
         ])->assignRole([$roleSupervisor, $roleSecretariat ]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'deleteWaterConnection',
             'description' => 'Permite eliminar las Tomas de Agua.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'editWaterConnection',
             'description' => 'Permite editar las Tomas de Agua.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'deleteCost',
             'description' => 'Permite eliminar los Costos.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'editCost',
             'description' => 'Permite editar los Costos.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'deletePayment',
             'description' => 'Permite eliminar los Pagos.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'editPayment',
             'description' => 'Permite editar los Pagos.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'deleteDebt',
             'description' => 'Permite eliminar Deuda.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'editCustomer',
             'description' => 'Permite editar los Clientes.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'deleteCustomer',
             'description' => 'Permite eliminar los Clientes.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewLocality',
             'description' => 'Permite ver las localidades.'
         ])->assignRole([$roleAdmin]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'editLocality',
             'description' => 'Permite editar las localidades.'
         ])->assignRole([$roleAdmin]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'deleteLocality',
             'description' => 'Permite eliminar localidades.'
         ])->assignRole([$roleAdmin]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'selectLocality',
             'description' => 'Permite seleccionar Localidades.'
         ])->assignRole([$roleSecretariat, $roleSupervisor]);        
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewDashboardCards',
             'description' => 'Permite ver las tarjetas de información en el dashboard.'
         ])->assignRole([$roleSupervisor, $roleSecretariat]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewLocalityCharts',
             'description' => 'Permite ver las gráficas correspondientes a una localidad en el dashboard.'
         ])->assignRole($roleAdmin);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'viewGeneralExpense',
             'description' => 'Permite ver los Gastos.'
         ])->assignRole([$roleSupervisor, $roleSecretariat ]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'deleteGeneralExpense',
             'description' => 'Permite eliminar los Gastos.'
         ])->assignRole([$roleSupervisor]);
-        Permission::create([
+        Permission::firstOrCreate([
             'name' => 'editGeneralExpense',
             'description' => 'Permite editar los Gastos.'
         ])->assignRole([$roleSupervisor]);
         Permission::firstOrCreate([
+            'name' => 'viewIncidentCategories',
+            'description' => 'Permite ver las Categorías de Incidentes.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'editIncidentCategories',
+            'description' => 'Permite editar Categorías de Incidentes.'
+        ])->assignRole($roleSupervisor);
+        Permission::firstOrCreate([
+            'name' => 'deleteIncidentCategories',
+            'description' => 'Permite eliminar Categorías de Incidentes.'
+        ])->assignRole($roleSupervisor);
+        Permission::firstOrCreate([
+            'name' => 'viewAdvancePayments',
+            'description' => 'Permite ver los Pagos Anticipados.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'viewIncidents',
+            'description' => 'Permite ver los Incidentes.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'editIncidents',
+            'description' => 'Permite editar Incidentes.'
+        ])->assignRole($roleSupervisor);
+        Permission::firstOrCreate([
+            'name' => 'deleteIncidents',
+            'description' => 'Permite eliminar Incidentes.'
+        ])->assignRole($roleSupervisor);
+              Permission::firstOrCreate([
             'name' => 'viewEmployee',
             'description' => 'Permite ver a los Empleados.'
         ])->assignRole([$roleSupervisor, $roleSecretariat]);
