@@ -121,11 +121,11 @@ class EmployeeController extends Controller
         return view('employees.edit', compact('employee'));
     }
 
-    public function generateEmployeeListPDF()
+    public function generateEmployeeListReport()
     {
         $authUser = auth()->user();
         $employees = Employee::all();
-        $pdf = PDF::loadView('reports.generateEmployeeListPDF', compact('employees', 'authUser'))
+        $pdf = PDF::loadView('reports.generateEmployeeListReport', compact('employees', 'authUser'))
             ->setPaper('A4', 'landscape');
 
         return $pdf->stream('employees.pdf');

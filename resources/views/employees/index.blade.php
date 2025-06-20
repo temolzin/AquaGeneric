@@ -16,7 +16,7 @@
                                         <i class="fa fa-plus"></i> Registrar Empleado
                                     </button>
                                     <a type="button" class="btn btn-secondary" target="_blank" title="Employees"
-                                        href="{{ route('report.generateEmployeeListPDF') }}">
+                                        href="{{ route('report.generateEmployeeListReport') }}">
                                         <i class="fas fa-users"></i> Generar Lista
                                     </a>
                                 </div>

@@ -121,6 +121,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['can:viewEmployee']], function () {
         Route::resource('employees', EmployeeController::class);
-        Route::get('/reports/generateEmployeeListPDF', [EmployeeController::class, 'generateEmployeeListPDF'])->name('report.generateEmployeeListPDF');
+        Route::get('/reports/generateEmployeeListReport', [EmployeeController::class, 'generateEmployeeListReport'])->name('report.generateEmployeeListReport');
     });
 });
