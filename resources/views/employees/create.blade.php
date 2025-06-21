@@ -1,5 +1,4 @@
-
-<div class="modal fade" id="createCustomer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="createEmployee" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="card-success">
@@ -11,12 +10,12 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('customers.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('employees.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
-                                <h3 class="card-title">Ingrese los Datos del Cliente</h3>
+                                <h3 class="card-title">Ingrese los Datos del Empleado</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fa fa-minus"></i>
@@ -41,26 +40,26 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="last_name" class="form-label">Apellido(*)</label>
-                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="last_name" name="last_name" placeholder="Ingresa apellido" value="{{ old('last_name') }}" required />
+                                            <label for="lastName" class="form-label">Apellido(*)</label>
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="lastName" name="lastName" placeholder="Ingresa apellido" value="{{ old('lastName') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="street" class="form-label">Calle(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="street" name="street" placeholder="Ingresa calle" value="{{ old('street') }}" required />
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="street" name="street" placeholder="Ingresa calle" value="{{ old('street') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="block" class="form-label">Colonia(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="block" name="block" placeholder="Ingresa colonia" value="{{ old('block') }}" required />
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="block" name="block" placeholder="Ingresa colonia" value="{{ old('block') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="locality" class="form-label">Localidad(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="locality" name="locality" placeholder="Ingresa localidad" value="{{ old('locality') }}" required />
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="locality" name="locality" placeholder="Ingresa localidad" value="{{ old('locality') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -71,52 +70,50 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="zip_code" class="form-label">Código Postal(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="zip_code" name="zip_code" placeholder="Ingresa código postal" value="{{ old('zip_code') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
+                                            <label for="zipCode" class="form-label">Código Postal(*)</label>
+                                            <input type="text" pattern="^[0-9]+"  class="form-control" id="zipCode" name="zipCode" placeholder="Ingresa código postal" value="{{ old('zipCode') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="exterior_number" class="form-label">Número Exterior(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="exterior_number" name="exterior_number" placeholder="Ingresa número exterior" value="{{ old('exterior_number') }}" required />
+                                            <label for="exteriorNumber" class="form-label">Número Exterior(*)</label>
+                                            <input type="text" pattern=".*\S.*" class="form-control" id="exteriorNumber" name="exteriorNumber" placeholder="Ingresa número exterior" value="{{ old('exteriorNumber') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="interior_number" class="form-label">Número Interior(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="interior_number" name="interior_number" placeholder="Ingresa número interior" value="{{ old('interior_number') }}" required />
+                                            <label for="interiorNumber" class="form-label">Número Interior(*)</label>
+                                            <input type="text" pattern=".*\S.*" class="form-control" id="interiorNumber" name="interiorNumber" placeholder="Ingresa número interior" value="{{ old('interiorNumber') }}" required />
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="marital_status" class="form-label">Estado Civil(*)</label>
-                                            <select class="form-control" id="marital_status" name="marital_status" required>
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ old('marital_status') == '1' ? 'selected' : '' }}>Casado</option>
-                                                <option value="0" {{ old('marital_status') == '0' ? 'selected' : '' }}>Soltero</option>
+                                            <label for="email" class="form-label">Correo Electronico(*)</label>
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="phoneNumber" class="form-label">Número telefónico(*)</label>
+                                            <input type="tel" pattern="^[0-9]+" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Ingresa número telefónico" value="{{ old('phoneNumber') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="salary" class="form-label">Salario(*)</label>
+                                            <input type="text" pattern="^[0-9]+" maxlength="5" class="form-control" id="salary" name="salary" placeholder="Ingresa salario" value="{{ old('salary') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="rol" class="form-label">Rol(*)</label>
+                                            <select class="form-control" name="rol" id="rol">
+                                                <option selected>Asigna un rol</option>
+                                                <option value="Administrador">Administrador</option>
+                                                <option value="Recepcionista">Recepcionista</option>
+                                                <option value="Encargado">Encargado</option>
+                                                <option value="Seguridad">Seguridad</option>
                                             </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="status" class="form-label">Estado del titular(*)</label>
-                                            <select class="form-control" id="status" name="status" required onchange="toggleResponsibleField()">
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Con Vida</option>
-                                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Fallecido</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12" id="responsible_field" style="display: none;">
-                                        <div class="form-group">
-                                            <label for="responsible_name" class="form-label">Nombre de la persona que será responsable de la toma</label>
-                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="responsible_name" name="responsible_name" placeholder="Ingresa nombre de la persona responsable, si no hay dejalo vacio" value="{{ old('responsible_name') }}" />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label for="note" class="form-label">Nota</label>
-                                            <textarea class="form-control" id="note" name="note" placeholder="Ingresa una nota"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -134,54 +131,47 @@
 </div>
 
 <script>
-    function previewImage(event) {
+    function previewImage (event) {
         var input = event.target;
         var file = input.files[0];
         var reader = new FileReader();
 
-        if (!file.type.startsWith('image/')) {
-            Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Por favor, sube un archivo de imagen',
-            confirmButtonText: 'Aceptar'
+        if (!file.type.startsWith ('image/')) {
+            Swal.fire ({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, sube un archivo de imagen',
+                confirmButtonText: 'Aceptar'
             });
+
             input.value = '';
             return;
         }
 
-    reader.onload = function(){
-        var output = document.getElementById('photo-preview');
-        output.src = reader.result;
-        output.style.display = 'block';
-    }
-    reader.readAsDataURL(event.target.files[0]);
-}
-
-    function toggleResponsibleField() {
-        var statusSelect = document.getElementById('status');
-        var responsibleField = document.getElementById('responsible_field');
-
-        if (statusSelect.value == '0') {
-            responsibleField.style.display = 'block';
-        } else {
-            responsibleField.style.display = 'none';
+        reader.onload = function () {
+            var output = document.getElementById('photo-preview');
+            output.src = reader.result;
+            output.style.display = 'block';
         }
+
+        reader.readAsDataURL(event.target.files[0]);
     }
 
-    const createCustomerForm = document.getElementById('createCustomer');
+    function handleFormSubmit(form) {
+        const submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+        submitButtons.forEach(button => {
+            button.disabled = true;
+            if (button.innerHTML) {
+                button.innerHTML = 'Guardando...';
+            }
+        });
+    }
 
-        if (createCustomerForm) {
-            createCustomerForm.addEventListener('submit', function(e) {
-                const submitButtons = createCustomerForm.querySelectorAll('button[type="submit"], input[type="submit"]');
-                submitButtons.forEach(button => {
-                    button.disabled = true;
+    const createEmployeeForm = document.getElementById('createEmployee');
 
-                    if (button.innerHTML) {
-                        button.innerHTML = 'Guardando...';
-                    }
-                });
-            });
-        }
+    if (createEmployeeForm) {
+        createEmployeeForm.addEventListener('submit', function (e) {
+            handleFormSubmit(createEmployeeForm);
+        });
+    }
 </script>
-

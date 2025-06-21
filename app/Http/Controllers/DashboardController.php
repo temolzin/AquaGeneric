@@ -63,6 +63,7 @@ class DashboardController extends Controller
             'months' => $months,
             'earningsPerMonth' => array_values($earningsPerMonth),
             'localities' => $localities,
+            'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
         ];
 
         return view('dashboard', compact('data', 'authUser'));
@@ -91,5 +92,35 @@ class DashboardController extends Controller
                 return ucfirst(Carbon::create()->month($month)->locale('es')->monthName);
             })
         ]);
+    }
+
+    public function getPaidDebtsExpiringSoon($localityId)
+    {
+        $today = Carbon::today();
+        $limit = $today->copy()->addDays(Debt::DASHBOARD_EXPIRING_DAYS);
+
+        $result = [];
+
+        $debts = Debt::with(['waterConnection:id,name,customer_id', 'waterConnection.customer'])
+            ->whereHas('waterConnection.customer', fn($q) => $q->where('locality_id', $localityId))
+            ->where('status', Debt::STATUS_PAID)
+            ->whereBetween('end_date', [$today, $limit])
+            ->orderBy('end_date')
+            ->get();
+
+        foreach ($debts as $debt) {
+            $customer = $debt->waterConnection->customer;
+
+            $result[] = [
+                'customerId' => $customer->id,
+                'customerName' => "{$customer->name} {$customer->last_name}",
+                'customerPhoto' => $customer?->getFirstMediaUrl('customerGallery') ?: asset('img/userDefault.png'),
+                'waterConnectionName' => $debt->waterConnection->name,
+                'endDate' => Carbon::parse($debt->end_date)->format('d/m/Y'),
+                'daysRemaining' => $today->diffInDays(Carbon::parse($debt->end_date)->endOfDay()) + 1,
+            ];
+        }
+        
+        return $result;
     }
 }

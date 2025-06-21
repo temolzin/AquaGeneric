@@ -13,7 +13,11 @@ use App\Http\Controllers\GeneralExpenseController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
-
+use App\Http\Controllers\AdvancePaymentController;
+use App\Http\Controllers\IncidentCategoriesController;
+use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LogIncidentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -68,7 +72,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['can:viewCost']], function () {
-        Route:: resource('costs', CostController::class);
+        Route::resource('costs', CostController::class);
         Route::get('/costs', [CostController::class, 'index'])->name('costs.index');
     });
 
@@ -100,6 +104,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['can:viewWaterConnection']], function () {
         Route::get('/waterConnections', [WaterConnectionController::class, 'index'])->name('connections.index');
         Route::resource('waterConnections', WaterConnectionController::class);
+        Route::patch('/waterConnections/{id}/cancel', [WaterConnectionController::class, 'cancel'])->name('waterConnections.cancel');
     });
 
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
@@ -109,5 +114,27 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/annual-expenses-report/{year}', [GeneralExpenseController::class, 'annualExpensesReport'])->name('report.annualExpensesReport');
         Route::get('/weekly-gains-report', [GeneralExpenseController::class, 'weeklyGainsReport'])->name('report.weeklyGainsReport');
         Route::get('/annual-gains-report/{year}', [GeneralExpenseController::class, 'annualGainsReport'])->name('report.annualGainsReport');
+    });
+
+    Route::group(['middleware' => ['can:viewAdvancePayments']], function () {
+       Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+       Route::get('/getAdavancedPaymentReportWithConnection', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
+       Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
+       Route::get('/getCustomersWithAdvancePayments', [AdvancePaymentController::class, 'getCustomersWithAdvancePayments'])->name('getCustomersWithAdvancePayments');
+       Route::get('/getAdvanceDebtDates', [AdvancePaymentController::class, 'getAdvanceDebtDates'])->name('getAdvanceDebtDates');
+    });
+
+    Route::group(['middleware' => ['can:viewIncidentCategories']], function () {
+       Route::resource('incidentCategories', IncidentCategoriesController::class);
+    });
+
+    Route::group(['middleware' => ['can:viewIncidents']], function () {
+       Route::resource('incidents', IncidentController::class);
+       Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
+    });
+
+    Route::group(['middleware' => ['can:viewEmployee']], function () {
+        Route::resource('employees', EmployeeController::class);
+        Route::get('/reports/generateEmployeeListReport', [EmployeeController::class, 'generateEmployeeListReport'])->name('report.generateEmployeeListReport');
     });
 });
