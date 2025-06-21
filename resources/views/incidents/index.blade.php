@@ -17,6 +17,9 @@
                                             <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createIncidence">
                                                 <i class="fa fa-plus"></i> Registrar Incidencia
                                             </button>
+                                            <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createResponsible">
+                                                <i class="fa fa-plus"></i> Cambio de Estatus
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -76,6 +79,7 @@
                                             @endif
                                         </tbody>
                                     </table>
+                                    @include('incidents.createResponsible')
                                     <div class="d-flex justify-content-center">
                                        {!! $incidents->links('pagination::bootstrap-4') !!}
                                     </div>

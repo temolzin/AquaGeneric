@@ -17,6 +17,7 @@ use App\Http\Controllers\AdvancePaymentController;
 use App\Http\Controllers\IncidentCategoriesController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LogIncidentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -129,8 +130,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['can:viewIncidents']], function () {
        Route::resource('incidents', IncidentController::class);
+       Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
     });
-    
+
     Route::group(['middleware' => ['can:viewEmployee']], function () {
         Route::resource('employees', EmployeeController::class);
         Route::get('/reports/generateEmployeeListReport', [EmployeeController::class, 'generateEmployeeListReport'])->name('report.generateEmployeeListReport');

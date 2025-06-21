@@ -6,15 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Incident;
 use App\Models\IncidentCategory;
+use App\Models\Employee;
 
 class IncidentController extends Controller
 {
     public function index()
     {
+        $authUser = auth()->user();
+
         $incidents = Incident::with('incidentCategory')->paginate(10);
         $categories = IncidentCategory::all();
 
-        return view('incidents.index', compact('incidents', 'categories'));
+        $employees = Employee::where('locality_id', $authUser->locality_id)->get();
+
+        return view('incidents.index', compact('incidents', 'categories','employees'));
     }
 
     public function create()
