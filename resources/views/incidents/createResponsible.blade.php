@@ -11,7 +11,7 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('incidents.changeStatus') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('logsIncidents.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="card">

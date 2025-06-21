@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Incident;
 use App\Models\IncidentCategory;
-use App\Models\LogIncident;
 use App\Models\Employee;
 
 class IncidentController extends Controller
@@ -79,22 +78,5 @@ class IncidentController extends Controller
     {
         $incident->delete();
         return redirect()->route('incidents.index')->with('success', 'Incidencia eliminado exitosamente.');
-    }
-
-    public function changeStatus(Request $request)
-    {
-        $authUser = auth()->user();
-
-        $logIncidentData = [
-            'locality_id' => $authUser->locality_id,
-            'created_by' => $authUser->id,
-            'employee_id' => $request->input('employee'),
-            'status' => $request->input('status'),
-            'description' => $request->input('description'),
-        ];
-
-        $logincident = LogIncident::create($logIncidentData);
-
-        return redirect()->route('incidents.index')->with('success', 'Cambio de Estatus de Incidencia Exitoso');
     }
 }
