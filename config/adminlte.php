@@ -393,6 +393,12 @@ return [
                 'icon' => 'fas fa-fw fa-tags',
                 'can'  => 'viewIncidentCategories',
             ],
+            [
+                'text' => 'Estatus de Incidencia',
+                'url'  => '/incidentStatuses',
+                'icon' => 'fas fa-fw fa-clipboard-list',
+                'can'  => 'viewIncidentStatuses',
+            ],
         ],
     ],
     [
