@@ -17,7 +17,7 @@
                                             <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createIncidence">
                                                 <i class="fa fa-plus"></i> Registrar Incidencia
                                             </button>
-                                            <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createResponsible">
+                                            <button class="btn btn-warning mr-2" data-toggle='modal' data-target="#createResponsible">
                                                 <i class="fa fa-plus"></i> Cambio de Estatus
                                             </button>
                                         </div>
@@ -68,7 +68,7 @@
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
                                                             <button type="button" class="btn bg-purple mr-2" data-toggle="modal" title="Ver Tomas de Agua" data-target="#delete{{$incident->id}}">
-                                                               <i class="fas fa-trash-alt"></i>
+                                                                <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         </td>
                                                         @include('incidents.edit')
@@ -79,9 +79,9 @@
                                             @endif
                                         </tbody>
                                     </table>
-                                    @include('incidents.createResponsible')
+                                    @include('incidents.changeStatusModal')
                                     <div class="d-flex justify-content-center">
-                                       {!! $incidents->links('pagination::bootstrap-4') !!}
+                                        {!! $incidents->links('pagination::bootstrap-4') !!}
                                     </div>
                                 </div>
                             </div>
