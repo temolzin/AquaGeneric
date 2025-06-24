@@ -18,6 +18,7 @@ use App\Http\Controllers\IncidentCategoriesController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LogIncidentController;
+use App\Http\Controllers\IncidentStatusController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -136,5 +137,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['can:viewEmployee']], function () {
         Route::resource('employees', EmployeeController::class);
         Route::get('/reports/generateEmployeeListReport', [EmployeeController::class, 'generateEmployeeListReport'])->name('report.generateEmployeeListReport');
+    });
+
+    Route::group(['middleware' => ['can:viewIncidentStatuses']], function () {
+        Route::resource('incidentStatuses', IncidentStatusController::class);
     });
 });
