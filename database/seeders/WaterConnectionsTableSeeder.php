@@ -26,6 +26,11 @@ class WaterConnectionsTableSeeder extends Seeder
             $users = DB::table('users')->pluck('id')->toArray();
 
             foreach ($customers as $customerId) {
+
+                if (empty($costs)) {
+                    continue;
+                }
+
                 WaterConnection::create([
                     'customer_id' => $customerId,
                     'locality_id' => $localityId,
