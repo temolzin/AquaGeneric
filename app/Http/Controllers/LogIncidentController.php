@@ -10,11 +10,7 @@ class LogIncidentController extends Controller
 {
     public function index()
     {
-        $authUser = auth()->user();
 
-        $employees = Employee::where('locality_id', $authUser->locality_id)->get();
-
-        return view('incidents.index', compact('incidents', 'categories','employees'));
     }
 
     public function store(Request $request)
@@ -32,5 +28,14 @@ class LogIncidentController extends Controller
         $logincident = LogIncident::create($logIncidentData);
 
         return redirect()->route('incidents.index')->with('success', 'Cambio de Estatus de Incidencia Exitoso');
+    }
+
+    public function getEmployees()
+    {
+        $authUser = auth()->user();
+
+        $employees = Employee::where('locality_id', $authUser->locality_id)->get();
+
+        return view('incidents.index', compact('incidents', 'categories','employees'));
     }
 }
