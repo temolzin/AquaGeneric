@@ -61,6 +61,12 @@
                                         <input type="text" disabled class="form-control" value="{{ $customer->state ?? 'Desconocido' }}" />
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Correo electrónico</label>
+                                        <input type="email" disabled class="form-control" value="{{ $customer->email}}" />
+                                    </div>
+                                </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label>Código Postal</label>

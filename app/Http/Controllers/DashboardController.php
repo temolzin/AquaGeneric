@@ -8,6 +8,8 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller
 {
@@ -118,9 +120,38 @@ class DashboardController extends Controller
                 'waterConnectionName' => $debt->waterConnection->name,
                 'endDate' => Carbon::parse($debt->end_date)->format('d/m/Y'),
                 'daysRemaining' => $today->diffInDays(Carbon::parse($debt->end_date)->endOfDay()) + 1,
+                'customerEmail' => $customer->email
             ];
         }
         
         return $result;
+    }
+
+    public function sendUpcomingPaymentAlerts(Request $request)
+    {
+        $authUser = Auth::user();
+        $customers = $this->getPaidDebtsExpiringSoon($authUser->locality_id);
+
+        foreach ($customers as $customerData) {
+            if (!empty($customerData['customerEmail'])) {
+                Mail::send([], [], function ($message) use ($customerData, $authUser) {
+                    $logoCid = $message->embed(public_path('img/logo.png'));
+                    $footerCid = $message->embed(public_path('img/rootheim.png'));
+
+                    $html = View::make('emails.upcomingPaymentAlert', array_merge($customerData, [
+                        'logoCid' => $logoCid,
+                        'footerCid' => $footerCid,
+                        'senderEmail' => $authUser->email,
+                        'senderPhone' => $authUser->phone
+                    ]))->render();
+
+                    $message->to($customerData['customerEmail'])
+                            ->subject('Recordatorio de pago próximo a vencer')
+                            ->setBody($html, 'text/html');
+                });
+            }
+        }
+
+        return back()->with('success', 'Los correos de recordatorio han sido enviados');
     }
 }

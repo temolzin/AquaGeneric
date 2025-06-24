@@ -74,6 +74,7 @@ class CustomerController extends Controller
             $customer->status = $request->input('statusUpdate');
             $customer->responsible_name = $request->input('responsibleNameUpdate');
             $customer->note = $request->input('noteUpdate');
+            $customer->email = $request->input('emailUpdate');
 
             $customer->save();
 

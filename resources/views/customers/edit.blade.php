@@ -69,6 +69,12 @@
                                             <input type="text" class="form-control" name="stateUpdate" id="stateUpdate" value="{{ $customer->state }}" required>
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="emailUpdate" class="form-label">Correo electrónico(*)</label>
+                                            <input type="email" class="form-control" id="emailUpdate" name="emailUpdate"  value="{{ $customer->email }}" required>
+                                        </div>
+                                    </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="zipCodeUpdate" class="form-label">Código Postal(*)</label>

@@ -44,6 +44,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('dashboard', DashboardController::class);
+    Route::post('/dashboard/sendUpcomingPaymentAlerts', [DashboardController::class, 'sendUpcomingPaymentAlerts'])->name('dashboard.sendUpcomingPaymentAlerts');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile/update', [ProfileController::class, 'profileUpdate'])->name('profile.update');

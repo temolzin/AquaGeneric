@@ -28,6 +28,7 @@ class CustomersTableSeeder extends Seeder
             DB::table('customers')->insert([
                 'name' => $faker->firstName,
                 'last_name' => $faker->lastName,
+                'email' => $faker->unique()->safeEmail,
                 'locality' => $faker->city,
                 'state' => $faker->state,
                 'zip_code' => $faker->regexify('[0-9]{5}'),
