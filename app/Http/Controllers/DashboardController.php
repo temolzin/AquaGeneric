@@ -127,7 +127,7 @@ class DashboardController extends Controller
         return $result;
     }
 
-    public function sendUpcomingPaymentAlerts(Request $request)
+    public function sendEmailsForDebtsExpiringSoon()
     {
         $authUser = Auth::user();
         $customers = $this->getPaidDebtsExpiringSoon($authUser->locality_id);

@@ -158,7 +158,7 @@
                                     <h3 class="card-title m-0">Períodos Próximos a Vencer</h3>
                                 </div>
                                 <div class="col-md-6 d-flex justify-content-end">
-                                    <form action="{{ route('dashboard.sendUpcomingPaymentAlerts') }}" method="POST" class="m-0">
+                                    <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="m-0">
                                         @csrf
                                         <button type="submit" class="btn btn-primary btn-sm">
                                             <i class="fas fa-envelope"></i> Enviar recordatorios
