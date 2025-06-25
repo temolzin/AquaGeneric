@@ -153,7 +153,19 @@
                     </div>
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Períodos Proximos a Vencer</h3>
+                            <div class="row w-100">
+                                <div class="col-md-6 d-flex align-items-center">
+                                    <h3 class="card-title m-0">Períodos Próximos a Vencer</h3>
+                                </div>
+                                <div class="col-md-6 d-flex justify-content-end">
+                                    <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-envelope"></i> Enviar recordatorios
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
                             <table class="table table-striped">
@@ -167,19 +179,25 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($data['paidDebtsExpiringSoon'] as $period)
+                                    @if(count($data['paidDebtsExpiringSoon']) <= 0)
                                         <tr>
-                                            <td>
-                                                <img src="{{ $period['customerPhoto'] }}"
-                                                    alt="Foto de cliente"
-                                                    style="width: 50px; height: 50px; border-radius: 50%;">
-                                            </td>
-                                            <td>{{ $period['customerName'] }}</td>
-                                            <td>{{ $period['waterConnectionName'] }}</td>
-                                            <td>{{ $period['endDate'] }}</td>
-                                            <td>{{ $period['daysRemaining'] }} días</td>
+                                            <td colspan="5">No hay resultados</td>
                                         </tr>
-                                    @endforeach
+                                    @else
+                                        @foreach($data['paidDebtsExpiringSoon'] as $period)
+                                            <tr>
+                                                <td>
+                                                    <img src="{{ $period['customerPhoto'] }}"
+                                                        alt="Foto de cliente"
+                                                        style="width: 50px; height: 50px; border-radius: 50%;">
+                                                </td>
+                                                <td>{{ $period['customerName'] }}</td>
+                                                <td>{{ $period['waterConnectionName'] }}</td>
+                                                <td>{{ $period['endDate'] }}</td>
+                                                <td>{{ $period['daysRemaining'] }} días</td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -241,6 +259,15 @@
                     $('#localityInfoAnnual').text('');
                 }
             });
+            var successMessage = "{{ session('success') }}";
+            if (successMessage) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: successMessage,
+                    confirmButtonText: 'Aceptar'
+                });
+            }
         });
 
         var ctx = document.getElementById('earningsChart').getContext('2d');
