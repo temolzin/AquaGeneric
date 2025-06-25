@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Incident;
 use App\Models\IncidentCategory;
 use App\Models\Employee;
+use App\Models\IncidentStatus;
 
 class IncidentController extends Controller
 {
@@ -18,8 +19,9 @@ class IncidentController extends Controller
         $categories = IncidentCategory::all();
 
         $employees = Employee::where('locality_id', $authUser->locality_id)->get();
+        $statuses = IncidentStatus::pluck('status');
 
-        return view('incidents.index', compact('incidents', 'categories','employees'));
+        return view('incidents.index', compact('incidents', 'categories','employees', 'statuses'));
     }
 
     public function create()

@@ -43,8 +43,9 @@
                                             <label for="status" class="form-label">Estatus(*)</label>
                                             <select class="form-control" name="status" required>
                                                 <option value="">Selecciona una opción</option>
-                                                <option value="Terminado">Terminado</option>
-                                                <option value="Proceso">Proceso</option>
+                                                @foreach ($statuses as $status)
+                                                    <option value="{{ $status }}">{{ $status }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
