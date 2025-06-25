@@ -15,6 +15,7 @@ class LogIncident extends Model
         'employee_id',
         'status',
         'description',
+        'incident_id'
     ];
 
     public function locality()

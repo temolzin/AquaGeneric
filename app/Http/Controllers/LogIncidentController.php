@@ -23,6 +23,7 @@ class LogIncidentController extends Controller
             'employee_id' => $request->input('employee'),
             'status' => $request->input('status'),
             'description' => $request->input('description'),
+            'incident_id' => $request->incident,
         ];
 
         $logincident = LogIncident::create($logIncidentData);
