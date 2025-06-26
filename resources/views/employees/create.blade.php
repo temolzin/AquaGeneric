@@ -32,76 +32,16 @@
                                             <input type="file" accept="image/*" class="form-control" name="photo" id="photo" aria-describedby="photoHelp" onchange="previewImage(event)" />
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="name" class="form-label">Nombre(*)</label>
                                             <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="name" name="name" placeholder="Ingresa nombre" value="{{ old('name') }}" required />
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="lastName" class="form-label">Apellido(*)</label>
                                             <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="lastName" name="lastName" placeholder="Ingresa apellido" value="{{ old('lastName') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="street" class="form-label">Calle(*)</label>
-                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="street" name="street" placeholder="Ingresa calle" value="{{ old('street') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="block" class="form-label">Colonia(*)</label>
-                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="block" name="block" placeholder="Ingresa colonia" value="{{ old('block') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="locality" class="form-label">Localidad(*)</label>
-                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="locality" name="locality" placeholder="Ingresa localidad" value="{{ old('locality') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="state" class="form-label">Estado(*)</label>
-                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="state" name="state" placeholder="Ingresa estado" value="{{ old('state') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="zipCode" class="form-label">Código Postal(*)</label>
-                                            <input type="text" pattern="^[0-9]+"  class="form-control" id="zipCode" name="zipCode" placeholder="Ingresa código postal" value="{{ old('zipCode') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="exteriorNumber" class="form-label">Número Exterior(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="exteriorNumber" name="exteriorNumber" placeholder="Ingresa número exterior" value="{{ old('exteriorNumber') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="interiorNumber" class="form-label">Número Interior(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="interiorNumber" name="interiorNumber" placeholder="Ingresa número interior" value="{{ old('interiorNumber') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="email" class="form-label">Correo Electronico(*)</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="phoneNumber" class="form-label">Número telefónico(*)</label>
-                                            <input type="tel" pattern="^[0-9]+" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Ingresa número telefónico" value="{{ old('phoneNumber') }}" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="salary" class="form-label">Salario(*)</label>
-                                            <input type="text" pattern="^[0-9]+" maxlength="5" class="form-control" id="salary" name="salary" placeholder="Ingresa salario" value="{{ old('salary') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -114,6 +54,66 @@
                                                 <option value="Encargado">Encargado</option>
                                                 <option value="Seguridad">Seguridad</option>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="salary" class="form-label">Salario(*)</label>
+                                            <input type="text" pattern="^[0-9]+" maxlength="5" class="form-control" id="salary" name="salary" placeholder="Ingresa salario" value="{{ old('salary') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="phoneNumber" class="form-label">Número telefónico(*)</label>
+                                            <input type="tel" pattern="^[0-9]+" maxlength="10" minlength="10" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Ingresa número telefónico" value="{{ old('phoneNumber') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="email" class="form-label">Correo Electronico(*)</label>
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="state" class="form-label">Estado(*)</label>
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="state" name="state" placeholder="Ingresa estado" value="{{ old('state') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="locality" class="form-label">Localidad(*)</label>
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="locality" name="locality" placeholder="Ingresa localidad" value="{{ old('locality') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="block" class="form-label">Colonia(*)</label>
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="block" name="block" placeholder="Ingresa colonia" value="{{ old('block') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="zipCode" class="form-label">Código Postal(*)</label>
+                                            <input type="text" pattern="^[0-9]+"  class="form-control" id="zipCode" name="zipCode" placeholder="Ingresa código postal" value="{{ old('zipCode') }}" maxlength="5" pattern="\d{5}" inputmode="numeric" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="street" class="form-label">Calle(*)</label>
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="street" name="street" placeholder="Ingresa calle" value="{{ old('street') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="exteriorNumber" class="form-label">Número Exterior(*)</label>
+                                            <input type="text" pattern=".*\S.*" class="form-control" id="exteriorNumber" name="exteriorNumber" placeholder="Ingresa número exterior" value="{{ old('exteriorNumber') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="interiorNumber" class="form-label">Número Interior(*)</label>
+                                            <input type="text" pattern=".*\S.*" class="form-control" id="interiorNumber" name="interiorNumber" placeholder="Ingresa número interior" value="{{ old('interiorNumber') }}" required />
                                         </div>
                                     </div>
                                 </div>
