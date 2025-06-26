@@ -14,7 +14,7 @@ class AddIncidentIdToLogIncidentsTable extends Migration
     public function up()
     {
         Schema::table('log_incidents', function (Blueprint $table) {
-            $table->unsignedBigInteger('incident_id')->nullable()->after('description'); // o donde prefieras
+            $table->unsignedBigInteger('incident_id')->nullable()->after('description');
             $table->foreign('incident_id')->references('id')->on('incidents')->onDelete('set null');
         });
     }

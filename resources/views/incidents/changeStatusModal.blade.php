@@ -57,7 +57,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="incident" class="form-label">Incidencia</label>
-                                            <select class="form-control" name="incident" required>
+                                            <select class="form-control" name="incidentId" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($incidents as $incident)
                                                     <option value="{{ $incident->id }}">{{ $incident->name }}</option>
