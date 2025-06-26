@@ -13,8 +13,8 @@ class IncidentStatusSeeder extends Seeder
             [
                 'status' => 'Pendiente',
                 'description' => 'Incidencia en proceso de ser atendida',
-                'created_by' => 3,      // Cambia según corresponda
-                'locality_id' => 1,     // Cambia según corresponda
+                'created_by' => 3,
+                'locality_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
