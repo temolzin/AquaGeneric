@@ -86,6 +86,9 @@
                                                             <i class="fas fa-image"></i>
                                                         </button>
                                                     @endcan
+                                                    <button type="button" class="btn btn-primary mr-2" data-toggle="modal"  title="Configurar correo" data-target="#mailConfigModal{{$locality->id}}">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </button>
                                                     @can('deleteLocality')
                                                         @if($locality->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
@@ -103,6 +106,7 @@
                                             @include('localities.delete')
                                             @include('localities.show')
                                             @include('localities.editLogo')
+                                            @include('localities.mailConfiguration')
                                         </tr>
                                         @endforeach
                                         @endif

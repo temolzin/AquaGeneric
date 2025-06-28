@@ -40,4 +40,9 @@ class Locality extends Model implements HasMedia
     {
         return $this->hasMany(Cost::class);
     }
+
+    public function mailConfiguration()
+    {
+        return $this->hasOne(MailConfiguration::class);
+    }
 }

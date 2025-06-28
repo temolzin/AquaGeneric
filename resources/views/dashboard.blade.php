@@ -151,6 +151,7 @@
                             </div>
                         </div>
                     </div>
+                    @can('viewDashboardCards')
                     <div class="card">
                         <div class="card-header">
                             <div class="row w-100">
@@ -160,7 +161,14 @@
                                 <div class="col-md-6 d-flex justify-content-end">
                                     <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="m-0">
                                         @csrf
-                                        <button type="submit" class="btn btn-primary btn-sm">
+                                        <button
+                                            type="submit"
+                                            class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm"
+                                            title="{{ $hasMailConfig 
+                                                ? 'Enviar correos de recordatorio' 
+                                                : 'No hay configuración de correo válida para esta localidad' }}"
+                                            {{ $hasMailConfig ? '' : 'disabled' }}
+                                        >
                                             <i class="fas fa-envelope"></i> Enviar recordatorios
                                         </button>
                                     </form>
@@ -200,8 +208,12 @@
                                     @endif
                                 </tbody>
                             </table>
+                            <div class="d-flex justify-content-center mt-3">
+                                {{ $data['paidDebtsExpiringSoon']->appends(request()->query())->links('pagination::bootstrap-4') }}
+                            </div>
                         </div>
                     </div>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -268,6 +280,15 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
+            var errorMessage = "{{ session('error') }}";
+            if (errorMessage) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage,
+                    confirmButtonText: 'Aceptar'
+                });
+            }   
         });
 
         var ctx = document.getElementById('earningsChart').getContext('2d');
