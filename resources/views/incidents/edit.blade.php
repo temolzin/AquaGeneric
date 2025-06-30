@@ -45,7 +45,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="category" class="form-label">Categoria(*)</label>
-                                            <select class="form-control" name="categoryUpdate" required>
+                                            <select class="form-control select2" name="categoryUpdate" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach($incident->incidentCategory->all() as $category)
                                                     <option value="{{ $category->id }}" {{ $incident->category_id == $category->id ? 'selected' : '' }}>
