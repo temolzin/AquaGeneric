@@ -17,8 +17,11 @@
                                             <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createIncidence">
                                                 <i class="fa fa-plus"></i> Registrar Incidencia
                                             </button>
-                                            <button class="btn btn-warning mr-2" data-toggle='modal' data-target="#createResponsible">
+                                            <button class="btn bg-purple mr-2" data-toggle='modal' data-target="#createResponsible">
                                                 <i class="fa fa-plus"></i> Cambio de Estatus
+                                            </button>
+                                            <button class="btn bg-maroon mr-2" data-toggle='modal' data-target="">
+                                                <i class="fa fa-plus"></i> Historial de incidencia
                                             </button>
                                         </div>
                                     </div>
@@ -67,7 +70,7 @@
                                                             <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{$incident->id}}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
-                                                            <button type="button" class="btn bg-purple mr-2" data-toggle="modal" title="Ver Tomas de Agua" data-target="#delete{{$incident->id}}">
+                                                            <button type="button" class="btn bg-red mr-2" data-toggle="modal" title="Ver Tomas de Agua" data-target="#delete{{$incident->id}}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         </td>

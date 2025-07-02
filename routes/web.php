@@ -19,6 +19,7 @@ use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LogIncidentController;
 use App\Http\Controllers\IncidentStatusController;
+use App\Http\Controllers\MailConfigurationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -101,6 +102,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('localities', LocalityController::class);
         Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
+        Route::put('/localities/{locality}/mailConfiguration',[MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
     });
 
     Route::group(['middleware' => ['can:viewWaterConnection']], function () {

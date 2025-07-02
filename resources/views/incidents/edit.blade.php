@@ -51,12 +51,12 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estado(*)</label>
-                                            <select class="form-control" name="statusUpdate">
-                                                <option value="">Selecciona una opción</option>
-                                                <option value="Pendiente" {{ $incident->status == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
-                                                <option value="Proceso" {{ $incident->status == 'Proceso' ? 'selected' : '' }}>Proceso</option>
-                                                <option value="Terminado" {{ $incident->status == 'Terminado' ? 'selected' : '' }}>Terminado</option>
-                                            </select>
+                                                <select class="form-control" name="statusUpdate" required>
+                                                    <option value="">Selecciona una opción</option>
+                                                    @foreach ($statuses as $status)
+                                                        <option value="{{ $status }}" {{ $incident->status == $status ? 'selected' : '' }}>{{ $status }}</option>
+                                                    @endforeach
+                                                </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">

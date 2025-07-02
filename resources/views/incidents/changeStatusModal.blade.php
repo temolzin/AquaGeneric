@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="card-success">
-                <div class="card-header bg-warning">
+                <div class="card-header bg-purple">
                     <div class="d-sm-flex align-items-center justify-content-between">
                         <h4 class="card-title">Cambiar Estatus <small> &nbsp;(*) Campos requeridos</small></h4>
                         <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close">
@@ -43,15 +43,27 @@
                                             <label for="status" class="form-label">Estatus(*)</label>
                                             <select class="form-control" name="status" required>
                                                 <option value="">Selecciona una opción</option>
-                                                <option value="Terminado">Terminado</option>
-                                                <option value="Proceso">Proceso</option>
+                                                @foreach ($statuses as $status)
+                                                    <option value="{{ $status }}">{{ $status }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="description" class="form-label">Descripción</label>
-                                            <textarea class="form-control" name="description" placeholder="Agrega una descripción"></textarea>
+                                            <input type="text" class="form-control" name="description" placeholder="Agrega una descripción">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="incident" class="form-label">Incidencia</label>
+                                            <select class="form-control" name="incidentId" required>
+                                                <option value="">Selecciona una opción</option>
+                                                @foreach ($incidents as $incident)
+                                                    <option value="{{ $incident->id }}">{{ $incident->name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
