@@ -281,7 +281,7 @@
                                         'residencial' => 'Residencial',
                                     ];
                                 @endphp
-                                <td style="width: 57%;">
+                                <td style="width: 59%;">
                                     <label>Tipo:</label>
                                     <p>{{ $types[$waterConnection->type] ?? ucfirst($waterConnection->type) }}</p>
                                 </td>

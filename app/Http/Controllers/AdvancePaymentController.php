@@ -192,7 +192,7 @@ class AdvancePaymentController extends Controller
             amount
         ')
         ->where('status', Debt::STATUS_PAID) 
-        ->where('start_date', '>', now())
+        ->where('end_date', '>=', now()->startOfMonth()->addMonth())
         ->first();
 
         Carbon::setLocale('es');
