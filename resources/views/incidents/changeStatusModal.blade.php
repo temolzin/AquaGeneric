@@ -28,7 +28,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="employee" class="form-label">Responsable(*)</label>
-                                            <select class="form-control" name="employee" required>
+                                            <select class="form-control select2" name="employee" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($employees as $employee)
                                                     <option value="{{ $employee->id }}">

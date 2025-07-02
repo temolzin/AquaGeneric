@@ -39,7 +39,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="category" class="form-label">Categoria(*)</label>
-                                            <select class="form-control" name="category" required>
+                                            <select class="form-control select2" name="category" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($categories as $category)
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -77,3 +77,11 @@
         </div>
     </div>
 </div>
+
+<style>
+    .select2-container .select2-selection--single {
+        height: 40px;
+        display: flex;
+        align-items: center;
+    }
+</style>
