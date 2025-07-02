@@ -37,13 +37,6 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="description" class="form-label">Descripción(*)</label>
-                                            <input type="text" class="form-control" name="descriptionUpdate" value="{{ $incident->description }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6"></div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
                                             <label for="category" class="form-label">Categoria(*)</label>
                                             <select class="form-control" name="categoryUpdate" required>
                                                 <option value="">Selecciona una opción</option>
@@ -64,6 +57,12 @@
                                                         <option value="{{ $status }}" {{ $incident->status == $status ? 'selected' : '' }}>{{ $status }}</option>
                                                     @endforeach
                                                 </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="description" class="form-label">Descripción(*)</label>
+                                            <input type="text" class="form-control" name="descriptionUpdate" value="{{ $incident->description }}" required>
                                         </div>
                                     </div>
                                 </div>

@@ -41,32 +41,59 @@
                                                 onchange="previewImageEdit(event, {{ $employee->id }})">
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="nameUpdate" class="form-label">Nombre(*)</label>
                                             <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="nameUpdate" id="nameUpdate"
                                                 value="{{ $employee->name }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="lastNameUpdate" class="form-label">Apellido(*)</label>
                                             <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="lastNameUpdate"
                                                 id="lastNameUpdate" value="{{ $employee->last_name }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="streetUpdate" class="form-label">Calle(*)</label>
-                                            <input type="text" class="form-control" name="streetUpdate"
-                                                id="streetUpdate" value="{{ $employee->street }}" required>
+                                            <label for="rolUpdate" class="form-label">Rol(*)</label>
+                                            <select class="form-control" name="rolUpdate" id="rolUpdate" required>
+                                                <option value="" disabled>Asigna un rol</option>
+                                                <option value="Administrador" {{ $employee->rol == 'Administrador' ? 'selected' : '' }}> Administrador </option>
+                                                <option value="Recepcionista" {{ $employee->rol == 'Recepcionista' ? 'selected' : '' }}> Recepcionista </option>
+                                                <option value="Encargado" {{ $employee->rol == 'Encargado' ? 'selected' : '' }}> Encargado </option>
+                                                <option value="Seguridad" {{ $employee->rol == 'Seguridad' ? 'selected' : '' }}> Seguridad </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="salaryUpdate" class="form-label">Salario(*)</label>
+                                            <input type="text" pattern="^[0-9]+" maxlength="5" class="form-control" name="salaryUpdate"
+                                                id="salaryUpdate" value="{{ $employee->salary }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="phoneNumberUpdate" class="form-label">Número
+                                                Telefónico(*)</label>
+                                            <input type="tel" pattern="^[0-9]+" maxlength="10" minlength="10" class="form-control" name="phoneNumberUpdate"
+                                                id="phoneNumberUpdate" value="{{ $employee->phone_number }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="emailUpdate" class="form-label">Correo Electrónico(*)</label>
+                                            <input type="email" class="form-control" name="emailUpdate" id="emialUpdate"
+                                                value="{{ $employee->email }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="blockUpdate" class="form-label">Colonia(*)</label>
-                                            <input type="text" class="form-control" name="blockUpdate" id="blockUpdate"
-                                                value="{{ $employee->block }}" required>
+                                            <label for="stateUpdate" class="form-label">Estado(*)</label>
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="stateUpdate" id="stateUpdate"
+                                                value="{{ $employee->state }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -78,17 +105,24 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="stateUpdate" class="form-label">Estado(*)</label>
-                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="stateUpdate" id="stateUpdate"
-                                                value="{{ $employee->state }}" required>
+                                            <label for="blockUpdate" class="form-label">Colonia(*)</label>
+                                            <input type="text" class="form-control" name="blockUpdate" id="blockUpdate"
+                                                value="{{ $employee->block }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="zipCodeUpdate" class="form-label">Código Postal(*)</label>
                                             <input type="text" pattern="^[0-9]+" class="form-control" name="zipCodeUpdate"
                                                 id="zipCodeUpdate" value="{{ $employee->zip_code }}" maxlength="5"
                                                 pattern="\d{5}" inputmode="numeric" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="streetUpdate" class="form-label">Calle(*)</label>
+                                            <input type="text" class="form-control" name="streetUpdate"
+                                                id="streetUpdate" value="{{ $employee->street }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -107,40 +141,6 @@
                                             <input type="text" class="form-control" name="interiorNumberUpdate"
                                                 id="interiorNumberUpdate" value="{{ $employee->interior_number }}"
                                                 required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="emailUpdate" class="form-label">Correo Electrónico(*)</label>
-                                            <input type="email" class="form-control" name="emailUpdate" id="emialUpdate"
-                                                value="{{ $employee->email }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="phoneNumberUpdate" class="form-label">Número
-                                                Telefónico(*)</label>
-                                            <input type="tel" pattern="^[0-9]+" maxlength="10" minlength="10" class="form-control" name="phoneNumberUpdate"
-                                                id="phoneNumberUpdate" value="{{ $employee->phone_number }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="salaryUpdate" class="form-label">Salario(*)</label>
-                                            <input type="text" pattern="^[0-9]+" maxlength="5" class="form-control" name="salaryUpdate"
-                                                id="salaryUpdate" value="{{ $employee->salary }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="rolUpdate" class="form-label">Rol(*)</label>
-                                            <select class="form-control" name="rolUpdate" id="rolUpdate" required>
-                                                <option value="" disabled>Asigna un rol</option>
-                                                <option value="Administrador" {{ $employee->rol == 'Administrador' ? 'selected' : '' }}> Administrador </option>
-                                                <option value="Recepcionista" {{ $employee->rol == 'Recepcionista' ? 'selected' : '' }}> Recepcionista </option>
-                                                <option value="Encargado" {{ $employee->rol == 'Encargado' ? 'selected' : '' }}> Encargado </option>
-                                                <option value="Seguridad" {{ $employee->rol == 'Seguridad' ? 'selected' : '' }}> Seguridad </option>
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
