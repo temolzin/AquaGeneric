@@ -24,5 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DashboardExpiringPaidDebtsSeeder::class);
         $this->call(GeneralExpensesSeeder::class);
         $this->call(MailConfigurationsTableSeeder::class); 
+        $this->call(IncidentStatusSeeder::class);
     }
 }
