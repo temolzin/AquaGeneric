@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class DashboardController extends Controller
 {
@@ -57,6 +59,9 @@ class DashboardController extends Controller
             return ucfirst(Carbon::create()->month($month)->locale('es')->monthName);
         });
 
+        $mailConfig = $authUser->locality?->mailConfiguration;
+        $hasMailConfig = $mailConfig && $mailConfig->isComplete();
+
         $data = [
             'customersByLocality' => $customersByLocality,
             'customersWithDebts' => $customersWithDebts,
@@ -68,7 +73,7 @@ class DashboardController extends Controller
             'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
         ];
 
-        return view('dashboard', compact('data', 'authUser'));
+        return view('dashboard', compact('data', 'authUser', 'hasMailConfig'));
     }
 
     public function getEarningsByLocality(Request $request)
@@ -96,7 +101,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function getPaidDebtsExpiringSoon($localityId)
+    public function getPaidDebtsExpiringSoon($localityId, $perPage = 5)
     {
         $today = Carbon::today();
         $limit = $today->copy()->addDays(Debt::DASHBOARD_EXPIRING_DAYS);
@@ -124,34 +129,59 @@ class DashboardController extends Controller
             ];
         }
         
-        return $result;
+        $items = collect($result);
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentPageItems = $items->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        return new LengthAwarePaginator(
+            $currentPageItems,
+            $items->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => request()->url(),
+                'query' => request()->query(),
+            ]
+        );
     }
 
     public function sendEmailsForDebtsExpiringSoon()
     {
         $authUser = Auth::user();
+        $mailConfig = $authUser->locality->mailConfiguration; 
+
+        Config::set('mail.mailers.smtp.host', $mailConfig->host);
+        Config::set('mail.mailers.smtp.port', $mailConfig->port);
+        Config::set('mail.mailers.smtp.username', $mailConfig->username);
+        Config::set('mail.mailers.smtp.password', $mailConfig->password);
+        Config::set('mail.mailers.smtp.encryption', $mailConfig->encryption);
+        Config::set('mail.from.address', $mailConfig->from_address);
+        Config::set('mail.from.name', $mailConfig->from_name ?? config('app.name'));
         $customers = $this->getPaidDebtsExpiringSoon($authUser->locality_id);
 
         foreach ($customers as $customerData) {
             if (!empty($customerData['customerEmail'])) {
-                Mail::send([], [], function ($message) use ($customerData, $authUser) {
-                    $logoCid = $message->embed(public_path('img/logo.png'));
-                    $footerCid = $message->embed(public_path('img/rootheim.png'));
+                try {
+                    Mail::send([], [], function ($message) use ($customerData, $authUser) {
+                        $logoCid = $message->embed(public_path('img/logo.png'));
+                        $footerCid = $message->embed(public_path('img/rootheim.png'));
 
-                    $html = View::make('emails.upcomingPaymentAlert', array_merge($customerData, [
-                        'logoCid' => $logoCid,
-                        'footerCid' => $footerCid,
-                        'senderEmail' => $authUser->email,
-                        'senderPhone' => $authUser->phone
-                    ]))->render();
+                        $html = View::make('emails.upcomingPaymentAlert', array_merge($customerData, [
+                            'logoCid' => $logoCid,
+                            'footerCid' => $footerCid,
+                            'senderEmail' => $authUser->email,
+                            'senderPhone' => $authUser->phone
+                        ]))->render();
 
-                    $message->to($customerData['customerEmail'])
-                            ->subject('Recordatorio de pago próximo a vencer')
-                            ->setBody($html, 'text/html');
-                });
+                        $message->to($customerData['customerEmail'])
+                                ->subject('Recordatorio de pago próximo a vencer')
+                                ->setBody($html, 'text/html');
+                    });
+                } catch (\Exception) {
+                    return back()->with('error', 'No se pudo establecer conexión con el servidor de correo. Verifica la configuración SMTP.');
+                }    
             }
         }
-
         return back()->with('success', 'Los correos de recordatorio han sido enviados');
     }
 }

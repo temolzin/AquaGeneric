@@ -15,7 +15,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        User::create([
+        User::firstOrCreate([
             'locality_id' => null,
             'name' => 'Jose',
             'last_name' => 'Lopez Osorio',
@@ -24,7 +24,7 @@ class UsersTableSeeder extends Seeder
             'password' => Hash::make('12345'),
         ])->assignRole('Admin');
 
-        User::create([
+        User::firstOrCreate([
             'locality_id' => 2,
             'name' => 'Erika',
             'last_name' => 'Lopez Perez',
@@ -33,12 +33,21 @@ class UsersTableSeeder extends Seeder
             'password' => Hash::make('12345'),
         ])->assignRole('Secretaria');
 
-        User::create([
+        User::firstOrCreate([
             'locality_id' => 1,
             'name' => 'Juan',
             'last_name' => 'Perez Garcia',
             'email' => 'juan@gmail.com',
             'phone' => '5512998832',
+            'password' => Hash::make('12345'),
+        ])->assignRole('Supervisor');
+
+        User::firstOrCreate([
+            'locality_id' => 3,
+            'name' => 'Mario',
+            'last_name' => 'Gomez Fernandez',
+            'email' => 'mario@gmail.com',
+            'phone' => '5588997766',
             'password' => Hash::make('12345'),
         ])->assignRole('Supervisor');
     }
