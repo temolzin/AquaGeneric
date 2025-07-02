@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-lg-12 text-right">
             <div class="btn-group" role="group" aria-label="Acciones de gráfica de pagos">
-                <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#paymentChart">
+                <button class="btn btn-primary mr-2" id="btnGenerateReportGraph" data-toggle="modal" data-target="#paymentChart">
                     <i class="fa fa-money-bill"></i> Gráfica de pagos
                 </button>
                 <a class="btn btn-success mr-2" data-toggle="modal" data-target="#paymentHistoryModal" title="Historial de pagos">
@@ -95,7 +95,7 @@
                     success: function (response) {
                         $.each(response.waterConnections, function (index, connection) {
                             waterConnectionSelect.append(
-                                `<option value="${connection.id}">${connection.id} - ${connection.name}</option>`
+                                '<option value="${connection.id}">${connection.id} - ${connection.name}</option>'
                             );
                         });
                     },
@@ -188,7 +188,7 @@
             const canvas = document.getElementById(canvasId);
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
-            link.download = `${canvasId}.png`;
+            link.download = '${canvasId}.png';
             link.click();
         });
     });

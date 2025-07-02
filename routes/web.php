@@ -119,20 +119,20 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['can:viewAdvancePayments']], function () {
-       Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
-       Route::get('/getAdavancedPaymentReportWithConnection', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
-       Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
-       Route::get('/getCustomersWithAdvancePayments', [AdvancePaymentController::class, 'getCustomersWithAdvancePayments'])->name('getCustomersWithAdvancePayments');
-       Route::get('/getAdvanceDebtDates', [AdvancePaymentController::class, 'getAdvanceDebtDates'])->name('getAdvanceDebtDates');
+        Route::get('/advancePayments', [AdvancePaymentController::class, 'index'])->name('advancePayments.index');
+        Route::get('/getAdavancedPaymentReportWithConnection', [AdvancePaymentController::class, 'generateAdvancedPaymentReport'])->name('advancePayments.report');
+        Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
+        Route::get('/getCustomersWithAdvancePayments', [AdvancePaymentController::class, 'getCustomersWithAdvancePayments'])->name('getCustomersWithAdvancePayments');
+        Route::get('/getAdvanceDebtDates', [AdvancePaymentController::class, 'getAdvanceDebtDates'])->name('getAdvanceDebtDates');
     });
 
     Route::group(['middleware' => ['can:viewIncidentCategories']], function () {
-       Route::resource('incidentCategories', IncidentCategoriesController::class);
+        Route::resource('incidentCategories', IncidentCategoriesController::class);
     });
 
     Route::group(['middleware' => ['can:viewIncidents']], function () {
-       Route::resource('incidents', IncidentController::class);
-       Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
+        Route::resource('incidents', IncidentController::class);
+        Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
     });
 
     Route::group(['middleware' => ['can:viewEmployee']], function () {
