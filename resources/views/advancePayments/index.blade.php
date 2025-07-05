@@ -6,25 +6,25 @@
     <h2>Pagos adelantados</h2>
 
     @include('advancePayments.advancePaymentsReportForm')
+    @include('advancePayments.paymentHistoryModal')
+
 
     <div class="row">
         <div class="col-lg-12 text-right">
             <div class="btn-group" role="group" aria-label="Acciones de gráfica de pagos">
-                <button class="btn btn-primary mr-2" id="btnGenerateReportGraph" data-toggle="modal" data-target="#paymentChart">
-                    <i class="fa fa-money-bill"></i> Gráfica de pagos
+                <button class="btn btn-primary mr-2" id="btnGenerateReportGraph">
+                    <i class="fa fa-chart-pie"></i> Generar PDF de Gráficos
                 </button>
-                <a class="btn btn-success mr-2" data-toggle="modal" data-target="#paymentHistoryModal" title="Historial de pagos">
-                    <i class="fas fa-clipboard"></i> Historial de pagos
-                </a>
+                <button class="btn btn-success mr-2" data-toggle="modal" data-target="#paymentHistoryModal" title="Historial de pagos">
+                    <i class="fa fa-calendar"></i> Historial de Pagos
+                </button>
                 <button type="button" class="btn bg-teal mr-2" data-toggle="modal"
                     data-target="#generateAdvancePaymentsReportModal">
-                    <i class="fas fa-fw fa-calendar-plus"></i> Pagos Adelantados
+                    <i class="fas fa-file-pdf"></i> Reporte de Pagos Adelantados
                 </button>
             </div>
         </div>
     </div>
-
-    @include('advancePayments.paymentHistoryModal')
 
     @php
         $chartHeight = '300px';
@@ -54,41 +54,12 @@
     </div>
 @endsection
 
-@push('js')
-<script>
-    $(function () {
-        $('#generateAdvancePaymentsReportModal').on('shown.bs.modal', function () {
-            $('.select2').select2({
-                dropdownParent: $('#generateAdvancePaymentsReportModal')
-            });
-        });
-
-        $('#advancePaymentsCustomerSelect').on('change', function () {
-            const customerId = $(this).val();
-            const waterConnectionSelect = $('#advancePaymentsWaterConnectionSelect');
-            waterConnectionSelect.empty().append('<option value="">Selecciona una toma</option>');
-
-            if (customerId) {
-                $.ajax({
-                    url: '{{ route('getWaterConnectionsByCustomer') }}',
-                    method: 'GET',
-                    data: { waterCustomerId: customerId },
-                    success: function (response) {
-                        $.each(response.waterConnections, function (index, connection) {
-                            waterConnectionSelect.append(
-                                '<option value="${connection.id}">${connection.id} - ${connection.name}</option>'
-                            );
-                        });
-                    },
-                    error: function (xhr) {
-                        console.error('Error al cargar tomas de agua', xhr.responseText);
-                    }
-                });
-            }
-        });
-    });
-</script>
-@endpush
+<style>
+    #btnGenerateReportGraph:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+</style>
 
 @push('js')
 <script>
@@ -178,28 +149,41 @@
 
 @push('js')
 <script>
-    document.getElementById('btnGenerateReportGraph')?.addEventListener('click', async () => {
-        const chartIds = ['barChart', 'lineChart', 'pieChart'];
-        const chartImages = chartIds.map(id => {
-            const canvas = document.getElementById(id);
-            return canvas.toDataURL('image/png');
-        });
+    document.getElementById('btnGenerateReportGraph')?.addEventListener('click', async function() {
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Generando reporte...';
 
-        const response = await fetch('{{ route('report.advancePaymentGraphReport') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ charts: chartImages })
-        });
+        try {
+            const chartIds = ['barChart', 'lineChart', 'pieChart','doughnutChart'];
+            const chartImages = chartIds.map(id => {
+                const canvas = document.getElementById(id);
+                return canvas ? canvas.toDataURL('image/png') : null;
+            }).filter(Boolean);
 
-        if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            window.open(url, '_blank');
-        } else {
-            console.error('Error al generar el reporte.');
+            const response = await fetch('{{ route('report.advancePaymentGraphReport') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ charts: chartImages })
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                
+                const previewWindow = window.open(url, '_blank');
+            } else {
+                throw new Error('Error en el servidor');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Error', 'No se pudo generar el reporte', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-chart-pie"></i> Generar PDF de Gráficos';
         }
     });
 </script>

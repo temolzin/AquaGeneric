@@ -58,3 +58,57 @@
         align-items: center;
     }
 </style>
+
+@push('js')
+<script>
+    $(function () {
+        $('#generateAdvancePaymentsReportModal').on('shown.bs.modal', function () {
+            $('.select2').select2({
+                dropdownParent: $('#generateAdvancePaymentsReportModal')
+            });
+
+            $.ajax({
+                url: '{{ route("getCustomersWithAdvancePayments") }}',
+                method: 'GET',
+                success: function (response) {
+                    const customerSelect = $('#advancePaymentsCustomerSelect');
+                    customerSelect.empty().append('<option value="">Selecciona un cliente</option>');
+                    
+                    $.each(response.customers, function (index, customer) {
+                        customerSelect.append(
+                            `<option value="${customer.id}">${customer.name} ${customer.last_name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr) {
+                    console.error('Error al cargar clientes con pagos adelantados', xhr.responseText);
+                }
+            });
+        });
+
+        $('#advancePaymentsCustomerSelect').on('change', function () {
+            const customerId = $(this).val();
+            const waterConnectionSelect = $('#advancePaymentsWaterConnectionSelect');
+            waterConnectionSelect.empty().append('<option value="">Selecciona una toma</option>');
+
+            if (customerId) {
+                $.ajax({
+                    url: '{{ route("getCustomersWithAdvancePayments") }}',
+                    method: 'GET',
+                    data: { customerId: customerId },
+                    success: function (response) {
+                        $.each(response.waterConnections, function (index, connection) {
+                            waterConnectionSelect.append(
+                                `<option value="${connection.id}">${connection.id} - ${connection.name}</option>`
+                            );
+                        });
+                    },
+                    error: function (xhr) {
+                        console.error('Error al cargar tomas de agua con pagos adelantados', xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+</script>
+@endpush
