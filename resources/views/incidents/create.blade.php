@@ -15,7 +15,7 @@
                     <div class="card-body">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
-                                <h3 class="card-title">Registro de  Incidencias</h3>
+                                <h3 class="card-title">Registro de Incidencias</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fa fa-minus"></i>
@@ -33,12 +33,12 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="startDate" class="form-label">Fecha de Inicio(*)</label>
-                                            <input type="date" class="form-control" name="startDate" placeholder="Ingrese Fecha de Inicio" value="{{ old('startDate') }}" required />
+                                            <input type="date" class="form-control" name="startDate" value="{{ old('startDate') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="category" class="form-label">Categoria(*)</label>
+                                            <label for="category" class="form-label">Categoría(*)</label>
                                             <select class="form-control select2" name="category" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($categories as $category)
@@ -49,13 +49,13 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                                <label for="status" class="form-label">Estado(*)</label>
-                                                <select class="form-control" name="status" required>
-                                                    <option value="">Selecciona una opción</option>
-                                                    @foreach ($statuses as $status)
-                                                        <option value="{{ $status }}">{{ $status }}</option>
-                                                    @endforeach
-                                                </select>
+                                            <label for="status" class="form-label">Estado(*)</label>
+                                            <select class="form-control" name="status" required>
+                                                <option value="">Selecciona una opción</option>
+                                                @foreach ($statuses as $status)
+                                                    <option value="{{ $status }}">{{ $status }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -64,15 +64,40 @@
                                             <input type="text" class="form-control" name="description" placeholder="Ingrese la Descripción" value="{{ old('description') }}" required />
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="imagesInput" class="form-label">Imágenes de referencia <small class="text-muted">(opcional)</small></label>
+                                            <input type="file" class="form-control" id="imagesInput" name="images[]" multiple accept="image/*">
+                                            <small class="form-text text-muted mt-1">
+                                                Puedes subir varias imágenes para dar contexto. Formatos permitidos: JPG, PNG.
+                                            </small>
+                                            <div id="imageButtonsContainer" class="mt-3"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" id="save" class="btn btn-success">Guardar</button>
+                        <button type="submit" class="btn btn-success">Guardar</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="multiImagePreviewModal" tabindex="-1" role="dialog" aria-labelledby="multiImagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title" id="multiImagePreviewModalLabel">Vista previa</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="multiModalImagePreview" src="#" alt="Vista previa" class="img-fluid rounded" style="max-height: 400px;">
             </div>
         </div>
     </div>
@@ -85,3 +110,38 @@
         align-items: center;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('imagesInput');
+        const label = input.nextElementSibling;
+        const container = document.getElementById('imageButtonsContainer');
+        const modalImg = document.getElementById('multiModalImagePreview');
+
+        input.addEventListener('change', function () {
+            const files = Array.from(this.files);
+            label.textContent = files.length > 1 ? `${files.length} imágenes seleccionadas` : (files[0]?.name || 'Selecciona una imagen');
+            container.innerHTML = '';
+
+            files.forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-sm btn-info mr-2 mb-2';
+                        btn.textContent = `Ver imagen`;
+                        btn.dataset.toggle = 'modal';
+                        btn.dataset.target = '#multiImagePreviewModal';
+                        btn.dataset.imageSrc = e.target.result;
+                        btn.addEventListener('click', function () {
+                            modalImg.src = this.dataset.imageSrc;
+                        });
+                        container.appendChild(btn);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    });
+</script>

@@ -37,10 +37,10 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="category" class="form-label">Categoria(*)</label>
+                                            <label for="categoryUpdate" class="form-label">Categoria(*)</label>
                                             <select class="form-control select2" name="categoryUpdate" required>
                                                 <option value="">Selecciona una opción</option>
-                                                @foreach($incident->incidentCategory->all() as $category)
+                                                @foreach($categories as $category)
                                                     <option value="{{ $category->id }}" {{ $incident->category_id == $category->id ? 'selected' : '' }}>
                                                         {{ $category->name }}
                                                     </option>
@@ -50,20 +50,39 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="status" class="form-label">Estado(*)</label>
-                                                <select class="form-control" name="statusUpdate" required>
-                                                    <option value="">Selecciona una opción</option>
-                                                    @foreach ($statuses as $status)
-                                                        <option value="{{ $status }}" {{ $incident->status == $status ? 'selected' : '' }}>{{ $status }}</option>
-                                                    @endforeach
-                                                </select>
+                                            <label for="statusUpdate" class="form-label">Estado(*)</label>
+                                            <select class="form-control" name="statusUpdate" required>
+                                                <option value="">Selecciona una opción</option>
+                                                @foreach ($statuses as $status)
+                                                    <option value="{{ $status }}" {{ $incident->status == $status ? 'selected' : '' }}>{{ $status }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="description" class="form-label">Descripción(*)</label>
+                                            <label for="descriptionUpdate" class="form-label">Descripción(*)</label>
                                             <input type="text" class="form-control" name="descriptionUpdate" value="{{ $incident->description }}" required>
                                         </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="imagesUpdate" class="form-label">Actualizar Imágenes de Referencia</label>
+                                            <input type="file" class="form-control" name="imagesUpdate[]" multiple accept="image/*">
+                                            <small class="form-text text-muted">Puedes seleccionar una o más imágenes para agregar.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center mt-3">
+                                        @if($incident->getMedia('incidentImages')->count())
+                                            <label>Imágenes actuales:</label>
+                                            <div>
+                                                @foreach($incident->getMedia('incidentImages') as $media)
+                                                    <img src="{{ $media->getUrl() }}" alt="Imagen incidencia" class="img-thumbnail m-1" style="max-width: 100px;">
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <p>No hay imágenes disponibles.</p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
