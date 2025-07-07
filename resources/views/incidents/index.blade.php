@@ -123,22 +123,10 @@
         }
     });
 
-    $('#createIncidence').on('shown.bs.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $('#createIncidence')
-        });
+    $(document).on('shown.bs.modal', '.modal', function () {
+    $(this).find('.select2').select2({
+        dropdownParent: $(this)
     });
-
-    $('[id^="edit"]').on('shown.bs.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
-
-    $('#createResponsible').on('shown.bs.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $('#createResponsible'),
-        });
-    });
+});
 </script>
 @endsection

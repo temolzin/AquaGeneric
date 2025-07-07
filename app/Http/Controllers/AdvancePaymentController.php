@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Str;
 use App\Models\Debt;
 use Illuminate\Support\Facades\Log;
+use App\Models\WaterConnection;
 
 class AdvancePaymentController extends Controller
 {
@@ -234,4 +235,52 @@ class AdvancePaymentController extends Controller
 
             return compact('months', 'totals');
         }
+
+    public function generateAdvancedPaymentHistoryReport(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'water_connection_id' => 'required|exists:water_connections,id'
+        ]);
+
+        $customer = Customer::findOrFail($request->customer_id);
+        $connection = WaterConnection::findOrFail($request->water_connection_id);
+
+        $response = $this->getAdvanceDebtDates(new Request([
+            'waterConnectionId' => $connection->id
+        ]));
+
+        $debtDates = json_decode($response->getContent(), true);
+
+        $debt = (object)[
+            'startDate' => $debtDates['start_date'],
+            'endDate' => $debtDates['end_date'],
+        ];
+
+        $startDate = Carbon::parse($debt->startDate);
+        $endDate = Carbon::parse($debt->endDate);
+        $months = [];
+        $current = $startDate->copy()->startOfMonth();
+
+        while ($current <= $endDate) {
+            $months[] = [
+                'label' => $current->isoFormat('MMMM YYYY'),
+                'paid' => true,
+                'month' => $current->month,
+                'year' => $current->year,
+            ];
+            $current->addMonth();
+        }
+
+        $data = [
+            'customer' => $customer,
+            'connection' => $connection,
+            'debt' => $debt,
+            'months' => $months,
+            'authUser' => auth()->user(),
+        ];
+
+        $pdf = Pdf::loadView('reports.advancePaymentsHistory', $data);
+        return $pdf->stream('reporte_pago_anticipado_'.$customer->id.'_'.$connection->id.'.pdf');
+    }
 }

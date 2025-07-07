@@ -126,6 +126,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/advancePaymentsGraphReport', [AdvancePaymentController::class, 'generatePaymentGraphReport'])->name('report.advancePaymentGraphReport');
         Route::get('/getCustomersWithAdvancePayments', [AdvancePaymentController::class, 'getCustomersWithAdvancePayments'])->name('getCustomersWithAdvancePayments');
         Route::get('/getAdvanceDebtDates', [AdvancePaymentController::class, 'getAdvanceDebtDates'])->name('getAdvanceDebtDates');
+        Route::get('/advancePaymentsHistoryReport', [AdvancePaymentController::class, 'generateAdvancedPaymentHistoryReport'])->name('advancePayments.historyReport');
     });
 
     Route::group(['middleware' => ['can:viewIncidentCategories']], function () {

@@ -54,7 +54,7 @@
                                     <div class="bg-light p-2 rounded text-right">
                                         <p class="mb-1"><strong>Fecha de Inicio:</strong> <span class="labelStarDate"></span></p>
                                         <p class="mb-0"><strong>Fecha de Fin:</strong> <span class="labelEndDate"></span></p>
-                                        <a href="#" class="btn btn-success btn-sm mt-2 shadow-sm" id="btn-download-pdf">
+                                        <a href="#" class="btn btn-success btn-sm mt-2 shadow-sm" id="btnDownloadPdf">
                                             <i class="fas fa-file-download mr-1"></i> Descargar PDF
                                         </a>
                                     </div>
@@ -276,6 +276,26 @@
         if (customerId && connectionId) {
             loadAdvancePaymentEvents(customerId, connectionId);
         } 
+    });
+
+    $('#btnDownloadPdf').on('click', function(e) {
+        e.preventDefault();
+
+        const customerId = customerSelect.val();
+        const waterConnectionId = connectionSelect.val();
+        
+        if (!customerId || !waterConnectionId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Datos incompletos',
+                text: 'Por favor selecciona un cliente y una toma de agua',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+        
+        const url = '{{ route("advancePayments.historyReport") }}' + `?customer_id=${customerId}&water_connection_id=${waterConnectionId}`;
+        const newWindow = window.open(url, '_blank');
     });
 });
 </script>
