@@ -26,28 +26,28 @@
                                         <input type="text" disabled class="form-control" value="{{ $incident->name }} " />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label>Fecha de Inicio</label>
                                         <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Descripción</label>
-                                        <input type="text" disabled class="form-control" value="{{ $incident->description }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="CategoryUpdate" class="form-label">Categoria(*)</label>
                                         <input type="text" disabled class="form-control" value="{{ $incident->incidentCategory->name }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label for="status" class="form-label">Estado(*)</label>
+                                        <label for="status" class="form-label">Estatus(*)</label>
                                         <input type="text" disabled class="form-control" value="{{ $incident->status }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Descripción</label>
+                                        <input type="text" disabled class="form-control" value="{{ $incident->description }}" />
                                     </div>
                                 </div>
                             </div>

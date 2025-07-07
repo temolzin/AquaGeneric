@@ -8,7 +8,7 @@
         <div class="col-md-12 col-sm-12 ">
             <div class="x_panel">
                 <div class="x_title">
-                    <h2>Categorías de Incidencia</h2>
+                    <h2>Categoría de Incidencias</h2>
                     <div class="row">
                         <div class="col-lg-12 text-right">
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create">
