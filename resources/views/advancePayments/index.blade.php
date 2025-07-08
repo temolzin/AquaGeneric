@@ -149,6 +149,38 @@
 
 @push('js')
 <script>
+    document.getElementById('btnGenerateReportGraph')?.addEventListener('click', () => {
+    const chartIds = ['barChart', 'lineChart', 'pieChart'];
+    const chartImages = chartIds.map(id => {
+        const canvas = document.getElementById(id);
+        return canvas.toDataURL('image/png');
+    });
+
+    const formGenerateReportGraphPayments = document.createElement('form');
+    formGenerateReportGraphPayments.method = 'POST';
+    formGenerateReportGraphPayments.action = '{{ route('report.advancePaymentGraphReport') }}';
+    formGenerateReportGraphPayments.target = '_blank';
+
+    const tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = '_token';
+    tokenInput.value = '{{ csrf_token() }}';
+    formGenerateReportGraphPayments.appendChild(tokenInput);
+
+    const chartsInput = document.createElement('input');
+    chartsInput.type = 'hidden';
+    chartsInput.name = 'charts';
+    chartsInput.value = JSON.stringify(chartImages);
+    formGenerateReportGraphPayments.appendChild(chartsInput);
+
+    document.body.appendChild(formGenerateReportGraphPayments);
+    formGenerateReportGraphPayments.submit();
+});
+</script>
+@endpush
+
+@push('js')
+<script>
     document.getElementById('btnGenerateReportGraph')?.addEventListener('click', async function() {
         const btn = this;
         btn.disabled = true;

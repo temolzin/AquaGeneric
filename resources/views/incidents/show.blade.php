@@ -26,31 +26,58 @@
                                         <input type="text" disabled class="form-control" value="{{ $incident->name }} " />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label>Fecha de Inicio</label>
                                         <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Descripción</label>
-                                        <input type="text" disabled class="form-control" value="{{ $incident->description }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="CategoryUpdate" class="form-label">Categoria(*)</label>
                                         <input type="text" disabled class="form-control" value="{{ $incident->incidentCategory->name }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label for="status" class="form-label">Estado(*)</label>
+                                        <label for="status" class="form-label">Estatus(*)</label>
                                         <input type="text" disabled class="form-control" value="{{ $incident->status }}" />
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Descripción</label>
+                                        <input type="text" disabled class="form-control" value="{{ $incident->description }}" />
+                                    </div>
+                                </div>
                             </div>
+                            <div class="col-lg-12 text-center mt-4">
+                                @if($incident->getMedia('incidentImages')->count())
+                                    @foreach ($incident->getMedia('incidentImages') as $media)
+                                        <img src="{{ $media->getUrl() }}" alt="Imagen incidencia" class="img-thumbnail m-1" style="max-width: 150px; cursor:pointer;"
+                                            data-toggle="modal" data-target="#imagePreviewModal{{ $media->id }}">
+                                        <!-- Modal para vista previa -->
+                                        <div class="modal fade" id="imagePreviewModal{{ $media->id }}" tabindex="-1" role="dialog" aria-labelledby="imagePreviewModalLabel{{ $media->id }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-secondary text-white">
+                                                        <h5 class="modal-title" id="imagePreviewModalLabel{{ $media->id }}">Vista previa</h5>
+                                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <img src="{{ $media->getUrl() }}" alt="Imagen incidencia" class="img-fluid rounded" style="max-height: 500px;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <p>No hay imágenes disponibles.</p>
+                                @endif
+                            </div>
+
                         </div>
                     </div>
                 </div>
