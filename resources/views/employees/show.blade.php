@@ -37,28 +37,52 @@
                                         <input type="text" disabled class="form-control" value="{{ $employee->name }} {{ $employee->last_name }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label>Calle</label>
-                                        <input type="text" disabled class="form-control" value="{{ $employee->street }}" />
+                                        <label>Rol</label>
+                                        <input type="text" disabled class="form-control" value="{{ $employee->rol }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label>Colonia</label>
-                                        <input type="text" disabled class="form-control" value="{{ $employee->block }}" />
+                                        <label>Salario</label>
+                                        <input type="text" disabled class="form-control" value="{{ $employee->salary }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Correo Electrónico</label>
+                                        <input type="text" disabled class="form-control" value="{{ $employee->email }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Número telefónico</label>
+                                        <input type="text" disabled class="form-control" value="{{ $employee->phone_number }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Estado</label>
+                                        <input type="text" disabled class="form-control" value="{{ $employee->state ?? 'Desconocido' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label>Localidad</label>
                                         <input type="text" disabled class="form-control" value="{{ $employee->locality ?? 'Desconocido' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label>Estado</label>
-                                        <input type="text" disabled class="form-control" value="{{ $employee->state ?? 'Desconocido' }}" />
+                                        <label>Colonia</label>
+                                        <input type="text" disabled class="form-control" value="{{ $employee->block }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="form-group">
+                                        <label>Calle</label>
+                                        <input type="text" disabled class="form-control" value="{{ $employee->street }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -77,30 +101,6 @@
                                     <div class="form-group">
                                         <label>Número Interior</label>
                                         <input type="text" disabled class="form-control" value="{{ $employee->interior_number }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Correo Electrónico</label>
-                                        <input type="text" disabled class="form-control" value="{{ $employee->email }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Número telefónico</label>
-                                        <input type="text" disabled class="form-control" value="{{ $employee->phone_number }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Salario</label>
-                                        <input type="text" disabled class="form-control" value="{{ $employee->salary }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Rol</label>
-                                        <input type="text" disabled class="form-control" value="{{ $employee->rol }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-12">

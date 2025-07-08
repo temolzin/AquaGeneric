@@ -16,7 +16,7 @@
                     <div class="card-body">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
-                                <h3 class="card-title"></h3>
+                                <h3 class="card-title">Datos del Cambio de Estatus</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fa fa-minus"></i>
@@ -25,7 +25,18 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="incident" class="form-label">Incidencia</label>
+                                            <select class="form-control" name="incidentId" required>
+                                                <option value="">Selecciona una opción</option>
+                                                @foreach ($incidents as $incident)
+                                                    <option value="{{ $incident->id }}">{{ $incident->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="employee" class="form-label">Responsable(*)</label>
                                             <select class="form-control select2" name="employee" required>
@@ -38,7 +49,7 @@
                                             </select>    
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estatus(*)</label>
                                             <select class="form-control" name="status" required>
@@ -49,21 +60,10 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="description" class="form-label">Descripción</label>
                                             <input type="text" class="form-control" name="description" placeholder="Agrega una descripción">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="incident" class="form-label">Incidencia</label>
-                                            <select class="form-control" name="incidentId" required>
-                                                <option value="">Selecciona una opción</option>
-                                                @foreach ($incidents as $incident)
-                                                    <option value="{{ $incident->id }}">{{ $incident->name }}</option>
-                                                @endforeach
-                                            </select>
                                         </div>
                                     </div>
                                 </div>

@@ -41,7 +41,7 @@
                                                 <th>FECHA DE INICIO</th>
                                                 <th>DESCRIPCIÓN</th>
                                                 <th>CATEGORIA</th>
-                                                <th>ESTADO</th>
+                                                <th>ESTATUS</th>
                                                 <th>OPCIONES</th>
                                             </tr>
                                         </thead>

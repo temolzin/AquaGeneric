@@ -200,7 +200,7 @@ class AdvancePaymentController extends Controller
         $debt->startMonthName = Carbon::create()->month($debt->start_month)->translatedFormat('F');
         $debt->endMonthName = Carbon::create()->month($debt->end_month)->translatedFormat('F');
 
-        $chartImages = $request->input('charts');
+        $chartImages = json_decode($request->input('charts'), true) ?? [];
 
         $pdf = PDF::loadView('reports.advancePaymentGraphReport', compact('authUser', 'chartImages', 'debt'))->setPaper('A4', 'portrait');
 

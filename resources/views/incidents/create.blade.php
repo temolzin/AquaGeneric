@@ -49,7 +49,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                                <label for="status" class="form-label">Estado(*)</label>
+                                                <label for="status" class="form-label">Estatus(*)</label>
                                                 <select class="form-control" name="status" required>
                                                     <option value="">Selecciona una opción</option>
                                                     @foreach ($statuses as $status)
