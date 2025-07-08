@@ -11,8 +11,8 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="year" class="form-label">Año(*)</label>
-                        <input type="number" id="year" name="year" class="form-control"  min="1900" max="{{ date('Y') }}" 
-                               required placeholder="Ingrese el año ejemplo 2024" value="{{ old('year') }}" />
+                        <input type="number" id="year" name="year" class="form-control"  min="2000" max="{{ date('Y') }}" 
+                                required placeholder="Ingrese el año ejemplo 2024" value="{{ old('year') }}" />
                     </div>
                 </div>
                 <div class="modal-footer">

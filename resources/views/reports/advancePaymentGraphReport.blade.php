@@ -259,9 +259,12 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2" style="padding: 8px; text-align: center;">
+                        <td style="padding: 8px; text-align: center; width: 50%;">
                             <img src="{{ $chartImages[2] }}" style="max-width: 80%; height: auto;">
                         </td>
+                        <td style="padding: 8px; text-align: center; width: 50%;">
+                            <img src="{{ $chartImages[3] }}" style="max-width: 80%; height: auto;">
+                       </td>
                     </tr>
                 </tbody>
             </table>
