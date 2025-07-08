@@ -14,28 +14,32 @@ class MailConfigurationsTableSeeder extends Seeder
      */
     public function run()
     {
-        MailConfiguration::create([
-            'locality_id' => 1,
-            'mailer' => 'smtp',
-            'host' => 'smtp.smallville.com',
-            'port' => 587,
-            'username' => 'smallville_user',
-            'password' => 'smallville_pass',
-            'encryption' => 'tls',
-            'from_address' => 'noreply@smallville.com',
-            'from_name' => 'Smallville Water Services',
-        ]);
+        MailConfiguration::updateOrCreate(
+            ['locality_id' => 1],
+            [
+                'mailer' => 'smtp',
+                'host' => 'smtp.gmail.com',
+                'port' => 587,
+                'username' => 'aquacontrolmailtesting@gmail.com',
+                'password' => 'lfjo iynk oaef lrgp',
+                'encryption' => 'tls',
+                'from_address' => 'aquacontrolmailtesting@gmail.com',
+                'from_name' => 'Servicios de Agua Smallville',
+            ]
+        );
 
-        MailConfiguration::create([
-            'locality_id' => 2,
-            'mailer' => 'smtp',
-            'host' => 'smtp.springfield.com',
-            'port' => 465,
-            'username' => 'springfield_user',
-            'password' => 'springfield_pass',
-            'encryption' => 'ssl',
-            'from_address' => 'noreply@springfield.com',
-            'from_name' => 'Springfield Water Dept',
-        ]);
+        MailConfiguration::updateOrCreate(
+            ['locality_id' => 2],
+            [
+                'mailer' => 'smtp',
+                'host' => 'smtp.springfield.com',
+                'port' => 465,
+                'username' => 'springfield_user',
+                'password' => 'springfield_pass',
+                'encryption' => 'ssl',
+                'from_address' => 'noreply@springfield.com',
+                'from_name' => 'Springfield Water Dept',
+            ]
+        );
     }
 }
