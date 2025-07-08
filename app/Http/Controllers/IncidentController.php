@@ -76,13 +76,13 @@ class IncidentController extends Controller
 
             $incident->save();
 
-        if ($request->hasFile('imagesUpdate')) {
-            $incident->clearMediaCollection('incidentImages');
-            
-            foreach ($request->file('imagesUpdate') as $image) {
-                $incident->addMedia($image)->toMediaCollection('incidentImages');
+            if ($request->hasFile('imagesUpdate')) {
+                $incident->clearMediaCollection('incidentImages');
+                
+                foreach ($request->file('imagesUpdate') as $image) {
+                    $incident->addMedia($image)->toMediaCollection('incidentImages');
+                }
             }
-        }
 
             return redirect()->route('incidents.index')->with('success', 'Incidencia actualizada correctamente.');
         }
