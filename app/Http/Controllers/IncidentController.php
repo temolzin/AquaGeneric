@@ -51,6 +51,12 @@ class IncidentController extends Controller
 
         $incident = Incident::create($incidentData);
 
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $incident->addMedia($image)->toMediaCollection('incidentImages');
+            }
+        }
+
         return redirect()->route('incidents.index')->with('success', 'Incidente creado exitosamente.');
     }
 
@@ -75,6 +81,14 @@ class IncidentController extends Controller
             $incident->status = $request->input('statusUpdate');
 
             $incident->save();
+
+            if ($request->hasFile('imagesUpdate')) {
+                $incident->clearMediaCollection('incidentImages');
+                
+                foreach ($request->file('imagesUpdate') as $image) {
+                    $incident->addMedia($image)->toMediaCollection('incidentImages');
+                }
+            }
 
             return redirect()->route('incidents.index')->with('success', 'Incidencia actualizada correctamente.');
         }
