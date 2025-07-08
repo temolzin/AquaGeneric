@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Exception;
 
 class DashboardController extends Controller
 {
@@ -177,7 +178,7 @@ class DashboardController extends Controller
                                 ->subject('Recordatorio de pago próximo a vencer')
                                 ->setBody($html, 'text/html');
                     });
-                } catch (\Exception) {
+                } catch (Exception) {
                     return back()->with('error', 'No se pudo establecer conexión con el servidor de correo. Verifica la configuración SMTP.');
                 }    
             }

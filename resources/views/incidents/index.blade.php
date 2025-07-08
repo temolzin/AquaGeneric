@@ -29,6 +29,21 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-4">
+                        <form method="GET" action="{{ route('incidents.index') }}" class="my-3">
+                            <div class="d-flex">
+                                <select name="category" class="form-control select2 rounded-start border-end-0" style="width: auto;">
+                                    <option value="">Filtrar por categoría</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="btn btn-primary rounded-end border-start-0">Filtrar</button>
+                            </div>
+                        </form>
+                    </div>
                     <div class="x_content">
                         <div class="row">
                             <div class="col-sm-12">
@@ -41,7 +56,7 @@
                                                 <th>FECHA DE INICIO</th>
                                                 <th>DESCRIPCIÓN</th>
                                                 <th>CATEGORIA</th>
-                                                <th>ESTADO</th>
+                                                <th>ESTATUS</th>
                                                 <th>OPCIONES</th>
                                             </tr>
                                         </thead>
@@ -123,22 +138,10 @@
         }
     });
 
-    $('#createIncidence').on('shown.bs.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $('#createIncidence')
-        });
+    $(document).on('shown.bs.modal', '.modal', function () {
+    $(this).find('.select2').select2({
+        dropdownParent: $(this)
     });
-
-    $('[id^="edit"]').on('shown.bs.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
-
-    $('#createResponsible').on('shown.bs.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $('#createResponsible'),
-        });
-    });
+});
 </script>
 @endsection

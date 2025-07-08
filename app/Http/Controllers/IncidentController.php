@@ -11,17 +11,23 @@ use App\Models\IncidentStatus;
 
 class IncidentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $authUser = auth()->user();
 
-        $incidents = Incident::with('incidentCategory')->paginate(10);
-        $categories = IncidentCategory::all();
+        $query = Incident::with('incidentCategory');
 
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        $incidents = $query->paginate(10);
+
+        $categories = IncidentCategory::all();
         $employees = Employee::where('locality_id', $authUser->locality_id)->get();
         $statuses = IncidentStatus::pluck('status');
 
-        return view('incidents.index', compact('incidents', 'categories','employees', 'statuses'));
+        return view('incidents.index', compact('incidents', 'categories', 'employees', 'statuses'));
     }
 
     public function create()
