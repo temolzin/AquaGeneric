@@ -79,4 +79,9 @@ class Customer extends Model implements HasMedia
             $customer->waterConnections()->delete();
         });
     }
+    
+    public function waterConnectionsAll()
+    {
+        return $this->hasMany(WaterConnection::class)->withoutGlobalScope('notCanceled');
+    }
 }

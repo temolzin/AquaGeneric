@@ -17,6 +17,13 @@ class WaterConnection extends Model
     public const VIEW_STATUS_ADVANCED = 'Adelantado';
     public const VIEW_STATUS_CANCELED = 'Cancelado';
 
+    protected static function booted()
+    {
+        static::addGlobalScope('notCanceled', function ($query) {
+            $query->where('is_canceled', false);
+        });
+    }
+
     protected $fillable = [
         'locality_id',
         'created_by',
