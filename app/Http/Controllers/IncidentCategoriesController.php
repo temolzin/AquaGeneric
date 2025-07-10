@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\IncidentCategory;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class IncidentCategoriesController extends Controller
 {
@@ -12,7 +13,7 @@ class IncidentCategoriesController extends Controller
         $authUser = auth()->user();
         $categories = IncidentCategory::where('locality_id', $authUser->locality_id)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10);
 
         return view('incidentCategories.index', compact('categories'));
     }
@@ -59,5 +60,15 @@ class IncidentCategoriesController extends Controller
         $incidentCategory->delete();
 
         return redirect()->route('incidentCategories.index')->with('success', 'Categoría de incidencia eliminada exitosamente.');
+    }
+
+    public function generateIncidentCategoyListReport()
+    {
+        $authUser = auth()->user();
+        $incidentCategories = IncidentCategory::all();
+        $pdf = PDF::loadView('reports.generateIncidentCategoyListReport', compact('incidentCategories', 'authUser'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('incidentCategories.pdf');
     }
 }

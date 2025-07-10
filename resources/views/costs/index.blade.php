@@ -14,6 +14,10 @@
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create">
                                 <i class="fa fa-plus"></i> Registrar Costo
                             </button>
+                            <a type="button" class="btn btn-secondary" target="_blank" title="Costs"
+                                href="{{ route('report.generateCostListReport') }}">
+                                <i class="fas fa-list"></i> Generar Lista
+                            </a>
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -68,7 +72,9 @@
                                     </tbody>
                                 </table>
                                 @include('costs.create')
-                            </div>
+                                <div class="d-flex justify-content-center">
+                                    {!! $costs->links('pagination::bootstrap-4') !!}
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -82,9 +88,10 @@
 <script>
     $(document).ready(function() {
         $('#costs').DataTable({
-            responsive: true,
-            buttons: ['excel', 'pdf', 'print'],
-            dom: 'Bfrtip',
+                responsive: true,
+                paging: false,
+                info: false,
+                searching: false
         });
 
         var successMessage = "{{ session('success') }}";

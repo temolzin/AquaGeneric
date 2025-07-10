@@ -8,6 +8,7 @@ use App\Models\Incident;
 use App\Models\IncidentCategory;
 use App\Models\Employee;
 use App\Models\IncidentStatus;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class IncidentController extends Controller
 {
@@ -84,7 +85,7 @@ class IncidentController extends Controller
 
             if ($request->hasFile('imagesUpdate')) {
                 $incident->clearMediaCollection('incidentImages');
-                
+
                 foreach ($request->file('imagesUpdate') as $image) {
                     $incident->addMedia($image)->toMediaCollection('incidentImages');
                 }
@@ -100,5 +101,15 @@ class IncidentController extends Controller
     {
         $incident->delete();
         return redirect()->route('incidents.index')->with('success', 'Incidencia eliminado exitosamente.');
+    }
+
+    public function generateIncidentListReport()
+    {
+        $authUser = auth()->user();
+        $incidents = Incident::all();
+        $pdf = PDF::loadView('reports.generateIncidentListReport', compact('incidents', 'authUser'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('incidents.pdf');
     }
 }

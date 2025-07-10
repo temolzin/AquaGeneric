@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\IncidentStatus;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class IncidentStatusController extends Controller
 {
@@ -64,5 +65,15 @@ class IncidentStatusController extends Controller
         $incidentStatus->delete();
         return redirect()->route('incidentStatuses.index')
             ->with('success', 'Estatus eliminado correctamente.');
+    }
+
+        public function generateIncidentStatusListReport()
+    {
+        $authUser = auth()->user();
+        $incidentStatus = IncidentStatus::all();
+        $pdf = PDF::loadView('reports.generateIncidentStatusListReport', compact('incidentStatus', 'authUser'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('incidentStatus.pdf');
     }
 }
