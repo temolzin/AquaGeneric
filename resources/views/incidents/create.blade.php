@@ -154,20 +154,24 @@
             files.forEach((file) => {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
-                        reader.onload = function (e) {
-                            const btn = document.createElement('button');
-                            btn.type = 'button';
-                            btn.className = 'btn btn-sm btn-info mr-2 mb-2';
-                            btn.textContent = `Ver imagen`;
-                            btn.dataset.toggle = 'modal';
-                            btn.dataset.target = '#multiImagePreviewModal';
-                            btn.dataset.imageSrc = e.target.result;
-                            btn.addEventListener('click', function () {
-                                modalImg.src = this.dataset.imageSrc;
-                            });
-                            container.appendChild(btn);
-                        };
-                        reader.readAsDataURL(file);
+
+                    reader.onload = function (e) {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-sm btn-info mr-2 mb-2';
+                        btn.textContent = 'Ver imagen';
+                        btn.dataset.toggle = 'modal';
+                        btn.dataset.target = '#multiImagePreviewModal';
+                        btn.dataset.imageSrc = e.target.result;
+
+                        btn.addEventListener('click', function () {
+                            modalImg.src = this.dataset.imageSrc;
+                        });
+
+                        container.appendChild(btn);
+                    };
+
+                    reader.readAsDataURL(file);
                 }
             });
         });
