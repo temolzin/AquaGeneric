@@ -87,6 +87,10 @@
                                                                 <button type="button" class="btn btn-info" data-toggle="modal" title="Ver motivo de cancelación" data-target="#viewCancellationReason{{ $connection->id }}">
                                                                 <i class="fas fa-info-circle"></i>
                                                                 </button>
+
+                                                                <button type="button" class="btn"  style="background-color: #0d6efd;  margin-left: 8px;" data-toggle="modal" title="Reactivar toma de agua" data-target="#ReactivateWaterService{{ $connection->id }}">
+                                                                 <i class="fas fa-sync-alt"></i>
+                                                                </button>
                                                             @endif
                                                         </div>
                                                     </td>
@@ -140,6 +144,37 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="modal fade" id="ReactivateWaterService{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="cancelLabel{{ $connection->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <form action="{{ route('waterConnections.reactivate', $connection->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="cancelLabel{{ $connection->id }}">Reactivar Toma de Agua</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <label for="cancelDescription{{ $connection->id }}">Cliente</label>
+                                                                    <select class="form-control" name="customer_id" id="customer_id" required>
+                                                                        <option value="">Selecciona un cliente</option>
+                                                                        @foreach($customers as $customer)
+                                                                            <option value="{{ $customer->id }}">
+                                                                                {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-success">Reactivar Toma</button>
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                                 @endif
                                             @endforeach
                                         @endif
@@ -177,6 +212,7 @@
         </div>
     </div>
 </div>
+
 @endif
 @endsection
 

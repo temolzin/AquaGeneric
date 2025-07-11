@@ -119,4 +119,20 @@ class WaterConnectionController extends Controller
 
         return redirect()->route('waterConnections.index')->with('success', 'Toma cancelada correctamente.');
     }
+
+    public function reactivate(Request $request, $id)
+    {
+        $connection = WaterConnection::findOrFail($id);
+
+        if ($request->has('customer_id')) {
+            $connection->customer_id = $request->input('customer_id');
+        }
+
+        $connection->is_canceled = false;
+        $connection->canceled_at = null;
+        $connection->cancel_description = null;
+        $connection->save();
+
+        return redirect()->route('waterConnections.index')->with('success', 'Toma reactivada y asignada correctamente.');
+    }
 }
