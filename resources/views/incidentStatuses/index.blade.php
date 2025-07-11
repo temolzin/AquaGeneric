@@ -14,9 +14,13 @@
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createIncidentStatusModal">
                                 <i class="fa fa-plus"></i> Registrar Estatus
                             </button>
+                            <a type="button" class="btn btn-secondary" target="_blank" title="IncidentStatus"
+                                href="{{ route('report.generateIncidentStatusListReport') }}">
+                                <i class="fas fa-list"></i> Generar Lista
+                            </a>
                         </div>
                     </div>
-                    <div class="clearfix"></div>
+                    <div class="clearfix mb-4"></div>
                 </div>
                 <div class="x_content">
                     <div class="row">
@@ -67,7 +71,9 @@
                                     </tbody>
                                 </table>
                                 @include('incidentStatuses.create')
-                            </div>
+                                <div class="d-flex justify-content-center">
+                                    {!! $statuses->links('pagination::bootstrap-4') !!}
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -82,8 +88,9 @@
     $(document).ready(function() {
         $('#incidentStatuses').DataTable({
             responsive: true,
-            buttons: ['excel', 'pdf', 'print'],
-            dom: 'Bfrtip',
+            paging: false,
+            info: false,
+            searching: false
         });
 
         var successMessage = "{{ session('success') }}";

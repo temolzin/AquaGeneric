@@ -23,6 +23,10 @@
                                             <button class="btn bg-maroon mr-2" data-toggle='modal' data-target="">
                                                 <i class="fa fa-plus"></i> Historial de incidencia
                                             </button>
+                                            <a type="button" class="btn btn-secondary" target="_blank" title="Incident"
+                                                href="{{ route('report.generateIncidentListReport') }}">
+                                                    <i class="fas fa-list"></i> Generar Lista
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -48,7 +52,7 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="card-box table-responsive">
-                                    <table class="table table-striped display responsive nowrap" style="width:100%">
+                                    <table id="incident" class="table table-striped display responsive nowrap" style="width:100%">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -116,6 +120,13 @@
 @section('js')
 <script>
     $(document).ready(function() {
+        $('#incident').DataTable({
+                responsive: true,
+                paging: false,
+                info: false,
+                searching: false
+        });
+
         var successMessage = "{{ session('success') }}";
         var errorMessage = "{{ session('error') }}";
 
