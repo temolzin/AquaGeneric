@@ -13,7 +13,8 @@ class WaterConnectionController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = WaterConnection::where('water_connections.locality_id', $authUser->locality_id)
+        $query = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+            ->where('water_connections.locality_id', $authUser->locality_id)
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
             ->orderBy('water_connections.created_at', 'desc')
             ->select('water_connections.*');
