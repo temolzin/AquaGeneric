@@ -82,6 +82,6 @@ class Customer extends Model implements HasMedia
     
     public function waterConnectionsAll()
     {
-        return $this->hasMany(WaterConnection::class)->withoutGlobalScope('notCanceled');
+        return $this->hasMany(WaterConnection::class)->withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED);
     }
 }
