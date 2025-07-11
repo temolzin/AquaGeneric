@@ -117,31 +117,95 @@
         const label = input.nextElementSibling;
         const container = document.getElementById('imageButtonsContainer');
         const modalImg = document.getElementById('multiModalImagePreview');
+        const form = input.closest('form');
+
+        const MAX_FILES = 5;
+        const MAX_FILE_SIZE_MB = 1;
+        const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
         input.addEventListener('change', function () {
             const files = Array.from(this.files);
+
+            if (files.length > MAX_FILES) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Demasiadas imágenes',
+                    text: `Solo puedes subir hasta ${MAX_FILES} imágenes.`,
+                });
+                resetInput();
+                return;
+            }
+
+            for (const file of files) {
+                if (file.size > MAX_FILE_SIZE_BYTES) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Imagen demasiado pesada',
+                        text: `La imagen "${file.name}" supera el límite de ${MAX_FILE_SIZE_MB} MB.`,
+                    });
+                    resetInput();
+                    return;
+                }
+            }
+
             label.textContent = files.length > 1 ? `${files.length} imágenes seleccionadas` : (files[0]?.name || 'Selecciona una imagen');
             container.innerHTML = '';
 
-            files.forEach((file, index) => {
+            files.forEach((file) => {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
+
                     reader.onload = function (e) {
                         const btn = document.createElement('button');
                         btn.type = 'button';
                         btn.className = 'btn btn-sm btn-info mr-2 mb-2';
-                        btn.textContent = `Ver imagen`;
+                        btn.textContent = 'Ver imagen';
                         btn.dataset.toggle = 'modal';
                         btn.dataset.target = '#multiImagePreviewModal';
                         btn.dataset.imageSrc = e.target.result;
+
                         btn.addEventListener('click', function () {
                             modalImg.src = this.dataset.imageSrc;
                         });
+
                         container.appendChild(btn);
                     };
+
                     reader.readAsDataURL(file);
                 }
             });
         });
+
+        form.addEventListener('submit', function (e) {
+            const files = Array.from(input.files);
+
+            if (files.length > MAX_FILES) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Demasiadas imágenes',
+                    text: `Solo puedes subir hasta ${MAX_FILES} imágenes.`,
+                });
+                e.preventDefault();
+                return;
+            }
+
+            for (const file of files) {
+                if (file.size > MAX_FILE_SIZE_BYTES) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Imagen demasiado pesada',
+                        text: `La imagen "${file.name}" supera el límite de ${MAX_FILE_SIZE_MB} MB.`,
+                    });
+                    e.preventDefault();
+                    return;
+                }
+            }
+        });
+
+        function resetInput() {
+            input.value = '';
+            container.innerHTML = '';
+            label.textContent = 'Selecciona una imagen';
+        }
     });
 </script>
