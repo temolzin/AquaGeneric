@@ -150,7 +150,7 @@
 @push('js')
 <script>
     document.getElementById('btnGenerateReportGraph')?.addEventListener('click', () => {
-    const chartIds = ['barChart', 'lineChart', 'pieChart'];
+    const chartIds = ['barChart', 'lineChart', 'pieChart','doughnutChart'];
     const chartImages = chartIds.map(id => {
         const canvas = document.getElementById(id);
         return canvas.toDataURL('image/png');
@@ -176,47 +176,5 @@
     document.body.appendChild(formGenerateReportGraphPayments);
     formGenerateReportGraphPayments.submit();
 });
-</script>
-@endpush
-
-@push('js')
-<script>
-    document.getElementById('btnGenerateReportGraph')?.addEventListener('click', async function() {
-        const btn = this;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Generando reporte...';
-
-        try {
-            const chartIds = ['barChart', 'lineChart', 'pieChart','doughnutChart'];
-            const chartImages = chartIds.map(id => {
-                const canvas = document.getElementById(id);
-                return canvas ? canvas.toDataURL('image/png') : null;
-            }).filter(Boolean);
-
-            const response = await fetch('{{ route('report.advancePaymentGraphReport') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ charts: chartImages })
-            });
-
-            if (response.ok) {
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-                
-                const previewWindow = window.open(url, '_blank');
-            } else {
-                throw new Error('Error en el servidor');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Error', 'No se pudo generar el reporte', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa fa-chart-pie"></i> Generar PDF de Gráficos';
-        }
-    });
 </script>
 @endpush
