@@ -15,7 +15,7 @@ class IncidentController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Incident::with('incidentCategory');
+        $query = Incident::with('incidentCategory', 'latestLog.employee', 'logs.employee');
 
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);

@@ -150,7 +150,7 @@
 @push('js')
 <script>
     document.getElementById('btnGenerateReportGraph')?.addEventListener('click', () => {
-    const chartIds = ['barChart', 'lineChart', 'pieChart'];
+    const chartIds = ['barChart', 'lineChart', 'pieChart' ,'doughnutChart'];
     const chartImages = chartIds.map(id => {
         const canvas = document.getElementById(id);
         return canvas.toDataURL('image/png');

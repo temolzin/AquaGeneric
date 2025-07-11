@@ -51,10 +51,10 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estatus(*)</label>
-                                            <select class="form-control" name="statusUpdate" required>
+                                            <select class="form-control select2" name="statusUpdate" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($statuses as $status)
-                                                    <option value="{{ $status }}" {{ $incident->status == $status ? 'selected' : '' }}>{{ $status }}</option>
+                                                    <option value="{{ $status }}" {{ $incident->latestStatus() == $status ? 'selected' : '' }}> {{ $status }} </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -62,7 +62,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="descriptionUpdate" class="form-label">Descripción(*)</label>
-                                            <input type="text" class="form-control" name="descriptionUpdate" value="{{ $incident->description }}" required>
+                                            <textarea class="form-control" name="descriptionUpdate" rows="3" required>{{ $incident->latestDescription() }}</textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
