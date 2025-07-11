@@ -181,6 +181,7 @@
                                     <tr>
                                         <th>Foto</th>
                                         <th>Cliente</th>
+                                        <th>Email</th>
                                         <th>Toma de Agua</th>
                                         <th>Fecha de Término</th>
                                         <th>Días Restantes</th>
@@ -189,7 +190,7 @@
                                 <tbody>
                                     @if(count($data['paidDebtsExpiringSoon']) <= 0)
                                         <tr>
-                                            <td colspan="5">No hay resultados</td>
+                                            <td colspan="6">No hay resultados</td>
                                         </tr>
                                     @else
                                         @foreach($data['paidDebtsExpiringSoon'] as $period)
@@ -200,6 +201,7 @@
                                                         style="width: 50px; height: 50px; border-radius: 50%;">
                                                 </td>
                                                 <td>{{ $period['customerName'] }}</td>
+                                                <td>{{ $period['customerEmail'] }}</td>
                                                 <td>{{ $period['waterConnectionName'] }}</td>
                                                 <td>{{ $period['endDate'] }}</td>
                                                 <td>{{ $period['daysRemaining'] }} días</td>
