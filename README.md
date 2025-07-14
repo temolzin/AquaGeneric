@@ -1,64 +1,98 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Welcome to the AquaControl Repository 💧
+![Logo](public/img/logo.png)
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## AquaControl
+A system for water management in a community that helps maintain customer control and, in turn, offer high-quality services and a better experience for local users.
 
-## About Laravel
+## Preview
+![Preview 2](public/img/preview2.jpg)
+![Preview 1](public/img/preview1.jpg)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Prerequisites 📋
+To run this project, you will need:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP server (XAMPP, WAMP, LAMP)
+- **Visual Studio Code** text editor (optional)
+- [Composer](https://getcomposer.org/) (dependency manager for PHP)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Local Installation 🔧💻
+1. Go to the GitHub repository: [AquaControl on GitHub](https://github.com/temolzin/AquaGeneric/)
 
-## Learning Laravel
+2. Click the **Code** button and copy the link to clone the repository.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Open your terminal and navigate to the folder where you want to clone the project.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+4. Run the following command:
 
-## Laravel Sponsors
+    ```bash
+    git clone https://github.com/temolzin/AquaGeneric.git
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+5. Enter the project folder:
 
-### Premium Partners
+    ```bash
+    cd AquaGeneric
+    ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+6. Install PHP dependencies with Composer:
+    ```bash
+    composer install
+    ```
 
-## Contributing
+7. Copy the `.env.example` file and rename it to `.env`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+8. Open the `.env` file and configure the database name and other variables if necessary.
 
-## Code of Conduct
+9. Create a database with the same name configured in the `.env` file.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+10. Run the migrations and seeders:
 
-## Security Vulnerabilities
+    ```bash
+    php artisan migrate --seed
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+11. Make sure the `gd` extension is enabled in the `php.ini` file. Uncomment this line if it's commented:
 
-## License
+    ```
+    extension=gd
+    ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+12. Generate the application key:
+
+    ```bash
+    php artisan key:generate
+    ```
+
+13. Install AdminLTE files:
+
+    ```bash
+    php artisan adminlte:install
+    ```
+
+14. Restore the original repository state:
+
+    ```bash
+    git reset --hard
+    ```
+
+15. Make sure the MySQL module is running if you're using a server like XAMPP.
+
+16. Finally, start the server:
+
+    ```bash
+    php artisan serve
+    ```
+
+    Open the URL shown in the console (usually http://127.0.0.1:8000).
+
+## Additional Commands
+
+- **Manual Migrations**:
+    ```bash
+    php artisan migrate
+    ```
+- **Manual Seeders**:
+    ```bash
+    php artisan db:seed
+    ```
+    
