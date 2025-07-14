@@ -41,13 +41,13 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="status" class="form-label">Estatus(*)</label>
-                                        <input type="text" disabled class="form-control" value="{{ $incident->latestStatus() }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $incident->getLatestStatus() }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Descripción</label>
-                                        <textarea disabled class="form-control" rows="3">{{ $incident->latestDescription() }}</textarea>
+                                        <textarea disabled class="form-control" rows="3">{{ $incident->getLatestDescription() }}</textarea>
                                     </div>
                                 </div>
                             </div>

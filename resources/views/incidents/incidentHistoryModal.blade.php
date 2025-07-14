@@ -22,7 +22,7 @@
                         </div>
                         <div class="card-body" style="padding-left: 0;">
                             <ul class="timeline timeline-inverse">
-                                @forelse($incident->logs as $log)
+                                @forelse($incident->getstatusChangeLogs as $log)
                                     <div class="time-label">
                                         <span class="bg-maroon">
                                             {{ $log->created_at->format('d/m/Y') }}

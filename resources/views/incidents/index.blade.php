@@ -77,7 +77,7 @@
                                                             {{$incident->incidentCategory->name}}
                                                         </td>
                                                         <td>
-                                                            {{ $incident->latestStatus() }}
+                                                            {{ $incident->getLatestStatus() }}
                                                         </td>
                                                         <td>
                                                             <button type="button" class="btn btn-info btn-sm mr-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $incident->id }}">

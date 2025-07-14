@@ -37,27 +37,19 @@ class Incident extends Model implements HasMedia
         return $this->belongsTo(IncidentCategory::class, 'category_id');
     }
 
-    public function latestLog()
-    {
-        return $this->hasOne(LogIncident::class, 'incident_id')->latestOfMany();
-    }
-
-    public function logs()
+    public function getstatusChangeLogs()
     {
         return $this->hasMany(LogIncident::class, 'incident_id')->latest();
     }
 
-    public function latestDescription()
+    public function getLatestDescription()
     {
         $incidentDescription = $this->description;
         $incidentUpdatedAt = $this->updated_at;
-
-        $lastLog = $this->latestLog;
+        $lastLog = $this->getstatusChangeLogs->first();
 
         if ($lastLog && !empty($lastLog->description)) {
-            $logUpdatedAt = $lastLog->updated_at;
-
-            if ($logUpdatedAt > $incidentUpdatedAt) {
+            if ($lastLog->updated_at > $incidentUpdatedAt) {
                 return $lastLog->description;
             }
         }
@@ -65,16 +57,14 @@ class Incident extends Model implements HasMedia
         return $incidentDescription;
     }
 
-    public function latestStatus()
+    public function getLatestStatus()
     {
         $incidentStatus = $this->status;
         $incidentUpdatedAt = $this->updated_at;
-
-        $lastLog = $this->latestLog;
+        $lastLog = $this->getstatusChangeLogs->first();
 
         if ($lastLog && !empty($lastLog->status)) {
             $logUpdatedAt = $lastLog->updated_at;
-
             if ($logUpdatedAt > $incidentUpdatedAt) {
                 return $lastLog->status;
             }
@@ -85,16 +75,16 @@ class Incident extends Model implements HasMedia
 
     public function getResponsibleEmployeesAttribute()
     {
-        $unique = collect();
-        $seen = [];
+        $uniqueEmployees = collect();
+        $employeeIdsAlreadySeen = [];
 
-        foreach ($this->logs as $log) {
-            if ($log->employee && !in_array($log->employee->id, $seen)) {
-                $seen[] = $log->employee->id;
-                $unique->push($log->employee);
+        foreach ($this->getstatusChangeLogs as $log) {
+            if ($log->employee && !in_array($log->employee->id, $employeeIdsAlreadySeen)) {
+                $employeeIdsAlreadySeen[] = $log->employee->id;
+                $uniqueEmployees->push($log->employee);
             }
         }
 
-        return $unique;
+        return $uniqueEmployees;
     }
 }
