@@ -14,6 +14,7 @@ class CreateLocalitiesTable extends Migration
             $table->string('municipality');
             $table->string('state');
             $table->string('zip_code', 5);
+            $table->text('token');
             $table->timestamps();
             $table->softDeletes();
         });
