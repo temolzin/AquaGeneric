@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Locality;
 use Illuminate\Http\Request;
+use App\Models\MailConfiguration;
 
 class LocalityController extends Controller
 {
@@ -18,7 +19,19 @@ class LocalityController extends Controller
         }
 
         $localities = $query->paginate(10);
-        return view('localities.index', compact('localities'));
+
+        $mailExamples = [
+            'mailer'  => MailConfiguration::EXAMPLE_MAILER,
+            'host'  => MailConfiguration::EXAMPLE_HOST,
+            'port'  => MailConfiguration::EXAMPLE_PORT,
+            'username'  => MailConfiguration::EXAMPLE_USERNAME,
+            'password'  => MailConfiguration::EXAMPLE_PASSWORD,
+            'encryption'  => MailConfiguration::EXAMPLE_ENCRYPTION,
+            'from_address'  => MailConfiguration::EXAMPLE_FROM_ADDRESS,
+            'from_name'  => MailConfiguration::EXAMPLE_FROM_NAME,
+        ];
+        
+        return view('localities.index', compact('localities','mailExamples'));
     }
 
     public function store(Request $request)
