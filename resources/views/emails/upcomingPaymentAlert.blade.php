@@ -24,24 +24,6 @@
             border-bottom: 2px solid #0B1C80;
         }
 
-        .logoContainer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-
-        .logo {
-            height: 50px;
-        }
-
-        .brandName {
-            color: #0B1C80;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
         .title {
             color: #0B1C80;
             font-size: 20pt;
@@ -120,13 +102,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="logoContainer">
-                <img src="{{ $logoCid }}" alt="Logo AquaControl" class="logo">
-                <div class="brandName">AquaControl</div>
-            </div>
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
+                <tr>
+                    <td style="padding-right:20px;">
+                        <img src="{{ $logoCid }}" alt="Logo AquaControl" height="50" style="width:auto; display:block;">
+                    </td>
+                    <td style="color:#0B1C80; font-size:24px; font-weight:bold; font-family: Montserrat, sans-serif;">
+                        AquaControl
+                    </td>
+                </tr>
+            </table>
             <h1 class="title">RECORDATORIO DE PAGO</h1>
         </div>
-
         <div class="content">
             <p>Estimado(a) <strong>{{ $customerName }}</strong>,</p>
 
