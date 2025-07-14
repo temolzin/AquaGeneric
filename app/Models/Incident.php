@@ -36,4 +36,55 @@ class Incident extends Model implements HasMedia
     {
         return $this->belongsTo(IncidentCategory::class, 'category_id');
     }
+
+    public function getstatusChangeLogs()
+    {
+        return $this->hasMany(LogIncident::class, 'incident_id')->latest();
+    }
+
+    public function getLatestDescription()
+    {
+        $incidentDescription = $this->description;
+        $incidentUpdatedAt = $this->updated_at;
+        $lastLog = $this->getstatusChangeLogs->first();
+
+        if ($lastLog && !empty($lastLog->description)) {
+            if ($lastLog->updated_at > $incidentUpdatedAt) {
+                return $lastLog->description;
+            }
+        }
+
+        return $incidentDescription;
+    }
+
+    public function getLatestStatus()
+    {
+        $incidentStatus = $this->status;
+        $incidentUpdatedAt = $this->updated_at;
+        $lastLog = $this->getstatusChangeLogs->first();
+
+        if ($lastLog && !empty($lastLog->status)) {
+            $logUpdatedAt = $lastLog->updated_at;
+            if ($logUpdatedAt > $incidentUpdatedAt) {
+                return $lastLog->status;
+            }
+        }
+
+        return $incidentStatus;
+    }
+
+    public function getResponsibleEmployeesAttribute()
+    {
+        $uniqueEmployees = collect();
+        $employeeIdsAlreadySeen = [];
+
+        foreach ($this->getstatusChangeLogs as $log) {
+            if ($log->employee && !in_array($log->employee->id, $employeeIdsAlreadySeen)) {
+                $employeeIdsAlreadySeen[] = $log->employee->id;
+                $uniqueEmployees->push($log->employee);
+            }
+        }
+
+        return $uniqueEmployees;
+    }
 }

@@ -17,12 +17,6 @@
                                             <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createIncidence">
                                                 <i class="fa fa-plus"></i> Registrar Incidencia
                                             </button>
-                                            <button class="btn bg-purple mr-2" data-toggle='modal' data-target="#createResponsible">
-                                                <i class="fa fa-plus"></i> Cambio de Estatus
-                                            </button>
-                                            <button class="btn bg-maroon mr-2" data-toggle='modal' data-target="">
-                                                <i class="fa fa-plus"></i> Historial de incidencia
-                                            </button>
                                             <a type="button" class="btn btn-secondary" target="_blank" title="Incident"
                                                 href="{{ route('report.generateIncidentListReport') }}">
                                                     <i class="fas fa-list"></i> Generar Lista
@@ -56,9 +50,9 @@
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
-                                                <th>NOMBRE</th>
+                                                <th>INCIDENCIA</th>
+                                                <th>EMPLEADO</th>
                                                 <th>FECHA DE INICIO</th>
-                                                <th>DESCRIPCIÓN</th>
                                                 <th>CATEGORIA</th>
                                                 <th>ESTATUS</th>
                                                 <th>OPCIONES</th>
@@ -74,28 +68,46 @@
                                                     <tr>
                                                         <td>{{ $incident->id }}</td>
                                                         <td>{{ $incident->name }}</td>
+                                                        <td>
+                                                            @forelse ($incident->responsible_employees as $employee)
+                                                                <img src="{{ $employee->getFirstMediaUrl('employeeGallery') ?: asset('img/userDefault.png') }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}" 
+                                                                    class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 3px;">
+                                                            @empty
+                                                                <span class="text-muted">Sin asignar</span>
+                                                            @endforelse
+                                                        </td>
                                                         <td>{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}</td>
-                                                        <td>{{ $incident->description }}</td>
                                                         <td>
                                                             {{$incident->incidentCategory->name}}
                                                         </td>
                                                         <td>
-                                                            {{$incident->status}}
+                                                            {{ $incident->getLatestStatus() }}
                                                         </td>
                                                         <td>
-                                                            <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{$incident->id}}">
+                                                            <button type="button" class="btn btn-info btn-sm mr-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $incident->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{$incident->id}}">
+
+                                                            <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $incident->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
-                                                            <button type="button" class="btn bg-red mr-2" data-toggle="modal" title="Ver Tomas de Agua" data-target="#delete{{$incident->id}}">
+
+                                                            <button type="button" class="btn bg-red btn-sm mr-1" data-toggle="modal" title="Eliminar Incidencia" data-target="#delete{{ $incident->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
+                                                            </button>
+
+                                                            <button type="button" class="btn bg-purple btn-sm mr-1" data-toggle="modal" data-target="#createResponsible" data-incident-id="{{ $incident->id }}" data-incident-name="{{ $incident->name }}">
+                                                                <i class="fas fa-exchange-alt"></i>
+                                                            </button>
+
+                                                            <button type="button" class="btn bg-maroon btn-sm" data-toggle="modal" title="Historial de Incidencia" data-target="#historyModal{{ $incident->id }}">
+                                                                <i class="fas fa-history"></i>
                                                             </button>
                                                         </td>
                                                         @include('incidents.edit')
                                                         @include('incidents.delete')
                                                         @include('incidents.show')
+                                                        @include('incidents.incidentHistoryModal')
                                                     </tr>
                                                 @endforeach
                                             @endif
@@ -153,6 +165,16 @@
     $(this).find('.select2').select2({
         dropdownParent: $(this)
     });
+});
+
+$('#createResponsible').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var incidentId = button.data('incident-id');
+    var incidentName = button.data('incident-name');
+
+    var modal = $(this);
+    modal.find('#incidentId').val(incidentId);
+    modal.find('#incidentNameDisplay').text(incidentName);
 });
 </script>
 @endsection

@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
         $this->call(GeneralExpensesSeeder::class);
         $this->call(MailConfigurationsTableSeeder::class); 
         $this->call(IncidentStatusSeeder::class);
+        $this->call(IncidentCategorySeeder::class);
+        $this->call(IncidentSeeder::class);
         $this->call(EmployeesTableSeeder::class);
     }
 }

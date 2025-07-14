@@ -27,13 +27,9 @@
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="incident" class="form-label">Incidencia</label>
-                                            <select class="form-control" name="incidentId" required>
-                                                <option value="">Selecciona una opción</option>
-                                                @foreach ($incidents as $incident)
-                                                    <option value="{{ $incident->id }}">{{ $incident->name }}</option>
-                                                @endforeach
-                                            </select>
+                                            <label for="incident_name" class="form-label">Incidencia</label>
+                                            <p class="form-control-plaintext mb-0" id="incidentNameDisplay"></p>
+                                            <input type="hidden" name="incidentId" id="incidentId">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -52,7 +48,7 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estatus(*)</label>
-                                            <select class="form-control" name="status" required>
+                                            <select class="form-control select2" name="status" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($statuses as $status)
                                                     <option value="{{ $status }}">{{ $status }}</option>
@@ -63,7 +59,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="description" class="form-label">Descripción</label>
-                                            <input type="text" class="form-control" name="description" placeholder="Agrega una descripción">
+                                            <textarea class="form-control" name="description" placeholder="Agrega una descripción" rows="3"></textarea>
                                         </div>
                                     </div>
                                 </div>

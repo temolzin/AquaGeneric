@@ -49,19 +49,19 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                          <label for="status" class="form-label">Estatus(*)</label>
-                                          <select class="form-control" name="status" required>
-                                              <option value="">Selecciona una opción</option>
-                                              @foreach ($statuses as $status)
-                                                  <option value="{{ $status }}">{{ $status }}</option>
-                                              @endforeach
-                                          </select>
+                                            <label for="status" class="form-label">Estatus(*)</label>
+                                            <select class="form-control select2" name="status" required>
+                                                <option value="">Selecciona una opción</option>
+                                                @foreach ($statuses as $status)
+                                                    <option value="{{ $status }}">{{ $status }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="description" class="form-label">Descripción(*)</label>
-                                            <input type="text" class="form-control" name="description" placeholder="Ingrese la Descripción" value="{{ old('description') }}" required />
+                                            <textarea class="form-control" name="description" placeholder="Ingrese la Descripción" rows="3" required>{{ old('description') }}</textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
