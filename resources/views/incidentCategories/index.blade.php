@@ -14,6 +14,10 @@
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create">
                                 <i class="fa fa-plus"></i> Registrar Categoría
                             </button>
+                            <a type="button" class="btn btn-secondary" target="_blank" title="IncidentCategories"
+                                href="{{ route('report.generateIncidentCategoyListReport') }}">
+                                <i class="fas fa-list"></i> Generar Lista
+                            </a>
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -73,6 +77,9 @@
                                     </tbody>
                                 </table>
                                 @include('incidentCategories.create')
+                                    <div class="d-flex justify-content-center">
+                                        {!! $categories->links('pagination::bootstrap-4') !!}
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -88,8 +95,9 @@
     $(document).ready(function() {
         $('#incidentCategories').DataTable({
             responsive: true,
-            buttons: ['excel', 'pdf', 'print'],
-            dom: 'Bfrtip',
+            paging: false,
+            info: false,
+            searching: false
         });
 
         var successMessage = "{{ session('success') }}";

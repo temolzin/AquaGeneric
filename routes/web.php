@@ -77,6 +77,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['can:viewCost']], function () {
         Route::resource('costs', CostController::class);
         Route::get('/costs', [CostController::class, 'index'])->name('costs.index');
+        Route::get('/reports/generateCostListReport', [CostController::class, 'generateCostListReport'])->name('report.generateCostListReport');
     });
 
     Route::group(['middleware' => ['can:viewDebts']], function () {
@@ -109,6 +110,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/waterConnections', [WaterConnectionController::class, 'index'])->name('connections.index');
         Route::resource('waterConnections', WaterConnectionController::class);
         Route::patch('/waterConnections/{id}/cancel', [WaterConnectionController::class, 'cancel'])->name('waterConnections.cancel');
+        Route::patch('/waterConnections/{id}/reactivate', [WaterConnectionController::class, 'reactivate'])->name('waterConnections.reactivate');
     });
 
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
@@ -131,11 +133,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['can:viewIncidentCategories']], function () {
         Route::resource('incidentCategories', IncidentCategoriesController::class);
+        Route::get('/reports/generateIncidentCategoyListReport', [IncidentCategoriesController::class, 'generateIncidentCategoyListReport'])->name('report.generateIncidentCategoyListReport');
     });
 
     Route::group(['middleware' => ['can:viewIncidents']], function () {
         Route::resource('incidents', IncidentController::class);
         Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
+        Route::get('/reports/generateIncidentListReport', [IncidentController::class, 'generateIncidentListReport'])->name('report.generateIncidentListReport');
     });
 
     Route::group(['middleware' => ['can:viewEmployee']], function () {
@@ -145,5 +149,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['can:viewIncidentStatuses']], function () {
         Route::resource('incidentStatuses', IncidentStatusController::class);
+        Route::get('/reports/generateIncidentStatusListReport', [IncidentStatusController::class, 'generateIncidentStatusListReport'])->name('report.generateIncidentStatusListReport');
     });
 });

@@ -13,7 +13,8 @@ class WaterConnectionController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = WaterConnection::where('water_connections.locality_id', $authUser->locality_id)
+        $query = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+            ->where('water_connections.locality_id', $authUser->locality_id)
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
             ->orderBy('water_connections.created_at', 'desc')
             ->select('water_connections.*');
@@ -117,5 +118,21 @@ class WaterConnectionController extends Controller
         $connection->save();
 
         return redirect()->route('waterConnections.index')->with('success', 'Toma cancelada correctamente.');
+    }
+
+    public function reactivate(Request $request, $id)
+    {
+        $connection = WaterConnection::findOrFail($id);
+
+        if ($request->has('customer_id')) {
+            $connection->customer_id = $request->input('customer_id');
+        }
+
+        $connection->is_canceled = false;
+        $connection->canceled_at = null;
+        $connection->cancel_description = null;
+        $connection->save();
+
+        return redirect()->route('waterConnections.index')->with('success', 'Toma reactivada y asignada correctamente.');
     }
 }

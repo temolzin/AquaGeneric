@@ -51,7 +51,7 @@
                             @endif
                             <div class="water-connection-list" style="overflow-y: auto; max-height: 300px; overflow-x: hidden;">
                                 @php $connectionCounter = 0; @endphp
-                                @foreach ($customer->waterConnections as $waterConnection)
+                                @foreach ($customer->waterConnectionsAll as $waterConnection)
                                     @if ($waterConnection)
                                         @php $connectionCounter++; @endphp
                                         @if ($connectionCounter > 1)

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Exception;
+use App\Jobs\SendUpcomingPaymentEmails;
 
 class DashboardController extends Controller
 {
@@ -107,19 +108,17 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $limit = $today->copy()->addDays(Debt::DASHBOARD_EXPIRING_DAYS);
 
-        $result = [];
-
         $debts = Debt::with(['waterConnection:id,name,customer_id', 'waterConnection.customer'])
             ->whereHas('waterConnection.customer', fn($q) => $q->where('locality_id', $localityId))
             ->where('status', Debt::STATUS_PAID)
             ->whereBetween('end_date', [$today, $limit])
             ->orderBy('end_date')
-            ->get();
+            ->paginate($perPage);
 
-        foreach ($debts as $debt) {
+        $debts->getCollection()->transform(function ($debt) use ($today) {
             $customer = $debt->waterConnection->customer;
 
-            $result[] = [
+            return [
                 'customerId' => $customer->id,
                 'customerName' => "{$customer->name} {$customer->last_name}",
                 'customerPhoto' => $customer?->getFirstMediaUrl('customerGallery') ?: asset('img/userDefault.png'),
@@ -128,22 +127,9 @@ class DashboardController extends Controller
                 'daysRemaining' => $today->diffInDays(Carbon::parse($debt->end_date)->endOfDay()) + 1,
                 'customerEmail' => $customer->email
             ];
-        }
-        
-        $items = collect($result);
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentPageItems = $items->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        });
 
-        return new LengthAwarePaginator(
-            $currentPageItems,
-            $items->count(),
-            $perPage,
-            $currentPage,
-            [
-                'path' => request()->url(),
-                'query' => request()->query(),
-            ]
-        );
+        return $debts;
     }
 
     public function sendEmailsForDebtsExpiringSoon()
@@ -158,31 +144,28 @@ class DashboardController extends Controller
         Config::set('mail.mailers.smtp.encryption', $mailConfig->encryption);
         Config::set('mail.from.address', $mailConfig->from_address);
         Config::set('mail.from.name', $mailConfig->from_name ?? config('app.name'));
-        $customers = $this->getPaidDebtsExpiringSoon($authUser->locality_id);
 
-        foreach ($customers as $customerData) {
-            if (!empty($customerData['customerEmail'])) {
-                try {
-                    Mail::send([], [], function ($message) use ($customerData, $authUser) {
-                        $logoCid = $message->embed(public_path('img/logo.png'));
-                        $footerCid = $message->embed(public_path('img/rootheim.png'));
+        $perPage = 5;
+        $currentPage = 1;
+        $allCustomers = collect();
 
-                        $html = View::make('emails.upcomingPaymentAlert', array_merge($customerData, [
-                            'logoCid' => $logoCid,
-                            'footerCid' => $footerCid,
-                            'senderEmail' => $authUser->email,
-                            'senderPhone' => $authUser->phone
-                        ]))->render();
+        do {
+            LengthAwarePaginator::currentPageResolver(function () use ($currentPage) {
+                return $currentPage;
+            });
 
-                        $message->to($customerData['customerEmail'])
-                                ->subject('Recordatorio de pago próximo a vencer')
-                                ->setBody($html, 'text/html');
-                    });
-                } catch (Exception) {
-                    return back()->with('error', 'No se pudo establecer conexión con el servidor de correo. Verifica la configuración SMTP.');
-                }    
-            }
-        }
-        return back()->with('success', 'Los correos de recordatorio han sido enviados');
+            $customers = $this->getPaidDebtsExpiringSoon($authUser->locality_id, $perPage);
+            $allCustomers = $allCustomers->merge($customers->items());
+            $currentPage++;
+
+        } while ($customers->hasMorePages());
+
+        $uniqueCustomers = $allCustomers->unique('customerEmail');
+
+        $uniqueCustomers->chunk(50)->each(function ($chunk) use ($authUser) {
+            dispatch(new SendUpcomingPaymentEmails($chunk, $authUser->id));
+        });
+        
+        return back()->with('success', 'Los correos están en proceso de envío y pronto llegarán a sus destinatarios.');
     }
 }
