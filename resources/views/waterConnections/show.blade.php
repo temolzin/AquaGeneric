@@ -29,7 +29,14 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Propietario</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->customer->name }} {{ $connection->customer->last_name }}" />
+                                        @if ($connection->customer)
+                                            <input type="text" disabled class="form-control"
+                                                value="{{ $connection->customer->name }} {{ $connection->customer->last_name }}" />
+                                        @else
+                                            <div class="alert alert-warning p-2 mb-2 small">
+                                                Esta toma de agua no tiene un cliente asignado.
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-lg-6">

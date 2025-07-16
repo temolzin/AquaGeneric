@@ -3,6 +3,7 @@
 @section('title', config('adminlte.title') . ' | Pagos adelantados')
 
 @section('content')
+<section class="content">
     <h2>Pagos adelantados</h2>
 
     @include('advancePayments.advancePaymentsReportForm')
@@ -27,7 +28,7 @@
     </div>
 
     @php
-        $chartHeight = '300px';
+        $chartHeight = '27vh';
     @endphp
 
     <div class="row mt-5">
@@ -52,6 +53,7 @@
             </div>
         @endforeach
     </div>
+</section>
 @endsection
 
 <style>
