@@ -3,6 +3,7 @@
 @section('title', config('adminlte.title') . ' | Pagos adelantados')
 
 @section('content')
+<section class="content">
     <h2>Pagos adelantados</h2>
 
     @include('advancePayments.advancePaymentsReportForm')
@@ -27,7 +28,7 @@
     </div>
 
     @php
-        $chartHeight = '300px';
+        $chartHeight = '250px';
     @endphp
 
     <div class="row mt-5">
@@ -52,6 +53,7 @@
             </div>
         @endforeach
     </div>
+</section>
 @endsection
 
 <style>
@@ -140,7 +142,7 @@
             const canvas = document.getElementById(canvasId);
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
-            link.download = '${canvasId}.png';
+            link.download = `${canvasId}.png`;
             link.click();
         });
     });

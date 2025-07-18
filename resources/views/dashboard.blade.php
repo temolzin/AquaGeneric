@@ -175,8 +175,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <table class="table table-striped">
+                        <div class="card-box table-responsive">
+                            <table id="emails" class="table table-striped display responsive nowrap" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>Foto</th>
@@ -291,6 +291,12 @@
                     confirmButtonText: 'Aceptar'
                 });
             }   
+            $('#emails').DataTable({
+                responsive: true,
+                paging: false,
+                info: false,
+                searching: false
+            });
         });
 
         var ctx = document.getElementById('earningsChart').getContext('2d');

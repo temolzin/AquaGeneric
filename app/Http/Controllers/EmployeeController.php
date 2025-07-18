@@ -12,12 +12,16 @@ class EmployeeController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Employee::query()->orderBy('created_at', 'desc');
+        $query = Employee::where('locality_id', $authUser->locality_id)
+            ->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
-                ->orWhere('id', 'LIKE', "%{$search}%");
+            
+            $query->where(function ($searchQuery) use ($search) {
+                $searchQuery->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                    ->orWhere('id', 'LIKE', "%{$search}%");
+            });
         }
 
         $employees = $query->paginate(10);
