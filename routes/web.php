@@ -20,6 +20,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LogIncidentController;
 use App\Http\Controllers\IncidentStatusController;
 use App\Http\Controllers\MailConfigurationController;
+use App\Http\Controllers\ExpiredSubscriptionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -151,4 +152,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('incidentStatuses', IncidentStatusController::class);
         Route::get('/reports/generateIncidentStatusListReport', [IncidentStatusController::class, 'generateIncidentStatusListReport'])->name('report.generateIncidentStatusListReport');
     });
+
+    Route::get('/expiredSubscriptions/expired', [ExpiredSubscriptionController::class, 'expired'])->name('expiredSubscriptions.expired');
 });
