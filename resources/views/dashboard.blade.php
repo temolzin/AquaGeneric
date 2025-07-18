@@ -176,7 +176,7 @@
                             </div>
                         </div>
                         <div class="card-box table-responsive">
-                            <table id="Emails" class="table table-striped display responsive nowrap" style="width:100%">
+                            <table id="emails" class="table table-striped display responsive nowrap" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>Foto</th>
@@ -291,7 +291,7 @@
                     confirmButtonText: 'Aceptar'
                 });
             }   
-            $('#Emails').DataTable({
+            $('#emails').DataTable({
                 responsive: true,
                 paging: false,
                 info: false,
