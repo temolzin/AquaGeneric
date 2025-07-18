@@ -122,7 +122,7 @@ class WaterConnectionController extends Controller
 
     public function reactivate(Request $request, $id)
     {
-        $connection = WaterConnection::findOrFail($id);
+        $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)->findOrFail($id);
 
         if ($request->has('customer_id')) {
             $connection->customer_id = $request->input('customer_id');

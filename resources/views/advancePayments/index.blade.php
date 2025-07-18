@@ -142,7 +142,7 @@
             const canvas = document.getElementById(canvasId);
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
-            link.download = '${canvasId}.png';
+            link.download = `${canvasId}.png`;
             link.click();
         });
     });
