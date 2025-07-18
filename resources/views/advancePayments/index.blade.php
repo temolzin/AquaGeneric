@@ -28,7 +28,7 @@
     </div>
 
     @php
-        $chartHeight = '27vh';
+        $chartHeight = '250px';
     @endphp
 
     <div class="row mt-5">
