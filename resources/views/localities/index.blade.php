@@ -100,6 +100,14 @@
                                                             </button>
                                                         @endif
                                                     @endcan
+                                                    <form action="{{ route('localities.generateToken') }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <input type="hidden" name="idLocality" value="{{ $locality->id }}">
+                                                        <button type="submit" class="btn" style="background-color: #fd7e14; color: white;">
+                                                            <i class="fas fa-key"></i>
+                                                        </button>
+                                                    </form>
+
                                                 </div>
                                             </td>
                                             @include('localities.edit')

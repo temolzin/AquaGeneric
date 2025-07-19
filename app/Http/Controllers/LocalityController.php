@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Locality;
 use Illuminate\Http\Request;
 use App\Models\MailConfiguration;
+use Illuminate\Support\Facades\Crypt;
 
 class LocalityController extends Controller
 {
@@ -86,5 +87,28 @@ class LocalityController extends Controller
         }
 
         return redirect()->back()->with('error', 'Localidad no encontrada.');
+    }
+
+    public function generateToken(Request $request)
+    {
+        $id = $request->input('idLocality');
+
+        $startDate = now()->format('Y-m-d');
+        $endDate = now()->addYear()->format('Y-m-d');
+
+        $data = [
+            'idLocality' => $id,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ];
+
+        $hmacSignature = hash_hmac('sha256', json_encode($data), env('EXAMPLE_TOKEN'));
+
+        $token = Crypt::encrypt([
+            'data' => $data,
+            'hmac' => $hmacSignature,
+        ]);
+
+        return redirect()->route('localities.index')->with('success', 'Token generado correctamente: ' . $token);
     }
 }
