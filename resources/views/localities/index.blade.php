@@ -107,7 +107,6 @@
                                                             <i class="fas fa-key"></i>
                                                         </button>
                                                     </form>
-
                                                 </div>
                                             </td>
                                             @include('localities.edit')
