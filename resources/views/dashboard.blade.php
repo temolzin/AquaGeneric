@@ -290,6 +290,15 @@
                     text: errorMessage,
                     confirmButtonText: 'Aceptar'
                 });
+            }
+            var warningMessage = "{{ session('warning') }}";
+            if (warningMessage) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Advertencia',
+                    text: warningMessage,
+                    confirmButtonText: 'Aceptar'
+                });
             }   
             $('#emails').DataTable({
                 responsive: true,
