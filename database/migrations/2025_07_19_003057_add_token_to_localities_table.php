@@ -26,7 +26,7 @@ class AddTokenToLocalitiesTable extends Migration
     public function down()
     {
         Schema::table('localities', function (Blueprint $table) {
-            //
+            $table->dropColumn('token');
         });
     }
 }
