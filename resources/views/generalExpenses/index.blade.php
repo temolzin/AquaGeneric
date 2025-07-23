@@ -9,23 +9,31 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Gastos</h2>
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            <button class="btn btn-success" data-toggle='modal' data-target="#createGeneralExpenses">
-                                <i class="fa fa-plus"></i> Registrar Gasto
-                            </button>
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
+                                <form method="GET" action="{{ route('generalExpenses.index') }}" class="flex-grow-1 mt-2" style="min-width: 330px; max-width: 30%;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por ID o Concepto" value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Gasto">
+                                                <i class="fas fa-search"></i>
+                                                <span class="d-none d-md-inline">Buscar</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2" data-toggle='modal' 
+                                    data-target="#createGeneralExpenses" title="Registrar Gasto">
+                                    <i class="fa fa-plus"></i>
+                                    <span class="d-none d-md-inline">Registrar Gasto</span>
+                                    <span class="d-inline d-md-none">Registrar Gasto</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <form method="GET" action="{{ route('generalExpenses.index') }}" class="my-3">
-                    <div class="input-group w-50">
-                        <input type="text" name="search" class="form-control" placeholder="Buscar por ID o Concepto" value="{{ request('search') }}">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
-                        </div>
-                    </div>
-                </form>
                 <div class="x_content">
                     <div class="row">
                         <div class="col-sm-12">
@@ -114,6 +122,8 @@
     $(document).ready(function() {
         $('#generalExpenses').DataTable({
             responsive: true,
+            buttons: ['csv', 'excel', 'print'],
+            dom: 'Bfrtip',
             paging: false,
             info: false,
             searching: false

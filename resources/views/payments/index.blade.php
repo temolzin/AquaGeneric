@@ -13,35 +13,64 @@
                             @include('payments.create')
                             @include('payments.clientPayments')
                             @include('payments.waterConnectionPayments')
-                            <div class="col-lg-12 text-right">
-                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createPayment">
-                                    <i class="fa fa-plus"></i> Registrar Pago
-                                </button>
-                                <a type="button" class="btn btn-secondary" target="_blank" title="Customers" href="{{ route('report.current-customers') }}">
-                                    <i class="fas fa-users"></i> Clientes al Día
-                                </a>
-                                </button>
-                                <button type="button" class="btn bg-maroon" data-toggle="modal" data-target="#clientPayments">
-                                    <i class="fas fa-money-bill-wave"></i> Pagos por Cliente
-                                </button>
-                                <button type="button" class="btn bg-purple" data-toggle="modal" data-target="#waterConnectionPayments">
-                                    <i class="fas fa-fw fa-water"></i> Pagos por Toma de agua
-                                </button>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="col-lg-8">
-                                <form id="formSearch" method="GET" action="{{ route('payments.index') }}" class="my-3">
-                                    <div class="input-group my-3">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-search"></i>
-                                        </span>
-                                        <input type="text" name="name" id="searchName" class="form-control" placeholder="Buscar por nombre de cliente" value="{{ request('name') }}">
-                                        <input type="text" name="period" id="searchPeriod" class="form-control" placeholder="Buscar por Fecha ejemplo: enero / 2024" value="{{ request('period') }}">
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-primary">Buscar</button>
+                            <div class="col-12 order-first">
+                                <form id="formSearch" method="GET" action="{{ route('payments.index') }}" class="mb-2">
+                                    <div class="row g-3">
+                                        <div class="col-12 col-md-4 mt-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" name="name" id="searchName" class="form-control"
+                                                    placeholder="Buscar por nombre de cliente"
+                                                    value="{{ request('name') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-5 mt-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-calendar"></i>
+                                                </span>
+                                                <input type="text" name="period" id="searchPeriod" class="form-control"
+                                                    placeholder="Buscar por Fecha ejemplo: enero / 2024"
+                                                    value="{{ request('period') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-2 pe-1 mt-2">
+                                            <button type="submit" class="btn btn-primary w-100" title="Buscar">
+                                                <i class="fas fa-search me-1"></i> Buscar
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
+                            </div>
+                            <div class="col-12">
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1" data-toggle="modal"
+                                        data-target="#createPayment" title="Registrar Pago">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Pago</span>
+                                        <span class="d-inline d-md-none">Registrar Pago</span>
+                                    </button>
+                                    <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1" target="_blank"
+                                        href="{{ route('report.current-customers') }}" title="Clientes al Día">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <span class="d-none d-md-inline">Clientes al Día</span>
+                                        <span class="d-inline d-md-none">Clientes al Día</span>
+                                    </a>
+                                    <button type="button" class="btn bg-maroon flex-grow-1 flex-md-grow-0 ml-1 mt-2 mr-2" data-toggle="modal"
+                                        data-target="#clientPayments" title="Pagos por Cliente">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span class="d-none d-md-inline">Pagos por Cliente</span>
+                                        <span class="d-inline d-md-none">Por Cliente</span>
+                                    </button>
+                                    <button type="button" class="btn bg-purple flex-grow-1 flex-md-grow-0 mt-2 ml-1" data-toggle="modal"
+                                        data-target="#waterConnectionPayments" title="Pagos por Toma">
+                                        <i class="fas fa-fw fa-water"></i>
+                                        <span class="d-none d-md-inline">Pagos por Toma</span>
+                                        <span class="d-inline d-md-none">Por Toma</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

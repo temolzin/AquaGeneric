@@ -9,36 +9,43 @@
     @include('advancePayments.advancePaymentsReportForm')
     @include('advancePayments.paymentHistoryModal')
 
-
-    <div class="row">
-        <div class="col-lg-12 text-right">
-            <div class="btn-group" role="group" aria-label="Acciones de gráfica de pagos">
-                <button class="btn btn-primary mr-2" id="btnGenerateReportGraph">
-                    <i class="fa fa-chart-pie"></i> Generar PDF de Gráficos
+    <div class="row mb-3">
+        <div class="col-lg-12">
+            <div class="d-flex flex-wrap gap-2 justify-content-end">
+                <button class="btn btn-primary flex-grow-1 flex-md-grow-0 mr-1 mt-2" id="btnGenerateReportGraph" title="Generar PDF de Gráficos">
+                    <i class="fa fa-chart-pie"></i>
+                    <span class="d-none d-md-inline">Generar PDF de Gráficos</span>
+                    <span class="d-inline d-md-none">Gráficos</span>
                 </button>
-                <button class="btn btn-success mr-2" data-toggle="modal" data-target="#paymentHistoryModal" title="Historial de pagos">
-                    <i class="fa fa-calendar"></i> Historial de Pagos
+                <button class="btn btn-success flex-grow-1 flex-md-grow-0 ml-1 mt-2" data-toggle="modal"
+                        data-target="#paymentHistoryModal" title="Historial de pagos">
+                    <i class="fa fa-calendar"></i>
+                    <span class="d-none d-md-inline">Historial de Pagos</span>
+                    <span class="d-inline d-md-none">Historial</span>
                 </button>
-                <button type="button" class="btn bg-teal mr-2" data-toggle="modal"
-                    data-target="#generateAdvancePaymentsReportModal">
-                    <i class="fas fa-file-pdf"></i> Reporte de Pagos Adelantados
+                <button class="btn bg-teal flex-grow-1 flex-md-grow-0 ml-1 mt-2" data-toggle="modal"
+                        data-target="#generateAdvancePaymentsReportModal" title="Reporte de Pagos Adelantados">
+                        <i class="fas fa-file-pdf"></i>
+                    <span class="d-none d-md-inline">Reporte de Pagos Adelantados</span>
+                    <span class="d-inline d-md-none">Reporte de Pagos Adelantados</span>
                 </button>
             </div>
         </div>
     </div>
 
     @php
+        $chartHeight = '200px';
         $chartHeight = '250px';
     @endphp
 
-    <div class="row mt-5">
+    <div class="row">
         @foreach ([
             ['id' => 'barChart', 'title' => 'Gráfica de Barras'],
             ['id' => 'lineChart', 'title' => 'Gráfica de Líneas'],
             ['id' => 'pieChart', 'title' => 'Gráfica de Pastel'],
             ['id' => 'doughnutChart', 'title' => 'Gráfica de Dona']
         ] as $chart)
-            <div class="col-md-6 mb-4">
+            <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-header d-flex align-items-center">
                         <strong class="flex-grow-1">{{ $chart['title'] }}</strong>
