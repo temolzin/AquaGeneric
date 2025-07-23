@@ -3,40 +3,40 @@
 @section('title', config('adminlte.title') . ' | Tomas')
 
 @section('content')
-    <section class="content">
-        <div class="right_col" role="main">
-            <div class="col-md-12 col-sm-12">
-                <div class="x_panel">
-                    <div class="x_title">
-                        <h2>Tomas</h2>
-                        <div class="row mb-2">
-                            <div class="col-lg-12">
-                                <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
-                                    <form method="GET" action="{{ route('waterConnections.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
-                                        <div class="input-group">
-                                            <input type="text" name="search" class="form-control"
-                                                placeholder="Buscar por ID, Nombre, Propietario"
-                                                value="{{ request('search') }}">
-                                            <div class="input-group-append">
-                                                <button type="submit" class="btn btn-primary" title="Buscar Toma de Agua">
-                                                    <i class="fas fa-search d-lg-none"></i>
-                                                    <span class="d-none d-lg-inline">Buscar</span>
-                                                </button>
-                                            </div>
+<section class="content">
+    <div class="right_col" role="main">
+        <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Tomas</h2>
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
+                                <form method="GET" action="{{ route('waterConnections.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control"
+                                            placeholder="Buscar por ID, Nombre, Propietario"
+                                            value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Toma de Agua">
+                                                <i class="fas fa-search d-lg-none"></i>
+                                                <span class="d-none d-lg-inline">Buscar</span>
+                                            </button>
                                         </div>
-                                    </form>
-                                    <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2"
-                                            data-toggle='modal' data-target="#createWaterConnections"
-                                            title="Registrar Toma">
-                                        <i class="fa fa-plus"></i>
-                                        <span class="d-none d-lg-inline">Registrar Toma</span>
-                                        <span class="d-inline d-lg-none">Nueva Toma</span>
-                                    </button>
-                                </div>
+                                    </div>
+                                </form>
+                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2"
+                                        data-toggle='modal' data-target="#createWaterConnections"
+                                        title="Registrar Toma">
+                                    <i class="fa fa-plus"></i>
+                                    <span class="d-none d-lg-inline">Registrar Toma</span>
+                                    <span class="d-inline d-lg-none">Nueva Toma</span>
+                                </button>
                             </div>
                         </div>
-                        <div class="clearfix"></div>
                     </div>
+                    <div class="clearfix"></div>
+                </div>
                 <div class="x_content">
                     <div class="row">
                         <div class="col-sm-12">
@@ -100,7 +100,7 @@
                                                                 </button>
 
                                                                 <button type="button" class="btn"  style="background-color: #0d6efd;  margin-left: 8px;" data-toggle="modal" title="Reactivar toma de agua" data-target="#ReactivateWaterService{{ $connection->id }}">
-                                                                 <i class="fas fa-sync-alt"></i>
+                                                                <i class="fas fa-sync-alt"></i>
                                                                 </button>
                                                             @endif
                                                         </div>

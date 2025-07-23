@@ -3,13 +3,13 @@
 @section('title', config('adminlte.title') . ' | Deudas')
 
 @section('content')
-    <section class="content">
-        <div class="right_col" role="main">
-            <div class="col-md-12 col-sm-12 ">
-                <div class="x_panel">
-                    <div class="x_title">
-                        <h2>Deudas</h2>
-                        <div class="row mb-2">
+<section class="content">
+    <div class="right_col" role="main">
+        <div class="col-md-12 col-sm-12 ">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Deudas</h2>
+                    <div class="row mb-2">
                         @include('debts.create')
                         @include('debts.periods')
                         <div class="col-lg-12">
