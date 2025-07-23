@@ -95,4 +95,7 @@ To run this project, you will need:
     ```bash
     php artisan db:seed
     ```
-    
+- **Run Queue Worker** (to process background jobs like emails, notifications, etc.):
+    ```bash
+    php artisan queue:work
+    ```
