@@ -407,6 +407,11 @@ return [
         'icon' => 'fas fa-solid fa-users',
         'can' => 'viewEmployee'
     ],
+    [
+        'text' => 'Falta de pago',
+        'url'  => '/expiredSubscriptions/expired',
+        'icon' => 'fas fa-exclamation-circle text-warning',
+    ],
 ],
 
     /*

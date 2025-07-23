@@ -20,6 +20,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LogIncidentController;
 use App\Http\Controllers\IncidentStatusController;
 use App\Http\Controllers\MailConfigurationController;
+use App\Http\Controllers\ExpiredSubscriptionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -104,6 +105,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
         Route::put('/localities/{locality}/mailConfiguration',[MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
+        Route::post('/localities/generateTeoken', [LocalityController::class, 'generateToken'])->name('localities.generateToken');
     });
 
     Route::group(['middleware' => ['can:viewWaterConnection']], function () {
@@ -151,4 +153,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('incidentStatuses', IncidentStatusController::class);
         Route::get('/reports/generateIncidentStatusListReport', [IncidentStatusController::class, 'generateIncidentStatusListReport'])->name('report.generateIncidentStatusListReport');
     });
+
+    Route::get('/expiredSubscriptions/expired', [ExpiredSubscriptionController::class, 'expired'])->name('expiredSubscriptions.expired');
 });

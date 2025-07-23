@@ -62,7 +62,13 @@
                                                 <tr>
                                                     <td scope="row">{{ $connection->id }}</td>
                                                     <td>{{ $connection->name }}</td>
-                                                    <td>{{ $connection->customer->name }} {{ $connection->customer->last_name }}</td>
+                                                    <td>
+                                                        @if ($connection->customer)
+                                                            {{ $connection->customer->name }} {{ $connection->customer->last_name }}
+                                                        @else
+                                                            <span class="text-danger">Toma sin cliente asignado</span>
+                                                        @endif
+                                                    </td>
                                                     <td>${{ $connection->cost->price }}</td>
                                                     @if ($connection->type === 'residencial')
                                                         <td>Residencial</td>
@@ -169,7 +175,7 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <label for="cancelDescription{{ $connection->id }}">Cliente</label>
-                                                                    <select class="form-control" name="customer_id" id="customer_id" required>
+                                                                    <select class="form-control select2" name="customer_id" id="customer_id" required>
                                                                         <option value="">Selecciona un cliente</option>
                                                                         @foreach($customers as $customer)
                                                                             <option value="{{ $customer->id }}">
@@ -276,5 +282,11 @@
     @if(session('debtError'))
         $('#debtErrorModal').modal('show');
     @endif
+    
+    $(document).on('shown.bs.modal', '.modal', function () {
+        $(this).find('.select2').select2({
+            dropdownParent: $(this)
+        });
+    });
 </script>
 @endsection

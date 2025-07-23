@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
 
 class LoginController extends Controller
 {
@@ -15,7 +16,6 @@ class LoginController extends Controller
     {
         return view('auth.login');
     }
-
 
     public function login(Request $request)
     {
@@ -27,6 +27,29 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+
+             if (Auth::attempt($credentials)) {
+                $user = Auth::user();
+
+                $locality = $user->locality;
+
+                if ($locality && $locality->token) {
+                    $decrypted = Crypt::decrypt($locality->token);
+                    $data = $decrypted['data'] ?? null;
+
+                    if ($data && isset($data['endDate'])) {
+                        $expiration = Carbon::parse($data['endDate'])->startOfDay();
+                        $today = now()->startOfDay();
+                        $daysRemaining = $today->diffInDays($expiration, false);
+
+                        if (in_array($daysRemaining, [12, 3])) {
+                            return redirect()->intended('dashboard')
+                            ->with('warning', 'Tu suscripción vence pronto: ' . $expiration->format('d/m/Y') . ' (faltan ' . $daysRemaining . ' días).');
+                        }
+                    }
+                }
+            }
+
             return redirect()->intended('dashboard');
         }
 

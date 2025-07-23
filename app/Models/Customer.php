@@ -45,7 +45,7 @@ class Customer extends Model implements HasMedia
 
     public function hasDependencies()
     {
-        return $this->waterConnections()->whereHas('debts')->exists();
+        return $this->waterConnections()->exists() || $this->waterConnections()->whereHas('debts')->exists();
     }
 
     public function waterConnections()
