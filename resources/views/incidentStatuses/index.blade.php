@@ -9,18 +9,26 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Estatus de Incidencia</h2>
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createIncidentStatusModal">
-                                <i class="fa fa-plus"></i> Registrar Estatus
-                            </button>
-                            <a type="button" class="btn btn-secondary" target="_blank" title="IncidentStatus"
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
+                                        data-toggle="modal" data-target="#createIncidentStatusModal" title="Registrar Estatus">
+                                    <i class="fa fa-plus"></i>
+                                    <span class="d-none d-md-inline">Registrar Estatus</span>
+                                    <span class="d-inline d-md-none">Estatus</span>
+                                </button>
+                                <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1"
+                                target="_blank" title="Generar Lista"
                                 href="{{ route('report.generateIncidentStatusListReport') }}">
-                                <i class="fas fa-list"></i> Generar Lista
-                            </a>
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span class="d-none d-md-inline">Generar Lista</span>
+                                    <span class="d-inline d-md-none">Lista PDF</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="clearfix mb-4"></div>
+                    <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
                     <div class="row">
@@ -88,6 +96,8 @@
     $(document).ready(function() {
         $('#incidentStatuses').DataTable({
             responsive: true,
+            buttons: ['csv', 'excel', 'print'],
+            dom: 'Bfrtip',
             paging: false,
             info: false,
             searching: false

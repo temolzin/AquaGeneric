@@ -3,41 +3,49 @@
 @section('title', config('adminlte.title') . ' | Deudas')
 
 @section('content')
-<section class="content">
-    <div class="right_col" role="main">
-        <div class="col-md-12 col-sm-12 ">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Deudas</h2>
-                    <div class="row">
+    <section class="content">
+        <div class="right_col" role="main">
+            <div class="col-md-12 col-sm-12 ">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Deudas</h2>
+                        <div class="row mb-2">
                         @include('debts.create')
                         @include('debts.periods')
-                        <div class="col-lg-12 text-right">
-                            <form action="{{ route('debts.assignAll') }}" method="POST" style="display:inline;">
-                                @csrf
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assignDebtModal">
-                                    <i class="fa fa-plus"></i> Asignar Deuda a Todos
-                                </button>
-                            </form>
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createDebt">
-                                <i class="fa fa-plus"></i> Crear Deuda
-                            </button>
-                            <a type="button" class="btn btn-secondary" target="_blank" title="Clientes con deudas" href="{{ route('report.with-debts') }}">
-                                <i class="fas fa-users"></i> Clientes con deudas
-                            </a>
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center">
+                                <form method="GET" action="{{ route('debts.index') }}" class="flex-grow-1" style="min-width: 330px; max-width: 50%;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control mt-2" placeholder="Buscar por nombre, apellido o ID" value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary mt-2" title="Buscar Deuda">Buscar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-wrap justify-content-end gap-2">
+                                    <button type="button" class="btn btn-primary flex-grow-1 flex-lg-grow-0 mr-1 mt-2" data-toggle="modal"
+                                            title="Asignar Deuda a Todos" data-target="#assignDebtModal">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-lg-inline">Asignar Deuda a Todos</span>
+                                        <span class="d-inline d-lg-none">Asignar a Todos</span>
+                                    </button>
+                                    <button type="button" class="btn btn-success flex-grow-1 flex-lg-grow-0 ml-1 mt-2" data-toggle="modal"
+                                            title="Crear Deuda" data-target="#createDebt">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-lg-inline">Crear Deuda</span>
+                                        <span class="d-inline d-lg-none">Crear Deuda</span>
+                                    </button>
+                                    <a type="button" class="btn btn-secondary flex-grow-1 flex-lg-grow-0 mt-2 ml-1" target="_blank"
+                                    title="Clientes con deudas" href="{{ route('report.with-debts') }}">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <span class="d-none d-lg-inline">Clientes con deudas</span>
+                                        <span class="d-inline d-lg-none">Clientes con deudas</span>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="clearfix"></div>
-                    <div class="col-lg-4">
-                        <form method="GET" action="{{ route('debts.index') }}" class="my-3">
-                            <div class="input-group">
-                                <input type="text" name="search" class="form-control" placeholder="Buscar por nombre, apellido o ID" value="{{ request('search') }}">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-primary">Buscar</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
                 </div>
                 <div class="x_content">
                     <div class="row">
@@ -60,7 +68,7 @@
                                             @if (!in_array($debt->waterConnection->customer_id, $shownCustomers))
                                                 <tr>
                                                     <td>{{ $debt->waterConnection->customer->id }}</td>
-                                                    <td>{{ $debt->waterConnection->customer->name }} {{ $debt->waterConnection->customer->last_name }}</td>
+                                                    <td>{{ $debt->waterConnection->customer->name }} {{ $debt->waterConnection->customer->last_name}}</td>
                                                     <td>
                                                         @php
                                                             $unpaidDebts = collect($debt->waterConnection->customer->waterConnections)->flatMap(function ($waterConnection) {

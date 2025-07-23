@@ -19,7 +19,6 @@
                                             <img src="{{ asset('img/userDefault.png') }}">
                                         @endif
                                     </div>
-
                                     <div class="col-md-8">
                                         <h4 class="font-weight-bold text-capitalize welcome">Bienvenid@</h4>
                                         <h1 class="font-weight-bold text-blue">{{ $authUser->name }} {{ $authUser->last_name }}</h1>
@@ -87,23 +86,29 @@
                                         <h3 class="card-title">Reportes</h3>
                                     </div>
                                     <div class="card-body">
-                                        <div class="column">
-                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#annualEarnings">
+                                        <div class="d-flex flex-md-row flex-column ">
+                                            <button type="button" class="btn btn-info w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#annualEarnings" title="Ingresos Anuales">
                                                 <i class="fa fa-dollar-sign"></i> Ingresos Anuales
                                             </button>
-                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyEarnings">
+                                            <button type="button" class="btn bg-olive w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#weeklyEarnings" title="Ingresos Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Ingresos Semanales
                                             </button>
-                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#annualExpenses">
+                                            <button type="button" class="btn btn-info w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#annualExpenses" title="Egresos Anuales">
                                                 <i class="fa fa-dollar-sign"></i> Egresos Anuales
                                             </button>
-                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyExpenses">
+                                            <button type="button" class="btn bg-olive w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#weeklyExpenses" title="Egresos Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Egresos Semanales
                                             </button>
-                                            <button type="button" class="btn btn-info" data-toggle="modal" target="_blank"  data-target="#annualGains">
+                                            <button type="button" class="btn btn-info w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#annualGains" title="Ganancias Anuales">
                                                 <i class="fa fa-dollar-sign"></i> Ganancias Anuales
                                             </button>
-                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyGains">
+                                            <button type="button" class="btn bg-olive w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#weeklyGains" title="Ganancias Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Ganancias Semanales
                                             </button>
                                         </div>
@@ -154,21 +159,15 @@
                     @can('viewDashboardCards')
                     <div class="card">
                         <div class="card-header">
-                            <div class="row w-100">
-                                <div class="col-md-6 d-flex align-items-center">
+                            <div class="row w-100 align-items-center">
+                                <div class="col-12 col-md-10">
                                     <h3 class="card-title m-0">Períodos Próximos a Vencer</h3>
                                 </div>
-                                <div class="col-md-6 d-flex justify-content-end">
-                                    <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="m-0">
+                                <div class="col-12 col-md-auto mt-2 mt-md-0 ms-md-auto">
+                                    <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100">
                                         @csrf
-                                        <button
-                                            type="submit"
-                                            class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm"
-                                            title="{{ $hasMailConfig 
-                                                ? 'Enviar correos de recordatorio' 
-                                                : 'No hay configuración de correo válida para esta localidad' }}"
-                                            {{ $hasMailConfig ? '' : 'disabled' }}
-                                        >
+                                        <button type="submit" class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm w-100 w-md-auto" title="{{ $hasMailConfig
+                                                ? 'Enviar correos de recordatorio' : 'No hay configuración de correo válida para esta localidad' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
                                             <i class="fas fa-envelope"></i> Enviar recordatorios
                                         </button>
                                     </form>

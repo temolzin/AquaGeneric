@@ -3,36 +3,52 @@
 @section('title', config('adminlte.title') . ' | Clientes')
 
 @section('content')
-<section class="content">
-    <div class="right_col" role="main">
-        <div class="col-md-12 col-sm-12 ">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Clientes</h2>
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            <div class="btn-group" role="group" aria-label="Acciones de Cliente">
-                                <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createCustomer">
-                                    <i class="fa fa-plus"></i> Registrar Cliente
-                                </button>
-                                <a type="button" class="btn btn-secondary" target="_blank" title="Customers" href="{{ route('customers.pdfCustomers') }}">
-                                    <i class="fas fa-users"></i> Generar Lista
-                                </a>
+    <section class="content">
+        <div class="right_col" role="main">
+            <div class="col-md-12 col-sm-12">
+                <div class="x_panel">
+                    <div class="x_title mb-3">
+                        <h2>Clientes</h2>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                    <form method="GET" action="{{ route('customers.index') }}" class="mb-3 mb-lg-0" style="min-width: 300px;">
+                                        <div class="input-group">
+                                            <input type="text" name="search" class="form-control" placeholder="Buscar por nombre, apellido" value="{{ request('search') }}">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-primary" title="Buscar Cliente">Buscar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="btn-group d-none d-md-flex" role="group" aria-label="Acciones de Cliente">
+                                        <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
+                                            <i class="fa fa-plus"></i> Registrar Cliente
+                                        </button>
+                                        <a type="button" class="btn btn-secondary" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers') }}">
+                                            <i class="fas fa-file-pdf"></i> Generar Lista
+                                        </a>
+                                    </div>
+                                    <div class="d-md-none w-100">
+                                        <div class="row g-2">
+                                            <div class="col-6 pe-1">
+                                                <button class="btn btn-success w-100 py-2" data-toggle='modal'
+                                                        data-target="#createCustomer" title="Registrar Cliente">
+                                                        <i class="fa fa-plus"></i> Registrar Cliente
+                                                </button>
+                                            </div>
+                                            <div class="col-6 ps-1">
+                                                <a type="button" class="btn btn-secondary w-100 py-2" target="_blank"
+                                                title="Generar Lista" href="{{ route('customers.pdfCustomers') }}">
+                                                    <i class="fas fa-file-pdf"></i> Generar Lista
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>                    
                     <div class="clearfix"></div>
                 </div>
-                <div class="col-lg-4">
-                <form method="GET" action="{{ route('customers.index') }}" class="my-3">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Buscar por nombre, apellido" value="{{ request('search') }}">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
-                        </div>
-                    </div>
-                </form> 
-            </div>               
                 <div class="x_content">
                     <div class="row">
                         <div class="col-sm-12">
@@ -80,6 +96,7 @@
                                                         Desconocido
                                                         @break
                                                 @endswitch
+                                            </td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
                                                     <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{$customer->id}}">
@@ -138,6 +155,8 @@
     $(document).ready(function() {
         $('#customers').DataTable({
             responsive: true,
+            buttons: ['csv', 'excel', 'print'],
+            dom: 'Bfrtip',
             paging: false,
             info: false,
             searching: false
