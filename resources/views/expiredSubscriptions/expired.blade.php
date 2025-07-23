@@ -113,18 +113,32 @@
                 <p>
                     Si ya realizaste el pago, por favor ingresa el <strong>token de renovación</strong> proporcionado por el administrador para reactivar tu cuenta.
                 </p>
-                <div class="input-group mt-4 mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-lock text-primary"></i></span>
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
-                    <input type="text" class="form-control" placeholder="Pega aquí tu token de renovación...">
-                </div>
+                @endif
+
+                <form action="{{ route('validatetoken') }}" method="POST">
+                    @csrf
+                    <div class="input-group mt-4 mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-lock text-primary"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="token" placeholder="Pega aquí tu token de renovación..." required>
+                    </div>
             </div>
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary">Validar Token</button>
+                <button type="submit" class="btn btn-primary">Validar Token</button>
             </div>
+        </form>
         </div>
     </div>
 </div>

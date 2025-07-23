@@ -22,6 +22,26 @@ class DashboardController extends Controller
         Carbon::setLocale('es');
 
         $authUser = Auth::user();
+
+        $tokenExpired = false;
+        if ($authUser && $authUser->locality && $authUser->locality->token) {
+            try {
+                $decrypted = \Illuminate\Support\Facades\Crypt::decrypt($authUser->locality->token);
+                $data = $decrypted['data'] ?? null;
+                if ($data && isset($data['endDate'])) {
+                    $expiration = Carbon::parse($data['endDate'])->startOfDay();
+                    $today = now()->startOfDay();
+                    $daysRemaining = $today->diffInDays($expiration, false);
+                    if ($daysRemaining < 0) {
+                        $tokenExpired = true;
+                    }
+                }
+            } catch (\Exception $e) {
+                $tokenExpired = true;
+            }
+        }
+            $tokenExpired = true;
+
         $totalCustomers = Customer::count();
         $localities = Locality::all();
 
@@ -75,7 +95,7 @@ class DashboardController extends Controller
             'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
         ];
 
-        return view('dashboard', compact('data', 'authUser', 'hasMailConfig'));
+        return view('dashboard', compact('data', 'authUser', 'hasMailConfig', 'tokenExpired'));
     }
 
     public function getEarningsByLocality(Request $request)

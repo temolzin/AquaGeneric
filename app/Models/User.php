@@ -12,6 +12,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
 
 class User extends Authenticatable implements HasMedia
 {
@@ -22,6 +24,11 @@ class User extends Authenticatable implements HasMedia
      *
      * @var array<int, string>
      */
+
+    /**
+     * @method bool hasRole(string|array $roles)
+     */
+    
     protected $fillable=['locality_id','name','last_name','phone','email','password'];
     public $timestamps = false;
 
@@ -72,5 +79,27 @@ class User extends Authenticatable implements HasMedia
     public function payments()
     {
         return $this->hasMany(Payment::class, 'created_at');
+    }
+
+    public function tokenIsValid()
+    {
+        if (!$this->locality || !$this->locality->token) {
+            return false;
+        }
+
+        try {
+            $decrypted = Crypt::decrypt($this->locality->token);
+            $data = $decrypted['data'] ?? null;
+
+            if ($data && isset($data['endDate'])) {
+                $expiration = Carbon::parse($data['endDate'])->startOfDay();
+                $today = now()->startOfDay();
+                $daysRemaining = $today->diffInDays($expiration, false);
+                return $daysRemaining >= 0;
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
