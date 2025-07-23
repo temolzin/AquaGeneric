@@ -15,7 +15,6 @@ class MailConfiguration extends Model
     public const EXAMPLE_USERNAME = 'usuario@tudominio.com';
     public const EXAMPLE_PASSWORD = 'tu contraseña segura';
     public const EXAMPLE_ENCRYPTION = 'tls';
-    public const EXAMPLE_FROM_ADDRESS = 'notificaciones@tudominio.com';
     public const EXAMPLE_FROM_NAME = 'Tu Empresa o Servicio';
 
     protected $fillable = [
@@ -26,7 +25,6 @@ class MailConfiguration extends Model
         'username',
         'password',
         'encryption',
-        'from_address',
         'from_name'
     ];
 
@@ -43,7 +41,6 @@ class MailConfiguration extends Model
             !empty($this->port) &&
             !empty($this->username) &&
             !empty($this->password) &&
-            !empty($this->encryption) &&
-            !empty($this->from_address);
+            !empty($this->encryption);
     }
 }

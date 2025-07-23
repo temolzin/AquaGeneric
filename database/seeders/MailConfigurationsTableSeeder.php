@@ -23,7 +23,6 @@ class MailConfigurationsTableSeeder extends Seeder
                 'username' => 'aquacontrolmailtesting@gmail.com',
                 'password' => 'lfjo iynk oaef lrgp',
                 'encryption' => 'tls',
-                'from_address' => 'aquacontrolmailtesting@gmail.com',
                 'from_name' => 'Servicios de Agua Smallville',
             ]
         );
@@ -37,7 +36,6 @@ class MailConfigurationsTableSeeder extends Seeder
                 'username' => 'springfield_user',
                 'password' => 'springfield_pass',
                 'encryption' => 'ssl',
-                'from_address' => 'noreply@springfield.com',
                 'from_name' => 'Springfield Water Dept',
             ]
         );

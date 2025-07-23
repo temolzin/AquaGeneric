@@ -27,7 +27,6 @@ class LocalityController extends Controller
             'username'  => MailConfiguration::EXAMPLE_USERNAME,
             'password'  => MailConfiguration::EXAMPLE_PASSWORD,
             'encryption'  => MailConfiguration::EXAMPLE_ENCRYPTION,
-            'from_address'  => MailConfiguration::EXAMPLE_FROM_ADDRESS,
             'from_name'  => MailConfiguration::EXAMPLE_FROM_NAME,
         ];
         

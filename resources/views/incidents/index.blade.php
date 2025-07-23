@@ -96,7 +96,7 @@
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
 
-                                                            <button type="button" class="btn bg-purple btn-sm mr-1" data-toggle="modal" data-target="#createResponsible" data-incident-id="{{ $incident->id }}" data-incident-name="{{ $incident->name }}">
+                                                            <button type="button" class="btn bg-purple btn-sm mr-1" data-toggle="modal" title="Cambiar Estatus de Incidencia" data-target="#createResponsible" data-incident-id="{{ $incident->id }}" data-incident-name="{{ $incident->name }}">
                                                                 <i class="fas fa-exchange-alt"></i>
                                                             </button>
 
