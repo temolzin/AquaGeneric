@@ -22,7 +22,6 @@ class DashboardController extends Controller
         Carbon::setLocale('es');
 
         $authUser = Auth::user();
-
         $totalCustomers = Customer::count();
         $localities = Locality::all();
 
@@ -76,7 +75,7 @@ class DashboardController extends Controller
             'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
         ];
 
-        return view('dashboard', compact('data', 'authUser', 'hasMailConfig',));
+        return view('dashboard', compact('data', 'authUser', 'hasMailConfig'));
     }
 
     public function getEarningsByLocality(Request $request)
