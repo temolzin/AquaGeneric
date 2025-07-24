@@ -62,6 +62,16 @@
                                             <textarea class="form-control" name="description" placeholder="Agrega una descripción" rows="3"></textarea>
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="imagesInput" class="form-label">Imágenes de referencia <small class="text-muted">(opcional)</small></label>
+                                            <input type="file" class="imageInput form-control" name="images[]" multiple accept="image/*">
+                                            <small class="form-text text-muted mt-1">
+                                                Puedes subir varias imágenes para dar contexto. Formatos permitidos: JPG, PNG.
+                                            </small>
+                                            <div class="imageButtonsContainer mt-3"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -75,3 +85,39 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.querySelector('.imageInput');
+        const container = input.closest('.form-group').querySelector('.imageButtonsContainer');
+        const modalImg = document.getElementById('multiModalImagePreview');
+
+        input.addEventListener('change', function () {
+            container.innerHTML = '';
+
+            const files = Array.from(this.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-sm btn-info mr-2 mb-2';
+                        btn.textContent = 'Ver imagen';
+                        btn.dataset.toggle = 'modal';
+                        btn.dataset.target = '#multiImagePreviewModal';
+                        btn.dataset.imageSrc = e.target.result;
+
+                        btn.addEventListener('click', function () {
+                            modalImg.src = this.dataset.imageSrc;
+                        });
+
+                        container.appendChild(btn);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    });
+</script>

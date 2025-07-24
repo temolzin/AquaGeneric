@@ -21,34 +21,59 @@
                             </div>
                         </div>
                         <div class="card-body" style="padding-left: 0;">
+                            <div style="margin-left: 40px; margin-bottom: 10px; font-size: 0.95rem;">
+                                <strong>Incidencia:</strong> {{ $incident->name }}
+                            </div>
                             <ul class="timeline timeline-inverse">
                                 @forelse($incident->getstatusChangeLogs as $log)
                                     <div class="time-label">
-                                        <span class="bg-maroon">
-                                            {{ $log->created_at->format('d/m/Y') }}
-                                        </span>
+                                        <span class="bg-maroon">{{ $log->created_at->format('d/m/Y') }}</span>
                                     </div>
-                                    <div class="timeline timeline-inverse">
+                                    <div class="timeline-item d-flex align-items-start" style="margin-left: 17px; margin-bottom: 15px;">
                                         <img src="{{ $log->employee?->getFirstMediaUrl('employeeGallery') ?: asset('img/userDefault.png') }}"
-                                            style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%; margin-left: 17px;">
-                                    </div>
-                                    <div class="timeline-item" style="margin-left: 40px;">
-                                        <span class="time"><i class="fas fa-clock"></i> {{ $log->created_at->format('H:i') }}</span>
-                                        <div style="font-size: 0.95rem; margin-top: 5px;">
-                                            <p><strong>Nombre:</strong> {{ $log->employee->name ?? 'Responsable eliminado' }}</p>
-                                            <p><strong>Descripción:</strong> {{ $log->description ?: 'Sin descripción' }}</p>
-                                            <p><strong>Estatus:</strong>
-                                                <span class="badge badge-info">{{ $log->status }}</span>
-                                            </p>
-                                            <p><strong>Incidencia:</strong> {{ $incident->name }}</p>
+                                            style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%; margin-right: 10px;">
+                                        <div style="border: 1px solid #ccc; border-radius: 10px; padding: 10px; flex: 1;">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <p class="mb-1" style="font-size: 0.9rem;">
+                                                    <strong>Nombre de Empleado:</strong>
+                                                    {{ $log->employee?->name . ' ' . $log->employee?->last_name ?? 'Responsable eliminado' }}
+                                                </p>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock"></i> {{ $log->created_at->format('H:i') }}
+                                                </small>
+                                            </div>
+                                            <hr style="margin: 8px 0; border-top: 1px solid #aaa;">
+                                            <div style="font-size: 0.9rem;">
+                                                <p class="mb-1"><strong>Estatus:</strong> <span class="badge badge-info">{{ $log->status }}</span></p>
+                                                <p class="mb-1"><strong>Descripción:</strong> {{ $log->description ?: 'Sin descripción' }}</p>
+                                                <hr style="margin: 8px 0; border-top: 1px solid #aaa;">
+                                                @if ($log->getMedia('logIncidentImages')->count())
+                                                    <div class="mt-2">
+                                                        <strong>Imágenes:</strong>
+                                                        <div class="container-fluid">
+                                                            <div class="row">
+                                                                @foreach ($log->getMedia('logIncidentImages') as $media)
+                                                                    <div class="col-6 mb-3">
+                                                                        <img src="{{ $media->getUrl() }}" alt="Imagen incidencia"
+                                                                            class="img-fluid rounded img-thumbnail"
+                                                                            style="width: 100%; max-height: 150px; object-fit: cover;">
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 @empty
-                                    <li>
+                                    <li style="list-style: none;">
                                         <i class="fas fa-info-circle bg-gray"
-                                            style="width: 30px; height: 30px; line-height: 30px; font-size: 14px;"></i>
+                                        style="width: 30px; height: 30px; line-height: 30px; font-size: 14px; margin-left: 10px;"></i>
                                         <div class="timeline-item">
-                                            <div class="timeline-body">No hay historial registrado aún.</div>
+                                            <div class="timeline-body" style="text-align: center;">
+                                                No hay historial registrado aún.
+                                            </div>
                                         </div>
                                     </li>
                                 @endforelse
