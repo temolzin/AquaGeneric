@@ -4,21 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Locality;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Crypt;
 
 class LocalitiesTableSeeder extends Seeder
 {
     public function run()
     {
-        $existingLocalities = Locality::whereNull('token')->get();
-
-        foreach ($existingLocalities as $locality) {
-            $token = $this->getgenerateLocalityToken($locality->id);
-            $locality->token = $token;
-            $locality->save();
-        }
-
-        $localities = [
+        $localitiesData = [
             [
                 'name' => 'Smallville',
                 'municipality' => 'Smallville',
@@ -39,30 +30,17 @@ class LocalitiesTableSeeder extends Seeder
             ],
         ];
 
-        foreach ($localities as $data) {
+        foreach ($localitiesData as $data) {
             $locality = Locality::create($data);
-            $token = $this->getgenerateLocalityToken($locality->id);
-            $locality->token = $token;
+            $locality->token = Locality::generateTokenForLocality($locality->id);
             $locality->save();
         }
-    }
 
-    private function getgenerateLocalityToken(int $id): string
-    {
-        $startDate = now()->format('Y-m-d');
-        $endDate = now()->addYear()->format('Y-m-d');
-
-        $data = [
-            'idLocality' => $id,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-        ];
-
-        $hmacSignature = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
-
-        return Crypt::encrypt([
-            'data' => $data,
-            'hmac' => $hmacSignature,
-        ]);
+        Locality::where(function ($query) {
+            $query->whereNull('token')->orWhere('token', '');
+        })->get()->each(function ($locality) {
+            $locality->token = Locality::generateTokenForLocality($locality->id);
+            $locality->save();
+        });
     }
 }

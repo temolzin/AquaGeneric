@@ -92,23 +92,13 @@ class LocalityController extends Controller
     public function generateToken(Request $request)
     {
         $id = $request->input('idLocality');
+        $token = Locality::generateTokenForLocality($id);
 
-        $startDate = now()->format('Y-m-d');
-        $endDate = now()->addYear()->format('Y-m-d');
-
-        $data = [
-            'idLocality' => $id,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-        ];
-
-        $hmacSignature = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY";
-'));
-
-        $token = Crypt::encrypt([
-            'data' => $data,
-            'hmac' => $hmacSignature,
-        ]);
+        $locality = Locality::find($id);
+        if ($locality) {
+            $locality->token = $token;
+            $locality->save();
+        }
 
         return redirect()->route('localities.index')->with('success', 'Token generado correctamente: ' . $token);
     }

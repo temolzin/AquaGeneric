@@ -9,6 +9,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Support\Facades\Crypt;
 
 class Locality extends Model implements HasMedia
 {
@@ -44,5 +45,26 @@ class Locality extends Model implements HasMedia
     public function mailConfiguration()
     {
         return $this->hasOne(MailConfiguration::class);
+    }
+
+    public static function generateTokenForLocality($localityId)
+    {
+        $startDate = now()->format('Y-m-d');
+        $endDate = now()->addYear()->format('Y-m-d');
+
+        $data = [
+            'idLocality' => $localityId,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ];
+
+        $hmacSignature = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
+
+        $token = Crypt::encrypt([
+            'data' => $data,
+            'hmac' => $hmacSignature,
+        ]);
+
+        return $token;
     }
 }
