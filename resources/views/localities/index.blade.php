@@ -134,10 +134,10 @@
                                 <div class="d-flex justify-content-center">
                                     {!! $localities->links('pagination::bootstrap-4') !!}
                                 </div>
-                                @if (session('generated_token') && session('generated_locality'))
+                                @if (session('createdToken') && session('localityName'))
                                     @include('localities.generatedTokenModal', [
-                                        'token' => session('generated_token'),
-                                        'localityName' => session('generated_locality')
+                                        'token' => session('createdToken'),
+                                        'localityName' => session('localityName')
                                     ])
                                 @endif
                             </div>
@@ -181,7 +181,7 @@
             });
         }
 
-        @if (session('generated_token'))
+        @if (session('createdToken'))
         $('#generatedTokenModal').modal('show');
         @endif
     });

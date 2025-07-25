@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 
-class TokenGenerator
+class Token
 {
     public static function generateTokenForLocality($localityId, $startDate = null, $endDate = null)
     {

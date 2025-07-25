@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Locality;
 use Illuminate\Http\Request;
-use App\Models\TokenGenerator;
+use App\Models\Token;
 use App\Models\MailConfiguration;
 use Illuminate\Support\Facades\Crypt;
 
@@ -101,12 +101,12 @@ class LocalityController extends Controller
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
 
-        $token = TokenGenerator::generateTokenForLocality($id, $startDate, $endDate);
+        $token = Token::generateTokenForLocality($id, $startDate, $endDate);
 
         $locality = Locality::find($id);
 
         return redirect()->route('localities.index')
-            ->with('generated_token', $token)
-            ->with('generated_locality', $locality->name);
+            ->with('createdToken', $token)
+            ->with('localityName', $locality->name);
     }
 }

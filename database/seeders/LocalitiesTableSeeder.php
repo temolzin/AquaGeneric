@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\TokenGenerator;
+use App\Models\Token;
 use Illuminate\Database\Seeder;
 use App\Models\Locality;
 use Carbon\Carbon;
@@ -46,14 +46,14 @@ class LocalitiesTableSeeder extends Seeder
                 $startDate = Carbon::now()->format('Y-m-d');
                 $endDate = Carbon::now()->addYear()->format('Y-m-d');     
             
-            $locality->token = TokenGenerator::generateTokenForLocality($locality->id, $startDate, $endDate);
+            $locality->token = Token::generateTokenForLocality($locality->id, $startDate, $endDate);
             $locality->save();
         }
 
         Locality::where(function ($query) {
             $query->whereNull('token')->orWhere('token', '');
         })->get()->each(function ($locality) {
-            $locality->token = TokenGenerator::generateTokenForLocality($locality->id);
+            $locality->token = Token::generateTokenForLocality($locality->id);
             $locality->save();
         });
     }

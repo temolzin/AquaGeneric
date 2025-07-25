@@ -11,13 +11,13 @@ use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
+use Exception;
 
 class Locality extends Model implements HasMedia
 {
     const SUBSCRIPTION_ACTIVE = 'Activa';
     const SUBSCRIPTION_EXPIRED = 'Caducada';
     const SUBSCRIPTION_NONE = 'Sin token';
-    const SUBSCRIPTION_INVALID = 'Token inválido';
 
     use HasFactory, InteractsWithMedia, SoftDeletes;
 
@@ -59,14 +59,10 @@ class Locality extends Model implements HasMedia
             return self::SUBSCRIPTION_NONE;
         }
 
-        try {
-            $decrypted = Crypt::decrypt($this->token);
-            $endDate = Carbon::parse($decrypted['data']['endDate'])->startOfDay();
-            $today = now()->startOfDay();
+        $decrypted = Crypt::decrypt($this->token);
+        $endDate = Carbon::parse($decrypted['data']['endDate'])->startOfDay();
+        $today = now()->startOfDay();
 
-            return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
-        } catch (\Exception $e) {
-            return self::SUBSCRIPTION_INVALID;
-        }
+        return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
     }
 }
