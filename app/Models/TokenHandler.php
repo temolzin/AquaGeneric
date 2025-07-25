@@ -10,7 +10,6 @@ class TokenHandler
 {
     public static function verifyToken($token, $user)
     {
-        $errors = [];
 
         try {
 
