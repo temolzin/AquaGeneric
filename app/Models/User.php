@@ -23,10 +23,6 @@ class User extends Authenticatable implements HasMedia
      * @var array<int, string>
      */
 
-    /**
-     * @method bool hasRole(string|array $roles)
-     */
-    
     protected $fillable=['locality_id','name','last_name','phone','email','password'];
     public $timestamps = false;
 
