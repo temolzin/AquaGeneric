@@ -21,6 +21,9 @@ use App\Http\Controllers\LogIncidentController;
 use App\Http\Controllers\IncidentStatusController;
 use App\Http\Controllers\MailConfigurationController;
 use App\Http\Controllers\ExpiredSubscriptionController;
+use App\Http\Controllers\TokenController;
+use App\Http\Middleware\CheckSubscription;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,7 +46,7 @@ Route::get('/dashboard', function () {
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('dashboard', DashboardController::class);
@@ -153,6 +156,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('incidentStatuses', IncidentStatusController::class);
         Route::get('/reports/generateIncidentStatusListReport', [IncidentStatusController::class, 'generateIncidentStatusListReport'])->name('report.generateIncidentStatusListReport');
     });
-
-    Route::get('/expiredSubscriptions/expired', [ExpiredSubscriptionController::class, 'expired'])->name('expiredSubscriptions.expired');
 });
+    Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
+    Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');

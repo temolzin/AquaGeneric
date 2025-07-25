@@ -99,7 +99,7 @@ class LocalityController extends Controller
         $id = $request->input('idLocality');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
-
+      
         $token = Token::generateTokenForLocality($id, $startDate, $endDate);
 
         $locality = Locality::find($id);
