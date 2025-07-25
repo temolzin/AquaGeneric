@@ -12,9 +12,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Support\Facades\Crypt;
-use Carbon\Carbon;
-use Exception;
 
 class User extends Authenticatable implements HasMedia
 {
