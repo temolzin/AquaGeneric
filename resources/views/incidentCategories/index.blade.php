@@ -9,15 +9,23 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Categoría de Incidencias</h2>
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create">
-                                <i class="fa fa-plus"></i> Registrar Categoría
-                            </button>
-                            <a type="button" class="btn btn-secondary" target="_blank" title="IncidentCategories"
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
+                                        data-toggle="modal" data-target="#create" title="Registrar Categoría">
+                                    <i class="fa fa-plus"></i>
+                                    <span class="d-none d-md-inline">Registrar Categoría</span>
+                                    <span class="d-inline d-md-none">Registrar Categoría</span>
+                                </button>
+                                <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1"
+                                target="_blank" title="Generar Lista"
                                 href="{{ route('report.generateIncidentCategoyListReport') }}">
-                                <i class="fas fa-list"></i> Generar Lista
-                            </a>
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span class="d-none d-md-inline">Generar Lista</span>
+                                    <span class="d-inline d-md-none">Generar Lista</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -95,6 +103,8 @@
     $(document).ready(function() {
         $('#incidentCategories').DataTable({
             responsive: true,
+            buttons: ['csv', 'excel', 'print'],
+            dom: 'Bfrtip',
             paging: false,
             info: false,
             searching: false

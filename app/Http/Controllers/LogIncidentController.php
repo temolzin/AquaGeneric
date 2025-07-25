@@ -28,6 +28,12 @@ class LogIncidentController extends Controller
 
         $logincident = LogIncident::create($logIncidentData);
 
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $logincident->addMedia($image)->toMediaCollection('logIncidentImages');
+            }
+        }
+
         return redirect()->route('incidents.index')->with('success', 'Cambio de Estatus de Incidencia Exitoso');
     }
 

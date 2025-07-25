@@ -9,31 +9,38 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <h2>Empleados</h2>
-                        <div class="row">
-                            <div class="col-lg-12 text-right">
-                                <div class="btn-group" role="group" aria-label="Acciones de Empleado">
-                                    <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createEmployee">
-                                        <i class="fa fa-plus"></i> Registrar Empleado
-                                    </button>
-                                    <a type="button" class="btn btn-secondary" target="_blank" title="Employees"
-                                        href="{{ route('report.generateEmployeeListReport') }}">
-                                        <i class="fas fa-users"></i> Generar Lista
-                                    </a>
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                                    <form method="GET" action="{{ route('employees.index') }}" class="flex-grow-1 w-100" style="min-width: 300px; max-width: 100%;">
+                                        <div class="input-group">
+                                            <input type="text" name="search" class="form-control" placeholder="Buscar por nombre, apellido" value="{{ request('search') }}">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-primary" title="Buscar Empleado">
+                                                    <i class="fas fa-search"></i>
+                                                    <span class="d-none d-md-inline">Buscar</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="d-flex flex-wrap justify-content-end gap-2 w-100 w-md-auto">
+                                        <button class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-2" data-toggle='modal'
+                                                data-target="#createEmployee" title="Registrar Empleado">
+                                            <i class="fa fa-plus"></i>
+                                            <span class="d-none d-md-inline">Registrar Empleado</span>
+                                            <span class="d-inline d-md-none">Registrar Empleado</span>
+                                        </button>
+                                        <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank"
+                                                title="Generar Lista de Empleados" href="{{ route('report.generateEmployeeListReport') }}">
+                                            <i class="fas fa-file-pdf"></i>
+                                            <span class="d-none d-md-inline">Generar Lista</span>
+                                            <span class="d-inline d-md-none">Generar Lista</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="clearfix"></div>
-                    </div>
-                    <div class="col-lg-4">
-                        <form method="GET" action="{{ route('employees.index') }}" class="my-3">
-                            <div class="input-group">
-                                <input type="text" name="search" class="form-control"
-                                    placeholder="Buscar por nombre, apellido" value="{{ request('search') }}">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-primary">Buscar</button>
-                                </div>
-                            </div>
-                        </form>
                     </div>
                     <div class="x_content">
                         <div class="row">
@@ -124,6 +131,8 @@
             $('#employees').DataTable
             ({
                 responsive: true,
+                buttons: ['csv', 'excel', 'print'],
+                dom: 'Bfrtip',
                 paging: false,
                 info: false,
                 searching: false

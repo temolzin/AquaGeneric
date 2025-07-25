@@ -142,7 +142,7 @@ class DashboardController extends Controller
         Config::set('mail.mailers.smtp.username', $mailConfig->username);
         Config::set('mail.mailers.smtp.password', $mailConfig->password);
         Config::set('mail.mailers.smtp.encryption', $mailConfig->encryption);
-        Config::set('mail.from.address', $mailConfig->from_address);
+        Config::set('mail.from.address', $mailConfig->username);
         Config::set('mail.from.name', $mailConfig->from_name ?? config('app.name'));
 
         $perPage = 5;
