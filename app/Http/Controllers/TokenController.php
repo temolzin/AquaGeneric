@@ -34,15 +34,15 @@ class TokenController extends Controller
         $user = Auth::user();
         $token = $request->input('token');
 
-        $NewTokenValidation = TokenHandler::verifyToken($token, $user);
+        $newTokenValidation = TokenHandler::verifyToken($token, $user);
 
-        if ($NewTokenValidation['valid']) {
+        if ($newTokenValidation['valid']) {
             $user->locality->token = $token;
             $user->locality->save();
 
             return redirect('/dashboard')->with('success', 'Token actualizado correctamente.');
         }
 
-        return back()->withErrors(['token' => $NewTokenValidation['error']]);
+        return back()->withErrors(['token' => $newTokenValidation['error']]);
     }
 }
