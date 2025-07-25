@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
+use App\Models\TokenHandler;
 
 class TokenController extends Controller
 {
@@ -23,33 +24,30 @@ class TokenController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
+
     public function validateNewToken(Request $request)
     {
         $request->validate([
             'token' => 'required|string',
         ]);
 
-        try {
-            $decrypted = Crypt::decrypt($request->input('token'));
-            $data = $decrypted['data'] ?? null;
+        $user = Auth::user();
+        $token = $request->input('token');
 
-            if (!$data || !isset($data['idLocality'])) {
-                return back()->withErrors(['token' => 'Token inválido o incompleto.']);
+        $NewTokenValidation = TokenHandler::verifyToken($token);
+
+        if ($NewTokenValidation['valid']) {
+            if ($NewTokenValidation['data']['idLocality'] != $user->locality->id) {
+                return back()->withErrors(['token' => 'El token no pertenece a esta localidad.']);
             }
 
-            $user = Auth::user();
-            $locality = $user->locality;
+            $user->locality->token = $token;
+            $user->locality->save();
 
-            if ($locality && $locality->id == $data['idLocality']) {
-                $locality->token = $request->input('token');
-                $locality->save();
-
-                return redirect()->route('dashboard')->with('success', 'Token actualizado correctamente.');
-            }
-
-            return back()->withErrors(['token' => 'Este token no corresponde a tu localidad.']);
-        } catch (\Exception $e) {
-            return back()->withErrors(['token' => 'Token inválido o corrupto.']);
+            return redirect('/dashboard')->with('success', 'Token actualizado correctamente.');
         }
+
+        return back()->withErrors(['token' => $NewTokenValidation['error']]);
     }
+
 }

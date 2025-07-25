@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 
 class LoginController extends Controller
-{
+{   
+    private const WARNING_DAY_FIRST_NOTICE = 12;
+    private const WARNING_DAY_FINAL_NOTICE = 3;
 
     public function showLoginForm()
     {
@@ -43,7 +45,7 @@ class LoginController extends Controller
                         return redirect()->route('expiredSubscriptions.expired');
                     }
 
-                    if (in_array($daysRemaining, [12, 3])) {
+                    if (in_array($daysRemaining, [self::WARNING_DAY_FIRST_NOTICE, self::WARNING_DAY_FINAL_NOTICE])) {
                         return redirect()->intended('dashboard')
                             ->with('warning', 'Tu suscripción vence pronto: ' . $expiration->format('d/m/Y') . ' (faltan ' . $daysRemaining . ' días).');
                     }

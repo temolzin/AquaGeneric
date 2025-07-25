@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\TokenHandler;
+
 
 class CheckSubscription
 {
@@ -23,30 +25,25 @@ class CheckSubscription
         $user = Auth::user();
 
         if ($user && $user->locality) {
-            if (!$user->locality->token) {
+            $token = $user->locality->token;
+
+            if (!$token) {
                 return redirect()->route('expiredSubscriptions.expired')
                     ->withErrors(['token' => 'Acceso restringido. No se ha asignado un token a esta localidad.']);
             }
 
-            $decrypted = Crypt::decrypt($user->locality->token);
-            $data = $decrypted['data'] ?? null;
-            $hmacSignature = $decrypted['hmac'] ?? null;
+            $tokenValidation = TokenHandler::verifyToken($token);
 
-            if ($data && isset($data['endDate'])) {
-                $expiration = Carbon::parse($data['endDate'])->startOfDay();
-                $today = now()->startOfDay();
-                $daysRemaining = $today->diffInDays($expiration, false);
+        if (!$tokenValidation['valid']) {
+            return redirect()->route('expiredSubscriptions.expired')
+                ->withErrors(['token' => $tokenValidation['error']]);
+        }
 
-                $calculatedHmac = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
+        if ($tokenValidation['data']['idLocality'] != $user->locality->id) {
+            return redirect()->route('expiredSubscriptions.expired')
+                ->withErrors(['token' => 'El token no pertenece a esta localidad.']);
+        }
 
-                if ($hmacSignature !== $calculatedHmac) {
-                    return redirect()->route('expiredSubscriptions.expired')->withErrors(['token' => 'Token manipulado o inválido.']);
-                }
-
-                if ($daysRemaining < 0) {
-                    return redirect()->route('expiredSubscriptions.expired');
-                }
-            }
         }
 
         return $next($request);
