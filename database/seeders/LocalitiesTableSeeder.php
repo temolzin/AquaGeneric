@@ -43,8 +43,11 @@ class LocalitiesTableSeeder extends Seeder
                 $startDate = Carbon::now()->subYear()->format('Y-m-d');
                 $endDate = Carbon::now()->subDay()->format('Y-m-d');
             }
+
+            if (!$isExpired) {
                 $startDate = Carbon::now()->format('Y-m-d');
-                $endDate = Carbon::now()->addYear()->format('Y-m-d');     
+                $endDate = Carbon::now()->addYear()->format('Y-m-d');
+            }     
             
             $locality->token = Token::generateTokenForLocality($locality->id, $startDate, $endDate);
             $locality->save();
