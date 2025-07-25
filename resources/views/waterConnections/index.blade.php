@@ -89,11 +89,13 @@
                                                             </button>
                                                             @endcan
 
+                                                            {{--
                                                             @can('deleteWaterConnection')
                                                             <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $connection->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                             @endcan
+                                                            --}}
 
                                                             <button type="button" class="btn {{ $connection->cancelDescription ? 'btn-secondary' : 'btn-danger' }} mr-2" data-toggle="modal" title="{{ $connection->cancelDescription ? 'Toma ya cancelada' : 'Cancelar Toma' }}"
                                                                 data-target="#cancel{{ $connection->id }}" {{ $connection->cancelDescription ? 'disabled' : '' }}>
@@ -123,7 +125,7 @@
                                                             @csrf
                                                             @method('PATCH')
                                                             <div class="modal-content">
-                                                                <div class="modal-header">
+                                                                <div class="modal-header bg-danger text-white">
                                                                     <h5 class="modal-title" id="cancelLabel{{ $connection->id }}">Cancelar Toma</h5>
                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                                                                         <span aria-hidden="true">&times;</span>
@@ -146,7 +148,7 @@
                                                 <div class="modal fade" id="viewCancellationReason{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="viewCancellationReasonLabel{{ $connection->id }}" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
-                                                            <div class="modal-header">
+                                                            <div class="modal-header bg-info text-white">
                                                                 <h5 class="modal-title" id="viewCancellationReasonLabel{{ $connection->id }}">Motivo de Cancelación</h5>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                                                                     <span aria-hidden="true">&times;</span>
@@ -167,7 +169,7 @@
                                                             @csrf
                                                             @method('PATCH')
                                                             <div class="modal-content">
-                                                                <div class="modal-header">
+                                                                <div class="modal-header bg-primary text-white">
                                                                     <h5 class="modal-title" id="cancelLabel{{ $connection->id }}">Reactivar Toma de Agua</h5>
                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                                                                         <span aria-hidden="true">&times;</span>

@@ -17,7 +17,6 @@ class MailConfigurationController extends Controller
             'username' => 'required|string',
             'password' => 'required|string',
             'encryption' => 'required|string',
-            'from_address' => 'required|email',
             'from_name' => 'nullable|string',
         ]);
 

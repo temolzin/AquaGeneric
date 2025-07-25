@@ -52,8 +52,8 @@
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="form-group">
-                                                <label for="username{{ $locality->id }}">Usuario(*)</label>
-                                                <input type="text" name="username" class="form-control" id="username{{ $locality->id }}" placeholder="Ingresa el usuario" value="{{ old('username', $config?->username) }}" required>
+                                                <label for="username{{ $locality->id }}">Correo del Usuario(*)</label>
+                                                <input type="text" name="username" class="form-control" id="username{{ $locality->id }}" placeholder="Ingresa el correo" value="{{ old('username', $config?->username) }}" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -64,17 +64,11 @@
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="form-group">
-                                                <label for="encryption{{ $locality->id }}">Encriptación(*)</label>
+                                                <label for="encryption{{ $locality->id }}">Tipo de Encriptación(*)</label>
                                                 <input type="text" name="encryption" class="form-control" id="encryption{{ $locality->id }}" placeholder="Ingresa el tipo de encriptación" value="{{ old('encryption', $config?->encryption) }}" required>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label for="fromAddress{{ $locality->id }}">Correo de Envío(*)</label>
-                                                <input type="email" name="from_address" class="form-control" id="fromAddress{{ $locality->id }}" placeholder="Ingresa el correo de envío" value="{{ old('from_address', $config?->from_address) }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label for="fromName{{ $locality->id }}">Nombre del Remitente</label>
                                                 <input type="text" name="from_name" class="form-control" id="fromName{{ $locality->id }}" placeholder="Ingresa el nombre del remitente" value="{{ old('from_name', $config?->from_name) }}">
@@ -116,7 +110,7 @@
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="form-group">
-                                                <label>Usuario</label>
+                                                <label>Correo del Usuario</label>
                                                 <input type="text" class="form-control" value="{{ $mailExamples['username'] }}" readonly>
                                             </div>
                                         </div>
@@ -128,17 +122,11 @@
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="form-group">
-                                                <label>Encriptación</label>
+                                                <label>Tipo de Encriptación</label>
                                                 <input type="text" class="form-control" value="{{ $mailExamples['encryption'] }}" readonly>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label>Correo de Envío</label>
-                                                <input type="email" class="form-control" value="{{ $mailExamples['from_address'] }}" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label>Nombre del Remitente</label>
                                                 <input type="text" class="form-control" value="{{ $mailExamples['from_name'] }}" readonly>
