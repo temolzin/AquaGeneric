@@ -22,7 +22,6 @@ class User extends Authenticatable implements HasMedia
      *
      * @var array<int, string>
      */
-
     protected $fillable=['locality_id','name','last_name','phone','email','password'];
     public $timestamps = false;
 
