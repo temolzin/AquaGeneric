@@ -8,20 +8,23 @@ use Exception;
 
 class TokenHandler
 {
-    public static function verifyToken($token)
+    public static function verifyToken($token, $user)
     {
+        $errors = [];
+
         try {
+
             $decrypted = Crypt::decrypt($token);
             $data = $decrypted['data'] ?? null;
             $hmac = $decrypted['hmac'] ?? null;
 
             if (!$data || !$hmac) {
-                return ['valid' => false, 'error' => 'Token incompleto.'];
+                $errors[] = 'Token incompleto.';
             }
 
             $calculatedHmac = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
             if ($hmac !== $calculatedHmac) {
-                return ['valid' => false, 'error' => 'Token manipulado o inválido.'];
+                $errors[] = 'Token manipulado o inválido.';
             }
 
             if (isset($data['endDate'])) {
@@ -29,11 +32,20 @@ class TokenHandler
                 $today = now()->startOfDay();
 
                 if ($today->gt($expiration)) {
-                    return ['valid' => false, 'error' => 'Token expirado.'];
+                    $errors[] = 'Token expirado.';
                 }
             }
 
+            if (isset($data['idLocality']) && $data['idLocality'] != $user->locality->id) {
+                $errors[] = 'El token no pertenece a esta localidad.';
+            }
+
+            if (!empty($errors)) {
+                return ['valid' => false, 'error' => implode(' ', $errors)];
+            }
+
             return ['valid' => true, 'data' => $data];
+
         } catch (Exception $e) {
             return ['valid' => false, 'error' => 'Token corrupto.'];
         }

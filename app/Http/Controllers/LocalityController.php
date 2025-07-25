@@ -102,8 +102,7 @@ class LocalityController extends Controller
             'endDate' => $endDate,
         ];
 
-        $hmacSignature = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY";
-'));
+        $hmacSignature = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
 
         $token = Crypt::encrypt([
             'data' => $data,
