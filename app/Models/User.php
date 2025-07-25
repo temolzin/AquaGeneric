@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
+use Exception;
 
 class User extends Authenticatable implements HasMedia
 {
@@ -98,7 +99,7 @@ class User extends Authenticatable implements HasMedia
                 return $daysRemaining >= 0;
             }
             return false;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
