@@ -10,9 +10,15 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
 
 class Locality extends Model implements HasMedia
 {
+    const SUBSCRIPTION_ACTIVE = 'Activa';
+    const SUBSCRIPTION_EXPIRED = 'Caducada';
+    const SUBSCRIPTION_NONE = 'Sin token';
+    const SUBSCRIPTION_INVALID = 'Token inválido';
+
     use HasFactory, InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
@@ -47,24 +53,20 @@ class Locality extends Model implements HasMedia
         return $this->hasOne(MailConfiguration::class);
     }
 
-    public static function generateTokenForLocality($localityId)
+    public function getSubscriptionStatus()
     {
-        $startDate = now()->format('Y-m-d');
-        $endDate = now()->addYear()->format('Y-m-d');
+        if (!$this->token) {
+            return self::SUBSCRIPTION_NONE;
+        }
 
-        $data = [
-            'idLocality' => $localityId,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-        ];
+        try {
+            $decrypted = Crypt::decrypt($this->token);
+            $endDate = Carbon::parse($decrypted['data']['endDate'])->startOfDay();
+            $today = now()->startOfDay();
 
-        $hmacSignature = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
-
-        $token = Crypt::encrypt([
-            'data' => $data,
-            'hmac' => $hmacSignature,
-        ]);
-
-        return $token;
+            return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
+        } catch (\Exception $e) {
+            return self::SUBSCRIPTION_INVALID;
+        }
     }
 }
