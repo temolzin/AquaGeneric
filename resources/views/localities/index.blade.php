@@ -3,6 +3,9 @@
 @section('title', config('adminlte.title') . ' | Localidades')
 
 @section('content')
+@php
+    use App\Models\Locality;
+@endphp
 <section class="content">
     <div class="right_col" role="main">
         <div class="col-md-12 col-sm-12 ">
@@ -74,8 +77,8 @@
                                             <td>{{$locality->zip_code}}</td>
                                             <td class="text-left align-center">
                                                 <span class="badge 
-                                                    {{ $locality->getSubscriptionStatus() === \App\Models\Locality::SUBSCRIPTION_ACTIVE ? 'badge-success' : 
-                                                    ($locality->getSubscriptionStatus() === \App\Models\Locality::SUBSCRIPTION_EXPIRED ? 'badge-danger' : 'badge-secondary') }}"
+                                                    {{ $locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_ACTIVE ? 'badge-success' : 
+                                                    ($locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_EXPIRED ? 'badge-danger' : 'badge-secondary') }}"
                                                     style="font-size: 1rem; padding: 2px 6px;">
                                                     {{ $locality->getSubscriptionStatus() }}
                                                 </span>
