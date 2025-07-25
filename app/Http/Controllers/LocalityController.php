@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Locality;
 use Illuminate\Http\Request;
+use App\Models\Token;
 use App\Models\MailConfiguration;
 use Illuminate\Support\Facades\Crypt;
 
@@ -90,25 +91,21 @@ class LocalityController extends Controller
 
     public function generateToken(Request $request)
     {
-        $id = $request->input('idLocality');
-
-        $startDate = now()->format('Y-m-d');
-        $endDate = now()->addYear()->format('Y-m-d');
-
-        $data = [
-            'idLocality' => $id,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-        ];
-
-        $hmacSignature = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY";
-'));
-
-        $token = Crypt::encrypt([
-            'data' => $data,
-            'hmac' => $hmacSignature,
+        $request->validate([
+            'startDate' => 'required|date',
+            'endDate' => 'required|date|after_or_equal:startDate',
         ]);
 
-        return redirect()->route('localities.index')->with('success', 'Token generado correctamente: ' . $token);
+        $id = $request->input('idLocality');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        $token = Token::generateTokenForLocality($id, $startDate, $endDate);
+
+        $locality = Locality::find($id);
+
+        return redirect()->route('localities.index')
+            ->with('createdToken', $token)
+            ->with('localityName', $locality->name);
     }
 }
