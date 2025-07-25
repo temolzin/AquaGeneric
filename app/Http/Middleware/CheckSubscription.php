@@ -32,16 +32,11 @@ class CheckSubscription
                     ->withErrors(['token' => 'Acceso restringido. No se ha asignado un token a esta localidad.']);
             }
 
-            $tokenValidation = TokenHandler::verifyToken($token);
+            $tokenValidation = TokenHandler::verifyToken($token, $user);
 
             if (!$tokenValidation['valid']) {
                 return redirect()->route('expiredSubscriptions.expired')
                     ->withErrors(['token' => $tokenValidation['error']]);
-            }
-
-            if ($tokenValidation['data']['idLocality'] != $user->locality->id) {
-                return redirect()->route('expiredSubscriptions.expired')
-                    ->withErrors(['token' => 'El token no pertenece a esta localidad.']);
             }
         }
 

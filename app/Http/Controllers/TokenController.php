@@ -34,13 +34,9 @@ class TokenController extends Controller
         $user = Auth::user();
         $token = $request->input('token');
 
-        $NewTokenValidation = TokenHandler::verifyToken($token);
+        $NewTokenValidation = TokenHandler::verifyToken($token, $user);
 
         if ($NewTokenValidation['valid']) {
-            if ($NewTokenValidation['data']['idLocality'] != $user->locality->id) {
-                return back()->withErrors(['token' => 'El token no pertenece a esta localidad.']);
-            }
-
             $user->locality->token = $token;
             $user->locality->save();
 

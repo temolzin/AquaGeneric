@@ -8,7 +8,7 @@ use Exception;
 
 class TokenHandler
 {
-    public static function verifyToken($token)
+    public static function verifyToken($token, $user = null)
     {
         try {
             $decrypted = Crypt::decrypt($token);
@@ -31,6 +31,10 @@ class TokenHandler
                 if ($today->gt($expiration)) {
                     return ['valid' => false, 'error' => 'Token expirado.'];
                 }
+            }
+
+            if ($user && isset($data['idLocality']) && $data['idLocality'] != $user->locality->id) {
+                return ['valid' => false, 'error' => 'El token no pertenece a esta localidad.'];
             }
 
             return ['valid' => true, 'data' => $data];
