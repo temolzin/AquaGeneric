@@ -20,32 +20,31 @@ class CheckSubscription
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
 
-public function handle(Request $request, Closure $next)
-{
-    $user = Auth::user();
+    public function handle(Request $request, Closure $next)
+    {
+        $user = Auth::user();
 
-    if ($user && $user->locality) {
-        $token = $user->locality->token;
+        if ($user && $user->locality) {
+            $token = $user->locality->token;
 
-        if (!$token) {
-            return redirect()->route('expiredSubscriptions.expired')
-                ->withErrors(['token' => 'Acceso restringido. No se ha asignado un token a esta localidad.']);
+            if (!$token) {
+                return redirect()->route('expiredSubscriptions.expired')
+                    ->withErrors(['token' => 'Acceso restringido. No se ha asignado un token a esta localidad.']);
+            }
+
+            $tokenValidation = TokenHandler::verifyToken($token);
+
+            if (!$tokenValidation['valid']) {
+                return redirect()->route('expiredSubscriptions.expired')
+                    ->withErrors(['token' => $tokenValidation['error']]);
+            }
+
+            if ($tokenValidation['data']['idLocality'] != $user->locality->id) {
+                return redirect()->route('expiredSubscriptions.expired')
+                    ->withErrors(['token' => 'El token no pertenece a esta localidad.']);
+            }
         }
 
-        // Pasamos ambos parámetros: $token y $user
-        $tokenValidation = TokenHandler::verifyToken($token, $user);
-
-        if (!$tokenValidation['valid']) {
-            return redirect()->route('expiredSubscriptions.expired')
-                ->withErrors(['token' => $tokenValidation['error']]);
-        }
-
-        if ($tokenValidation['data']['idLocality'] != $user->locality->id) {
-            return redirect()->route('expiredSubscriptions.expired')
-                ->withErrors(['token' => 'El token no pertenece a esta localidad.']);
-        }
+        return $next($request);
     }
-
-    return $next($request);
-}
 }

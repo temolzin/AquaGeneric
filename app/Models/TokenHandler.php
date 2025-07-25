@@ -8,22 +8,20 @@ use Exception;
 
 class TokenHandler
 {
-    public static function verifyToken($token, $user)
+    public static function verifyToken($token)
     {
-
         try {
-
             $decrypted = Crypt::decrypt($token);
             $data = $decrypted['data'] ?? null;
             $hmac = $decrypted['hmac'] ?? null;
 
             if (!$data || !$hmac) {
-                $errors[] = 'Token incompleto.';
+                return ['valid' => false, 'error' => 'Token incompleto.'];
             }
 
             $calculatedHmac = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
             if ($hmac !== $calculatedHmac) {
-                $errors[] = 'Token manipulado o inválido.';
+                return ['valid' => false, 'error' => 'Token manipulado o inválido.'];
             }
 
             if (isset($data['endDate'])) {
@@ -31,16 +29,8 @@ class TokenHandler
                 $today = now()->startOfDay();
 
                 if ($today->gt($expiration)) {
-                    $errors[] = 'Token expirado.';
+                    return ['valid' => false, 'error' => 'Token expirado.'];
                 }
-            }
-
-            if (isset($data['idLocality']) && $data['idLocality'] != $user->locality->id) {
-                $errors[] = 'El token no pertenece a esta localidad.';
-            }
-
-            if (!empty($errors)) {
-                return ['valid' => false, 'error' => implode(' ', $errors)];
             }
 
             return ['valid' => true, 'data' => $data];
@@ -50,4 +40,3 @@ class TokenHandler
         }
     }
 }
-
