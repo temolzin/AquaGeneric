@@ -81,26 +81,4 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(Payment::class, 'created_at');
     }
-
-    public function tokenIsValid()
-    {
-        if (!$this->locality || !$this->locality->token) {
-            return false;
-        }
-
-        try {
-            $decrypted = Crypt::decrypt($this->locality->token);
-            $data = $decrypted['data'] ?? null;
-
-            if ($data && isset($data['endDate'])) {
-                $expiration = Carbon::parse($data['endDate'])->startOfDay();
-                $today = now()->startOfDay();
-                $daysRemaining = $today->diffInDays($expiration, false);
-                return $daysRemaining >= 0;
-            }
-            return false;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
 }

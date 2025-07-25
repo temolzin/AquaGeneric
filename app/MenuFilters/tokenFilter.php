@@ -3,6 +3,7 @@
 namespace App\MenuFilters;
 
 use Illuminate\Support\Facades\Auth;
+use App\Models\TokenHandler; 
 
 class TokenFilter
 {
@@ -27,7 +28,9 @@ class TokenFilter
                 return $item;
             }
 
-            if (!$user->tokenIsValid()) {
+            $tokenValidation = TokenHandler::verifyToken($user->locality->token, $user);
+
+            if (!$tokenValidation['valid']) {
                 if (
                     (isset($item['route']) && in_array($item['route'], $expiredSubscription)) ||
                     (isset($item['url']) && in_array($item['url'], $expiredSubscription))
@@ -38,7 +41,7 @@ class TokenFilter
                 return false;
             }
 
-            if ($user->tokenIsValid()) {
+            if ($tokenValidation['valid']) {
                 if (
                     (isset($item['route']) && in_array($item['route'], $expiredSubscription)) ||
                     (isset($item['url']) && in_array($item['url'], $expiredSubscription))
