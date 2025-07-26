@@ -294,78 +294,126 @@ return [
     |
     */
 
-    'menu' => [
-        // Navbar items:
-        [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => false,
-        ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
-        ['header' => 'MODULOS'],
-        [
-            'text' => 'Panel',
-            'url' => '/dashboard',
-            'icon' => 'fa fa-home',
-        ],
-        [
-            'text' => 'Usuarios',
-            'url' => '/users',
-            'icon' => 'fas fa-fw fa-user',
-            'can'  =>'viewUser'
-        ],
-        [
-            'text' => 'Roles',
-            'url' => '/roles',
-            'icon' => 'fas fa-fw fa-user-shield',
-            'can'  =>'viewRoles'
-        ],
-        [
-            'text' => 'Clientes',
-            'url' => '/customers',
-            'icon' => 'fas fa-fw fa-users',
-            'can'  =>'viewCustomers'
-        ],
-        [
-            'text' => 'Pagos',
-            'url' => '/payments',
-            'icon' => 'fas fa-fw fa-dollar-sign',
-            'can'  =>'viewPayments'
-        ],
-        [
-            'text' => 'Deudas',
-            'url' => '/debts',
-            'icon' => 'fas fa-fw fa-credit-card',
-            'can'  =>'viewDebts'
-        ],
-        [
-            'text' => 'Costos',
-            'url' => '/costs',
-            'icon' => 'fas fa-fw fa-money-bill-wave',
-            'can'  =>'viewCost'
-        ],
-        [
-            'text' => 'Localidades',
-            'url' => '/localities',
-            'icon' => 'fas fa-fw fa-map-marker-alt',
-            'can'  =>'viewLocality'
-        ],
-        [
-            'text' => 'Tomas de Agua',
-            'url' => '/waterConnections',
-            'icon' => 'fas fa-fw fa-water',
-            'can'  =>'viewWaterConnection'
-        ],
-        [
-            'text' => 'Gastos',
-            'url' => '/generalExpenses',
-            'icon' => 'fas fa-fw fa-coins',
-            'can'  =>'viewGeneralExpense'
+'menu' => [
+    // Navbar items:
+    [
+        'type' => 'navbar-search',
+        'text' => 'search',
+        'topnav_right' => false,
+    ],
+    [
+        'type' => 'fullscreen-widget',
+        'topnav_right' => true,
+    ],
+    ['header' => 'MODULOS'],
+    [
+        'text' => 'Panel',
+        'url' => '/dashboard',
+        'icon' => 'fa fa-home',
+    ],
+    [
+        'text' => 'Usuarios',
+        'url' => '/users',
+        'icon' => 'fas fa-fw fa-user',
+        'can'  => 'viewUser'
+    ],
+    [
+        'text' => 'Roles',
+        'url' => '/roles',
+        'icon' => 'fas fa-fw fa-user-shield',
+        'can'  => 'viewRoles'
+    ],
+    [
+        'text' => 'Clientes',
+        'url' => '/customers',
+        'icon' => 'fas fa-fw fa-users',
+        'can'  => 'viewCustomers'
+    ],
+    [
+        'text' => 'Gestión de Pagos',
+        'icon' => 'fas fa-fw fa-dollar-sign',
+        'submenu' => [
+            [
+                'text' => 'Pagos',
+                'url'  => '/payments',
+                'icon' => 'fas fa-fw fa-money-check-alt',
+                'can'  => 'viewPayments',
+            ],
+            [
+                'text' => 'Pagos Adelantados',
+                'url'  => '/advancePayments',
+                'icon' => 'fas fa-fw fa-calendar-plus',
+                'can'  => 'viewAdvancePayments',
+            ],
         ],
     ],
+    [
+        'text' => 'Deudas',
+        'url' => '/debts',
+        'icon' => 'fas fa-fw fa-credit-card',
+        'can'  => 'viewDebts'
+    ],
+    [
+        'text' => 'Costos',
+        'url' => '/costs',
+        'icon' => 'fas fa-fw fa-money-bill-wave',
+        'can'  => 'viewCost'
+    ],
+    [
+        'text' => 'Localidades',
+        'url' => '/localities',
+        'icon' => 'fas fa-fw fa-map-marker-alt',
+        'can'  => 'viewLocality'
+    ],
+    [
+        'text' => 'Tomas de Agua',
+        'url' => '/waterConnections',
+        'icon' => 'fas fa-fw fa-water',
+        'can'  => 'viewWaterConnection'
+    ],
+    [
+        'text' => 'Gastos',
+        'url' => '/generalExpenses',
+        'icon' => 'fas fa-fw fa-coins',
+        'can'  => 'viewGeneralExpense'
+    ],
+    [
+        'text' => 'Gestión de Incidencias',
+        'icon' => 'fas fa-fw fa-exclamation-triangle',
+        'submenu' => [
+            [
+                'text' => 'Incidencias',
+                'url'  => '/incidents',
+                'icon' => 'fas fa-fw fa-bug',
+                'can'  => 'viewIncidents',
+            ],
+            [
+                'text' => 'Categoría de Incidencias',
+                'url'  => '/incidentCategories',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewIncidentCategories',
+            ],
+            [
+                'text' => 'Estatus de Incidencia',
+                'url'  => '/incidentStatuses',
+                'icon' => 'fas fa-fw fa-clipboard-list',
+                'can'  => 'viewIncidentStatuses',
+            ],
+        ],
+    ],
+    [
+        'text' => 'Empleados',
+        'url' => '/employees',
+        'icon' => 'fas fa-solid fa-users',
+        'can' => 'viewEmployee'
+    ],
+    [
+        'text' => 'Falta de pago',
+        'url'  => '/expiredSubscriptions/expired',
+        'icon' => 'fas fa-exclamation-circle text-warning',
+    ],
+],
+
     /*
     |--------------------------------------------------------------------------
     | Menu Filters
@@ -386,6 +434,7 @@ return [
         JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
+        App\MenuFilters\TokenFilter::class, 
     ],
 
     /*
@@ -487,12 +536,12 @@ return [
             ],
         ],
         'Chartjs' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js',
+                    'location' => 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
                 ],
             ],
         ],
@@ -518,6 +567,16 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+                ],
+            ],
+        ],
+        'FullCalendar' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js',
                 ],
             ],
         ],

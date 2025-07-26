@@ -21,6 +21,7 @@ class Customer extends Model implements HasMedia
     protected $fillable = [
         'name',
         'last_name',
+        'email',
         'locality',
         'state',
         'zip_code',
@@ -44,7 +45,7 @@ class Customer extends Model implements HasMedia
 
     public function hasDependencies()
     {
-        return $this->waterConnections()->whereHas('debts')->exists();
+        return $this->waterConnections()->exists() || $this->waterConnections()->whereHas('debts')->exists();
     }
 
     public function waterConnections()
@@ -77,5 +78,10 @@ class Customer extends Model implements HasMedia
             });
             $customer->waterConnections()->delete();
         });
+    }
+    
+    public function waterConnectionsAll()
+    {
+        return $this->hasMany(WaterConnection::class)->withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED);
     }
 }

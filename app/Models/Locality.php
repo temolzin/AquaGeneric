@@ -9,9 +9,16 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
+use Exception;
 
 class Locality extends Model implements HasMedia
 {
+    const SUBSCRIPTION_ACTIVE = 'Activa';
+    const SUBSCRIPTION_EXPIRED = 'Caducada';
+    const SUBSCRIPTION_NONE = 'Sin token';
+
     use HasFactory, InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
@@ -39,5 +46,23 @@ class Locality extends Model implements HasMedia
     public function costs()
     {
         return $this->hasMany(Cost::class);
+    }
+
+    public function mailConfiguration()
+    {
+        return $this->hasOne(MailConfiguration::class);
+    }
+
+    public function getSubscriptionStatus()
+    {
+        if (!$this->token) {
+            return self::SUBSCRIPTION_NONE;
+        }
+
+        $decrypted = Crypt::decrypt($this->token);
+        $endDate = Carbon::parse($decrypted['data']['endDate'])->startOfDay();
+        $today = now()->startOfDay();
+
+        return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
     }
 }

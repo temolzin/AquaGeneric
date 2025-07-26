@@ -3,6 +3,9 @@
 @section('title', config('adminlte.title') . ' | Localidades')
 
 @section('content')
+@php
+    use App\Models\Locality;
+@endphp
 <section class="content">
     <div class="right_col" role="main">
         <div class="col-md-12 col-sm-12 ">
@@ -46,6 +49,7 @@
                                             <th>MUNICIPIO</th>
                                             <th>ESTADO</th>
                                             <th>C.P</th>
+                                            <th>SUSCRIPCIÓN</th>
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
@@ -71,6 +75,14 @@
                                             <td>{{$locality->municipality}}</td>
                                             <td>{{$locality->state}}</td>
                                             <td>{{$locality->zip_code}}</td>
+                                            <td class="text-left align-center">
+                                                <span class="badge 
+                                                    {{ $locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_ACTIVE ? 'badge-success' : 
+                                                    ($locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_EXPIRED ? 'badge-danger' : 'badge-secondary') }}"
+                                                    style="font-size: 1rem; padding: 2px 6px;">
+                                                    {{ $locality->getSubscriptionStatus() }}
+                                                </span>
+                                            </td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
                                                     @can('viewLocality')
@@ -86,6 +98,9 @@
                                                             <i class="fas fa-image"></i>
                                                         </button>
                                                     @endcan
+                                                    <button type="button" class="btn bg-purple mr-2" data-toggle="modal"  title="Configurar correo" data-target="#mailConfigModal{{$locality->id}}">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </button>
                                                     @can('deleteLocality')
                                                         @if($locality->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
@@ -97,12 +112,22 @@
                                                             </button>
                                                         @endif
                                                     @endcan
+                                                    <form action="{{ route('localities.generateToken') }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <input type="hidden" name="idLocality" value="{{ $locality->id }}">
+                                                        <button type="button" class="btn" title="Generar token" style="background-color: #fd7e14; color: white;"
+                                                            data-toggle="modal" data-target="#generateTokenModal{{ $locality->id }}">
+                                                            <i class="fas fa-key"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </td>
                                             @include('localities.edit')
                                             @include('localities.delete')
                                             @include('localities.show')
                                             @include('localities.editLogo')
+                                            @include('localities.mailConfiguration')
+                                            @include('localities.tokenModal')
                                         </tr>
                                         @endforeach
                                         @endif
@@ -112,6 +137,12 @@
                                 <div class="d-flex justify-content-center">
                                     {!! $localities->links('pagination::bootstrap-4') !!}
                                 </div>
+                                @if (session('createdToken') && session('localityName'))
+                                    @include('localities.generatedTokenModal', [
+                                        'token' => session('createdToken'),
+                                        'localityName' => session('localityName')
+                                    ])
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -152,6 +183,10 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+
+        @if (session('createdToken'))
+        $('#generatedTokenModal').modal('show');
+        @endif
     });
 </script>
 @endsection

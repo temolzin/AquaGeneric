@@ -9,11 +9,22 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Costos</h2>
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create">
-                                <i class="fa fa-plus"></i> Registrar Costo
-                            </button>
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-1" data-toggle="modal"
+                                    data-target="#create" title="Registrar Costo">
+                                    <i class="fa fa-plus"></i>
+                                    <span class="d-none d-md-inline">Registrar Costo</span>
+                                    <span class="d-inline d-md-none">Registrar Costo</span>
+                                </button>
+                                <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-1" target="_blank"
+                                    title="Generar Lista" href="{{ route('report.generateCostListReport') }}">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span class="d-none d-md-inline">Generar Lista</span>
+                                    <span class="d-inline d-md-none">Generar Lista</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -68,7 +79,9 @@
                                     </tbody>
                                 </table>
                                 @include('costs.create')
-                            </div>
+                                <div class="d-flex justify-content-center">
+                                    {!! $costs->links('pagination::bootstrap-4') !!}
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -82,9 +95,12 @@
 <script>
     $(document).ready(function() {
         $('#costs').DataTable({
-            responsive: true,
-            buttons: ['excel', 'pdf', 'print'],
-            dom: 'Bfrtip',
+                responsive: true,
+                buttons: ['csv', 'excel', 'print'],
+                dom: 'Bfrtip',
+                paging: false,
+                info: false,
+                searching: false
         });
 
         var successMessage = "{{ session('success') }}";

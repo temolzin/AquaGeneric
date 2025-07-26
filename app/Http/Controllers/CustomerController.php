@@ -31,6 +31,18 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
 
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'last_name' => 'required|string',
+            'street' => 'required|string',
+            'block' => 'required|string',
+            'locality' => 'required|string',
+            'state' => 'required|string',
+            'zip_code' => 'required|string',
+            'exterior_number' => 'required|string',
+            'interior_number' => 'required|string',
+        ]);
+
         $customerData = $request->all();
         $customerData['locality_id'] = $authUser->locality_id;
         $customerData['created_by'] = $authUser->id;
@@ -62,6 +74,7 @@ class CustomerController extends Controller
             $customer->status = $request->input('statusUpdate');
             $customer->responsible_name = $request->input('responsibleNameUpdate');
             $customer->note = $request->input('noteUpdate');
+            $customer->email = $request->input('emailUpdate');
 
             $customer->save();
 

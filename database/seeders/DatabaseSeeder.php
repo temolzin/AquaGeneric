@@ -21,6 +21,13 @@ class DatabaseSeeder extends Seeder
         $this->call(WaterConnectionsTableSeeder::class);
         $this->call(DebtsTableSeeder::class);
         $this->call(PaymentsTableSeeder::class);
+        $this->call(DashboardExpiringPaidDebtsSeeder::class);
         $this->call(GeneralExpensesSeeder::class);
+        $this->call(MailConfigurationsTableSeeder::class); 
+        $this->call(IncidentStatusSeeder::class);
+        $this->call(IncidentCategorySeeder::class);
+        $this->call(IncidentSeeder::class);
+        $this->call(EmployeesTableSeeder::class);
+        $this->call(LocalitiesTableSeeder::class);
     }
 }

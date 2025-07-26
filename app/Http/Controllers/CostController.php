@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cost;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CostController extends Controller
 {
@@ -11,8 +12,8 @@ class CostController extends Controller
     {
         $authUser = auth()->user();
         $costs = Cost::where('locality_id', $authUser->locality_id)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         return view('costs.index', compact('costs'));
     }
 
@@ -58,5 +59,15 @@ class CostController extends Controller
         $cost->delete();
 
         return redirect()->route('costs.index')->with('success', 'Costo eliminado exitosamente.');
+    }
+
+    public function generateCostListReport()
+    {
+        $authUser = auth()->user();
+        $costs = cost::all();
+        $pdf = PDF::loadView('reports.generateCostListReport', compact('costs', 'authUser'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('costs.pdf');
     }
 }

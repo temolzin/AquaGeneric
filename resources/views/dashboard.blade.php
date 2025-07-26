@@ -19,7 +19,6 @@
                                             <img src="{{ asset('img/userDefault.png') }}">
                                         @endif
                                     </div>
-
                                     <div class="col-md-8">
                                         <h4 class="font-weight-bold text-capitalize welcome">Bienvenid@</h4>
                                         <h1 class="font-weight-bold text-blue">{{ $authUser->name }} {{ $authUser->last_name }}</h1>
@@ -87,23 +86,29 @@
                                         <h3 class="card-title">Reportes</h3>
                                     </div>
                                     <div class="card-body">
-                                        <div class="column">
-                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#annualEarnings">
+                                        <div class="d-flex flex-md-row flex-column ">
+                                            <button type="button" class="btn btn-info w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#annualEarnings" title="Ingresos Anuales">
                                                 <i class="fa fa-dollar-sign"></i> Ingresos Anuales
                                             </button>
-                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyEarnings">
+                                            <button type="button" class="btn bg-olive w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#weeklyEarnings" title="Ingresos Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Ingresos Semanales
                                             </button>
-                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#annualExpenses">
+                                            <button type="button" class="btn btn-info w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#annualExpenses" title="Egresos Anuales">
                                                 <i class="fa fa-dollar-sign"></i> Egresos Anuales
                                             </button>
-                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyExpenses">
+                                            <button type="button" class="btn bg-olive w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#weeklyExpenses" title="Egresos Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Egresos Semanales
                                             </button>
-                                            <button type="button" class="btn btn-info" data-toggle="modal" target="_blank"  data-target="#annualGains">
+                                            <button type="button" class="btn btn-info w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#annualGains" title="Ganancias Anuales">
                                                 <i class="fa fa-dollar-sign"></i> Ganancias Anuales
                                             </button>
-                                            <button type="button" class="btn bg-olive" data-toggle="modal" target="_blank"  data-target="#weeklyGains">
+                                            <button type="button" class="btn bg-olive w-100 w-md-auto m-1" data-toggle="modal"
+                                            data-target="#weeklyGains" title="Ganancias Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Ganancias Semanales
                                             </button>
                                         </div>
@@ -151,6 +156,65 @@
                             </div>
                         </div>
                     </div>
+                    @can('viewDashboardCards')
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row w-100 align-items-center">
+                                <div class="col-12 col-md-10">
+                                    <h3 class="card-title m-0">Períodos Próximos a Vencer</h3>
+                                </div>
+                                <div class="col-12 col-md-auto mt-2 mt-md-0 ms-md-auto">
+                                    <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100">
+                                        @csrf
+                                        <button type="submit" class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm w-100 w-md-auto" title="{{ $hasMailConfig
+                                                ? 'Enviar correos de recordatorio' : 'No hay configuración de correo válida para esta localidad' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
+                                            <i class="fas fa-envelope"></i> Enviar recordatorios
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-box table-responsive">
+                            <table id="emails" class="table table-striped display responsive nowrap" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Foto</th>
+                                        <th>Cliente</th>
+                                        <th>Email</th>
+                                        <th>Toma de Agua</th>
+                                        <th>Fecha de Término</th>
+                                        <th>Días Restantes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(count($data['paidDebtsExpiringSoon']) <= 0)
+                                        <tr>
+                                            <td colspan="6">No hay resultados</td>
+                                        </tr>
+                                    @else
+                                        @foreach($data['paidDebtsExpiringSoon'] as $period)
+                                            <tr>
+                                                <td>
+                                                    <img src="{{ $period['customerPhoto'] }}"
+                                                        alt="Foto de cliente"
+                                                        style="width: 50px; height: 50px; border-radius: 50%;">
+                                                </td>
+                                                <td>{{ $period['customerName'] }}</td>
+                                                <td>{{ $period['customerEmail'] }}</td>
+                                                <td>{{ $period['waterConnectionName'] }}</td>
+                                                <td>{{ $period['endDate'] }}</td>
+                                                <td>{{ $period['daysRemaining'] }} días</td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-center mt-3">
+                                {{ $data['paidDebtsExpiringSoon']->appends(request()->query())->links('pagination::bootstrap-4') }}
+                            </div>
+                        </div>
+                    </div>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -207,6 +271,39 @@
                     $('#localityInfoMonthly').text('');
                     $('#localityInfoAnnual').text('');
                 }
+            });
+            var successMessage = "{{ session('success') }}";
+            if (successMessage) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: successMessage,
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+            var errorMessage = "{{ session('error') }}";
+            if (errorMessage) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage,
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+            var warningMessage = "{{ session('warning') }}";
+            if (warningMessage) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Advertencia',
+                    text: warningMessage,
+                    confirmButtonText: 'Aceptar'
+                });
+            }   
+            $('#emails').DataTable({
+                responsive: true,
+                paging: false,
+                info: false,
+                searching: false
             });
         });
 

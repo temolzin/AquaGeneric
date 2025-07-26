@@ -21,11 +21,16 @@ class WaterConnectionsTableSeeder extends Seeder
         $localities = DB::table('localities')->pluck('id')->toArray();
 
         foreach ($localities as $localityId) {
-            $customers = DB::table('customers')->where('locality_id', $localityId)->pluck('id')->toArray();
+            $customers = DB::table('customers')->where('locality_id', $localityId)->whereNull('deleted_at')->pluck('id')->toArray();
             $costs = DB::table('costs')->where('locality_id', $localityId)->pluck('id')->toArray();
             $users = DB::table('users')->pluck('id')->toArray();
 
             foreach ($customers as $customerId) {
+
+                if (empty($costs)) {
+                    continue;
+                }
+
                 WaterConnection::create([
                     'customer_id' => $customerId,
                     'locality_id' => $localityId,

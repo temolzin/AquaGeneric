@@ -51,7 +51,7 @@
                             @endif
                             <div class="water-connection-list" style="overflow-y: auto; max-height: 300px; overflow-x: hidden;">
                                 @php $connectionCounter = 0; @endphp
-                                @foreach ($customer->waterConnections as $waterConnection)
+                                @foreach ($customer->waterConnectionsAll as $waterConnection)
                                     @if ($waterConnection)
                                         @php $connectionCounter++; @endphp
                                         @if ($connectionCounter > 1)
@@ -64,10 +64,20 @@
                                                     <p>{{ $waterConnection->id }}</p>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-8">
+                                            <div class="col-lg-5">
                                                 <div class="form-group">
                                                     <label>Nombre de la Toma</label>
                                                     <p>{{ $waterConnection->name }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label>Estatus</label>
+                                                    <div>
+                                                        <div style="display: inline-block; padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; text-align: center; {!! $waterConnection->getCalculatedStyleAttribute() !!}">
+                                                            {{ $waterConnection->statusCalculated }}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg-2">
