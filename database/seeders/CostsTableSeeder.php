@@ -3,19 +3,13 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Models\Cost;
 
 class CostsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        DB::table('costs')->insert([
+        $costs = [
             [
                 'locality_id' => 1,
                 'created_by' => 2,
@@ -44,6 +38,21 @@ class CostsTableSeeder extends Seeder
                 'price' => 100.00,
                 'description' => 'Tarifas para Madres Solteras',
             ],
-        ]);
+        ];
+
+        foreach ($costs as $cost) {
+            Cost::updateOrCreate(
+                [
+                    'locality_id' => $cost['locality_id'],
+                    'category' => $cost['category'],
+                ],
+                [
+                    'price' => $cost['price'],
+                    'description' => $cost['description'],
+                    'created_by' => $cost['created_by'],
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 }

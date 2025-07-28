@@ -78,8 +78,7 @@
                                             <td class="text-left align-center">
                                                 <span class="badge 
                                                     {{ $locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_ACTIVE ? 'badge-success' : 
-                                                    ($locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_EXPIRED ? 'badge-danger' : 'badge-secondary') }}"
-                                                    style="font-size: 1rem; padding: 2px 6px;">
+                                                    ($locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_EXPIRED ? 'badge-danger' : 'badge-secondary') }}">
                                                     {{ $locality->getSubscriptionStatus() }}
                                                 </span>
                                             </td>

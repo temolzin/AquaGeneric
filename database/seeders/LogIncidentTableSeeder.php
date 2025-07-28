@@ -3,18 +3,13 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\LogIncident;
 
 class LogIncidentTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        DB::table('log_incidents')->insert([
+        $logs = [
             [
                 'locality_id' => 1,
                 'created_by' => 2,
@@ -50,6 +45,21 @@ class LogIncidentTableSeeder extends Seeder
                 'status' => 'Proceso',
                 'description' => 'Se hacen pruebas',
             ],
-        ]);
+        ];
+
+        foreach ($logs as $log) {
+            LogIncident::updateOrCreate(
+                [
+                    'status' => $log['status'],
+                    'description' => $log['description'],
+                    'locality_id' => $log['locality_id'],
+                ],
+                [
+                    'employee_id' => $log['employee_id'],
+                    'created_by' => $log['created_by'],
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 }
