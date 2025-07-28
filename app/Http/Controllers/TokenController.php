@@ -40,9 +40,11 @@ class TokenController extends Controller
             $user->locality->token = $token;
             $user->locality->save();
 
-            return redirect('/dashboard')->with('success', 'Token actualizado correctamente.');
+            session()->flash('success', 'Token actualizado correctamente.');
+
+            return response()->json(['success' => true]);
         }
 
-        return back()->withErrors(['token' => $newTokenValidation['error']]);
+        return response()->json(['success' => false, 'error' => $newTokenValidation['error']]);
     }
 }

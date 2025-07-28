@@ -4,7 +4,6 @@
 
 @section('content')
 <style>
-
     body {
         font-family: 'Roboto', sans-serif;
     }
@@ -113,18 +112,14 @@
                 <p>
                     Si ya realizaste el pago, por favor ingresa el <strong>token de renovación</strong> proporcionado por el administrador para reactivar tu cuenta.
                 </p>
-
                 @if ($errors->any())
                     <div class="alert alert-danger">
-                        <ul>
                             @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
+                                {{ $error }}
                             @endforeach
-                        </ul>
                     </div>
                 @endif
-
-                <form action="{{ route('validatetoken') }}" method="POST">
+                <form action="{{ route('validatetoken') }}" method="POST" id="tokenForm">
                     @csrf
                     <div class="input-group mt-4 mb-3">
                         <div class="input-group-prepend">
@@ -142,4 +137,40 @@
         </div>
     </div>
 </div>
+
+@endsection
+
+@section('js')
+<script>
+    $(document).ready(function() {
+        $('#tokenModal form').on('submit', function(event) {
+            event.preventDefault();
+
+            var token = $('input[name="token"]').val();
+
+            $.ajax({
+                url: '{{ route('validatetoken') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    token: token,
+                },
+                success: function(response) {
+                    $('#tokenModal .modal-body').find('.alert').remove();
+
+                    if (response.success) {
+                        window.location.href = '/dashboard';
+                    } else {
+                        $('#tokenModal .modal-body').append('<div class="alert alert-danger">' + response.error + '</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en la solicitud AJAX:', error);
+                    $('#tokenModal .modal-body').find('.alert').remove();
+                    $('#tokenModal .modal-body').append('<div class="alert alert-danger">Ocurrió un error inesperado.</div>');
+                }
+            });
+        });
+    });
+</script>
 @stop
