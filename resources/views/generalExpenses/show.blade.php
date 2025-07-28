@@ -74,11 +74,17 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Comprobante del Gasto</label>
-                                        <form action="{{ $expense->getFirstMediaUrl('expenseGallery') }}" method="get" target="_blank">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-eye"></i> Ver recibo
+                                        @if ($expense->hasMedia('expenseGallery'))
+                                            <form action="{{ $expense->getFirstMediaUrl('expenseGallery') }}" method="get" target="_blank">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-eye"></i> Ver recibo
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button class="btn btn-secondary" disabled>
+                                                <i class="fas fa-eye-slash"></i> Sin recibo disponible
                                             </button>
-                                        </form>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-lg-12">

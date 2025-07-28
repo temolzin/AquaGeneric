@@ -35,7 +35,6 @@
 
     @php
         $chartHeight = '200px';
-        $chartHeight = '250px';
     @endphp
 
     <div class="row">
