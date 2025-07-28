@@ -133,6 +133,7 @@ class AdvancePaymentController extends Controller
         $currentMonthStart = Carbon::now()->startOfMonth();
     
         $paymentsQuery = Payment::with(['customer', 'debt.waterConnection'])
+            ->where('locality_id', auth()->user()->locality_id)
             ->whereHas('debt', function($debtQuery) use ($currentMonthStart) {
                 $debtQuery->where('status', Debt::STATUS_PAID)
                     ->where('end_date', '>', $currentMonthStart);
@@ -210,6 +211,7 @@ class AdvancePaymentController extends Controller
         {
             $advancePayments = DB::table('debts')
                 ->where('status', Debt::STATUS_PAID)
+                ->where('locality_id', auth()->user()->locality_id)
                 ->whereColumn('created_at', '<=', DB::raw('DATE_ADD(start_date, INTERVAL 1 MONTH)'))
                 ->select(
                     DB::raw("YEAR(start_date) as year"),
