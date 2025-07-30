@@ -309,7 +309,7 @@ return [
     [
         'text' => 'Panel',
         'url' => '/dashboard',
-        'icon' => 'fas fa-fw fa-home',
+        'icon' => 'fa fa-fw fa-home',
     ],
     [
         'text' => 'Usuarios',
@@ -404,13 +404,13 @@ return [
     [
         'text' => 'Empleados',
         'url' => '/employees',
-        'icon' => 'fas fa-fw fa-users',
+        'icon' => 'fas fa-solid fa-users',
         'can' => 'viewEmployee'
     ],
     [
         'text' => 'Falta de pago',
         'url'  => '/expiredSubscriptions/expired',
-        'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
+        'icon' => 'fas fa-exclamation-circle text-warning',
     ],
 ],
 
