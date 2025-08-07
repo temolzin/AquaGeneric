@@ -24,7 +24,7 @@
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="customerId">Seleccionar Cliente(*)</label>
+                                        <label for="selectCustomerId">Seleccionar Cliente(*)</label>
                                         <select class="form-control select2" name="selectCustomerId" id="selectCustomerId" required>
                                             <option value="">Selecciona un cliente</option>
                                         </select>
@@ -32,7 +32,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="waterConnectionId">Seleccionar Toma(*)</label>
+                                        <label for="selectWaterConnectionId">Seleccionar Toma(*)</label>
                                         <select class="form-control select2" name="selectWaterConnectionId" id="selectWaterConnectionId" required>
                                             <option value="">Selecciona una toma</option>
                                         </select>
