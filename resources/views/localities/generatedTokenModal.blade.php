@@ -1,7 +1,7 @@
 <div class="modal fade" id="generatedTokenModal" tabindex="-1" role="dialog" aria-labelledby="generatedTokenLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content border-warning">
-            <div class="modal-header bg-warning text-white">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #fd7e14; color: white;">
                 <h5 class="modal-title" id="generatedTokenLabel">Token Generado</h5>
                 <button type="button" class="close text-white" data-dismiss="modal">
                     <span>&times;</span>
@@ -14,7 +14,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button class="btn btn-outline-warning" onclick="copyToken()">Copiar Token</button>
+                <button class="btn" style="background-color: #fd7e14; color: white;" onclick="copyToken()">Copiar Token</button>
             </div>
         </div>
     </div>

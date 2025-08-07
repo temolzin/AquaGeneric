@@ -3,14 +3,14 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Incident;
 use Carbon\Carbon;
 
 class IncidentSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('incidents')->insert([
+        $incidents = [
             [
                 'name' => 'Falla en iluminación',
                 'description' => 'No funcionan las luces del pasillo principal.',
@@ -19,8 +19,6 @@ class IncidentSeeder extends Seeder
                 'category_id' => 3,
                 'locality_id' => 1,
                 'created_by' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'name' => 'Fuga en baño',
@@ -30,8 +28,6 @@ class IncidentSeeder extends Seeder
                 'category_id' => 4,
                 'locality_id' => 1,
                 'created_by' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'name' => 'Ventana rota',
@@ -41,8 +37,6 @@ class IncidentSeeder extends Seeder
                 'category_id' => 3,
                 'locality_id' => 1,
                 'created_by' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'name' => 'Puerta dañada',
@@ -52,9 +46,24 @@ class IncidentSeeder extends Seeder
                 'category_id' => 3,
                 'locality_id' => 1,
                 'created_by' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
-        ]);
+        ];
+
+        foreach ($incidents as $incident) {
+            Incident::updateOrCreate(
+                [
+                    'name' => $incident['name'],
+                    'locality_id' => $incident['locality_id'],
+                ],
+                [
+                    'description' => $incident['description'],
+                    'status' => $incident['status'],
+                    'start_date' => $incident['start_date'],
+                    'category_id' => $incident['category_id'],
+                    'created_by' => $incident['created_by'],
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 }

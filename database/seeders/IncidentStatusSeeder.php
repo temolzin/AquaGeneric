@@ -3,37 +3,45 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\IncidentStatus; // Asegúrate de tener este modelo
 
 class IncidentStatusSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('incident_statuses')->insert([
+        $statuses = [
             [
                 'status' => 'Pendiente',
                 'description' => 'Incidencia en proceso de ser atendida',
                 'created_by' => 3,
                 'locality_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'status' => 'En progreso',
                 'description' => 'Incidencia en proceso de resolución',
                 'created_by' => 3,
                 'locality_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'status' => 'Terminada',
                 'description' => 'Incidencia resuelta y cerrada.',
                 'created_by' => 3,
                 'locality_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
-        ]);
+        ];
+
+        foreach ($statuses as $status) {
+            IncidentStatus::updateOrCreate(
+                [
+                    'status' => $status['status'],
+                    'locality_id' => $status['locality_id'],
+                ],
+                [
+                    'description' => $status['description'],
+                    'created_by' => $status['created_by'],
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 }
