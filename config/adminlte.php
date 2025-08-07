@@ -309,7 +309,7 @@ return [
     [
         'text' => 'Panel',
         'url' => '/dashboard',
-        'icon' => 'fa fa-home',
+        'icon' => 'fa fa-fw fa-home',
     ],
     [
         'text' => 'Usuarios',
