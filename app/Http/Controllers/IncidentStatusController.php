@@ -11,7 +11,10 @@ class IncidentStatusController extends Controller
 {
     public function index()
     {
-        $statuses = IncidentStatus::paginate(10); 
+        $authUser = auth()->user();
+
+        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)->paginate(10);
+
         return view('incidentStatuses.index', compact('statuses'));
     }
 
