@@ -64,7 +64,7 @@ class CostController extends Controller
     public function generateCostListReport()
     {
         $authUser = auth()->user();
-        $costs = Cost::where('locality_id', $authUser->locality_id)
+        $costs = cost::where('locality_id', $authUser->locality_id)
                     ->orderBy('created_at', 'desc')
                     ->get();
         
