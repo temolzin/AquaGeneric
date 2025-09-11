@@ -162,7 +162,7 @@ class CustomerController extends Controller
         return $pdf->stream('reporte_historial_pagos.pdf');
     }
     
-    public function pdfSummary(Request $request)
+    public function generateCustomerSummaryPdf(Request $request)
     {
         $authUser = auth()->user();
         $query = Customer::where('locality_id', $authUser->locality_id)
