@@ -33,14 +33,14 @@
                 align-items: center;
             }
 
-            .info_empresa {
+            .company_info {
                 width: 85%;
                 text-align: center;
                 align-content: stretch;
                 font-family: 'Montserrat', sans-serif;
             }
 
-            .aqua_titulo {
+            .aqua_title {
                 padding-right: 80px;
                 padding-top: 60px;
                 font-family: 'Montserrat', sans-serif;
@@ -73,14 +73,14 @@
                 margin-bottom: 5px;
             }
 
-            .textable {
+            .text_table {
                 text-align: center;
                 font-family: 'Montserrat', sans-serif;
                 font-size: 11pt;
                 color: #FFF;
             }
 
-            .textcenter {
+            .text_center {
                 background-color: #FFF;
                 text-align: center;
                 font-size: 11pt;
@@ -89,25 +89,25 @@
                 padding: 5px;
             }
 
-            #reporte_detalle {
+            #report_detail {
                 border-collapse: collapse;
                 width: 100%;
                 margin-bottom: 150px;
                 page-break-inside: auto;
             }
 
-            #reporte_detalle thead th {
+            #report_detail thead th {
                 background: #0B1C80;
                 color: #FFF;
                 padding: 5px;
             }
 
-            #detalle_clientes tr {
+            #customer_detail tr {
                 border-top: 1px solid #bfc9ff;
-                min-height: 60px; /* Ajustable si hay muchas tomas */
+                min-height: 60px; /* Adjustable if there are many connections */
             }
 
-            .info_Eabajo {
+            .footer_info {
                 text-align: center;
                 margin-top: 22px;
                 padding: 10px;
@@ -117,7 +117,7 @@
                 right: 20px;
             }
 
-            .text_infoE {
+            .footer_text {
                 text-align: center;
                 font-size: 10pt;
                 font-family: 'Montserrat', sans-serif;
@@ -126,20 +126,20 @@
                 display: inline-block;
             }
 
-            #reporte_head {
+            #report_head {
                 justify-content: center;
                 width: 100%;
                 text-align: center;
             }
 
-            #reporte_head .logo {
+            #report_head .logo {
                 height: auto;
                 margin-left: 70px;
                 margin-top: 60px;
                 display: inline-block;
             }
 
-            #reporte_head .logo img {
+            #report_head .logo img {
                 border-radius: 50%;
                 width: 100px;
                 height: 100px;
@@ -155,7 +155,7 @@
     </head>
     <body>
         <div id="page_pdf">
-            <table id="reporte_head">
+            <table id="report_head">
                 <tr>
                     <td>
                         <div class="logo">
@@ -166,9 +166,9 @@
                             @endif
                         </div>
                     </td>
-                    <td class="info_empresa">
+                    <td class="company_info">
                         <div>
-                            <p class="aqua_titulo">
+                            <p class="aqua_title">
                                 COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
                             </p>
                         </div>
@@ -178,24 +178,24 @@
             <div class="title">
                 <h3>RESUMEN DE CLIENTES</h3>
             </div>
-            <table id="reporte_detalle">
+            <table id="report_detail">
                 <thead>
                     <tr>
-                        <th class="textable">ID</th>
-                        <th class="textable">NOMBRE</th>
-                        <th class="textable">TOMAS</th>
-                        <th class="textable">MANZANA</th>
-                        <th class="textable">CALLE</th>
-                        <th class="textable">NUM. EXTERIOR</th>
-                        <th class="textable">NUM. INTERIOR</th>
+                        <th class="text_table">ID</th>
+                        <th class="text_table">NOMBRE</th>
+                        <th class="text_table">TOMAS</th>
+                        <th class="text_table">COLONIA</th>
+                        <th class="text_table">CALLE</th>
+                        <th class="text_table">NUM. EXTERIOR</th>
+                        <th class="text_table">NUM. INTERIOR</th>
                     </tr>
                 </thead>
-                <tbody id="detalle_clientes">
+                <tbody id="customer_detail">
                     @foreach ($customers as $customer)
                         <tr>
-                            <td class="textcenter">{{ $customer->id }}</td>
-                            <td class="textcenter">{{ $customer->name }} {{ $customer->last_name }}</td>
-                            <td class="textcenter">
+                            <td class="text_center">{{ $customer->id }}</td>
+                            <td class="text_center">{{ $customer->name }} {{ $customer->last_name }}</td>
+                            <td class="text_center">
                                 @foreach ($customer->waterConnections as $connection)
                                     <strong>Toma: {{ $connection->name ?: '-' }}</strong><br>
                                     @switch($connection->type)
@@ -212,22 +212,22 @@
                                     <br>
                                 @endforeach
                             </td>
-                            <td class="textcenter">
+                            <td class="text_center">
                                 @foreach ($customer->waterConnections as $connection)
                                     {{ $connection->block ?: '-' }}<br>
                                 @endforeach
                             </td>
-                            <td class="textcenter">
+                            <td class="text_center">
                                 @foreach ($customer->waterConnections as $connection)
                                     {{ $connection->street ?: '-' }}<br>
                                 @endforeach
                             </td>
-                            <td class="textcenter">
+                            <td class="text_center">
                                 @foreach ($customer->waterConnections as $connection)
                                     {{ $connection->exterior_number ?: '-' }}<br>
                                 @endforeach
                             </td>
-                            <td class="textcenter">
+                            <td class="text_center">
                                 @foreach ($customer->waterConnections as $connection)
                                     {{ $connection->interior_number ?: '-' }}<br>
                                 @endforeach
@@ -237,9 +237,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="info_Eabajo">
-            <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
-            <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="20px" height="15px">
+        <div class="footer_info">
+            <a class="footer_text" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+            <a class="footer_text" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="20px" height="15px">
         </div>
     </body>
 </html>
