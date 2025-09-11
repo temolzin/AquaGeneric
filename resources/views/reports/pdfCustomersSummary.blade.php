@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Resumen de Clientes</title>
+        <title>RESUMEN DE TOMAS DE AGUA POR CLIENTE</title>
         <style>
             html {
                 margin: 0;
@@ -85,8 +85,29 @@
                 text-align: center;
                 font-size: 11pt;
                 font-family: 'Montserrat', sans-serif;
-                vertical-align: top;
-                padding: 5px;
+                vertical-align: middle;
+                padding: 8px 5px;
+                line-height: 1.6;
+            }
+
+            .connection_separator {
+                margin: 8px 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 50px;
+                font-size: 11pt;
+            }
+
+            .address_cell .connection_separator {
+                margin: 8px 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 50px; 
+                font-size: 11pt;
             }
 
             #report_detail {
@@ -94,6 +115,10 @@
                 width: 100%;
                 margin-bottom: 150px;
                 page-break-inside: auto;
+            }
+
+            #report_detail thead {
+                display: table-header-group;
             }
 
             #report_detail thead th {
@@ -104,7 +129,7 @@
 
             #customer_detail tr {
                 border-top: 1px solid #bfc9ff;
-                min-height: 60px; /* Adjustable if there are many connections */
+                min-height: 60px;
             }
 
             .footer_info {
@@ -176,14 +201,14 @@
                 </tr>
             </table>
             <div class="title">
-                <h3>RESUMEN DE CLIENTES</h3>
+                <h3>RESUMEN DE TOMAS DE AGUA POR CLIENTE</h3>
             </div>
             <table id="report_detail">
                 <thead>
                     <tr>
                         <th class="text_table">ID</th>
                         <th class="text_table">NOMBRE</th>
-                        <th class="text_table">TOMAS</th>
+                        <th class="text_table">NOMBRE DE LA TOMA</th>
                         <th class="text_table">COLONIA</th>
                         <th class="text_table">CALLE</th>
                         <th class="text_table">NUM. EXTERIOR</th>
@@ -197,39 +222,48 @@
                             <td class="text_center">{{ $customer->name }} {{ $customer->last_name }}</td>
                             <td class="text_center">
                                 @foreach ($customer->waterConnections as $connection)
-                                    <strong>Toma: {{ $connection->name ?: '-' }}</strong><br>
-                                    @switch($connection->type)
-                                        @case('commercial')
-                                            (Comercial)
-                                            @break
-                                        @case('residencial')
-                                            (Residencial)
-                                            @break
-                                        @default
-                                            (No especificado)
-                                            @break
-                                    @endswitch
-                                    <br>
+                                    <div class="connection_separator">
+                                        <strong>Toma: {{ $connection->name ?: '-' }}</strong><br>
+                                        @switch($connection->type)
+                                            @case('commercial')
+                                                (Comercial)
+                                                @break
+                                            @case('residencial')
+                                                (Residencial)
+                                                @break
+                                            @default
+                                                (No especificado)
+                                                @break
+                                        @endswitch
+                                    </div>
                                 @endforeach
                             </td>
-                            <td class="text_center">
+                            <td class="text_center address_cell">
                                 @foreach ($customer->waterConnections as $connection)
-                                    {{ $connection->block ?: '-' }}<br>
+                                    <div class="connection_separator">
+                                        {{ $connection->block ?: '-' }}
+                                    </div>
                                 @endforeach
                             </td>
-                            <td class="text_center">
+                            <td class="text_center address_cell">
                                 @foreach ($customer->waterConnections as $connection)
-                                    {{ $connection->street ?: '-' }}<br>
+                                    <div class="connection_separator">
+                                        {{ $connection->street ?: '-' }}
+                                    </div>
                                 @endforeach
                             </td>
-                            <td class="text_center">
+                            <td class="text_center address_cell">
                                 @foreach ($customer->waterConnections as $connection)
-                                    {{ $connection->exterior_number ?: '-' }}<br>
+                                    <div class="connection_separator">
+                                        {{ $connection->exterior_number ?: '-' }}
+                                    </div>
                                 @endforeach
                             </td>
-                            <td class="text_center">
+                            <td class="text_center address_cell">
                                 @foreach ($customer->waterConnections as $connection)
-                                    {{ $connection->interior_number ?: '-' }}<br>
+                                    <div class="connection_separator">
+                                        {{ $connection->interior_number ?: '-' }}
+                                    </div>
                                 @endforeach
                             </td>
                         </tr>
