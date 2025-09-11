@@ -161,4 +161,23 @@ class CustomerController extends Controller
 
         return $pdf->stream('reporte_historial_pagos.pdf');
     }
+    
+    public function pdfSummary(Request $request)
+    {
+        $authUser = auth()->user();
+        $query = Customer::where('locality_id', $authUser->locality_id)
+            ->with('waterConnections');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                ->orWhere('id', 'LIKE', "%{$search}%");
+        }   
+
+        $customers = $query->get();
+        $pdf = Pdf::loadView('reports.pdfCustomersSummary', compact('customers', 'authUser'))
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->stream('customers_summary.pdf');
+    }
 }
