@@ -64,8 +64,11 @@ class CostController extends Controller
     public function generateCostListReport()
     {
         $authUser = auth()->user();
-        $costs = cost::all();
-        $pdf = PDF::loadView('reports.generateCostListReport', compact('costs', 'authUser'))
+        $costs = Cost::where('locality_id', $authUser->locality_id)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+        
+        $pdf = PDF::loadView('reports.generateCostListReport', compact('costs', 'authUser'))      
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('costs.pdf');
