@@ -25,4 +25,15 @@ class IncidentStatus extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function incidents()
+    {
+        return $this->hasMany(Incident::class, 'status', 'status');
+    }
+
+    public function hasDependencies()
+    {
+       return $this->incidents()->exists();
+    }
+
 }
