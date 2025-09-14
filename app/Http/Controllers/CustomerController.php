@@ -39,7 +39,7 @@ class CustomerController extends Controller
             'locality' => 'required|string',
             'state' => 'required|string',
             'zip_code' => 'required|string',
-            'exterior_number' => 'required|string',
+            'exterior_number' => 'nullable|string',
             'interior_number' => 'required|string',
         ]);
 
