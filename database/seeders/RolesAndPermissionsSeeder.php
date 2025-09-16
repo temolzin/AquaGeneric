@@ -168,16 +168,16 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite eliminar los estatus de una incidencia.'
         ])->assignRole([$roleSupervisor]);
         Permission::firstOrCreate([
-            'name' => 'viewCustomerPayMents',
-            'description' => 'Permite ver los pagos de clientes'
+            'name' => 'viewCustomerPayments',
+            'description' => 'El cliente puede ver sus pagos'
         ])->assignRole([$roleCliente]);
          Permission::firstOrCreate([
             'name' => 'viewCustomerDebts',
-            'description' => 'Permite ver las Deudas de clientes'
+            'description' => 'El cliente puede ver sus deudas'
         ])->assignRole([$roleCliente]);
         Permission::firstOrCreate([
             'name' => 'viewWaterConnections',
-            'description' => 'Permite ver las Conexiones de Agua'
+            'description' => 'El cliente puede ver sus conexiones de agua'
         ])->assignRole([$roleCliente]);
     }
 }
