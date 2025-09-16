@@ -177,7 +177,7 @@ class RolesAndPermissionsSeeder extends Seeder
         ])->assignRole([$roleCliente]);
         Permission::firstOrCreate([
             'name' => 'viewWaterConnections',
-            'description' => 'El cliente puede ver sus conexiones de agua'
+            'description' => 'El cliente puede ver sus tomas de agua'
         ])->assignRole([$roleCliente]);
     }
 }
