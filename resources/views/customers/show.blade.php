@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label>Manzana</label>
+                                        <label>Número Exterior</label>
                                         <input type="text" disabled class="form-control" value="{{ $customer->exterior_number }}" />
                                     </div>
                                 </div>
