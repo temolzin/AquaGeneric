@@ -42,3 +42,4 @@ class CreateFaultReportTable extends Migration
         Schema::dropIfExists('fault_report');
     }
 }
+
