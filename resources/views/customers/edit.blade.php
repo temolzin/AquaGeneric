@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="exteriorNumberUpdate" class="form-label">Manzana(*)</label>
+                                            <label for="exteriorNumberUpdate" class="form-label">Manzana</label>
                                             <input type="text" class="form-control" name="exteriorNumberUpdate" id="exteriorNumberUpdate" value="{{ $customer->exterior_number }}" >
                                         </div>
                                     </div>
