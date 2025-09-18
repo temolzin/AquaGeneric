@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateFaultReportTable extends Migration
 {
-    private const STATUS = ['earring', 'in_process', 'resolved', 'closed'];
     /**
      * Run the migrations.
      *
@@ -21,7 +20,7 @@ class CreateFaultReportTable extends Migration
             $table->unsignedBigInteger('locality_id')->nullable();
             $table->string('title');
             $table->text('description');
-            $table->enum('status', self::STATUS)->default('earring');
+            $table->string('status');
             $table->timestamp('date_report')->useCurrent();
             $table->timestamps();
             $table->softDeletes();

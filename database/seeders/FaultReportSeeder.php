@@ -15,13 +15,15 @@ class FaultReportSeeder extends Seeder
     {
         $faker = Faker::create();
 
+        $localityIds = DB::table('localities')->pluck('id')->toArray();
+        $userIds = DB::table('users')->pluck('id')->toArray();
         $statuses = ['earring', 'in_process', 'resolved', 'closed'];
 
         foreach (range(1, 20) as $i) {
             DB::table('fault_report')->insert([
                 'customer_id'   => $faker->numberBetween(1, 10), 
-                'created_by'    => $faker->numberBetween(1, 5),  
-                'locality_id'   => $faker->optional()->numberBetween(1, 10), 
+                'created_by'    => $faker->randomElement($userIds),  
+                'locality_id'   => $faker->randomElement($localityIds),
                 'title'         => $faker->sentence(6),
                 'description'   => $faker->paragraph(3),
                 'status'        => $faker->randomElement($statuses),
