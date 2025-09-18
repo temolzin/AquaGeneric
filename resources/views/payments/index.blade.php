@@ -84,6 +84,7 @@
                                                 <th>ID PAGO</th>
                                                 <th>CLIENTE</th>
                                                 <th>DEUDA</th>
+                                                <th>FECHA DE PAGO</th>
                                                 <th>MONTO</th>
                                                 <th>OPCIONES</th>
                                             </tr>
@@ -102,6 +103,9 @@
                                                             {{ \Carbon\Carbon::parse($payment->debt->start_date)->locale('es')->isoFormat('MMMM [/] YYYY')}} -
                                                             {{ \Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('MMMM [/] YYYY') }}
                                                             | Deuda: ${{ number_format($payment->debt->amount, 2) }}
+                                                        </td>
+                                                        <td>
+                                                            {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('MMMM [/] YYYY')}}
                                                         </td>
                                                         <td>${{ number_format($payment->amount, 2) }}</td>
                                                         <td>

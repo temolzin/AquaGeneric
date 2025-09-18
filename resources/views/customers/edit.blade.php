@@ -71,8 +71,8 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="emailUpdate" class="form-label">Correo electrónico(*)</label>
-                                            <input type="email" class="form-control" id="emailUpdate" name="emailUpdate"  value="{{ $customer->email }}" required>
+                                            <label for="emailUpdate" class="form-label">Correo electrónico</label>
+                                            <input type="email" class="form-control" id="emailUpdate" name="emailUpdate"  value="{{ $customer->email }}">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
