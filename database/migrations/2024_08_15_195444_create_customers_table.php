@@ -26,7 +26,7 @@ class CreateCustomersTable extends Migration
             $table->string('state');
             $table->string('block');
             $table->string('street');
-            $table->string('exterior_number');
+            $table->string('exterior_number')->nullable();
             $table->string('interior_number');
             $table->boolean('marital_status');
             $table->boolean('status');
