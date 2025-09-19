@@ -17,7 +17,7 @@ class FaultReportSeeder extends Seeder
 
         $localityIds = DB::table('localities')->pluck('id')->toArray();
         $userIds = DB::table('users')->pluck('id')->toArray();
-        $statuses = ['earring', 'inprocess', 'resolved', 'closed'];
+        $statuses = ['Earring', 'In process', 'Resolved', 'Closed'];
 
         foreach (range(1, 20) as $i) {
             DB::table('fault_report')->insert([
