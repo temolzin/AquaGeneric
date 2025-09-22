@@ -412,6 +412,12 @@ return [
         'url'  => '/expiredSubscriptions/expired',
         'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
     ],
+        [
+        'text' => 'Mis deudas',
+        'url'  => '/viewMyDebts',
+        'can' => 'viewCustomerDebts',
+        'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
+    ],
 ],
 
     /*
