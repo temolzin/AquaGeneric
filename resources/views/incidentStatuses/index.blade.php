@@ -60,8 +60,9 @@
                                                         </button>
                                                         @endcan
                                                         @can('deleteIncidentStatuses')
-                                                        <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#deleteIncidentStatus{{ $status->id }}">
-                                                            <i class="fas fa-trash-alt"></i>
+                                                        <button type="button" class="btn {{ $status->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2" title="{{ $status->hasDependencies() ? 'Eliminación no permitida: Existen incidencias asociadas a este estatus.' : 'Eliminar Registro' }}" 
+                                                        {{ $status->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#deleteIncidentStatus' . $status->id }}>
+                                                        <i class="fas fa-trash-alt"></i>
                                                         </button>
                                                         @endcan
                                                     </div>

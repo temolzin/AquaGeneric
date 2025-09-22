@@ -31,5 +31,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LocalitiesTableSeeder::class);
         $this->call(AdvancePaymentsSeeder::class);
         $this->call(LocalityNoticesSeeder::class);
+        $this->call(FaultReportSeeder::class);
+        $this->call(InventoryTableSeeder::class);
     }
 }
