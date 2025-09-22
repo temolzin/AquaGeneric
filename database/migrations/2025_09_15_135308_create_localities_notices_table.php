@@ -20,13 +20,14 @@ class CreateLocalitiesNoticesTable extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->boolean('is_active')->default(true);
-            $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('locality_id');
             $table->string('attachment_url')->nullable();
             $table->timestamps();
 
-            $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');
+            
         });
     }
 
