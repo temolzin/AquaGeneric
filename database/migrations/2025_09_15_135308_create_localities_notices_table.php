@@ -15,13 +15,13 @@ class CreateLocalitiesNoticesTable extends Migration
     {
        Schema::create('locality_notices', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('locality_id');
             $table->string('title', 100);
             $table->text('description');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->boolean('is_active')->default(true);
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('locality_id');
             $table->string('attachment_url')->nullable();
             $table->timestamps();
 
