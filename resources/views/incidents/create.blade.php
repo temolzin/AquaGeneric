@@ -49,8 +49,8 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                        <label for="status_id" class="form-label">Estatus(*)</label>
-                                        <select class="form-control select2" name="status_id" required>
+                                            <label for="status_id" class="form-label">Estatus(*)</label>
+                                            <select class="form-control select2" name="statusUpdate" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($statuses as $status)
                                                     <option value="{{ $status->id }}">
