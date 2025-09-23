@@ -49,11 +49,13 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="status" class="form-label">Estatus(*)</label>
-                                            <select class="form-control select2" name="status" required>
+                                        <label for="status_id" class="form-label">Estatus(*)</label>
+                                        <select class="form-control select2" name="status_id" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($statuses as $status)
-                                                    <option value="{{ $status }}">{{ $status }}</option>
+                                                    <option value="{{ $status->id }}">
+                                                {{ $status->status }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>

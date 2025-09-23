@@ -50,11 +50,13 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="status" class="form-label">Estatus(*)</label>
-                                            <select class="form-control select2" name="statusUpdate" required>
+                                            <label for="status_id" class="form-label">Estatus(*)</label>
+                                            <select class="form-control select2" name="status_id" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($statuses as $status)
-                                                    <option value="{{ $status }}" {{ $incident->getLatestStatus() == $status ? 'selected' : '' }}> {{ $status }} </option>
+                                                    <option value="{{ $status->id }}" {{ $incident->status_id == $status->id ? 'selected' : '' }}>
+                                                        {{ $status->status }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
