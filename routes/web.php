@@ -13,6 +13,7 @@ use App\Http\Controllers\GeneralExpenseController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\AdvancePaymentController;
 use App\Http\Controllers\IncidentCategoriesController;
 use App\Http\Controllers\IncidentController;
@@ -117,6 +118,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('waterConnections', WaterConnectionController::class);
         Route::patch('/waterConnections/{id}/cancel', [WaterConnectionController::class, 'cancel'])->name('waterConnections.cancel');
         Route::patch('/waterConnections/{id}/reactivate', [WaterConnectionController::class, 'reactivate'])->name('waterConnections.reactivate');
+    });
+
+    Route::group(['middleware' => ['can:viewInventory']], function () {
+        Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+        Route::resource('inventory', InventoryController::class);
     });
 
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {

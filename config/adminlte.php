@@ -412,6 +412,12 @@ return [
         'url'  => '/expiredSubscriptions/expired',
         'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
     ],
+    [
+    'text' => 'Inventario',
+    'url' => '/inventory',
+    'icon' => 'fas fa-fw fa-boxes',
+    'can'  => 'viewInventory'
+    ],
 ],
 
     /*
