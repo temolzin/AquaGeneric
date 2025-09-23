@@ -51,7 +51,7 @@
                                             <select class="form-control select2" name="status" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($statuses as $status)
-                                                    <option value="{{ $status }}">{{ $status }}</option>
+                                                    <option value="{{ $status->id }}">{{ $status->status }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

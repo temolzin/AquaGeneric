@@ -83,8 +83,8 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="exterior_number" class="form-label">Número Exterior(*)</label>
-                                            <input type="text" pattern=".*\S.*" class="form-control" id="exterior_number" name="exterior_number" placeholder="Ingresa número exterior" value="{{ old('exterior_number') }}" required />
+                                            <label for="exterior_number" class="form-label">Número Exterior</label>
+                                            <input type="text" pattern=".*\S.*" class="form-control" id="exterior_number" name="exterior_number" placeholder="Ingresa número exterior" value="{{ old('exterior_number') }}" />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
