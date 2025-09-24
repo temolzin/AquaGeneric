@@ -179,5 +179,17 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'viewWaterConnections',
             'description' => 'El cliente puede ver sus tomas de agua'
         ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
+            'name' => 'viewInventory',
+            'description' => 'Permite ver el Inventario.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'updateInventory',
+            'description' => 'Permite editar el Inventario.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'deleteInventory',
+            'description' => 'Permite eliminar el Inventario.'
+        ])->assignRole([$roleSupervisor]);
     }
 }

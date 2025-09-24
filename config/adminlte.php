@@ -413,6 +413,12 @@ return [
         'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
     ],
     [
+        'text' => 'Inventario',
+        'url' => '/inventory',
+        'icon' => 'fas fa-fw fa-boxes',
+        'can'  => 'viewInventory'
+    ],
+    [
         'text' => 'Mis Pagos',
         'url' => '/viewMyPayments',
         'can' => 'viewCustomerPayments',
