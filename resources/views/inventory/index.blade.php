@@ -50,47 +50,47 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(count($componentes) <= 0)
+                                        @if(count($components) <= 0)
                                             <tr>
                                                 <td colspan="7">No hay resultados</td>
                                             </tr>
                                         @else
-                                            @foreach($componentes as $componente)
+                                            @foreach($components as $component)
                                                 <tr>
-                                                    <td scope="row">{{ $componente->id }}</td>
-                                                    <td>{{ $componente->name }}</td>
-                                                    <td>{{ $componente->amount }}</td>
-                                                    <td>{{ $componente->category }}</td>
-                                                    <td>{{ $componente->material ?? 'N/A' }}</td>
-                                                    <td>{{ $componente->dimensions ?? 'N/A' }}</td>
+                                                    <td scope="row">{{ $component->id }}</td>
+                                                    <td>{{ $component->name }}</td>
+                                                    <td>{{ $component->amount }}</td>
+                                                    <td>{{ $component->category }}</td>
+                                                    <td>{{ $component->material ?? 'N/A' }}</td>
+                                                    <td>{{ $component->dimensions ?? 'N/A' }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
-                                                            <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $componente->id }}">
+                                                            <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $component->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
                                                             @can('updateInventory')
-                                                                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $componente->id }}">
+                                                                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $component->id }}">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
                                                             @endcan
                                                             @can('deleteInventory')
-                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $componente->id }}">
+                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $component->id }}">
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             @endcan
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                @include('inventory.show', ['componente' => $componente])
-                                                @include('inventory.edit', ['componente' => $componente, 'localities' => $localities, 'users' => $users])
-                                                @include('inventory.delete', ['componente' => $componente])
+                                                @include('inventory.show', ['component' => $component])
+                                                @include('inventory.edit', ['component' => $component, 'localities' => $localities, 'users' => $users])
+                                                @include('inventory.delete', ['component' => $component])
                                             @endforeach
                                         @endif
                                     </tbody>
                                 </table>
                                 @include('inventory.create', ['localities' => $localities, 'users' => $users])
                                 <div class="d-flex justify-content-center">
-                                    {!! $componentes->links('pagination::bootstrap-4') !!}
+                                    {!! $components->links('pagination::bootstrap-4') !!}
                                 </div>
                             </div>
                         </div>
