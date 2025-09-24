@@ -412,6 +412,12 @@ return [
         'url'  => '/expiredSubscriptions/expired',
         'icon' => 'fas fa-exclamation-circle text-warning',
     ],
+    [
+        'text' => 'Reporte de fallas',
+        'url' => '/faultReport',
+        'icon' => 'fa fa-clipboard-list',
+        'can'  => 'viewFaultReport'
+    ],
 ],
 
     /*
