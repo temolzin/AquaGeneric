@@ -1,4 +1,4 @@
-<div class="modal fade" id="edit{{ $componente->id }}" tabindex="-1" role="dialog" aria-labelledby="editInventoryLabel{{ $componente->id }}" aria-hidden="true">
+<div class="modal fade" id="edit{{ $component->id }}" tabindex="-1" role="dialog" aria-labelledby="editInventoryLabel{{ $component->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="card-warning">
@@ -10,7 +10,7 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('inventory.update', $componente->id) }}" method="post">
+                <form action="{{ route('inventory.update', $component->id) }}" method="post">
                     @csrf
                     @method('PUT')
                     <div class="card-body">
@@ -19,38 +19,38 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="nameUpdate{{ $componente->id }}" class="form-label">Nombre del Componente(*)</label>
-                                            <input type="text" class="form-control" name="name" id="nameUpdate{{ $componente->id }}" value="{{ $componente->name }}" required>
+                                            <label for="nameUpdate{{ $component->id }}" class="form-label">Nombre del Componente(*)</label>
+                                            <input type="text" class="form-control" name="name" id="nameUpdate{{ $component->id }}" value="{{ $component->name }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="amountUpdate{{ $componente->id }}" class="form-label">Cantidad(*)</label>
-                                            <input type="number" min="0" class="form-control" name="amount" id="amountUpdate{{ $componente->id }}" value="{{ $componente->amount }}" required>
+                                            <label for="amountUpdate{{ $component->id }}" class="form-label">Cantidad(*)</label>
+                                            <input type="number" min="0" class="form-control" name="amount" id="amountUpdate{{ $component->id }}" value="{{ $component->amount }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="categoryUpdate{{ $componente->id }}" class="form-label">Categoría(*)</label>
-                                            <input type="text" class="form-control" name="category" id="categoryUpdate{{ $componente->id }}" value="{{ $componente->category }}" required>
+                                            <label for="categoryUpdate{{ $component->id }}" class="form-label">Categoría(*)</label>
+                                            <input type="text" class="form-control" name="category" id="categoryUpdate{{ $component->id }}" value="{{ $component->category }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="materialUpdate{{ $componente->id }}" class="form-label">Material</label>
-                                            <input type="text" class="form-control" name="material" id="materialUpdate{{ $componente->id }}" value="{{ $componente->material }}">
+                                            <label for="materialUpdate{{ $component->id }}" class="form-label">Material</label>
+                                            <input type="text" class="form-control" name="material" id="materialUpdate{{ $component->id }}" value="{{ $component->material }}">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="dimensionsUpdate{{ $componente->id }}" class="form-label">Dimensiones</label>
-                                            <input type="text" class="form-control" name="dimensions" id="dimensionsUpdate{{ $componente->id }}" value="{{ $componente->dimensions }}">
+                                            <label for="dimensionsUpdate{{ $component->id }}" class="form-label">Dimensiones</label>
+                                            <input type="text" class="form-control" name="dimensions" id="dimensionsUpdate{{ $component->id }}" value="{{ $component->dimensions }}">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="descriptionUpdate{{ $componente->id }}" class="form-label">Descripción</label>
-                                            <textarea class="form-control" name="description" id="descriptionUpdate{{ $componente->id }}">{{ $componente->description }}</textarea>
+                                            <label for="descriptionUpdate{{ $component->id }}" class="form-label">Descripción</label>
+                                            <textarea class="form-control" name="description" id="descriptionUpdate{{ $component->id }}">{{ $component->description }}</textarea>
                                         </div>
                                     </div>
                                 </div>
