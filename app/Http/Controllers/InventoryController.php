@@ -16,7 +16,7 @@ class InventoryController extends Controller
         $user = Auth::user();
         $userLocalityId = $user->locality_id;
 
-        $componentes = Inventory::with(['locality', 'creator'])
+        $components = Inventory::with(['locality', 'creator'])
             ->when($search, function ($query, $search) {
                 return $query->where('name', 'like', "%{$search}%")
                     ->orWhere('category', 'like', "%{$search}%")
@@ -36,7 +36,7 @@ class InventoryController extends Controller
         $localities = Locality::select('id', 'name')->get();
         $users = User::select('id', 'name')->get();
 
-        return view('inventory.index', compact('componentes', 'localities', 'users'));
+        return view('inventory.index', compact('components', 'localities', 'users'));
     }
 
     public function create()
@@ -71,17 +71,17 @@ class InventoryController extends Controller
 
     public function show($id)
     {
-        $componente = Inventory::with(['locality', 'creator'])->findOrFail($id);
-        return view('inventory.show', compact('componente'));
+        $component = Inventory::with(['locality', 'creator'])->findOrFail($id);
+        return view('inventory.show', compact('component'));
     }
 
     public function edit($id)
     {
-        $componente = Inventory::findOrFail($id);
+        $component = Inventory::findOrFail($id);
         $localities = Locality::select('id', 'name')->get();
         $users = User::select('id', 'name')->get();
         $user = Auth::user();
-        return view('inventory.edit', compact('componente', 'localities', 'users', 'user'));
+        return view('inventory.edit', compact('component', 'localities', 'users', 'user'));
     }
 
     public function update(Request $request, $id)
@@ -101,16 +101,16 @@ class InventoryController extends Controller
             'dimensions' => 'nullable|string|max:50',
         ]);
 
-        $componente = Inventory::findOrFail($id);
-        $componente->update($request->all());
+        $component = Inventory::findOrFail($id);
+        $component->update($request->all());
 
         return redirect()->route('inventory.index')->with('success', 'Componente actualizado con éxito.');
     }
 
     public function destroy($id)
     {
-        $componente = Inventory::findOrFail($id);
-        $componente->delete();
+        $component = Inventory::findOrFail($id);
+        $component->delete();
 
         return redirect()->route('inventory.index')->with('success', 'Componente eliminado con éxito.');
     }
