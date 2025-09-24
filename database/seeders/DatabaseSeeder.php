@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
+    /**bh 
      * Seed the application's database.
      *
      * @return void
@@ -30,5 +30,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EmployeesTableSeeder::class);
         $this->call(LocalitiesTableSeeder::class);
         $this->call(AdvancePaymentsSeeder::class);
+        $this->call(MembershipSeeder::class);
     }
 }
