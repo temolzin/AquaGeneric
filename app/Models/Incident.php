@@ -59,17 +59,17 @@ class Incident extends Model implements HasMedia
 
     public function getLatestStatus()
     {
-       $incidentStatus = $this->status ? $this->status->status : null; 
-       $incidentUpdatedAt = $this->updated_at;
-       $lastLog = $this->getstatusChangeLogs->first();
+        $incidentStatus = $this->status ? $this->status->status : null;
+        $incidentUpdatedAt = $this->updated_at;
+        $lastLog = $this->getstatusChangeLogs()->first();
 
-    if ($lastLog && !empty($lastLog->status)) {
-        $logUpdatedAt = $lastLog->updated_at;
+        if ($lastLog && !empty($lastLog->status)) {
+            $logUpdatedAt = $lastLog->updated_at;
 
-        if ($logUpdatedAt > $incidentUpdatedAt) {
-            return $lastLog->status;
+            if ($logUpdatedAt > $incidentUpdatedAt) {
+                return $lastLog->status;
+            }
         }
-    }
 
         return $incidentStatus;
     }
