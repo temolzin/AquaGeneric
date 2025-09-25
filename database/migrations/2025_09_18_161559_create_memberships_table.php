@@ -18,7 +18,7 @@ class CreateMembershipsTable extends Migration
             $table->unsignedBigInteger('created_by');
             $table->string('name');
             $table->decimal('price', 10, 2);
-            $table->integer('duration');
+            $table->integer('term_months');
             $table->timestamps();
             $table->softDeletes();
 

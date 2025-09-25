@@ -27,17 +27,17 @@ class MembershipsTableSeeder extends Seeder
             [
                 'name' => 'Basic Plan - 3 Months',
                 'price' => 299.00,
-                'duration' => 3,
+                'term_months' => 3,
             ],
             [
                 'name' => 'Premium Plan - 6 Months', 
                 'price' => 499.00,
-                'duration' => 6,
+                'term_months' => 6,
             ],
             [
                 'name' => 'Enterprise Plan - 12 Months',
                 'price' => 899.00,
-                'duration' => 12,
+                'term_months' => 12,
             ]
         ];
 
@@ -45,7 +45,7 @@ class MembershipsTableSeeder extends Seeder
             DB::table('memberships')->insert([
                 'name' => $membership['name'],
                 'price' => $membership['price'],
-                'duration' => $membership['duration'],
+                'term_months' => $membership['term_months'],
                 'created_by' => $admin->id,
                 'created_at' => now(),
                 'updated_at' => now(),
