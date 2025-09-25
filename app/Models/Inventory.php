@@ -4,16 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class IncidentStatus extends Model
+class Inventory extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected $table = 'inventory';
 
     protected $fillable = [
-        'status',
-        'description',
-        'created_by',
         'locality_id',
+        'created_by',
+        'name',
+        'description',
+        'amount',
+        'category',
+        'material',
+        'dimensions',
     ];
 
     public function locality()
@@ -26,14 +33,8 @@ class IncidentStatus extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function incidents()
+    public function setAmountAttribute($value)
     {
-        return $this->hasMany(Incident::class, 'status_id', 'id');
+        $this->attributes['amount'] = max(0, $value);
     }
-
-    public function hasDependencies()
-    {
-        return $this->incidents()->exists();
-    }
-
 }

@@ -412,6 +412,30 @@ return [
         'url'  => '/expiredSubscriptions/expired',
         'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
     ],
+    [
+        'text' => 'Inventario',
+        'url' => '/inventory',
+        'icon' => 'fas fa-fw fa-boxes',
+        'can'  => 'viewInventory'
+    ],
+    [
+        'text' => 'Mis Pagos',
+        'url' => '/viewMyPayments',
+        'can' => 'viewCustomerPayments',
+        'icon' => 'fas fa-fw fa-dollar-sign text-white',
+    ],
+    [
+        'text' => 'Mis Deudas',
+        'url' => '/viewMyDebts',
+        'can'  => 'viewCustomerDebts',
+        'icon' => 'fas fa-fw fa-exclamation-circle text-white',
+    ],
+    [
+        'text' => 'Mis Tomas de Agua',
+        'url' => '/viewMyWaterConnections',
+        'can' => 'viewWaterConnections',
+        'icon' => 'fas fa-fw fa-water text-white',
+    ],
 ],
 
     /*

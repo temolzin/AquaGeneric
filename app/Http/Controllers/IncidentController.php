@@ -27,7 +27,7 @@ class IncidentController extends Controller
 
         $categories = IncidentCategory::all();
         $employees = Employee::where('locality_id', $authUser->locality_id)->get();
-        $statuses = IncidentStatus::pluck('status');
+        $statuses = IncidentStatus::all();
 
         return view('incidents.index', compact('incidents', 'categories', 'employees', 'statuses'));
     }
@@ -46,7 +46,7 @@ class IncidentController extends Controller
             'start_date' => $request->input('startDate'),
             'description' => $request->input('description'),
             'category_id' => $request->input('category'),
-            'status' => $request->input('status'),
+            'status_id' => $request->input('statusUpdate'),
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
         ];
@@ -80,7 +80,7 @@ class IncidentController extends Controller
             $incident->start_date = $request->input('startDateUpdate');
             $incident->description = $request->input('descriptionUpdate');
             $incident->category_id = $request->input('categoryUpdate');
-            $incident->status = $request->input('statusUpdate');
+            $incident->status_id = $request->input('statusUpdate');
 
             $incident->save();
 

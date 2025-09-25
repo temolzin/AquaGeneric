@@ -3,10 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Costs;
-use App\Models\Customer;
 
-class CreateCustomersTable extends Migration
+class CreateInventoryTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,23 +13,16 @@ class CreateCustomersTable extends Migration
      */
     public function up()
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('inventory', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('created_by');
-            $table->string('name');
-            $table->string('last_name');
-            $table->string('locality');
-            $table->string('zip_code', 5);
-            $table->string('state');
-            $table->string('block');
-            $table->string('street');
-            $table->string('exterior_number')->nullable();
-            $table->string('interior_number');
-            $table->boolean('marital_status');
-            $table->boolean('status');
-            $table->string('responsible_name')->nullable();
-            $table->text('note')->nullable();
+            $table->string('name', 100);
+            $table->text('description')->nullable();
+            $table->integer('amount')->unsigned()->default(0);
+            $table->string('category', 50)->default('general');
+            $table->string('material', 50)->nullable();
+            $table->string('dimensions', 50)->nullable();
             $table->timestamps();
             $table->softDeletes();
 
@@ -47,6 +38,6 @@ class CreateCustomersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('inventory');
     }
 }

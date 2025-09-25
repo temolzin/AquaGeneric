@@ -19,7 +19,7 @@ class Incident extends Model implements HasMedia
         'start_date',
         'description',
         'category_id',
-        'status',
+        'status_id',
     ];
 
     public function locality()
@@ -59,16 +59,17 @@ class Incident extends Model implements HasMedia
 
     public function getLatestStatus()
     {
-        $incidentStatus = $this->status;
-        $incidentUpdatedAt = $this->updated_at;
-        $lastLog = $this->getstatusChangeLogs->first();
+       $incidentStatus = $this->status ? $this->status->status : null; 
+       $incidentUpdatedAt = $this->updated_at;
+       $lastLog = $this->getstatusChangeLogs->first();
 
-        if ($lastLog && !empty($lastLog->status)) {
-            $logUpdatedAt = $lastLog->updated_at;
-            if ($logUpdatedAt > $incidentUpdatedAt) {
-                return $lastLog->status;
-            }
+    if ($lastLog && !empty($lastLog->status)) {
+        $logUpdatedAt = $lastLog->updated_at;
+
+        if ($logUpdatedAt > $incidentUpdatedAt) {
+            return $lastLog->status;
         }
+    }
 
         return $incidentStatus;
     }
@@ -86,5 +87,10 @@ class Incident extends Model implements HasMedia
         }
 
         return $uniqueEmployees;
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(IncidentStatus::class, 'status_id');
     }
 }

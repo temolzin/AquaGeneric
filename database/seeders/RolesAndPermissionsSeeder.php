@@ -13,6 +13,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $roleAdmin = Role::firstOrCreate(['name' => 'Admin']);
         $roleSecretariat = Role::firstOrCreate(['name' => 'Secretaria']);
         $roleSupervisor = Role::firstOrCreate(['name' => 'Supervisor']);
+        $roleCliente = Role::firstOrCreate(['name' => 'Cliente']);
       
         Permission::firstOrCreate([
             'name' => 'viewUser',
@@ -165,6 +166,30 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'deleteIncidentStatuses',
             'description' => 'Permite eliminar los estatus de una incidencia.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'viewCustomerPayments',
+            'description' => 'El cliente puede ver sus pagos'
+        ])->assignRole([$roleCliente]);
+         Permission::firstOrCreate([
+            'name' => 'viewCustomerDebts',
+            'description' => 'El cliente puede ver sus deudas'
+        ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
+            'name' => 'viewWaterConnections',
+            'description' => 'El cliente puede ver sus tomas de agua'
+        ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
+            'name' => 'viewInventory',
+            'description' => 'Permite ver el Inventario.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'updateInventory',
+            'description' => 'Permite editar el Inventario.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'deleteInventory',
+            'description' => 'Permite eliminar el Inventario.'
         ])->assignRole([$roleSupervisor]);
     }
 }
