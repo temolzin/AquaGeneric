@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Incident;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class IncidentSeeder extends Seeder
@@ -50,6 +51,19 @@ class IncidentSeeder extends Seeder
         ];
 
         foreach ($incidents as $incident) {
+            $statusId = DB::table('incident_statuses')->where('status', $incident['status'])->value('id');
+
+            if (!$statusId) {
+                $statusId = DB::table('incident_statuses')->insertGetId([
+                    'status' => $incident['status'],
+                    'description' => null,
+                    'created_by' => $incident['created_by'],
+                    'locality_id' => $incident['locality_id'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
             Incident::updateOrCreate(
                 [
                     'name' => $incident['name'],
@@ -57,7 +71,7 @@ class IncidentSeeder extends Seeder
                 ],
                 [
                     'description' => $incident['description'],
-                    'status' => $incident['status'],
+                    'status_id' => $statusId, 
                     'start_date' => $incident['start_date'],
                     'category_id' => $incident['category_id'],
                     'created_by' => $incident['created_by'],
