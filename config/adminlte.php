@@ -430,6 +430,12 @@ return [
         'can' => 'viewWaterConnections',
         'icon' => 'fas fa-fw fa-water text-white',
     ],
+    [
+        'text' => 'Avisos',
+        'url' => '/localityNotices',
+        'can' => 'viewNotice',
+        'icon' => 'fas fa-fw fa-bell text-white',
+    ],
 ],
 
     /*
