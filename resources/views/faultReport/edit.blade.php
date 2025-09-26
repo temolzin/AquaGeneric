@@ -20,13 +20,13 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="titleUpdate" class="form-label">Título(*)</label>
-                                            <input type="text" class="form-control" name="titleUpdate" placeholder="Título del reporte" value="{{ $report->title }}" required />
+                                            <input type="text" class="form-control" name="titleUpdate" placeholder="Título del reporte" value="{{ $report->title }}" required readonly/>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="descriptionUpdate" class="form-label">Descripción(*)</label>
-                                            <textarea class="form-control" name="descriptionUpdate" placeholder="Descripción del reporte" required>{{ $report->description }}</textarea>
+                                            <textarea class="form-control" name="descriptionUpdate" placeholder="Descripción del reporte" required readonly>{{ $report->description }}</textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -34,17 +34,18 @@
                                             <label for="statusUpdate" class="form-label">Estado(*)</label>
                                             <select name="statusUpdate" class="form-control select2" required>
                                                 <option value="">Selecciona un estado</option>
-                                                <option value="earring" {{ $report->status === 'earring' ? 'selected' : '' }}>Pendiente</option>
-                                                <option value="inprocess" {{ $report->status === 'inprocess' ? 'selected' : '' }}>En proceso</option>
-                                                <option value="resolved" {{ $report->status === 'resolved' ? 'selected' : '' }}>Resuelto</option>
-                                                <option value="closed" {{ $report->status === 'closed' ? 'selected' : '' }}>Cerrado</option>
+                                                <option value="Earring" {{ $report->status === 'Earring' ? 'selected' : '' }}>Pendiente</option>
+                                                <option value="In process" {{ $report->status === 'In process' ? 'selected' : '' }}>En proceso</option>
+                                                <option value="Resolved" {{ $report->status === 'Resolved' ? 'selected' : '' }}>Resuelto</option>
+                                                <option value="Closed" {{ $report->status === 'Closed' ? 'selected' : '' }}>Cerrado</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="dateReportUpdate" class="form-label">Fecha del reporte(*)</label>
-                                            <input type="date" class="form-control" name="dateReportUpdate" value="{{ $report->date_report }}" required />
+                                            <input type="date" class="form-control" name="dateReportUpdate" 
+                                                   value="{{ old('dateReportUpdate', \Carbon\Carbon::parse($report->date_report)->format('Y-m-d')) }}" required readonly/>
                                         </div>
                                     </div>
                                 </div>

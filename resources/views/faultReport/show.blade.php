@@ -41,21 +41,16 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Estado</label>
-                                        <input type="text" disabled class="form-control" value="{{ ucfirst($report->status) }}" />
+                                        <input type="text" disabled class="form-control"
+                                            value="@switch($report->status)
+                                                        @case('Earring') Pendiente @break
+                                                        @case('In process') En proceso @break
+                                                        @case('Resolved') Resuelto @break
+                                                        @case('Closed') Cerrado @break
+                                                        @default {{ $report->status }} @break
+                                                    @endswitch" />
                                     </div>
                                 </div>
-                                @if($report->attachment_url)
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Archivo Adjunto</label>
-                                        <form action="{{ $report->attachment_url }}" method="get" target="_blank">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-eye"></i> Ver archivo
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                                @endif
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Reportado por</label>

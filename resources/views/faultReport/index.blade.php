@@ -54,11 +54,21 @@
                                                     <td>{{ $report->title }}</td>
                                                     <td>
                                                         @switch($report->status)
-                                                            @case('Earning') Abierto @break
-                                                            @case('In process') En proceso @break
-                                                            @case('Resolved') Resuelto @break
-                                                            @case('Closed') Cerrado @break
-                                                            @default {{ $report->status }} @break
+                                                            @case('Earring')
+                                                                Pendiente
+                                                                @break
+                                                            @case('In process')
+                                                                En proceso
+                                                                @break
+                                                            @case('Resolved')
+                                                                Resuelto
+                                                                @break
+                                                            @case('Closed')
+                                                                Cerrado
+                                                                @break
+                                                            @default
+                                                                {{ $report->status }}
+                                                                @break
                                                         @endswitch
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($report->date_report)->format('d/m/Y') }}</td>
@@ -77,7 +87,7 @@
                                                             @endcan
 
                                                             @can('deleteFaultReport')
-                                                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $report->id }}">
+                                                            <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $report->id }}" disabled>
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                             @endcan
