@@ -24,13 +24,11 @@
                                         </div>
                                     </form>
                                     <div class="d-flex flex-wrap justify-content-end gap-2 w-100 w-md-auto">
-                                        @can('createMemberships')
                                         <button class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-2" data-toggle='modal'
                                                 data-target="#createMembership" title="Registrar Membresía">
                                             <i class="fa fa-plus"></i>
                                             <span class="d-none d-md-inline">Registrar Membresía</span>
                                         </button>
-                                        @endcan
                                     </div>
                                 </div>
                             </div>

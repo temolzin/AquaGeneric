@@ -413,12 +413,6 @@ return [
         'icon' => 'fas fa-fw fa-id-card',
         'can' => 'viewMemberships'
     ],
-
-    [
-        'text' => 'Falta de pago',
-        'url'  => '/expiredSubscriptions/expired',
-        'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
-    ],
     [
         'text' => 'Falta de pago',
         'url'  => '/expiredSubscriptions/expired',

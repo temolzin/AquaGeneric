@@ -29,7 +29,12 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Precio</label>
-                                        <input type="text" disabled class="form-control" value="${{ number_format($membership->price, 2) }}" />
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
+                                            </div>
+                                            <input type="text" disabled class="form-control" value="{{ number_format($membership->price, 2) }}" />
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">

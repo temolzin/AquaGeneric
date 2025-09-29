@@ -194,18 +194,14 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'viewMemberships',
             'description' => 'Permite ver las Membresías.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat]);
-        Permission::firstOrCreate([
-            'name' => 'createMemberships',
-            'description' => 'Permite crear Membresías.'
-        ])->assignRole([$roleSupervisor]);
+        ])->assignRole([$roleAdmin]);
         Permission::firstOrCreate([
             'name' => 'editMemberships',
             'description' => 'Permite editar las Membresías.'
-        ])->assignRole([$roleSupervisor]);
+        ])->assignRole([$roleAdmin]);
         Permission::firstOrCreate([
             'name' => 'deleteMemberships',
             'description' => 'Permite eliminar las Membresías.'
-        ])->assignRole([$roleSupervisor]);
+        ])->assignRole([$roleAdmin]);
     }
 }

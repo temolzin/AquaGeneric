@@ -34,7 +34,12 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="price" class="form-label">Precio(*)</label>
-                                            <input type="number" step="0.01" class="form-control" name="price" value="{{ $membership->price }}" required>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
+                                                </div>
+                                                <input type="number" step="0.01" class="form-control" name="price" value="{{ $membership->price }}" required>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
