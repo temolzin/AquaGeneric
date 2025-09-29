@@ -442,6 +442,12 @@ return [
         'can' => 'viewNotice',
         'icon' => 'fas fa-fw fa-bell text-white',
     ],
+    [
+        'text' => 'Reporte de fallas',
+        'url' => '/faultReport',
+        'icon' => 'fa fa-clipboard-list',
+        'can'  => 'viewFaultReport'
+    ],
 ],
 
     /*

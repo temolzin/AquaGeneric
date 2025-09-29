@@ -10,6 +10,7 @@ use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GeneralExpenseController;
+use App\Http\Controllers\FaultReportController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
@@ -165,6 +166,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/reports/generateIncidentStatusListReport', [IncidentStatusController::class, 'generateIncidentStatusListReport'])->name('report.generateIncidentStatusListReport');
     });
 
+    Route::group(['middleware' => ['can:viewFaultReport']], function () {
+        Route::get('/faultReport', [FaultReportController::class, 'index'])->name('faultReport.index');
+        Route::resource('faultReport', FaultReportController::class);
+    });
+  
     Route::group(['middleware' => ['can:viewNotice']], function () {
         Route::get('/localityNotices', [LocalityNoticeController::class, 'index'])->name('localityNotices.index');
         Route::resource('localityNotices', LocalityNoticeController::class);
