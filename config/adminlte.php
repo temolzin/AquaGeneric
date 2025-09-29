@@ -309,7 +309,7 @@ return [
     [
         'text' => 'Panel',
         'url' => '/dashboard',
-        'icon' => 'fa fa-home',
+        'icon' => 'fas fa-fw fa-home',
     ],
     [
         'text' => 'Usuarios',
@@ -404,13 +404,43 @@ return [
     [
         'text' => 'Empleados',
         'url' => '/employees',
-        'icon' => 'fas fa-solid fa-users',
+        'icon' => 'fas fa-fw fa-users',
         'can' => 'viewEmployee'
     ],
     [
         'text' => 'Falta de pago',
         'url'  => '/expiredSubscriptions/expired',
-        'icon' => 'fas fa-exclamation-circle text-warning',
+        'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
+    ],
+    [
+        'text' => 'Inventario',
+        'url' => '/inventory',
+        'icon' => 'fas fa-fw fa-boxes',
+        'can'  => 'viewInventory'
+    ],
+    [
+        'text' => 'Mis Pagos',
+        'url' => '/viewMyPayments',
+        'can' => 'viewCustomerPayments',
+        'icon' => 'fas fa-fw fa-dollar-sign text-white',
+    ],
+    [
+        'text' => 'Mis Deudas',
+        'url' => '/viewMyDebts',
+        'can'  => 'viewCustomerDebts',
+        'icon' => 'fas fa-fw fa-exclamation-circle text-white',
+    ],
+    [
+        'text' => 'Mis Tomas de Agua',
+        'url' => '/viewMyWaterConnections',
+        'can' => 'viewWaterConnections',
+        'icon' => 'fas fa-fw fa-water text-white',
+    ],
+    [
+        'text' => 'Avisos',
+        'url' => '/localityNotices',
+        'can' => 'viewNotice',
+        'icon' => 'fas fa-fw fa-bell text-white',
     ],
     [
         'text' => 'Reporte de fallas',

@@ -14,6 +14,7 @@ use App\Http\Controllers\FaultReportController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\AdvancePaymentController;
 use App\Http\Controllers\IncidentCategoriesController;
 use App\Http\Controllers\IncidentController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\LogIncidentController;
 use App\Http\Controllers\IncidentStatusController;
 use App\Http\Controllers\MailConfigurationController;
 use App\Http\Controllers\ExpiredSubscriptionController;
+use App\Http\Controllers\LocalityNoticeController;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
 
@@ -70,6 +72,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('customers', CustomerController::class);
         Route::get('/customers-with-debts', [CustomerController::class, 'customersWithDebts'])->name('report.with-debts');
         Route::get('/report/pdfCustomers', [CustomerController::class, 'pdfCustomers'])->name('customers.pdfCustomers');
+        Route::get('/report/pdfCustomersSummary', [CustomerController::class, 'generateCustomerSummaryPdf'])->name('customers.pdfCustomersSummary');
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
         Route::get('/payment-history/{id}', [CustomerController::class, 'generatePaymentHistoryReport'])->name('reports.paymentHistoryReport');
     });
@@ -119,6 +122,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::patch('/waterConnections/{id}/reactivate', [WaterConnectionController::class, 'reactivate'])->name('waterConnections.reactivate');
     });
 
+    Route::group(['middleware' => ['can:viewInventory']], function () {
+        Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+        Route::resource('inventory', InventoryController::class);
+    });
+
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
         Route::get('/generalExpenses', [GeneralExpenseController::class, 'index'])->name('expenses.index');
         Route::resource('generalExpenses', GeneralExpenseController::class);
@@ -161,6 +169,14 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewFaultReport']], function () {
         Route::get('/faultReport', [FaultReportController::class, 'index'])->name('faultReport.index');
         Route::resource('faultReport', FaultReportController::class);
+    });
+  
+    Route::group(['middleware' => ['can:viewNotice']], function () {
+        Route::get('/localityNotices', [LocalityNoticeController::class, 'index'])->name('localityNotices.index');
+        Route::resource('localityNotices', LocalityNoticeController::class);
+        Route::post('/localityNotices/{id}/toggle-status', [LocalityNoticeController::class, 'toggleStatus'])->name('localityNotices.toggle-status');
+        Route::get('/api/localities/{localityId}/active-notices', [LocalityNoticeController::class, 'getActiveByLocality'])->name('localityNotices.active-by-locality');
+        Route::get('localityNotices/{id}/download', [LocalityNoticeController::class, 'downloadAttachment'])->name('localityNotices.download');
     });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');

@@ -41,7 +41,7 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="status" class="form-label">Estatus(*)</label>
-                                        <input type="text" disabled class="form-control" value="{{ $incident->getLatestStatus() }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $incident->status->status ?? 'Sin estado' }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-12">

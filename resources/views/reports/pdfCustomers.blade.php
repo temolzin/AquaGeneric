@@ -166,7 +166,7 @@
                     <tr>
                         <th class="textable">ID</th>
                         <th class="textable">NOMBRE</th>
-                        <th class="textable">MANZANA</th>
+                        <th class="textable">NUM. EXTERIOR</th>
                         <th class="textable">CALLE</th>
                         <th class="textable">NUM. INTERIOR</th>
                         <th class="textable">ESTADO CIVIL</th>
