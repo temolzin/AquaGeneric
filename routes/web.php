@@ -24,6 +24,7 @@ use App\Http\Controllers\MailConfigurationController;
 use App\Http\Controllers\ExpiredSubscriptionController;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
+use App\Http\Controllers\MembershipController;
 
 /*
 |--------------------------------------------------------------------------
@@ -162,6 +163,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewIncidentStatuses']], function () {
         Route::resource('incidentStatuses', IncidentStatusController::class);
         Route::get('/reports/generateIncidentStatusListReport', [IncidentStatusController::class, 'generateIncidentStatusListReport'])->name('report.generateIncidentStatusListReport');
+    });
+
+    Route::group(['middleware' => ['can:viewMemberships']], function () {
+        Route::resource('memberships', MembershipController::class);
+        Route::get('/reports/generateMembershipListReport', [MembershipController::class, 'generateMembershipListReport'])->name('report.generateMembershipListReport');
     });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');

@@ -191,5 +191,21 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteInventory',
             'description' => 'Permite eliminar el Inventario.'
         ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'viewMemberships',
+            'description' => 'Permite ver las Membresías.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'createMemberships',
+            'description' => 'Permite crear Membresías.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'editMemberships',
+            'description' => 'Permite editar las Membresías.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'deleteMemberships',
+            'description' => 'Permite eliminar las Membresías.'
+        ])->assignRole([$roleSupervisor]);
     }
 }
