@@ -178,6 +178,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'deleteFaultReport',
             'description' => 'Permite eliminar el reporte de fallas.'
+        ])->assignRole([$roleSupervisor]);
         Permission::firstOrCreate([ 
             'name' => 'viewNotice',
             'description' => 'Permite ver los Avisos de Localidades.'
