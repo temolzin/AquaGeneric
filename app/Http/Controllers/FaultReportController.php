@@ -68,4 +68,3 @@ class FaultReportController extends Controller
         return redirect()->route('faultReport.index')->with('success', 'Reporte de falla eliminado correctamente.');
     }
 }
-
