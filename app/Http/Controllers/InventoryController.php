@@ -7,6 +7,7 @@ use App\Models\Locality;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InventoryController extends Controller
 {
@@ -113,5 +114,25 @@ class InventoryController extends Controller
         $component->delete();
 
         return redirect()->route('inventory.index')->with('success', 'Componente eliminado con éxito.');
+    }
+
+    public function generateInventoryPdf(Request $request)
+    {
+        $authUser = Auth::user();
+        $query = Inventory::where('locality_id', $authUser->locality_id);
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('category', 'like', "%{$search}%")
+                  ->orWhere('material', 'like', "%{$search}%")
+                  ->orWhere('id', $search);
+            });
+        }
+
+        $components = $query->get();
+        $pdf = Pdf::loadView('reports.pdfInventory', compact('components', 'authUser'))
+                  ->setPaper('A4', 'portrait');
+        return $pdf->stream('inventario.pdf');
     }
 }
