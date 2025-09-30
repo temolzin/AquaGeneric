@@ -84,7 +84,7 @@ class DashboardController extends Controller
 
         return view('dashboard', compact('data', 'authUser', 'hasMailConfig', 'notices'));
     }
-    
+
     public function getEarningsByLocality(Request $request)
     {
         $localityId = $request->input('locality_id');

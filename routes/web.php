@@ -180,7 +180,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     });
 
     Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
-        Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
+    Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
     });
 
 });
