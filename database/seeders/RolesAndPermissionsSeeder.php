@@ -204,6 +204,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'El cliente puede ver sus tomas de agua'
         ])->assignRole([$roleCliente]);
         Permission::firstOrCreate([
+            'name' => 'viewCustomerNotices',
+            'description' => 'Permite ver los avisos por localidad a los clientes.'
+        ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
             'name' => 'viewInventory',
             'description' => 'Permite ver el Inventario.'
         ])->assignRole([$roleSupervisor]);
