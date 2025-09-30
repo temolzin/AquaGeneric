@@ -10,6 +10,7 @@ use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GeneralExpenseController;
+use App\Http\Controllers\FaultReportController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\LogIncidentController;
 use App\Http\Controllers\IncidentStatusController;
 use App\Http\Controllers\MailConfigurationController;
 use App\Http\Controllers\ExpiredSubscriptionController;
+use App\Http\Controllers\LocalityNoticeController;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
 
@@ -162,6 +164,19 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewIncidentStatuses']], function () {
         Route::resource('incidentStatuses', IncidentStatusController::class);
         Route::get('/reports/generateIncidentStatusListReport', [IncidentStatusController::class, 'generateIncidentStatusListReport'])->name('report.generateIncidentStatusListReport');
+    });
+
+    Route::group(['middleware' => ['can:viewFaultReport']], function () {
+        Route::get('/faultReport', [FaultReportController::class, 'index'])->name('faultReport.index');
+        Route::resource('faultReport', FaultReportController::class);
+    });
+  
+    Route::group(['middleware' => ['can:viewNotice']], function () {
+        Route::get('/localityNotices', [LocalityNoticeController::class, 'index'])->name('localityNotices.index');
+        Route::resource('localityNotices', LocalityNoticeController::class);
+        Route::post('/localityNotices/{id}/toggle-status', [LocalityNoticeController::class, 'toggleStatus'])->name('localityNotices.toggle-status');
+        Route::get('/api/localities/{localityId}/active-notices', [LocalityNoticeController::class, 'getActiveByLocality'])->name('localityNotices.active-by-locality');
+        Route::get('localityNotices/{id}/download', [LocalityNoticeController::class, 'downloadAttachment'])->name('localityNotices.download');
     });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
