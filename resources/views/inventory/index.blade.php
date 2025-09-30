@@ -28,6 +28,9 @@
                                     <span class="d-none d-lg-inline">Registrar Componente</span>
                                     <span class="d-inline d-lg-none">Nuevo Componente</span>
                                 </button>
+                                <a class="btn btn-secondary" target="_blank"href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}" title="Generar Lista">
+                                    <i class="fas fa-file-pdf"></i> Generar Lista
+                                </a>
                             </div>
                         </div>
                     </div>
