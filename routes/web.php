@@ -179,6 +179,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/api/localities/{localityId}/active-notices', [LocalityNoticeController::class, 'getActiveByLocality'])->name('localityNotices.active-by-locality');
         Route::get('localityNotices/{id}/download', [LocalityNoticeController::class, 'downloadAttachment'])->name('localityNotices.download');
     });
+
+    Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
+    Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
+    });
+
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
     Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');
