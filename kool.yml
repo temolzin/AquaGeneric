@@ -12,22 +12,12 @@ scripts:
     - kool start
     - kool run composer install
     - kool run artisan key:generate
-  reset:
-    - kool run composer install
-    - kool run artisan migrate:fresh --seed
-    - kool run npm install
   before-start:
     - cp .env.example .env
     - kool run npm install
   # CLI access to MySQL
   mysql: kool exec -e MYSQL_PWD=$DB_PASSWORD database mysql -u $DB_USERNAME $DB_DATABASE
-  npx: kool docker kooldev/node:20 npx
-  # npm - helpers for JS handling
-  npm: kool docker kooldev/node:20 npm
-  
   init:
     - kool start
     - kool run composer install
     - kool run artisan migrate --seed
-    - kool run npm install
-    - kool run npm run build

@@ -33,16 +33,6 @@ services:
       - kool_local
     healthcheck:
       test: ["CMD", "mysqladmin", "ping"]
-  node:
-    image: kooldev/node:20
-    command: ["npm", "run", "dev"]
-    ports:
-      - "3001:3001"
-    volumes:
-      - .:/app:delegated
-    networks:
-      - kool_local
-      - kool_global
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: kool_phpmyadmin
