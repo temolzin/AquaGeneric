@@ -6,6 +6,7 @@ use App\Models\WaterConnection;
 use App\Models\Customer;
 use App\Models\Cost;
 use Illuminate\Http\Request;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class WaterConnectionController extends Controller
 {
@@ -134,5 +135,89 @@ class WaterConnectionController extends Controller
         $connection->save();
 
         return redirect()->route('waterConnections.index')->with('success', 'Toma reactivada y asignada correctamente.');
+    }
+    
+    public function generateQrAjax($id)
+    {
+    try {
+        $connection = WaterConnection::findOrFail($id);
+        $publicUrl = route('waterConnections.public.form', ['id' => $id]);
+        
+        $qrCode = base64_encode(QrCode::format('svg')
+            ->size(300)
+            ->margin(2)
+            ->errorCorrection('H')
+            ->generate($publicUrl));
+        
+        $downloadUrl = route('waterConnections.qr-download', $id);
+        
+        return response()->json([
+            'success' => true,
+            'image' => 'data:image/svg+xml;base64,' . $qrCode,
+            'download_url' => $downloadUrl
+        ]);
+        
+    } catch (\Exception $e) {
+        \Log::error('Error generando QR: ' . $e->getMessage());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al generar el código QR: ' . $e->getMessage()
+        ], 500);
+    }
+    }
+
+    public function downloadQr($id)
+    {
+    try {
+        $connection = WaterConnection::findOrFail($id);
+        $publicUrl = route('waterConnections.public.form', ['id' => $id]);
+        
+        $qrCode = QrCode::format('svg')
+            ->size(400)
+            ->margin(2)
+            ->errorCorrection('H')
+            ->generate($publicUrl);
+        
+        $fileName = "QR_Toma_{$connection->id}.svg";
+        
+        return response($qrCode)
+            ->header('Content-Type', 'image/svg+xml')
+            ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+            
+    } catch (\Exception $e) {
+        return back()->with('error', 'Error al descargar el código QR');
+    }
+    }
+
+    public function showPublicForm($id)
+    {
+    if (!auth()->check()) {
+        return redirect()->route('login')
+            ->with('error', 'Debes iniciar sesión para ver esta información');
+    } 
+    return view('waterConnections.public-form', compact('id'));
+    }
+
+    public function showPublic(Request $request)
+    {
+    try {
+        if (!auth()->check()) {
+            return redirect()->route('login')
+                ->with('error', 'Debes iniciar sesión para ver esta información');
+        }
+
+        $request->validate([
+            'id' => 'required|integer|exists:water_connections,id'
+        ]);
+
+        $connection = WaterConnection::with(['customer', 'locality'])
+            ->findOrFail($request->id);
+        
+        return view('waterConnections.public', compact('connection'));
+        
+    } catch (\Exception $e) {
+        abort(404, 'Toma de agua no encontrada');
+    }
     }
 }
