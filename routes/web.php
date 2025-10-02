@@ -161,7 +161,6 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware' => ['can:viewMemberships']], function () {
         Route::resource('memberships', MembershipController::class);
-        Route::get('/reports/generateMembershipListReport', [MembershipController::class, 'generateMembershipListReport'])->name('report.generateMembershipListReport');
     });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
