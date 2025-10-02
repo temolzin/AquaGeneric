@@ -26,6 +26,7 @@ use App\Http\Controllers\ExpiredSubscriptionController;
 use App\Http\Controllers\LocalityNoticeController;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
+use App\Http\Controllers\MembershipController;
 
 /*
 |--------------------------------------------------------------------------
@@ -184,6 +185,9 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
     });
 
+    Route::group(['middleware' => ['can:viewMemberships']], function () {
+        Route::resource('memberships', MembershipController::class);
+    });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
     Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');
