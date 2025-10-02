@@ -454,6 +454,12 @@ return [
         'icon' => 'fa fa-clipboard-list',
         'can'  => 'viewFaultReport'
     ],
+    [
+        'text' => 'Lista de Reportes',
+        'url' => '/reportList',
+        'icon' => 'fas fa-fw fa-file-alt',
+        'can' => 'viewReportsLists',
+    ],
 ],
 
     /*
