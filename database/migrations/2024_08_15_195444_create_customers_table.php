@@ -19,8 +19,8 @@ class CreateCustomersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('created_by');
-            $table->string('name');
-            $table->string('last_name');
+            $table->string('name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('locality');
             $table->string('zip_code', 5);
             $table->string('state');

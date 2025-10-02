@@ -73,4 +73,9 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(Payment::class, 'created_at');
     }
+    
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class);
+    }
 }
