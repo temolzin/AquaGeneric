@@ -72,7 +72,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="emailUpdate" class="form-label">Correo electrónico</label>
-                                            <input type="email" class="form-control" id="emailUpdate" name="emailUpdate"  value="{{ $customer->email }}">
+                                            <input type="email" class="form-control" id="emailUpdate" name="emailUpdate"  value="{{ $customer->email }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="exteriorNumberUpdate" class="form-label">Manzana</label>
+                                            <label for="exteriorNumberUpdate" class="form-label">Número Exterior(*)</label>
                                             <input type="text" class="form-control" name="exteriorNumberUpdate" id="exteriorNumberUpdate" value="{{ $customer->exterior_number }}" >
                                         </div>
                                     </div>
