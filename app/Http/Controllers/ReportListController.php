@@ -7,10 +7,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use App\Models\Customer;
 
-class ReportListController extends Controller
-{
-    public function index(Request $request)
-    {
+class ReportListController extends Controller{
+    public function index(Request $request){
         $menuItems = config('adminlte.menu');
         $sections = [];
 
