@@ -23,14 +23,18 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2" data-toggle="modal" data-target="#createInventory" title="Registrar Componente">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-lg-inline">Registrar Componente</span>
-                                    <span class="d-inline d-lg-none">Nuevo Componente</span>
-                                </button>
-                                <a class="btn btn-secondary" target="_blank"href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}" title="Generar Lista">
-                                    <i class="fas fa-file-pdf"></i> Generar Lista
-                                </a>
+                                <div class="d-flex flex-wrap justify-content-end gap-2 w-100 w-md-auto">
+                                    <button class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-2" data-toggle="modal" data-target="#createInventory" title="Registrar Componente">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Componente</span>
+                                        <span class="d-inline d-md-none">Nuevo Componente</span>
+                                    </button>
+                                    <a class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank" 
+                                    href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}" 
+                                    title="Generar Lista">
+                                        <i class="fas fa-file-pdf"></i> Generar Lista
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

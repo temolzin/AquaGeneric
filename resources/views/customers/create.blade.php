@@ -71,8 +71,8 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="email" class="form-label">Correo electrónico</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" />
+                                            <label for="email" class="form-label">Correo electrónico(*)</label>
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="exterior_number" class="form-label">Número Exterior</label>
+                                            <label for="exterior_number" class="form-label">Número Exterior(*)</label>
                                             <input type="text" pattern=".*\S.*" class="form-control" id="exterior_number" name="exterior_number" placeholder="Ingresa número exterior" value="{{ old('exterior_number') }}" />
                                         </div>
                                     </div>
