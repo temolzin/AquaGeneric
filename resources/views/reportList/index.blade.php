@@ -162,6 +162,9 @@
         box-sizing: border-box;
         margin: 0;
     }
+    .button-group-uniform .report-btn i {
+        margin-right: 8px;
+    }
     @media (max-width: 768px) {
         .button-group-uniform {
             flex-wrap: wrap;
