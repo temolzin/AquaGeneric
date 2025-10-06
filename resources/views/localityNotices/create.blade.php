@@ -132,6 +132,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('attachment');
     const fileLabel = document.querySelector('.custom-file-label');
 
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const endDateInput = document.getElementById('end_date');
+    if (endDateInput) {
+        endDateInput.min = tomorrow.toISOString().split('T')[0];
+    }
+
+    const startDateInput = document.getElementById('start_date');
+    if (startDateInput) {
+        startDateInput.min = today.toISOString().split('T')[0];
+        
+        startDateInput.addEventListener('change', function() {
+            const selectedStartDate = new Date(this.value);
+            const minEndDate = new Date(selectedStartDate);
+            minEndDate.setDate(minEndDate.getDate() + 1);
+            
+            if (endDateInput) {
+                endDateInput.min = minEndDate.toISOString().split('T')[0];
+                
+                const currentEndDate = new Date(endDateInput.value);
+                if (endDateInput.value && currentEndDate <= selectedStartDate) {
+                    endDateInput.value = '';
+                }
+            }
+        });
+    }
+
     fileInput.addEventListener('change', function (event) {
         const input = event.target;
         const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
