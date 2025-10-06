@@ -406,7 +406,6 @@ class PaymentController extends Controller
             'totalTransfer'  => $totalTransfer,
         ])->setPaper('A4', 'portrait');
 
-        return response($pdf->output(), 200)
-            ->header('Content-Type', 'application/pdf');
+        return $pdf->stream('reporte_corte_caja.pdf');
     }
 }

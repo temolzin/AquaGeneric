@@ -26,7 +26,6 @@ use App\Http\Controllers\ExpiredSubscriptionController;
 use App\Http\Controllers\LocalityNoticeController;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
-use App\Models\CashClosure;
 
 /*
 |--------------------------------------------------------------------------
