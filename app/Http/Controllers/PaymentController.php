@@ -366,51 +366,47 @@ class PaymentController extends Controller
     }
     
     public function cashClosurePaymentsReport()
-{    
-    $authUser = auth()->user();
-    $today = now()->toDateString();
+    {    
+        $authUser = auth()->user();
+        $today = now()->toDateString();
 
-    // Obtener pagos y gastos del día
-    $payments = Payment::where('locality_id', $authUser->locality_id)
-        ->whereDate('created_at', $today)
-        ->get();
+        $payments = Payment::where('locality_id', $authUser->locality_id)
+            ->whereDate('created_at', $today)
+            ->get();
 
-    $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
-        ->whereDate('expense_date', $today)
-        ->get();
+        $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
+            ->whereDate('expense_date', $today)
+            ->get();
 
-    // Calcular totales
-    $totalPayments = $payments->sum('amount');
-    $totalExpenses = $expenses->sum('amount');
-    $totalCash = $payments->where('method', 'cash')->sum('amount');
-    $totalCard = $payments->where('method', 'card')->sum('amount');
-    $totalTransfer = $payments->where('method', 'transfer')->sum('amount');
-    $finalAmount = $totalPayments - $totalExpenses;
+        $totalPayments = $payments->sum('amount');
+        $totalExpenses = $expenses->sum('amount');
+        $totalCash = $payments->where('method', 'cash')->sum('amount');
+        $totalCard = $payments->where('method', 'card')->sum('amount');
+        $totalTransfer = $payments->where('method', 'transfer')->sum('amount');
+        $finalAmount = $totalPayments - $totalExpenses;
 
-    // Crear un arreglo “simulando” el corte de caja
-    $latestClosure = (object)[
-        'opened_at'      => now()->startOfDay(),
-        'closed_at'      => now()->endOfDay(),
-        'initial_amount' => 0,
-        'final_amount'   => $finalAmount,
-        'total_sales'    => $totalPayments,
-        'total_expenses' => $totalExpenses,
-    ];
+        $latestClosure = (object)[
+            'opened_at'      => now()->startOfDay(),
+            'closed_at'      => now()->endOfDay(),
+            'initial_amount' => 0,
+            'final_amount'   => $finalAmount,
+            'total_sales'    => $totalPayments,
+            'total_expenses' => $totalExpenses,
+        ];
 
-    // Generar PDF
-    $pdf = PDF::loadView('reports.pdfCashClosures', [
-        'closures'       => collect([$latestClosure]),
-        'payments'       => $payments,
-        'expenses'       => $expenses,
-        'authUser'       => $authUser,
-        'totalPayments'  => $totalPayments,
-        'totalExpenses'  => $totalExpenses,
-        'totalCash'      => $totalCash,
-        'totalCard'      => $totalCard,
-        'totalTransfer'  => $totalTransfer,
-    ])->setPaper('A4', 'portrait');
+        $pdf = PDF::loadView('reports.pdfCashClosures', [
+            'closures'       => collect([$latestClosure]),
+            'payments'       => $payments,
+            'expenses'       => $expenses,
+            'authUser'       => $authUser,
+            'totalPayments'  => $totalPayments,
+            'totalExpenses'  => $totalExpenses,
+            'totalCash'      => $totalCash,
+            'totalCard'      => $totalCard,
+            'totalTransfer'  => $totalTransfer,
+        ])->setPaper('A4', 'portrait');
 
-    return response($pdf->output(), 200)
-        ->header('Content-Type', 'application/pdf');
-}
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf');
+    }
 }
