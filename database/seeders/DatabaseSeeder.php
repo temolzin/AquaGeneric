@@ -24,8 +24,8 @@ class DatabaseSeeder extends Seeder
         $this->call(PaymentsTableSeeder::class);
         $this->call(DashboardExpiringPaidDebtsSeeder::class);
         $this->call(ExpenseTypeSeeder::class);
-        $this->call(GeneralExpensesSeeder::class); 
-        $this->call(MailConfigurationsTableSeeder::class); 
+        $this->call(GeneralExpensesSeeder::class);
+        $this->call(MailConfigurationsTableSeeder::class);
         $this->call(IncidentStatusSeeder::class);
         $this->call(IncidentCategorySeeder::class);
         $this->call(IncidentSeeder::class);
@@ -37,5 +37,7 @@ class DatabaseSeeder extends Seeder
         $this->call(InventoryTableSeeder::class);
         $this->call(MembershipsTableSeeder::class);
         $this->call(SectionsSeeder::class);
+        $this->call(MigrateCustomersToUsersSeeder::class);
+        $this->call(AssignCustomerRoleSeeder::class);
     }
 }

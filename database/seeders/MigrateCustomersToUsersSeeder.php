@@ -17,7 +17,6 @@ class MigrateCustomersToUsersSeeder extends Seeder
      */
     public function run()
     {
-          // Solo tomar customers que no tengan user_id asignado
         $customers = DB::table('customers')->whereNull('user_id')->get();
 
         foreach ($customers as $customer) {
