@@ -21,6 +21,7 @@ class LocalityController extends Controller
         }
 
         $localities = $query->paginate(10);
+        $memberships = \App\Models\Membership::all();
 
         $mailExamples = [
             'mailer'  => MailConfiguration::EXAMPLE_MAILER,
@@ -31,8 +32,8 @@ class LocalityController extends Controller
             'encryption'  => MailConfiguration::EXAMPLE_ENCRYPTION,
             'from_name'  => MailConfiguration::EXAMPLE_FROM_NAME,
         ];
-        
-        return view('localities.index', compact('localities','mailExamples'));
+
+        return view('localities.index', compact('localities','mailExamples', 'memberships')); // Agregar memberships aquí
     }
 
     public function store(Request $request)
@@ -93,14 +94,17 @@ class LocalityController extends Controller
     {
         $request->validate([
             'startDate' => 'required|date',
-            'endDate' => 'required|date|after_or_equal:startDate',
+            'membership_id' => 'required|exists:memberships,id',
         ]);
 
         $id = $request->input('idLocality');
         $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
-      
-        $token = Token::generateTokenForLocality($id, $startDate, $endDate);
+        $membershipId = $request->input('membership_id');
+
+        $membership = \App\Models\Membership::find($membershipId);
+        $endDate = \Carbon\Carbon::parse($startDate)->addMonths($membership->term_months);
+
+        $token = Token::generateTokenForLocality($id, $startDate, $endDate->toDateString());
 
         $locality = Locality::find($id);
 
