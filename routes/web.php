@@ -26,6 +26,7 @@ use App\Http\Controllers\ExpiredSubscriptionController;
 use App\Http\Controllers\LocalityNoticeController;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
+use App\Http\Controllers\MembershipController;
 
 /*
 |--------------------------------------------------------------------------
@@ -125,6 +126,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewInventory']], function () {
         Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::resource('inventory', InventoryController::class);
+        Route::get('/reports/pdfInventory', [InventoryController::class, 'generateInventoryPdf'])->name('inventory.pdfInventory');
     });
 
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
@@ -181,6 +183,14 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     
     Route::get('/cash-closures/generate-latest', [PaymentController::class, 'cashClosurePaymentsReport'])
     ->name('cash-closures.generate.latest');
+
+    Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
+    Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
+    });
+
+    Route::group(['middleware' => ['can:viewMemberships']], function () {
+        Route::resource('memberships', MembershipController::class);
+    });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
     Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');
