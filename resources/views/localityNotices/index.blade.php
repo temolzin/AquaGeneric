@@ -49,6 +49,7 @@
                                                 <th>LOCALIDAD</th>
                                                 <th>FECHA INICIO</th>
                                                 <th>FECHA FIN</th>
+                                                <th>ESTATUS</th>
                                                 <th>OPCIONES</th>
                                             </tr>
                                         </thead>
@@ -62,14 +63,33 @@
                                                     <tr>
                                                         <td>{{ $notice->id }}</td>
                                                         <td>
-                                                            {{ Str::limit($notice->title, 40) }}
-                                                            @if(strlen($notice->title) > 40)
-                                                            <br><small class="text-muted">{{ $notice->title }}</small>
-                                                            @endif
+                                                            {{ Str::limit($notice->title, 40) }}                                                       
                                                         </td>
                                                         <td>{{ $notice->locality->name }}</td>
                                                         <td>{{ $notice->start_date->format('d/m/Y') }}</td>
                                                         <td>{{ $notice->end_date->format('d/m/Y') }}</td>
+                                                        <td>
+                                                            @php
+                                                                $now = now();
+                                                                $startDate = \Carbon\Carbon::parse($notice->start_date);
+                                                                $endDate = \Carbon\Carbon::parse($notice->end_date);
+                                                                
+                                                                if ($notice->is_active && $startDate <= $now && $endDate >= $now) {
+                                                                    $badgeClass = 'badge-success';
+                                                                    $text = 'Activo';
+                                                                } elseif ($startDate > $now) {
+                                                                    $badgeClass = 'badge-primary';
+                                                                    $text = 'Programado';
+                                                                } else {
+                                                                    $badgeClass = 'badge-secondary';
+                                                                    $text = 'Expirado';
+                                                                }
+                                                            @endphp
+                                                            
+                                                            <span class="badge {{ $badgeClass }} px-1 py-1">
+                                                                {{ $text }}
+                                                            </span>
+                                                        </td>
                                                         <td>
                                                             <div class="btn-group" role="group" aria-label="Opciones">
                                                                 @can('viewNotice')

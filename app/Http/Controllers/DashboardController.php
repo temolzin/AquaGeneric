@@ -64,6 +64,13 @@ class DashboardController extends Controller
         $mailConfig = $authUser->locality?->mailConfiguration;
         $hasMailConfig = $mailConfig && $mailConfig->isComplete();
 
+        $notices = \App\Models\LocalityNotice::with(['creator', 'locality'])
+            ->where('locality_id', $authUser->locality_id)
+            ->where('is_active', true)
+            ->where('end_date', '>=', now())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         $data = [
             'customersByLocality' => $customersByLocality,
             'customersWithDebts' => $customersWithDebts,
@@ -75,7 +82,7 @@ class DashboardController extends Controller
             'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
         ];
 
-        return view('dashboard', compact('data', 'authUser', 'hasMailConfig'));
+        return view('dashboard', compact('data', 'authUser', 'hasMailConfig', 'notices'));
     }
 
     public function getEarningsByLocality(Request $request)
