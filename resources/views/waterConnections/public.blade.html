@@ -220,29 +220,6 @@
                 </div>
                 @endif
 
-                @if($connection->type)
-                <div class="info-item">
-                    <i class="fas fa-building info-icon"></i>
-                    <div class="info-content">
-                        <div class="info-label">Tipo de Toma</div>
-                        <div class="info-value">
-                            @if(strtolower($connection->type) == 'residencial')
-                                <span class="badge-custom badge-residencial">
-                                    <i class="fas fa-home"></i> Residencial
-                                </span>
-                            @elseif(strtolower($connection->type) == 'comercial')
-                                <span class="badge-custom badge-comercial">
-                                    <i class="fas fa-store"></i> Comercial
-                                </span>
-                            @else
-                                <span class="badge-custom badge-residencial">
-                                    {{ ucfirst($connection->type) }}
-                                </span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @endif
 
                 @if($connection->water_days)
                 <div class="info-item">
@@ -279,46 +256,6 @@
                 </div>
                 @endif
 
-                @if(isset($connection->has_water_pressure))
-                <div class="info-item">
-                    <i class="fas fa-gauge-high info-icon"></i>
-                    <div class="info-content">
-                        <div class="info-label">Presión de Agua</div>
-                        <div class="info-value">
-                            @if($connection->has_water_pressure)
-                                <span class="badge-custom badge-activo">
-                                    <i class="fas fa-check"></i> Sí tiene
-                                </span>
-                            @else
-                                <span class="badge-custom badge-inactivo">
-                                    <i class="fas fa-times"></i> No tiene
-                                </span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @endif
-
-                @if(isset($connection->has_cistern))
-                <div class="info-item">
-                    <i class="fas fa-water info-icon"></i>
-                    <div class="info-content">
-                        <div class="info-label">Cisterna</div>
-                        <div class="info-value">
-                            @if($connection->has_cistern)
-                                <span class="badge-custom badge-activo">
-                                    <i class="fas fa-check"></i> Sí tiene
-                                </span>
-                            @else
-                                <span class="badge-custom badge-inactivo">
-                                    <i class="fas fa-times"></i> No tiene
-                                </span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @endif
-
                 <div class="info-item">
                     <i class="fas fa-circle-info info-icon"></i>
                     <div class="info-content">
@@ -347,17 +284,6 @@
                 </div>
                 @endif
 
-                <div class="info-item">
-                    <i class="fas fa-clock info-icon"></i>
-                    <div class="info-content">
-                        <div class="info-label">Fecha de Registro</div>
-                        <div class="info-value">
-                            {{ $connection->created_at ? $connection->created_at->format('d/m/Y H:i') : 'No disponible' }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="footer">
             <div class="footer-text">

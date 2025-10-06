@@ -241,7 +241,7 @@
 @section('js')
 <script>
     $(document).ready(function() {
-       $('#qrModal').on('show.bs.modal', function (event) {
+        $('#qrModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var id = button.data('id');
         var modal = $(this);
@@ -270,8 +270,7 @@
                     errorMsg = xhr.responseJSON.message;
                 }
                 img.attr('alt', errorMsg);
-                modal.find('.modal-body').prepend(
-                    '<div class="alert alert-danger">' + errorMsg + '</div>'
+                modal.find('.modal-body').prepend('<div class="alert alert-danger">' + errorMsg + '</div>'
                 );
             }
         });

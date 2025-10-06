@@ -123,11 +123,8 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     });
 
     Route::middleware(['auth'])->group(function () {
-        Route::get('/toma/{id}', [WaterConnectionController::class, 'showPublicForm'])
-        ->name('waterConnections.public.form');
-    
-        Route::post('/toma', [WaterConnectionController::class, 'showPublic'])
-        ->name('waterConnections.public');
+        Route::get('/toma/{code}', [WaterConnectionController::class, 'showPublicForm'])->name('waterConnections.public.form');
+        Route::post('/toma', [WaterConnectionController::class, 'showPublic'])->name('waterConnections.public');
     });
 
     Route::group(['middleware' => ['can:viewInventory']], function () {
