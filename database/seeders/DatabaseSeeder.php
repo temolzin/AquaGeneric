@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
         $this->call(LocalityNoticesSeeder::class);
         $this->call(FaultReportSeeder::class);
         $this->call(InventoryTableSeeder::class);
+        $this->call(MigrateCustomersToUsersSeeder::class);
+        $this->call(AssignCustomerRoleSeeder::class);
         $this->call(MembershipsTableSeeder::class);
     }
 }
