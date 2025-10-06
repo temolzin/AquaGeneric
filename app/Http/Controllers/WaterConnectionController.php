@@ -210,7 +210,7 @@ class WaterConnectionController extends Controller
             }
 
             return view('waterConnections.public-form', compact('id'));
-            
+
         } catch (\Exception $e) {
             abort(404, 'Error al procesar el código');
         }
@@ -237,5 +237,5 @@ class WaterConnectionController extends Controller
         } catch (\Exception $e) {
             abort(404, 'Toma de agua no encontrada');
         }
-        }
+    }
 }
