@@ -23,10 +23,6 @@ class AssignCustomerRoleSeeder extends Seeder
         }
 
         $usersWithoutRoles = User::doesntHave('roles')->get();
-        
-        if ($usersWithoutRoles->count() === 0) {
-            return;
-        }
 
         foreach ($usersWithoutRoles as $user) {
             if (!$user->hasRole('cliente')) {
