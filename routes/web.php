@@ -26,6 +26,7 @@ use App\Http\Controllers\ExpiredSubscriptionController;
 use App\Http\Controllers\LocalityNoticeController;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
+use App\Models\CashClosure;
 
 /*
 |--------------------------------------------------------------------------
@@ -178,6 +179,9 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/api/localities/{localityId}/active-notices', [LocalityNoticeController::class, 'getActiveByLocality'])->name('localityNotices.active-by-locality');
         Route::get('localityNotices/{id}/download', [LocalityNoticeController::class, 'downloadAttachment'])->name('localityNotices.download');
     });
+    
+    Route::get('/cash-closures/generate-latest', [PaymentController::class, 'showLatestCashClosurePDF'])
+    ->name('cash-closures.generate.latest');
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
     Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');

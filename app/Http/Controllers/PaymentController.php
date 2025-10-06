@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Debt;
 use App\Models\Customer;
+use App\Models\GeneralExpense;
+use App\Models\CashClosure;
 use App\Models\WaterConnection;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
@@ -362,5 +364,68 @@ class PaymentController extends Controller
                 ->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_pagos_tomas.pdf');
+    }
+    
+    public function showLatestCashClosurePDF()
+    {    
+        $authUser = auth()->user();
+        $today = now()->toDateString();
+
+
+        $latestClosure = CashClosure::where('locality_id', $authUser->locality_id)
+            ->where('user_id', $authUser->id)
+            ->whereDate('opened_at', $today)
+            ->latest()
+            ->first();
+
+        if (!$latestClosure) {
+            $latestClosure = CashClosure::create([
+                'opened_at'      => now()->startOfDay(),
+                'closed_at'      => now()->endOfDay(),
+                'initial_amount' => 0,
+                'final_amount'   => 0,
+                'total_sales'    => 0,
+                'total_expenses' => 0,
+                'created_by'     => $authUser->id,
+                'user_id'        => $authUser->id,
+                'locality_id'    => $authUser->locality_id,
+        ]);
+    }
+
+
+        $payments = Payment::where('locality_id', $authUser->locality_id)
+            ->whereDate('created_at', $today)
+            ->get();
+
+        $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
+            ->whereDate('expense_date', $today)
+            ->get();
+
+        $totalPayments = $payments->sum('amount');
+        $totalExpenses = $expenses->sum('amount');
+        $totalCash = $payments->where('method', 'cash')->sum('amount');
+        $totalCard = $payments->where('method', 'card')->sum('amount');
+        $totalTransfer = $payments->where('method', 'transfer')->sum('amount');
+
+        $latestClosure->update([
+            'total_sales'    => $totalPayments,
+            'total_expenses' => $totalExpenses,
+            'final_amount'   => ($totalPayments - $totalExpenses),
+    ]);
+
+        $pdf = PDF::loadView('reports.pdfCashClosures', [
+            'closures'       => collect([$latestClosure]),
+            'payments'       => $payments,
+            'expenses'       => $expenses,
+            'authUser'       => $authUser,
+            'totalPayments'  => $totalPayments,
+            'totalExpenses'  => $totalExpenses,
+            'totalCash'      => $totalCash,
+            'totalCard'      => $totalCard,
+            'totalTransfer'  => $totalTransfer,
+    ])->setPaper('A4', 'portrait');
+
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf');
     }
 }
