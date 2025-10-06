@@ -23,18 +23,16 @@
         #page_pdf {
             margin-top: 10%;
             margin: 40px;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .info_empresa {
             width: 100%;
             margin-top: 60px;
             text-align: center;
-            align-content: stretch;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .aqua_titulo {
-            font-family: 'Montserrat', sans-serif;
             font-size: 20pt;
             font-weight: bold;
             margin-right: 5px;
@@ -45,15 +43,14 @@
         }
 
         p, label, span, table {
-            font-family: 'Montserrat', sans-serif;
             font-size: 12pt;
         }
 
         .title {
             color: #0B1C80;
-            font-family: 'Montserrat', sans-serif;
             font-size: 14pt;
             text-align: center;
+            margin-bottom: 15px;
         }
 
         #reporte_head {
@@ -77,8 +74,10 @@
 
         .section h4 {
             color: #0B1C80;
+            font-size: 14pt;
             text-align: center;
             margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .line {
@@ -91,7 +90,6 @@
             padding: 20px;
             font-size: 15pt;
             text-align: right;
-            font-family: 'Montserrat', sans-serif;
             font-weight: bold;
         }
 
@@ -113,10 +111,10 @@
         .text_infoE {
             text-align: center;
             font-size: 12pt;
-            font-family: 'Montserrat', sans-serif;
             color: white;
             text-decoration: none;
             display: inline-block;
+            font-family: 'Montserrat', sans-serif;
         }
     </style>
 </head>
@@ -187,7 +185,7 @@
             @endif
         </div>
 
-        <h4 style="text-align:right; margin-top:20px; color:#0B1C80;">
+        <h4 style="text-align:center; font-family:'Montserrat', sans-serif; font-size:14pt; color:#0B1C80; margin-top:20px;">
             TOTAL NETO DEL CORTE: ${{ number_format(($totalPayments - $totalExpenses), 2) }}
         </h4>
     </div>
