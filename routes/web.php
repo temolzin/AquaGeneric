@@ -24,6 +24,7 @@ use App\Http\Controllers\IncidentStatusController;
 use App\Http\Controllers\MailConfigurationController;
 use App\Http\Controllers\ExpiredSubscriptionController;
 use App\Http\Controllers\LocalityNoticeController;
+use App\Http\Controllers\ReportListController;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
 use App\Http\Controllers\MembershipController;
@@ -183,6 +184,10 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
     Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
+    });
+    
+    Route::group(['middleware' => ['can:viewReportsLists']], function () {
+        Route::get('/reportList', [ReportListController::class, 'index'])->name('reportList.index');
     });
 
     Route::group(['middleware' => ['can:viewMemberships']], function () {

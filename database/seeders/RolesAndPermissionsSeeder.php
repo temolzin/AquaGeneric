@@ -231,5 +231,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteMemberships',
             'description' => 'Permite eliminar las Membresías.'
         ])->assignRole([$roleAdmin]);
+        Permission::firstOrCreate([
+            'name' => 'viewReportsLists',
+            'description' => 'Permite ver la lista de reportes.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
     }
 }
