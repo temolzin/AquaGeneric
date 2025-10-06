@@ -124,8 +124,8 @@
             <tr>
                 <td>
                     <div class="logo">
-                        @if ($closures->first()->locality && $closures->first()->locality->hasMedia('localityGallery'))
-                            <img src="{{ $closures->first()->locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $closures->first()->locality->name }}">
+                        @if ($authUser->locality && $authUser->locality->hasMedia('localityGallery'))
+                            <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $authUser->locality->name }}">
                         @else
                             <img src="img/localityDefault.png" alt="Default Photo">
                         @endif
@@ -136,7 +136,7 @@
 
         <div class="info_empresa">
             <p class="aqua_titulo">
-                COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $closures->first()->locality->name ?? '-' }}, {{ $closures->first()->locality->municipality ?? '-' }}, {{ $closures->first()->locality->state ?? '-' }}
+                COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name ?? '-' }}, {{ $authUser->locality->municipality ?? '-' }}, {{ $authUser->locality->state ?? '-' }}
             </p>
         </div>
 
@@ -164,7 +164,7 @@
                 $typeLabels = [
                     'mainteinence' => 'Mantenimiento',
                     'services' => 'Servicios',
-                    'supplies' => 'Suministros',
+                    'supplies' => 'Insumos',
                     'taxes' => 'Impuestos',
                     'staff' => 'Personal',
                 ];

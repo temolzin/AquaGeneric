@@ -180,7 +180,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('localityNotices/{id}/download', [LocalityNoticeController::class, 'downloadAttachment'])->name('localityNotices.download');
     });
     
-    Route::get('/cash-closures/generate-latest', [PaymentController::class, 'showLatestCashClosurePDF'])
+    Route::get('/cash-closures/generate-latest', [PaymentController::class, 'cashClosurePaymentsReport'])
     ->name('cash-closures.generate.latest');
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');

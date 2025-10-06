@@ -115,7 +115,6 @@
                                             onclick="window.open('{{ route('cash-closures.generate.latest') }}', '_blank', 'noopener,noreferrer')">
                                             <i class="fa fa-dollar-sign"></i> Corte de caja
                                             </button>
-
                                         </div>
                                     </div>
                                 </div>
