@@ -161,6 +161,10 @@
                                             data-target="#weeklyGains" title="Ganancias Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Ganancias Semanales
                                             </button>
+                                            <button type="button" class="btn btn-info w-100 w-md-auto m-1" title="Corte de caja"
+                                            onclick="window.open('{{ route('cash-closures.generate.latest') }}', '_blank', 'noopener,noreferrer')">
+                                            <i class="fa fa-dollar-sign"></i> Corte de caja
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

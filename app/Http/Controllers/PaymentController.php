@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Debt;
 use App\Models\Customer;
+use App\Models\GeneralExpense;
 use App\Models\WaterConnection;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
@@ -362,5 +363,49 @@ class PaymentController extends Controller
                 ->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_pagos_tomas.pdf');
+    }
+    
+    public function cashClosurePaymentsReport()
+    {    
+        $authUser = auth()->user();
+        $today = now()->toDateString();
+
+        $payments = Payment::where('locality_id', $authUser->locality_id)
+            ->whereDate('created_at', $today)
+            ->get();
+
+        $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
+            ->whereDate('expense_date', $today)
+            ->get();
+
+        $totalPayments = $payments->sum('amount');
+        $totalExpenses = $expenses->sum('amount');
+        $totalCash = $payments->where('method', 'cash')->sum('amount');
+        $totalCard = $payments->where('method', 'card')->sum('amount');
+        $totalTransfer = $payments->where('method', 'transfer')->sum('amount');
+        $finalAmount = $totalPayments - $totalExpenses;
+
+        $latestClosure = (object)[
+            'opened_at'      => now()->startOfDay(),
+            'closed_at'      => now()->endOfDay(),
+            'initial_amount' => 0,
+            'final_amount'   => $finalAmount,
+            'total_sales'    => $totalPayments,
+            'total_expenses' => $totalExpenses,
+        ];
+
+        $pdf = PDF::loadView('reports.pdfCashClosures', [
+            'closures'       => collect([$latestClosure]),
+            'payments'       => $payments,
+            'expenses'       => $expenses,
+            'authUser'       => $authUser,
+            'totalPayments'  => $totalPayments,
+            'totalExpenses'  => $totalExpenses,
+            'totalCash'      => $totalCash,
+            'totalCard'      => $totalCard,
+            'totalTransfer'  => $totalTransfer,
+        ])->setPaper('A4', 'portrait');
+
+        return $pdf->stream('reporte_corte_caja.pdf');
     }
 }
