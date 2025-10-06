@@ -7,7 +7,8 @@ use App\Models\Customer;
 use App\Models\Cost;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class WaterConnectionController extends Controller
 {
@@ -139,9 +140,12 @@ class WaterConnectionController extends Controller
 
     try {
         $connection = WaterConnection::findOrFail($id);
-        $encryptedId = Crypt::encryptString($id);
-        $safeEncryptedId = urlencode($encryptedId);
-        $publicUrl = route('waterConnections.public.form', ['code' => $safeEncryptedId]);
+
+        $token = base64_encode($id . '|' . time() . '|' . Str::random(10));
+        
+        \Cache::put('qr_token_' . $token, $id, now()->addDays(30));
+        
+        $publicUrl = route('waterConnections.public.form', ['code' => $token]);
         
         $qrCode = base64_encode(QrCode::format('svg')
             ->size(300)
@@ -150,7 +154,7 @@ class WaterConnectionController extends Controller
             ->generate($publicUrl));
         
         $downloadUrl = route('waterConnections.qr-download', $id);
-
+        
         return response()->json([
             'success' => true,
             'image' => 'data:image/svg+xml;base64,' . $qrCode,
@@ -158,8 +162,8 @@ class WaterConnectionController extends Controller
         ]);
         
     } catch (\Exception $e) {
+
         \Log::error('Error generando QR: ' . $e->getMessage());
-        
         return response()->json([
             'success' => false,
             'message' => 'Error al generar el código QR: ' . $e->getMessage()], 500);
@@ -172,10 +176,10 @@ class WaterConnectionController extends Controller
     try {
         $connection = WaterConnection::findOrFail($id);
         
-        $encryptedId = Crypt::encryptString($id);
-        $safeEncryptedId = urlencode($encryptedId);
+        $token = base64_encode($id . '|' . time() . '|' . Str::random(10));
+        \Cache::put('qr_token_' . $token, $id, now()->addDays(30));
         
-        $publicUrl = route('waterConnections.public.form', ['code' => $safeEncryptedId]);
+        $publicUrl = route('waterConnections.public.form', ['code' => $token]);
         
         $qrCode = QrCode::format('png')
             ->size(400)
@@ -201,16 +205,13 @@ class WaterConnectionController extends Controller
     }
     
     try {
-        $id = Crypt::decryptString($code);
-
-        if (!is_numeric($id) || $id <= 0) {
-            abort(404, 'Código no válido');
+        $id = \Cache::get('qr_token_' . $code);
+        
+        if (!$id) {
+            abort(404, 'Código no válido o expirado');
         }
         
-        return view('waterConnections.public-form', compact('id'));
-        
-    } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-        abort(404, 'Código no válido o expirado');
+        return view('waterConnections.public-form', compact('id'));           
     } catch (\Exception $e) {
         abort(404, 'Error al procesar el código');
     }
@@ -220,16 +221,18 @@ class WaterConnectionController extends Controller
     {
 
     try {
-        
+
         if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver esta información');
+            return redirect()->route('login')
+                ->with('error', 'Debes iniciar sesión para ver esta información');
         }
 
         $request->validate([
             'id' => 'required|integer|exists:water_connections,id'
         ]);
 
-        $connection = WaterConnection::with(['customer', 'locality'])->findOrFail($request->id);
+        $connection = WaterConnection::with(['customer', 'locality'])
+            ->findOrFail($request->id);
         
         return view('waterConnections.public', compact('connection'));
         
