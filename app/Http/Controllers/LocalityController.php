@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Locality;
-use Illuminate\Http\Request;
+use App\Models\Membership;
 use App\Models\Token;
 use App\Models\MailConfiguration;
+use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Crypt;
 
 class LocalityController extends Controller
 {
-
     public function index(Request $request)
     {
         $query = Locality::query()->orderBy('created_at', 'desc');
@@ -21,7 +21,7 @@ class LocalityController extends Controller
         }
 
         $localities = $query->paginate(10);
-        $memberships = \App\Models\Membership::all();
+        $memberships = Membership::all();
 
         $mailExamples = [
             'mailer'  => MailConfiguration::EXAMPLE_MAILER,
@@ -33,7 +33,7 @@ class LocalityController extends Controller
             'from_name'  => MailConfiguration::EXAMPLE_FROM_NAME,
         ];
 
-        return view('localities.index', compact('localities','mailExamples', 'memberships')); // Agregar memberships aquí
+        return view('localities.index', compact('localities','mailExamples', 'memberships'));
     }
 
     public function store(Request $request)
@@ -101,7 +101,7 @@ class LocalityController extends Controller
         $startDate = $request->input('startDate');
         $membershipId = $request->input('membership_id');
 
-        $membership = \App\Models\Membership::find($membershipId);
+        $membership = Membership::find($membershipId);
         $endDate = \Carbon\Carbon::parse($startDate)->addMonths($membership->term_months);
 
         $token = Token::generateTokenForLocality($id, $startDate, $endDate->toDateString());
