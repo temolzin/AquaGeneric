@@ -180,7 +180,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/faultReport', [FaultReportController::class, 'index'])->name('faultReport.index');
         Route::resource('faultReport', FaultReportController::class);
     });
-  
+
     Route::group(['middleware' => ['can:viewNotice']], function () {
         Route::get('/localityNotices', [LocalityNoticeController::class, 'index'])->name('localityNotices.index');
         Route::resource('localityNotices', LocalityNoticeController::class);

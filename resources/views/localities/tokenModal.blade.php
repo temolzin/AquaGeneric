@@ -13,11 +13,18 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Fecha de Inicio</label>
-                        <input type="date" name="startDate" class="form-control" required>
+                        <input type="date" name="startDate" class="form-control" value="{{ date('Y-m-d') }}" required readonly>
                     </div>
                     <div class="form-group">
-                        <label>Fecha de Término</label>
-                        <input type="date" name="endDate" class="form-control" required>
+                        <label>Plan de Membresía</label>
+                        <select name="membership_id" class="form-control" required>
+                            <option value="">Seleccionar plan</option>
+                            @foreach($memberships as $membership)
+                                <option value="{{ $membership->id }}">
+                                    {{ $membership->name }} - {{ $membership->term_months }} meses
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
