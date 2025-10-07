@@ -169,12 +169,7 @@
                         <th class="textable">NUM. EXTERIOR</th>
                         <th class="textable">CALLE</th>
                         <th class="textable">NUM. INTERIOR</th>
-                        <th class="textable">ESTADO CIVIL</th>
                         <th class="textable">NUM. DE TOMAS</th>
-                        <th class="textable">TOMAS</th>
-                        <th class="textable">DÍAS DE AGUA</th>
-                        <th class="textable">¿CUENTA CON PRESION?</th>
-                        <th class="textable">¿TIENE CISTERNA?</th>
                     </tr>
                 </thead>
                 <tbody id="detalle_clientes">
@@ -185,86 +180,7 @@
                             <td class="textcenter">{{ $customer->block }}</td>
                             <td class="textcenter">{{ $customer->street }}</td>
                             <td class="textcenter">{{ $customer->interior_number }}</td>
-                            <td class="textcenter">{{ $customer->marital_status ? 'Casado' : 'Soltero'}}</td>
                             <td class="textcenter">{{ $customer->waterConnections->count() }}</td>
-                            <td class="textcenter">
-                                @foreach ($customer->waterConnections as $connection)
-                                    <strong>Toma: {{ $connection->name }}</strong>
-                                    @switch($connection->type)
-                                        @case('commercial')
-                                            (Comercial)
-                                            @break
-                                        @case('residencial')
-                                            (Residencial)
-                                            @break
-                                        @default
-                                            No especificado
-                                            @break
-                                    @endswitch
-                                    <br>
-                                @endforeach
-                            </td>
-                            <td class="textcenter">
-                                @foreach ($customer->waterConnections as $connection)
-                                    <br>
-                                    @php
-                                        $days = json_decode($connection->water_days);
-                                    @endphp
-                                    @if (is_array($days))
-                                        @foreach ($days as $day)
-                                            @switch($day)
-                                                @case('monday')
-                                                    Lunes
-                                                    @break
-                                                @case('tuesday')
-                                                    Martes
-                                                    @break
-                                                @case('wednesday')
-                                                    Miércoles
-                                                    @break
-                                                @case('thursday')
-                                                    Jueves
-                                                    @break
-                                                @case('friday')
-                                                    Viernes
-                                                    @break
-                                                @case('saturday')
-                                                    Sábado
-                                                    @break
-                                                @case('sunday')
-                                                    Domingo
-                                                    @break
-                                                @default
-                                                    No especificado
-                                                    @break
-                                            @endswitch
-                                            <br>
-                                        @endforeach
-                                    @else
-                                        @switch($connection->water_days)
-                                            @case('"all"')
-                                                Diario
-                                                @break
-                                            @default
-                                                No especificado
-                                                @break
-                                        @endswitch
-                                    @endif
-                                    <br>
-                                @endforeach
-                            </td>
-                            <td class="textcenter">
-                                @foreach ($customer->waterConnections as $connection)
-                                    <br>
-                                    {{ $connection->has_water_pressure ? 'Sí' : 'No' }} <br><br>
-                                @endforeach
-                            </td>
-                            <td class="textcenter">
-                                @foreach ($customer->waterConnections as $connection)
-                                    <br>
-                                    {{ $connection->has_cistern ? 'Sí' : 'No' }} <br><br>
-                                @endforeach
-                            </td>
                         </tr>
                     @endforeach
                 </tbody>
