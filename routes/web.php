@@ -122,6 +122,13 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('waterConnections', WaterConnectionController::class);
         Route::patch('/waterConnections/{id}/cancel', [WaterConnectionController::class, 'cancel'])->name('waterConnections.cancel');
         Route::patch('/waterConnections/{id}/reactivate', [WaterConnectionController::class, 'reactivate'])->name('waterConnections.reactivate');
+        Route::get('/waterConnections/{id}/qr-generate', [WaterConnectionController::class, 'generateQrAjax'])->name('waterConnections.qr-generate');
+        Route::get('/waterConnections/{id}/qr-download', [WaterConnectionController::class, 'downloadQr'])->name('waterConnections.qr-download');
+    });
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/toma/{code}', [WaterConnectionController::class, 'showPublicForm'])->name('waterConnections.public.form');
+        Route::post('/toma', [WaterConnectionController::class, 'showPublic'])->name('waterConnections.public');
     });
 
     Route::group(['middleware' => ['can:viewInventory']], function () {
