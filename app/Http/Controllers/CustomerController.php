@@ -130,7 +130,7 @@ class CustomerController extends Controller
         $customers = Customer::where('locality_id', $authUser->locality_id)
             ->with('user')
             ->get();
-            $pdf = PDF::loadView('reports.pdfCustomers', compact('customers', 'authUser'))
+        $pdf = PDF::loadView('reports.pdfCustomers', compact('customers', 'authUser'))
             ->setPaper('A4', 'landscape');
 
         return $pdf->stream('customers.pdf');
@@ -142,7 +142,7 @@ class CustomerController extends Controller
         $customers = Customer::where('locality_id', $authUser->locality_id)
             ->with('user') 
             ->whereDoesntHave('waterConnections.debts', function ($query) {
-            $query->where('status', '!=', 'paid');
+                $query->where('status', '!=', 'paid');
             })->get();
     
         $pdf = Pdf::loadView('reports.reportCurrentCustomers', compact('customers', 'authUser'));
@@ -155,10 +155,10 @@ class CustomerController extends Controller
         $customers = Customer::where('locality_id', $authUser->locality_id)
             ->with('user') 
             ->whereHas('waterConnections.debts', function ($query) {
-            $query->where('status', '!=', 'paid');
+                $query->where('status', '!=', 'paid');
             })->get();
 
-            $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers', 'authUser'))
+        $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers', 'authUser'))
             ->setPaper('A4', 'portrait');
         return $pdf->stream('reporte_clientes_con_deudas.pdf');
     }
