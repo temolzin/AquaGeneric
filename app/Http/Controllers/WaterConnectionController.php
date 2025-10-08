@@ -53,16 +53,16 @@ class WaterConnectionController extends Controller
         $authUser = auth()->user();
 
         $locality = Locality::with('membership')->find($authUser->locality_id);
-        
+
         if ($locality && $locality->membership) {
             $currentConnectionsCount = WaterConnection::where('locality_id', $authUser->locality_id)
                 ->where('is_canceled', false)
                 ->count();
 
             if ($currentConnectionsCount >= $locality->membership->water_connections_number) {
-                return redirect()->back()->with('error', 
-                    'No se pueden registrar más tomas de agua. Límite de ' . 
-                    $locality->membership->water_connections_number . 
+                return redirect()->back()->with('error',
+                    'No se pueden registrar más tomas de agua. Límite de ' .
+                    $locality->membership->water_connections_number .
                     ' tomas de agua alcanzado para la localidad '. $locality->name. '. Contacte al administrador para habilitar más tomas de agua.');
             }
         }
@@ -96,7 +96,7 @@ class WaterConnectionController extends Controller
         $connection = WaterConnection::find($id);
         $sections = Section::where('locality_id', $connection->locality_id)
                     ->orWhereNull('locality_id')
-                    ->get(); 
+                    ->get();
 
         if (!$connection) {
             return redirect()->back()->with('error', 'Toma de Agua no encontrada.');
@@ -155,16 +155,16 @@ class WaterConnectionController extends Controller
 
         $authUser = auth()->user();
         $locality = Locality::with('membership')->find($authUser->locality_id);
-        
+
         if ($locality && $locality->membership) {
             $currentConnectionsCount = WaterConnection::where('locality_id', $authUser->locality_id)
                 ->where('is_canceled', false)
                 ->count();
 
             if ($currentConnectionsCount >= $locality->membership->water_connections_number) {
-                return redirect()->back()->with('error', 
-                    'No se puede reactivar la toma de agua. Límite de ' . 
-                    $locality->membership->water_connections_number . 
+                return redirect()->back()->with('error',
+                    'No se puede reactivar la toma de agua. Límite de ' .
+                    $locality->membership->water_connections_number .
                     ' tomas de agua alcanzado para esta localidad.');
             }
         }
@@ -180,7 +180,7 @@ class WaterConnectionController extends Controller
 
         return redirect()->route('waterConnections.index')->with('success', 'Toma reactivada y asignada correctamente.');
     }
-    
+
     private function generateConnectionHash($id)
     {
         return hash('sha256', $id . env('APP_KEY', 'default-secret-key'));
@@ -189,7 +189,7 @@ class WaterConnectionController extends Controller
     private function getIdFromHash($hash)
     {
         $connections = WaterConnection::select('id')->get();
-        
+
         foreach ($connections as $connection) {
             if ($this->generateConnectionHash($connection->id) === $hash) {
                 return $connection->id;
@@ -203,7 +203,7 @@ class WaterConnectionController extends Controller
         try {
 
             $id = $this->getIdFromHash($hash);
-            
+
             if (!$id) {
                 abort(404, 'Toma de agua no encontrada');
             }
@@ -229,7 +229,7 @@ class WaterConnectionController extends Controller
     public function generateQrAjax($id)
     {
         try {
-            
+
             $connection = WaterConnection::findOrFail($id);
             $hash = $this->generateConnectionHash($id);
             $publicUrl = route('waterConnections.public', ['hash' => $hash]);
@@ -249,7 +249,7 @@ class WaterConnectionController extends Controller
                 'image' => 'data:image/svg+xml;base64,' . $qrCode,
                 'download_url' => $downloadUrl,
                 'public_url' => $publicUrl,
-                'hash' => $hash 
+                'hash' => $hash
             ]);
 
         } catch (\Exception $e) {
@@ -283,5 +283,195 @@ class WaterConnectionController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Error al descargar el código QR');
         }
+    }
+
+    public function showCustomerWaterConnections()
+    {
+        $authUser = auth()->user();
+        $customer = \App\Models\Customer::where('user_id', $authUser->id)->first();
+
+        if (!$customer) {
+            $connections = collect();
+        } else {
+            $query = WaterConnection::with(['cost', 'locality'])
+                ->where('customer_id', $customer->id)
+                ->where('locality_id', $authUser->locality_id);
+
+            if (request()->has('search') && request('search') != '') {
+                $search = request('search');
+                $query->where(function($q) use ($search) {
+                    $q->where('id', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('type', 'like', "%{$search}%")
+                    ->orWhere('street', 'like', "%{$search}%")
+                    ->orWhere('block', 'like', "%{$search}%");
+                });
+            }
+
+            $connections = $query->paginate(10)->appends(request()->query());
+            $connections->getCollection()->transform(function ($connection) {
+                $connection->formatted_water_days = $this->getFormattedWaterDays($connection->water_days);
+                $connection->full_address = $this->getFullAddress($connection);
+                $connection->water_pressure_text = $connection->has_water_pressure ? 'Sí' : 'No';
+                $connection->cistern_text = $connection->has_cistern ? 'Sí' : 'No';
+
+                return $connection;
+            });
+        }
+
+        return view('viewCustomerWaterConnections.index', compact('connections'));
+    }
+
+    private function getFormattedWaterDays($waterDays)
+    {
+        if (empty($waterDays) || $waterDays === 'null' || $waterDays === '[]') {
+            return [
+                'days_array' => [],
+                'formatted_text' => 'No hay días específicos asignados',
+                'has_days' => false
+            ];
+        }
+
+        if ($waterDays === '"all"' || $waterDays === 'all') {
+            return $this->getAllDaysFormatted();
+        }
+
+        $waterDaysArray = json_decode($waterDays, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $waterDaysArray = [$waterDays];
+        }
+
+        if (is_array($waterDaysArray) && count($waterDaysArray) === 1 && is_string($waterDaysArray[0])) {
+            $firstItem = $waterDaysArray[0];
+
+            if ($firstItem === 'all') {
+                return $this->getAllDaysFormatted();
+            }
+
+            $waterDaysArray = [$firstItem];
+        }
+
+        $daysOfWeek = [
+            'monday' => 'Lunes',
+            'tuesday' => 'Martes',
+            'wednesday' => 'Miércoles',
+            'thursday' => 'Jueves',
+            'friday' => 'Viernes',
+            'saturday' => 'Sábado',
+            'sunday' => 'Domingo'
+        ];
+
+        $dayVariations = [
+            'monday' => ['monday', 'lunes', 'mon', 'lun'],
+            'tuesday' => ['tuesday', 'martes', 'tue', 'mar'],
+            'wednesday' => ['wednesday', 'miércoles', 'miercoles', 'wed', 'mie'],
+            'thursday' => ['thursday', 'jueves', 'thu', 'jue'],
+            'friday' => ['friday', 'viernes', 'fri', 'vie'],
+            'saturday' => ['saturday', 'sábado', 'sabado', 'sat', 'sab'],
+            'sunday' => ['sunday', 'domingo', 'sun', 'dom']
+        ];
+
+        $activeDays = [];
+        $allDays = [];
+
+        foreach ($daysOfWeek as $key => $day) {
+            $isActive = false;
+
+            if (is_array($waterDaysArray)) {
+                foreach ($waterDaysArray as $waterDay) {
+                    $waterDayLower = strtolower(trim($waterDay));
+
+                    if (in_array($waterDayLower, $dayVariations[$key])) {
+                        $isActive = true;
+                        break;
+                    }
+
+                    if ($waterDayLower === 'all') {
+                        $isActive = true;
+                        break;
+                    }
+                }
+            }
+
+            $allDays[$key] = [
+                'name' => $day,
+                'active' => $isActive
+            ];
+
+            if ($isActive) {
+                $activeDays[] = $day;
+            }
+        }
+
+        return [
+            'days_array' => $allDays,
+            'active_days' => $activeDays,
+            'formatted_text' => count($activeDays) > 0 ?
+                (count($activeDays) === 7 ? 'Todos los días' : implode(', ', $activeDays)) :
+                'No hay días activos',
+            'has_days' => count($activeDays) > 0
+        ];
+    }
+
+    private function getAllDaysFormatted()
+    {
+        $daysOfWeek = [
+            'monday' => 'Lunes',
+            'tuesday' => 'Martes',
+            'wednesday' => 'Miércoles',
+            'thursday' => 'Jueves',
+            'friday' => 'Viernes',
+            'saturday' => 'Sábado',
+            'sunday' => 'Domingo'
+        ];
+
+        $allDays = [];
+        foreach ($daysOfWeek as $key => $day) {
+            $allDays[$key] = [
+                'name' => $day,
+                'active' => true
+            ];
+        }
+
+        return [
+            'days_array' => $allDays,
+            'active_days' => array_values($daysOfWeek),
+            'formatted_text' => 'Todos los días',
+            'has_days' => true
+        ];
+    }
+
+    private function getFullAddress($connection)
+    {
+        $addressParts = [];
+
+        if ($connection->block) {
+            $addressParts[] = "Manzana {$connection->block}";
+        }
+
+        if ($connection->street) {
+            $addressParts[] = "Calle {$connection->street}";
+        }
+
+        if ($connection->exterior_number) {
+            $addressParts[] = "#{$connection->exterior_number}";
+        }
+
+        if ($connection->interior_number) {
+            $addressParts[] = "Int. {$connection->interior_number}";
+        }
+
+        if (empty($addressParts)) {
+            return [
+                'full_text' => 'Dirección no especificada',
+                'has_address' => false
+            ];
+        }
+
+        return [
+            'full_text' => implode(', ', $addressParts),
+            'has_address' => true,
+            'parts' => $addressParts
+        ];
     }
 }
