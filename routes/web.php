@@ -205,7 +205,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
     Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
     });
-    
+
     Route::group(['middleware' => ['can:viewReportsLists']], function () {
         Route::get('/reportList', [ReportListController::class, 'index'])->name('reportList.index');
     });
@@ -218,12 +218,18 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/expenseTypes', [ExpenseTypeController::class, 'index'])->name('expenseTypes.index');
         Route::resource('expenseTypes', ExpenseTypeController::class);
     });
-    
+
     Route::group(['middleware' => ['can:viewSections']], function () {
         Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
         Route::resource('sections', SectionController::class);
         Route::get('/reports/pdfSections', [SectionController::class, 'pdfSections'])->name('reports.pdfSections');
     });
+
+    Route::group(['middleware' => ['can:viewCustomerPayments']], function () {
+        Route::get('/viewCustomerPayments', [PaymentController::class, 'showCustomerPayments'])->name('viewCustomerPayments.index');
+        Route::get('/receipt/{paymentId}', [PaymentController::class, 'receiptPayment'])->name('viewCustomerPayments.receipt');
+    });
 });
-    Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
-    Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');
+
+Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
+Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');

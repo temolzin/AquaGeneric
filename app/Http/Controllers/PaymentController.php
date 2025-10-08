@@ -234,7 +234,7 @@ class PaymentController extends Controller {
         $weeks = [];
         $currentStart = $startDate->copy();
         $totalPeriodEarnings = 0;
-        
+
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
             if ($currentEnd->gt($endDate)) {
@@ -307,10 +307,10 @@ class PaymentController extends Controller {
             $months[$monthName]['note'] = $payment->note;
         }
 
-      
+
         $note = $payment->note;
         $message = $numberOfMonths > 1
-            ? "Monto total del pago $" . number_format($payment->amount, 2) . 
+            ? "Monto total del pago $" . number_format($payment->amount, 2) .
             ". Nota: " . $note
             : null;
 
@@ -373,8 +373,8 @@ class PaymentController extends Controller {
 
         return $pdf->stream('reporte_pagos_tomas.pdf');
     }
-    
-    public function cashClosurePaymentsReport() {    
+
+    public function cashClosurePaymentsReport() {
         $authUser = auth()->user();
         $today = now()->toDateString();
 
@@ -415,5 +415,52 @@ class PaymentController extends Controller {
         ])->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_corte_caja.pdf');
+    }
+
+    public function showCustomerPayments(Request $request)
+    {
+        $authUser = auth()->user();
+        $customer = Customer::where('user_id', $authUser->id)
+                        ->where('locality_id', $authUser->locality_id)
+                        ->first();
+
+        if (!$customer) {
+            return redirect()->back()->with('error', 'No se encontró información de cliente.');
+        }
+
+        $query = Payment::with(['debt.waterConnection'])
+                    ->where('customer_id', $customer->id)
+                    ->where('locality_id', $authUser->locality_id)
+                    ->orderBy('created_at', 'desc');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'LIKE', "%{$search}%")
+                ->orWhere('method', 'LIKE', "%{$search}%")
+                ->orWhere(function($q) use ($search) {
+                    $methodMappings = [
+                        'efectivo' => 'cash',
+                        'transferencia' => 'transfer',
+                        'tarjeta' => 'card',
+                        'credito' => 'card',
+                        'débito' => 'card'
+                    ];
+
+                    foreach ($methodMappings as $spanish => $english) {
+                        if (stripos($search, $spanish) !== false) {
+                            $q->orWhere('method', $english);
+                        }
+                    }
+                })
+                ->orWhereHas('debt.waterConnection', function($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%");
+                });
+            });
+        }
+
+        $payments = $query->paginate(10);
+
+        return view('viewCustomerPayments.index', compact('payments', 'customer'));
     }
 }
