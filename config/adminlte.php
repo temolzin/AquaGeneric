@@ -420,7 +420,7 @@ return [
     ],
     [
         'text' => 'Mis Pagos',
-        'url' => '/viewMyPayments',
+        'url' => '/viewCustomerPayments',
         'can' => 'viewCustomerPayments',
         'icon' => 'fas fa-fw fa-dollar-sign text-white',
     ],
