@@ -87,7 +87,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Días de Agua</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->formatted_water_days['formatted_text'] }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $connection->formatted_water_days }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
