@@ -103,9 +103,9 @@
                                     <div class="form-group">
                                         <label>¿Tiene Cisterna?</label>
                                         @php
-                                            $cisterna = $connection->has_cistern ? 'Sí' : 'No';
+                                            $cistern = $connection->has_cistern ? 'Sí' : 'No';
                                         @endphp
-                                        <input type="text" disabled class="form-control" value="{{ $cisterna }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $cistern }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
