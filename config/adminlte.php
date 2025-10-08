@@ -432,7 +432,7 @@ return [
     ],
     [
         'text' => 'Mis Tomas de Agua',
-        'url' => '/viewMyWaterConnections',
+        'url' => '/viewCustomerWaterConnections',
         'can' => 'viewWaterConnections',
         'icon' => 'fas fa-fw fa-water text-white',
     ],
