@@ -94,9 +94,9 @@
                                     <div class="form-group">
                                         <label>¿Tiene Presión de Agua?</label>
                                         @php
-                                            $presionAgua = $connection->has_water_pressure ? 'Sí' : 'No';
+                                            $pressureWater = $connection->has_water_pressure ? 'Sí' : 'No';
                                         @endphp
-                                        <input type="text" disabled class="form-control" value="{{ $presionAgua }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $pressureWater }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
