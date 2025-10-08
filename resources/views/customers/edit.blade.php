@@ -36,13 +36,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="nameUpdate" class="form-label">Nombre(*)</label>
-                                            <input type="text" class="form-control" name="nameUpdate" id="nameUpdate" value="{{ $customer->name }}" required>
+                                            <input type="text" class="form-control" name="nameUpdate" id="nameUpdate" value="{{ $customer->user->name ?? '' }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="lastNameUpdate" class="form-label">Apellido(*)</label>
-                                            <input type="text" class="form-control" name="lastNameUpdate" id="lastNameUpdate" value="{{ $customer->last_name }}" required>
+                                            <input type="text" class="form-control" name="lastNameUpdate" id="lastNameUpdate" value="{{ $customer->user->last_name ?? '' }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -72,7 +72,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="emailUpdate" class="form-label">Correo electrónico</label>
-                                            <input type="email" class="form-control" id="emailUpdate" name="emailUpdate"  value="{{ $customer->email }}">
+                                            <input type="email" class="form-control" name="emailUpdate" id="emailUpdate" value="{{ $customer->user->email ?? '' }}" />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
