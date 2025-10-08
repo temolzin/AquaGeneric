@@ -389,9 +389,7 @@ class PaymentController extends Controller
                     $methodMappings = [
                         'efectivo' => 'cash',
                         'transferencia' => 'transfer',
-                        'tarjeta' => 'card',
-                        'credito' => 'card',
-                        'débito' => 'card'
+                        'tarjeta' => 'card'
                     ];
                     
                     foreach ($methodMappings as $spanish => $english) {
