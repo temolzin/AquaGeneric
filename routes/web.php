@@ -189,8 +189,8 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('localityNotices/{id}/download', [LocalityNoticeController::class, 'downloadAttachment'])->name('localityNotices.download');
     });
     
-    Route::get('/cash-closures/generate-latest', [PaymentController::class, 'cashClosurePaymentsReport'])
-    ->name('cash-closures.generate.latest');
+    Route::get('/cash-closures-report', [PaymentController::class, 'cashClosurePaymentsReport'])
+    ->name('cash-closures.report');
 
     Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
     Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');

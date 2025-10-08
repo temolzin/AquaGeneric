@@ -92,6 +92,10 @@
                                                             </button>
                                                             <button type="button" class="btn bg-olive report-btn" data-toggle="modal" data-target="#weeklyGains" title="Ganancias Semanales">
                                                                 <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Ganancias Semanales</span><span class="d-inline d-md-none">Ganancias Semanales</span>
+                                                            <button type="button" class="btn report-btn btn-orange" title="Corte de caja"
+                                                            onclick="window.open('{{ route('cash-closures.report') }}', '_blank')">
+                                                                <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Corte de caja</span><span class="d-inline d-md-none">Corte</span>
+                                                            </button>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -179,6 +183,8 @@
     .btn.bg-teal { background-color: #20c997; color: #fff !important; }
     .btn.btn-success { background-color: #28a745; color: #fff !important; }
     .btn.bg-olive { background-color: #3d9970; color: #fff !important; }
+    .btn-orange {background-color: #ff7f00; color: white !important; border: none; }
+    .btn-orange:hover {background-color: #e67300; color: white !important; }
     table.dataTable thead th {
         position: relative;
         cursor: pointer;
