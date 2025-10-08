@@ -46,7 +46,7 @@
                                                 <th>NOMBRE</th>
                                                 <th>PRECIO</th>
                                                 <th>DURACIÓN</th>
-                                                <th>CONEXIONES</th>
+                                                <th>TOMAS DE AGUA</th>
                                                 <th>USUARIOS</th>
                                                 <th>OPCIONES</th>
                                             </tr>

@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="water_connections_number" class="form-label">Conexiones de Agua(*)</label>
+                                            <label for="water_connections_number" class="form-label">Tomas de agua(*)</label>
                                             <input type="number" class="form-control" name="water_connections_number" value="{{ $membership->water_connections_number }}" required>
                                         </div>
                                     </div>

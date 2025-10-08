@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label>Conexiones de Agua</label>
+                                        <label>Tomas de agua</label>
                                         <input type="text" disabled class="form-control" value="{{ number_format($membership->water_connections_number, 0) }}" />
                                     </div>
                                 </div>
