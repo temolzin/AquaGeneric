@@ -48,7 +48,6 @@ class CustomerController extends Controller
             'interior_number' => 'required|string',
             'email' => 'required|email|unique:users,email', 
         ]);
-
         
         $user = User::create([
             'name' => $request->name,
@@ -59,7 +58,6 @@ class CustomerController extends Controller
         ]);
 
         $user->assignRole('cliente');
-
         $customerData = $request->all();
         $customerData['locality_id'] = $authUser->locality_id;
         $customerData['created_by'] = $authUser->id;
@@ -118,12 +116,12 @@ class CustomerController extends Controller
 
     public function destroy(Customer $customer)
     {
-    if ($customer->user) {
-        $customer->user->delete();
-    }
-    
-    $customer->delete();
-    return redirect()->route('customers.index')->with('success', 'Cliente eliminado correctamente.');
+        if ($customer->user) {
+            $customer->user->delete();
+        }
+        
+        $customer->delete();
+        return redirect()->route('customers.index')->with('success', 'Cliente eliminado correctamente.');
     }
 
     public function pdfCustomers()
@@ -132,7 +130,7 @@ class CustomerController extends Controller
         $customers = Customer::where('locality_id', $authUser->locality_id)
             ->with('user')
             ->get();
-        $pdf = PDF::loadView('reports.pdfCustomers', compact('customers', 'authUser'))
+            $pdf = PDF::loadView('reports.pdfCustomers', compact('customers', 'authUser'))
             ->setPaper('A4', 'landscape');
 
         return $pdf->stream('customers.pdf');
@@ -144,7 +142,7 @@ class CustomerController extends Controller
         $customers = Customer::where('locality_id', $authUser->locality_id)
             ->with('user') 
             ->whereDoesntHave('waterConnections.debts', function ($query) {
-                $query->where('status', '!=', 'paid');
+            $query->where('status', '!=', 'paid');
             })->get();
     
         $pdf = Pdf::loadView('reports.reportCurrentCustomers', compact('customers', 'authUser'));
@@ -157,10 +155,10 @@ class CustomerController extends Controller
         $customers = Customer::where('locality_id', $authUser->locality_id)
             ->with('user') 
             ->whereHas('waterConnections.debts', function ($query) {
-                $query->where('status', '!=', 'paid');
+            $query->where('status', '!=', 'paid');
             })->get();
 
-        $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers', 'authUser'))
+            $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers', 'authUser'))
             ->setPaper('A4', 'portrait');
         return $pdf->stream('reporte_clientes_con_deudas.pdf');
     }
