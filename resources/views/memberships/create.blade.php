@@ -41,10 +41,22 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="term_months" class="form-label">Duración en Meses(*)</label>
-                                            <input type="number" class="form-control" id="term_months" name="term_months" placeholder="Ingrese duración en meses" value="{{ old('term_months') }}" required />
+                                            <input type="number" class="form-control" id="term_months" name="term_months" placeholder="Meses" value="{{ old('term_months') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="water_connections_number" class="form-label">Conexiones de Agua(*)</label>
+                                            <input type="number" class="form-control" id="water_connections_number" name="water_connections_number" placeholder="Ej: 4000" value="{{ old('water_connections_number') }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="users_number" class="form-label">Usuarios(*)</label>
+                                            <input type="number" class="form-control" id="users_number" name="users_number" placeholder="Ej: 100" value="{{ old('users_number') }}" required />
                                         </div>
                                     </div>
                                 </div>

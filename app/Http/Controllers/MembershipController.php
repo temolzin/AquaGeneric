@@ -28,13 +28,17 @@ class MembershipController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'term_months' => 'required|integer|min:1'
+            'term_months' => 'required|integer|min:1',
+            'water_connections_number' => 'required|integer|min:0', 
+            'users_number' => 'required|integer|min:0' 
         ]);
 
         Membership::create([
             'name' => $request->name,
             'price' => $request->price,
             'term_months' => $request->term_months,
+            'water_connections_number' => $request->water_connections_number, 
+            'users_number' => $request->users_number, 
             'created_by' => auth()->id()
         ]);
 
@@ -56,10 +60,18 @@ class MembershipController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'term_months' => 'required|integer|min:1'
+            'term_months' => 'required|integer|min:1',
+            'water_connections_number' => 'required|integer|min:0',
+            'users_number' => 'required|integer|min:0' 
         ]);
 
-        $membership->update($request->all());
+        $membership->update([
+            'name' => $request->name,
+            'price' => $request->price,
+            'term_months' => $request->term_months,
+            'water_connections_number' => $request->water_connections_number, 
+            'users_number' => $request->users_number 
+        ]);
 
         return redirect()->route('memberships.index')->with('success', 'Membresía actualizada exitosamente.');
     }

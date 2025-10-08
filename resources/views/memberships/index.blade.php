@@ -46,13 +46,15 @@
                                                 <th>NOMBRE</th>
                                                 <th>PRECIO</th>
                                                 <th>DURACIÓN</th>
+                                                <th>CONEXIONES</th>
+                                                <th>USUARIOS</th>
                                                 <th>OPCIONES</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @if(count($memberships) <= 0)
                                                 <tr>
-                                                    <td colspan="5">No hay resultados</td>
+                                                    <td colspan="7">No hay resultados</td>
                                                 </tr>
                                             @else
                                                 @foreach($memberships as $membership)
@@ -61,6 +63,8 @@
                                                         <td>{{$membership->name}}</td>
                                                         <td>${{number_format($membership->price, 2)}}</td>
                                                         <td>{{$membership->term_months}} meses</td>
+                                                        <td>{{number_format($membership->water_connections_number, 0)}}</td>
+                                                        <td>{{number_format($membership->users_number, 0)}}</td>
                                                         <td>
                                                             <div class="btn-group" role="group" aria-label="Opciones">
                                                                 <button type="button" class="btn btn-info mr-2" data-toggle="modal"
