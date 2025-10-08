@@ -12,7 +12,7 @@
                 @csrf
                 @method('DELETE')
                 <div class="modal-body text-center text-danger">
-                    ¿Estás seguro de eliminar al cliente <strong>{{ $customer->name }}?</strong>
+                    ¿Estás seguro de eliminar al cliente <strong>{{ $customer->user->name ?? 'Cliente' }}</strong>?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
