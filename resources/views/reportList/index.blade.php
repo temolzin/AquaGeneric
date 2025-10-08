@@ -93,7 +93,7 @@
                                                             <button type="button" class="btn bg-olive report-btn" data-toggle="modal" data-target="#weeklyGains" title="Ganancias Semanales">
                                                                 <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Ganancias Semanales</span><span class="d-inline d-md-none">Ganancias Semanales</span>
                                                             <button type="button" class="btn report-btn btn-orange" title="Corte de caja"
-                                                            onclick="window.open('{{ route('cash-closures.report') }}', '_blank', 'noopener,noreferrer')">
+                                                            onclick="window.open('{{ route('cash-closures.report') }}', '_blank')">
                                                                 <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Corte de caja</span><span class="d-inline d-md-none">Corte</span>
                                                             </button>
                                                             </button>
