@@ -363,4 +363,51 @@ class PaymentController extends Controller
 
         return $pdf->stream('reporte_pagos_tomas.pdf');
     }
+
+    public function showCustomerPayments(Request $request)
+    {
+        $authUser = auth()->user();
+        $customer = Customer::where('user_id', $authUser->id)
+                        ->where('locality_id', $authUser->locality_id)
+                        ->first();
+
+        if (!$customer) {
+            return redirect()->back()->with('error', 'No se encontró información de cliente.');
+        }
+
+        $query = Payment::with(['debt.waterConnection'])
+                    ->where('customer_id', $customer->id)
+                    ->where('locality_id', $authUser->locality_id)
+                    ->orderBy('created_at', 'desc');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'LIKE', "%{$search}%")
+                ->orWhere('method', 'LIKE', "%{$search}%")
+                ->orWhere(function($q) use ($search) {
+                    $methodMappings = [
+                        'efectivo' => 'cash',
+                        'transferencia' => 'transfer',
+                        'tarjeta' => 'card',
+                        'credito' => 'card',
+                        'débito' => 'card'
+                    ];
+                    
+                    foreach ($methodMappings as $spanish => $english) {
+                        if (stripos($search, $spanish) !== false) {
+                            $q->orWhere('method', $english);
+                        }
+                    }
+                })
+                ->orWhereHas('debt.waterConnection', function($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%");
+                });
+            });
+        }
+
+        $payments = $query->paginate(10);
+
+        return view('viewCustomerPayments.index', compact('payments', 'customer'));
+    }
 }

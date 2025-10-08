@@ -17,7 +17,14 @@ class UserController extends Controller
         $currentUserId = auth()->id();
         $roles = Role::all();
         $localities = Locality::all();
-        $users = User::where('id', '!=', $currentUserId)->get();
+        
+        $users = User::where('id', '!=', $currentUserId)
+                    ->whereDoesntHave('roles', function($query) {
+                        $query->whereIn('name', ['cliente', '$currentUserId']);
+                    })
+                    ->orderBy('id', 'desc')
+                    ->get();
+                    
         return view('users.index', compact('users', 'localities', 'roles'));
     }
 
