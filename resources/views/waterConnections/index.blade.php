@@ -64,8 +64,8 @@
                                                     <td scope="row">{{ $connection->id }}</td>
                                                     <td>{{ $connection->name }}</td>
                                                     <td>
-                                                        @if ($connection->customer)
-                                                            {{ $connection->customer->name }} {{ $connection->customer->last_name }}
+                                                        @if ($connection->customer && $connection->customer->user)
+                                                            {{ $connection->customer->user->name }} {{ $connection->customer->user->last_name }}
                                                         @else
                                                             <span class="text-danger">Toma sin cliente asignado</span>
                                                         @endif
@@ -196,9 +196,11 @@
                                                                     <select class="form-control select2" name="customer_id" id="customer_id" required>
                                                                         <option value="">Selecciona un cliente</option>
                                                                         @foreach($customers as $customer)
-                                                                            <option value="{{ $customer->id }}">
-                                                                                {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
-                                                                            </option>
+                                                                            @if($customer->user)
+                                                                                <option value="{{ $customer->id }}">
+                                                                                    {{ $customer->user->id }} - {{ $customer->user->name }} {{ $customer->user->last_name }}
+                                                                                </option>
+                                                                            @endif
                                                                         @endforeach
                                                                     </select>
                                                                 </div>

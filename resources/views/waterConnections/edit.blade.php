@@ -39,9 +39,11 @@
                                         <select class="form-control select2" name="customerIdUpdate" id="customerIdUpdate" required>
                                             <option value=""></option>
                                                 @foreach($customers as $customer)
-                                                    <option value="{{ $customer->id }}" {{ $customer->id == $connection->customer_id ? 'selected' : '' }}>
-                                                    {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
-                                                    </option>
+                                                    @if($customer->user)
+                                                        <option value="{{ $customer->id }}" {{ $customer->id == $connection->customer_id ? 'selected' : '' }}>
+                                                            {{ $customer->user->id }} - {{ $customer->user->name }} {{ $customer->user->last_name }}
+                                                        </option>
+                                                    @endif
                                                 @endforeach
                                         </select>
                                     </div>
