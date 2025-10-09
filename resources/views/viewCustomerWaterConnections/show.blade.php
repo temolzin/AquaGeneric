@@ -30,16 +30,16 @@
                                     <div class="form-group">
                                         <label>Tipo</label>
                                         @php
-                                            $tipe = 'Desconocido';
+                                            $type = 'Desconocido';
                                             if ($connection->type === 'residencial') {
-                                                $tipe = 'Residencial';
+                                                $type = 'Residencial';
                                             } elseif ($connection->type === 'commercial') {
-                                                $tipe = 'Comercial';
+                                                $type = 'Comercial';
                                             } else {
-                                                $tipe = $connection->type;
+                                                $type = $connection->type;
                                             }
                                         @endphp
-                                        <input type="text" disabled class="form-control" value="{{ $tipe }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $type }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">

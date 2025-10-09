@@ -179,7 +179,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     });
 
     Route::group(['middleware' => ['can:viewWaterConnections']], function () {
-    Route::get('/viewCustomerWaterConnections', [WaterConnectionController::class, 'showCustomerWaterConnections'])->name('viewCustomerWaterConnections.index');
+        Route::get('/viewCustomerWaterConnections', [WaterConnectionController::class, 'showCustomerWaterConnections'])->name('viewCustomerWaterConnections.index');
     });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
