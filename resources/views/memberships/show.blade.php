@@ -43,22 +43,22 @@
                                         <input type="text" disabled class="form-control" value="{{ $membership->term_months }} meses" />
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Tomas de agua</label>
+                                        <input type="text" disabled class="form-control" value="{{ number_format($membership->water_connections_number, 0) }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Usuarios Permitidos</label>
+                                        <input type="text" disabled class="form-control" value="{{ number_format($membership->users_number, 0) }}" />
+                                    </div>
+                                </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Creado Por</label>
                                         <input type="text" disabled class="form-control" value="{{ $membership->creator->name ?? 'Desconocido' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Fecha de Creación</label>
-                                        <input type="text" disabled class="form-control" value="{{ $membership->created_at->format('Y-m-d H:i') }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Última Actualización</label>
-                                        <input type="text" disabled class="form-control" value="{{ $membership->updated_at->format('Y-m-d H:i') }}" />
                                     </div>
                                 </div>
                             </div>

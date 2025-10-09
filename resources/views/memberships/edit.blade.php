@@ -42,10 +42,22 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="term_months" class="form-label">Duración en Meses(*)</label>
                                             <input type="number" class="form-control" name="term_months" value="{{ $membership->term_months }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="water_connections_number" class="form-label">Tomas de agua(*)</label>
+                                            <input type="number" class="form-control" name="water_connections_number" value="{{ $membership->water_connections_number }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="users_number" class="form-label">Usuarios(*)</label>
+                                            <input type="number" class="form-control" name="users_number" value="{{ $membership->users_number }}" required>
                                         </div>
                                     </div>
                                 </div>
