@@ -39,7 +39,7 @@ class Incident extends Model implements HasMedia
 
     public function getstatusChangeLogs()
     {
-        return $this->hasMany(LogIncident::class, 'incident_id')->latest();
+        return $this->hasMany(LogIncident::class, 'incident_id')->orderBy('created_at', 'desc');
     }
 
     public function getLatestDescription()

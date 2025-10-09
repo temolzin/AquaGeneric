@@ -164,6 +164,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('incidents', IncidentController::class);
         Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
         Route::get('/reports/generateIncidentListReport', [IncidentController::class, 'generateIncidentListReport'])->name('report.generateIncidentListReport');
+        Route::post('/incidents/update-status', [IncidentController::class, 'updateStatus'])->name('incidents.updateStatus');
     });
 
     Route::group(['middleware' => ['can:viewEmployee']], function () {
@@ -180,7 +181,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/faultReport', [FaultReportController::class, 'index'])->name('faultReport.index');
         Route::resource('faultReport', FaultReportController::class);
     });
-  
+    
     Route::group(['middleware' => ['can:viewNotice']], function () {
         Route::get('/localityNotices', [LocalityNoticeController::class, 'index'])->name('localityNotices.index');
         Route::resource('localityNotices', LocalityNoticeController::class);
