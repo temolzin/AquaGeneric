@@ -119,3 +119,15 @@
         align-items: center;
     }
 </style>
+
+<script>
+$(document).ready(function() {
+    $('#createPayment').on('shown.bs.modal', function () {
+        $(this).find('.select2').select2('destroy');
+
+        $(this).find('.select2').select2({
+            dropdownParent: $('#createPayment')
+        });
+    });
+});
+</script>

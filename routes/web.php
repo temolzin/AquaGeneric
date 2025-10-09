@@ -181,7 +181,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/faultReport', [FaultReportController::class, 'index'])->name('faultReport.index');
         Route::resource('faultReport', FaultReportController::class);
     });
-    
+
     Route::group(['middleware' => ['can:viewNotice']], function () {
         Route::get('/localityNotices', [LocalityNoticeController::class, 'index'])->name('localityNotices.index');
         Route::resource('localityNotices', LocalityNoticeController::class);
@@ -190,8 +190,8 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('localityNotices/{id}/download', [LocalityNoticeController::class, 'downloadAttachment'])->name('localityNotices.download');
     });
     
-    Route::get('/cash-closures/generate-latest', [PaymentController::class, 'cashClosurePaymentsReport'])
-    ->name('cash-closures.generate.latest');
+    Route::get('/cash-closures-report', [PaymentController::class, 'cashClosurePaymentsReport'])
+    ->name('cash-closures.report');
 
     Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
     Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');

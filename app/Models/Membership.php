@@ -13,7 +13,9 @@ class Membership extends Model
         'created_by',
         'name',
         'price',
-        'term_months'
+        'term_months',
+        'water_connections_number',
+        'users_number'
     ];
 
     public function creator()
