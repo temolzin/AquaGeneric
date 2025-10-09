@@ -135,4 +135,73 @@ class WaterConnectionController extends Controller
 
         return redirect()->route('waterConnections.index')->with('success', 'Toma reactivada y asignada correctamente.');
     }
+
+    public function showCustomerWaterConnections()
+    {
+        $authUser = auth()->user();
+        
+        $customer = $authUser->customer;
+        
+        if (!$customer) {
+            $connections = collect();
+        } else {
+            $query = WaterConnection::with(['cost', 'locality'])
+                ->where('customer_id', $customer->id)
+                ->where('locality_id', $authUser->locality_id);
+            
+            if (request()->has('search') && request('search') != '') {
+                $search = request('search');
+                $query->where(function($q) use ($search) {
+                    $q->where('id', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('type', 'like', "%{$search}%")
+                    ->orWhere('street', 'like', "%{$search}%")
+                    ->orWhere('block', 'like', "%{$search}%");
+                });
+            }
+            
+            $connections = $query->paginate(10)->appends(request()->query());
+            $connections->getCollection()->transform(function ($connection) {
+                $connection->formatted_water_days = $this->getFormattedWaterDays($connection->water_days);
+                $connection->water_pressure_text = $connection->has_water_pressure ? 'Sí' : 'No';
+                $connection->cistern_text = $connection->has_cistern ? 'Sí' : 'No';
+                
+                return $connection;
+            });
+        }
+
+        return view('viewCustomerWaterConnections.index', compact('connections'));
+    }
+
+    private function getFormattedWaterDays($waterDays)
+    {
+        if (empty($waterDays) || $waterDays === 'null' || $waterDays === '[]') {
+            return 'No hay días específicos asignados';
+        }
+        
+        if ($waterDays === '"all"' || $waterDays === 'all') {
+            return 'Todos los días';
+        }
+        
+        $daysArray = json_decode($waterDays, true) ?: [$waterDays];
+        
+        $daysMap = [
+            'monday' => 'Lunes', 'tuesday' => 'Martes', 'wednesday' => 'Miércoles',
+            'thursday' => 'Jueves', 'friday' => 'Viernes', 'saturday' => 'Sábado', 
+            'sunday' => 'Domingo'
+        ];
+        
+        $spanishDays = [];
+        foreach ($daysArray as $day) {
+            $dayLower = strtolower(trim($day));
+            
+            foreach ($daysMap as $en => $es) {
+                if ($dayLower === $en || $dayLower === strtolower($es) || $dayLower === 'all') {
+                    $spanishDays[] = $es;
+                }
+            }
+        }
+        
+        return empty($spanishDays) ? 'No hay días activos' : implode(', ', array_unique($spanishDays));
+    }
 }
