@@ -69,41 +69,41 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const editModals = document.querySelectorAll('[id^="editIncidentStatus"]');
-    
-    editModals.forEach(modal => {
-        const modalId = modal.id.replace('editIncidentStatus', '');
-        const colorSelect = document.getElementById('colorSelect' + modalId);
-        const colorPreview = document.getElementById('colorPreview' + modalId);
+    document.addEventListener('DOMContentLoaded', function() {
+        const editModals = document.querySelectorAll('[id^="editIncidentStatus"]');
         
-        if (colorSelect && colorPreview) {
-            colorSelect.addEventListener('change', function() {
-                if (this.value) {
-                    colorPreview.style.backgroundColor = this.value;
-                    colorPreview.style.border = '1px solid ' + this.value;
-                } else {
-                    colorPreview.style.backgroundColor = '#f8f9fa';
-                    colorPreview.style.border = '1px solid #ccc';
-                }
-            });
+        editModals.forEach(modal => {
+            const modalId = modal.id.replace('editIncidentStatus', '');
+            const colorSelect = document.getElementById('colorSelect' + modalId);
+            const colorPreview = document.getElementById('colorPreview' + modalId);
             
-            if (colorSelect.value) {
+            if (colorSelect && colorPreview) {
+                colorSelect.addEventListener('change', function() {
+                    if (this.value) {
+                        colorPreview.style.backgroundColor = this.value;
+                        colorPreview.style.border = '1px solid ' + this.value;
+                    } else {
+                        colorPreview.style.backgroundColor = '#f8f9fa';
+                        colorPreview.style.border = '1px solid #ccc';
+                    }
+                });
+                
+                if (colorSelect.value) {
+                    colorPreview.style.backgroundColor = colorSelect.value;
+                    colorPreview.style.border = '1px solid ' + colorSelect.value;
+                }
+            }
+        });
+        
+        $('[id^="editIncidentStatus"]').on('shown.bs.modal', function () {
+            const modalId = this.id.replace('editIncidentStatus', '');
+            const colorSelect = document.getElementById('colorSelect' + modalId);
+            const colorPreview = document.getElementById('colorPreview' + modalId);
+            
+            if (colorSelect && colorPreview && colorSelect.value) {
                 colorPreview.style.backgroundColor = colorSelect.value;
                 colorPreview.style.border = '1px solid ' + colorSelect.value;
             }
-        }
+        });
     });
-    
-    $('[id^="editIncidentStatus"]').on('shown.bs.modal', function () {
-        const modalId = this.id.replace('editIncidentStatus', '');
-        const colorSelect = document.getElementById('colorSelect' + modalId);
-        const colorPreview = document.getElementById('colorPreview' + modalId);
-        
-        if (colorSelect && colorPreview && colorSelect.value) {
-            colorPreview.style.backgroundColor = colorSelect.value;
-            colorPreview.style.border = '1px solid ' + colorSelect.value;
-        }
-    });
-});
 </script>

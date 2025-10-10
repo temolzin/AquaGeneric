@@ -68,32 +68,32 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const colorSelect = document.getElementById('colorSelect');
-    const colorPreview = document.getElementById('colorPreview');
-    
-    if (colorSelect && colorPreview) {
-        colorSelect.addEventListener('change', function() {
-            if (this.value) {
-                colorPreview.style.backgroundColor = this.value;
-                colorPreview.style.border = '1px solid ' + this.value;
-            } else {
-                colorPreview.style.backgroundColor = '#f8f9fa';
-                colorPreview.style.border = '1px solid #ccc';
+    document.addEventListener('DOMContentLoaded', function() {
+        const colorSelect = document.getElementById('colorSelect');
+        const colorPreview = document.getElementById('colorPreview');
+        
+        if (colorSelect && colorPreview) {
+            colorSelect.addEventListener('change', function() {
+                if (this.value) {
+                    colorPreview.style.backgroundColor = this.value;
+                    colorPreview.style.border = '1px solid ' + this.value;
+                } else {
+                    colorPreview.style.backgroundColor = '#f8f9fa';
+                    colorPreview.style.border = '1px solid #ccc';
+                }
+            });
+            
+            if (colorSelect.value) {
+                colorPreview.style.backgroundColor = colorSelect.value;
+                colorPreview.style.border = '1px solid ' + colorSelect.value;
+            }
+        }
+        
+        $('#createIncidentStatusModal').on('shown.bs.modal', function () {
+            if (colorSelect && colorSelect.value) {
+                colorPreview.style.backgroundColor = colorSelect.value;
+                colorPreview.style.border = '1px solid ' + colorSelect.value;
             }
         });
-        
-        if (colorSelect.value) {
-            colorPreview.style.backgroundColor = colorSelect.value;
-            colorPreview.style.border = '1px solid ' + colorSelect.value;
-        }
-    }
-    
-    $('#createIncidentStatusModal').on('shown.bs.modal', function () {
-        if (colorSelect && colorSelect.value) {
-            colorPreview.style.backgroundColor = colorSelect.value;
-            colorPreview.style.border = '1px solid ' + colorSelect.value;
-        }
     });
-});
 </script>
