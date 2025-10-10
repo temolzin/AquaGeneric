@@ -164,6 +164,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('incidents', IncidentController::class);
         Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
         Route::get('/reports/generateIncidentListReport', [IncidentController::class, 'generateIncidentListReport'])->name('report.generateIncidentListReport');
+        Route::post('/incidents/update-status', [IncidentController::class, 'updateStatus'])->name('incidents.updateStatus');
     });
 
     Route::group(['middleware' => ['can:viewEmployee']], function () {

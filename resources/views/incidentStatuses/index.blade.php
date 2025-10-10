@@ -47,7 +47,11 @@
                                         @forelse ($statuses as $status)
                                             <tr>
                                                 <td>{{ $status->id }}</td>
-                                                <td>{{ $status->status }}</td>
+                                                <td>
+                                                    <span class="badge" style="background-color: {{ $status->color ?? '#6c757d' }}; color: white;">
+                                                        {{ $status->status }}
+                                                    </span>
+                                                </td>
                                                 <td>{{ $status->description }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Opciones">
@@ -90,6 +94,24 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('css')
+<style>
+    .status-badge {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .status-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .table-dark .status-badge {
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+</style>
 @endsection
 
 @section('js')

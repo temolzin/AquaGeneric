@@ -12,6 +12,7 @@ class IncidentStatus extends Model
     protected $fillable = [
         'status',
         'description',
+        'color',
         'created_by',
         'locality_id',
     ];

@@ -30,11 +30,12 @@ class IncidentStatusController extends Controller
         $request->validate([
             'status' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'color' => 'required|string', 
         ]);
 
         IncidentStatus::create(
             array_merge(
-                $request->only(['status', 'description']), 
+                $request->only(['status', 'description', 'color']), 
                 [
                     'locality_id' => $authUser->locality_id,
                     'created_by' => $authUser->id,
@@ -42,8 +43,7 @@ class IncidentStatusController extends Controller
             )
         );
 
-        return redirect()->route('incidentStatuses.index')
-                        ->with('success', 'Estatus creado exitosamente.');
+        return redirect()->route('incidentStatuses.index')->with('success', 'Estatus creado exitosamente.');
     }
 
     public function edit(IncidentStatus $incidentStatus)
@@ -56,9 +56,10 @@ class IncidentStatusController extends Controller
         $request->validate([
             'status' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'color' => 'required|string', 
         ]);
 
-        $incidentStatus->update($request->only('status', 'description'));
+        $incidentStatus->update($request->only('status', 'description', 'color')); 
         return redirect()->route('incidentStatuses.index')
             ->with('success', 'Estatus actualizado correctamente.');
     }
@@ -70,7 +71,7 @@ class IncidentStatusController extends Controller
             ->with('success', 'Estatus eliminado correctamente.');
     }
 
-        public function generateIncidentStatusListReport()
+    public function generateIncidentStatusListReport()
     {
         $authUser = auth()->user();
         $incidentStatus = IncidentStatus::all();
