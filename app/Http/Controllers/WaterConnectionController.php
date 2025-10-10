@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\WaterConnection;
-use App\Models\Customer;
+use App\Models\User;
 use App\Models\Cost;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class WaterConnectionController extends Controller
@@ -13,11 +14,12 @@ class WaterConnectionController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
-            ->where('water_connections.locality_id', $authUser->locality_id)
-            ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
-            ->orderBy('water_connections.created_at', 'desc')
-            ->select('water_connections.*');
+            $query = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+                ->where('water_connections.locality_id', $authUser->locality_id)
+                ->join('users', 'water_connections.customer_id', '=', 'users.id') 
+                ->with(['customer.user'])
+                ->orderBy('water_connections.created_at', 'desc')
+                ->select('water_connections.*');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -26,13 +28,13 @@ class WaterConnectionController extends Controller
                 $q->where('water_connections.id', 'LIKE', "%{$search}%")
                 ->orWhere('water_connections.name', 'LIKE', "%{$search}%")
                 ->orWhere('water_connections.type', $search)
-                ->orWhere('customers.name', 'LIKE', "%{$search}%")
-                ->orWhere('customers.last_name', 'LIKE', "%{$search}%");
+                ->orWhere('users.name', 'LIKE', "%{$search}%")
+                ->orWhere('users.last_name', 'LIKE', "%{$search}%");
             });
         }
 
         $connections = $query->paginate(10);
-        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
+        $customers = Customer::where('locality_id', $authUser->locality_id)->with('user')->get();
         $costs = Cost::where('locality_id', $authUser->locality_id)->get();
 
         return view('waterConnections.index', compact('connections', 'customers', 'costs'));
@@ -58,8 +60,19 @@ class WaterConnectionController extends Controller
 
     public function show($id)
     {
-        $connections = WaterConnection::findOrFail($id);
-        return view('waterConnections.show', compact('connections'));
+        $connection = WaterConnection::with('customer.user')->findOrFail($id);
+        return view('waterConnections.show', compact('connection'));
+    }
+
+    public function edit($id)
+    {
+        $authUser = auth()->user();
+        
+        $connection = WaterConnection::with('customer.user')->findOrFail($id);
+        $customers = Customer::where('locality_id', $authUser->locality_id)->with('user')->get();
+        $costs = Cost::where('locality_id', $authUser->locality_id)->get();
+        
+        return view('waterConnections.edit', compact('connection', 'customers', 'costs'));
     }
 
     public function update(Request $request, $id)
