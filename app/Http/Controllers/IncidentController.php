@@ -117,70 +117,70 @@ class IncidentController extends Controller
     
     public function updateStatus(Request $request)
     {
-    try {
-        \Log::info('updateStatus called', $request->all());
+        try {
+            \Log::info('updateStatus called', $request->all());
 
-        $request->validate([
-            'incident_id' => 'required|exists:incidents,id',
-            'status_id' => 'required|exists:incident_statuses,id',
-            'employee' => 'required|exists:employees,id',
-            'description' => 'sometimes|string|max:500'
-        ]);
+            $request->validate([
+                'incident_id' => 'required|exists:incidents,id',
+                'status_id' => 'required|exists:incident_statuses,id',
+                'employee' => 'required|exists:employees,id',
+                'description' => 'sometimes|string|max:500'
+            ]);
 
-        $authUser = auth()->user();
-        $incident = Incident::findOrFail($request->incident_id);
+            $authUser = auth()->user();
+            $incident = Incident::findOrFail($request->incident_id);
 
-        if ($incident->locality_id != $authUser->locality_id) {
+            if ($incident->locality_id != $authUser->locality_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No tienes permisos para actualizar esta incidencia'
+                ], 403);
+            }
+
+            $newStatus = IncidentStatus::find($request->status_id);
+            $previousStatus = IncidentStatus::find($incident->status_id);
+            $previousStatusName = $previousStatus ? $previousStatus->status : 'Desconocido';
+            $incident->status_id = $request->status_id;
+            $incident->save();
+
+            \Log::info('Incident updated', ['incident_id' => $incident->id, 'new_status' => $request->status_id]);
+
+            $logDescription = $request->description ?: 'Cambio de estatus: ' . 
+                $previousStatusName . ' → ' . $newStatus->status;
+
+            $logIncident = LogIncident::create([
+                'incident_id' => $incident->id,
+                'status' => $newStatus->status, 
+                'employee_id' => $request->employee,
+                'description' => $logDescription,
+                'created_by' => $authUser->id,
+                'locality_id' => $authUser->locality_id,
+            ]);
+
+            \Log::info('Log created successfully:', [
+                'log_id' => $logIncident->id, 
+                'status_value' => $logIncident->status,
+                'status_type' => gettype($logIncident->status)
+            ]);
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $logIncident->addMedia($image)->toMediaCollection('logIncidentImages');
+                }
+                \Log::info('Images saved:', ['count' => count($request->file('images'))]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estatus actualizado correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in updateStatus: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'No tienes permisos para actualizar esta incidencia'
-            ], 403);
+                'message' => 'Error al actualizar el estatus: ' . $e->getMessage()
+            ], 500);
         }
-
-        $newStatus = IncidentStatus::find($request->status_id);
-        $previousStatus = IncidentStatus::find($incident->status_id);
-        $previousStatusName = $previousStatus ? $previousStatus->status : 'Desconocido';
-        $incident->status_id = $request->status_id;
-        $incident->save();
-
-        \Log::info('Incident updated', ['incident_id' => $incident->id, 'new_status' => $request->status_id]);
-
-        $logDescription = $request->description ?: 'Cambio de estatus: ' . 
-            $previousStatusName . ' → ' . $newStatus->status;
-
-        $logIncident = LogIncident::create([
-            'incident_id' => $incident->id,
-            'status' => $newStatus->status, 
-            'employee_id' => $request->employee,
-            'description' => $logDescription,
-            'created_by' => $authUser->id,
-            'locality_id' => $authUser->locality_id,
-        ]);
-
-        \Log::info('Log created successfully:', [
-            'log_id' => $logIncident->id, 
-            'status_value' => $logIncident->status,
-            'status_type' => gettype($logIncident->status)
-        ]);
-
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $logIncident->addMedia($image)->toMediaCollection('logIncidentImages');
-            }
-            \Log::info('Images saved:', ['count' => count($request->file('images'))]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Estatus actualizado correctamente'
-        ]);
-
-    } catch (\Exception $e) {
-        \Log::error('Error in updateStatus: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al actualizar el estatus: ' . $e->getMessage()
-        ], 500);
-    }
     }
 }
