@@ -27,16 +27,16 @@ class WaterConnectionController extends Controller
             ->select('water_connections.*');
 
         if ($request->has('search')) {
-        $search = $request->input('search');
+            $search = $request->input('search');
 
-        $query->where(function ($q) use ($search) {
-            $q->where('water_connections.id', 'LIKE', "%{$search}%")
-            ->orWhere('water_connections.name', 'LIKE', "%{$search}%")
-            ->orWhere('water_connections.type', $search)
-            ->orWhere('users.name', 'LIKE', "%{$search}%")
-            ->orWhere('users.last_name', 'LIKE', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('water_connections.id', 'LIKE', "%{$search}%")
+                ->orWhere('water_connections.name', 'LIKE', "%{$search}%")
+                ->orWhere('water_connections.type', $search)
+                ->orWhere('users.name', 'LIKE', "%{$search}%")
+                ->orWhere('users.last_name', 'LIKE', "%{$search}%");
             });
-    }
+        }
 
         $connections = $query->paginate(10);
         $customers = Customer::where('locality_id', $authUser->locality_id)->with('user')->get();
