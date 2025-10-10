@@ -340,7 +340,7 @@ return [
                 'can'  => 'viewPayments',
             ],
             [
-                'text' => 'Pagos Adelantados',
+                'text' => 'Graficos de Pagos Adelantados',
                 'url'  => '/advancePayments',
                 'icon' => 'fas fa-fw fa-calendar-plus',
                 'can'  => 'viewAdvancePayments',
