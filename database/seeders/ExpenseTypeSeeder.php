@@ -11,11 +11,6 @@ class ExpenseTypeSeeder extends Seeder
     {
         $localityIds = DB::table('localities')->pluck('id')->toArray();
         $userIds = DB::table('users')->pluck('id')->toArray();
-
-        if (empty($localityIds) || empty($userIds)) {
-            throw new \Exception('No hay IDs disponibles en las tablas localities o users.');
-        }
-
         $expenseTypesData = [];
 
         foreach ($localityIds as $localityId) {
