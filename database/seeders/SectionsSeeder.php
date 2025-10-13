@@ -4,62 +4,31 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Section;
+use App\Models\Locality;
 
-class SectionsTableSeeder extends Seeder
+class SectionsSeeder extends Seeder
 {
     public function run()
     {
-        $sections = [
-            [
-                'locality_id' => 1,
-                'created_by' => 1,
-                'name' => 'Sección A',
-                'zip_code' => '55001',
-                'color' => 'indigo',
-            ],
-            [
-                'locality_id' => 1,
-                'created_by' => 1,
-                'name' => 'Sección B',
-                'zip_code' => '55002',
-                'color' => 'light-blue',
-            ],
-            [
-                'locality_id' => 2,
-                'created_by' => 1,
-                'name' => 'Zona Sur',
-                'zip_code' => '55003',
-                'color' => 'navy',
-            ],
-            [
-                'locality_id' => 3,
-                'created_by' => 1,
-                'name' => 'Zona Centro',
-                'zip_code' => '55004',
-                'color' => 'lime',
-            ],
-            [
-                'locality_id' => 4,
-                'created_by' => 1,
-                'name' => 'Zona Norte',
-                'zip_code' => '55005',
-                'color' => 'teal',
-            ],
-        ];
+        $colors = ['purple', 'light-blue', 'orange', 'lime', 'navy', 'olive', 'secondary'];
 
-        foreach ($sections as $section) {
-            Section::updateOrCreate(
-                [
-                    'locality_id' => $section['locality_id'],
-                    'name' => $section['name'],
-                ],
-                [
-                    'created_by' => $section['created_by'],
-                    'zip_code' => $section['zip_code'],
-                    'color' => $section['color'],
-                    'updated_at' => now(),
-                ]
-            );
+        $localities = Locality::all(); 
+
+        foreach ($localities as $locality) {
+            for ($i = 1; $i <= 4; $i++) {
+                Section::updateOrCreate(
+                    [
+                        'locality_id' => $locality->id,
+                        'name' => 'Sección ' . $i . ' - Localidad ' . $locality->id,
+                    ],
+                    [
+                        'created_by' => 1,
+                        'zip_code' => str_pad(55000 + ($locality->id * 10) + $i, 5, '0', STR_PAD_LEFT),
+                        'color' => $colors[$i % count($colors)],
+                        'updated_at' => now(),
+                    ]
+                );
+            }
         }
     }
 }

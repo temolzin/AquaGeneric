@@ -20,9 +20,11 @@ class CreateSectionsTable extends Migration
             $table->string('name', 100); 
             $table->string('zip_code', 5);
             $table->string('color', 20);
+            $table->timestamps();
 
             $table->foreign('locality_id')->references('id')->on('localities');
             $table->foreign('created_by')->references('id')->on('users');
+
         });
     }
 
