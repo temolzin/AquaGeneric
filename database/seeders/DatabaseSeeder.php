@@ -34,5 +34,6 @@ class DatabaseSeeder extends Seeder
         $this->call(FaultReportSeeder::class);
         $this->call(InventoryTableSeeder::class);
         $this->call(MembershipsTableSeeder::class);
+        $this->call(SectionsSeeder::class);
     }
 }
