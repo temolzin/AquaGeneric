@@ -17,13 +17,13 @@
                                 <div class="col-lg-2">
                                     <div class="form-group">
                                         <label>ID del Cliente</label>
-                                        <input type="text" disabled class="form-control" value="{{ $debt->waterConnection->customer->id }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $debt->waterConnection->customer->user->id }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-10">
                                     <div class="form-group">
                                         <label>Nombre del Cliente</label>
-                                        <input type="text" disabled class="form-control" value="{{ $debt->waterConnection->customer->name }} {{ $debt->waterConnection->customer->last_name }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $debt->waterConnection->customer->user->name }} {{ $debt->waterConnection->customer->user->last_name }}" />
                                     </div>
                                 </div>
                                 @php
