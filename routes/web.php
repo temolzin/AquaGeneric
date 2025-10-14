@@ -183,7 +183,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     });
 
     Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
-        Route::get('/viewCustomerDebts', [DebtController::class, 'listCustomerDebts'])->name('viewCustomerDebts.index');
+        Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
     });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
