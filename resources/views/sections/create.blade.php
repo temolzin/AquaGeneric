@@ -45,7 +45,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <input type="hidden" name="locality_id" value="{{ auth()->user()->locality_id }}">
                             </div>
                         </div>
                     </div>

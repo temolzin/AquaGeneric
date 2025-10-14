@@ -10,23 +10,24 @@ class SectionController extends Controller
 {
     public function index(Request $request)
     {
-    $authUser = auth()->user();
-    $query = Section::where('sections.locality_id', $authUser->locality_id)
-        ->orderBy('sections.created_at', 'desc')
-        ->select('sections.*');
+        $authUser = auth()->user();
+        $query = Section::where('sections.locality_id', $authUser->locality_id)
+            ->orderBy('sections.created_at', 'desc')
+            ->select('sections.*');
 
-    if ($request->has('search')) {
-        $search = $request->input('search');
+        if ($request->has('search')) {
+            $search = $request->input('search');
 
-        $query->where(function ($q) use ($search) {
-            if (is_numeric($search)) {
-                $q->where('sections.id', $search);
-            }
-            $q->orWhere('sections.name', 'LIKE', "%{$search}%");
-        });
-    }
-        $sections = $query->paginate(10);    
-        
+            $query->where(function ($q) use ($search) {
+                if (is_numeric($search)) {
+                    $q->where('sections.id', $search);
+                }
+                $q->orWhere('sections.name', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $sections = $query->paginate(10);
+
         return view('sections.index', compact('sections'));
     }
 
