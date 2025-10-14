@@ -181,6 +181,10 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewWaterConnections']], function () {
         Route::get('/viewCustomerWaterConnections', [WaterConnectionController::class, 'showCustomerWaterConnections'])->name('viewCustomerWaterConnections.index');
     });
+
+    Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
+        Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
+    });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
     Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');
