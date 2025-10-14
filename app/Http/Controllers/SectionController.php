@@ -36,14 +36,13 @@ class SectionController extends Controller
         $authUser = auth()->user();
 
         $request->validate([
-            'locality_id' => 'required|exists:localities,id',
             'name' => 'required|string|max:100',
             'zip_code' => 'required|string|max:5',
             'color' => 'required|string|max:20',
         ]);
 
         Section::create([
-            'locality_id' => $request->locality_id,
+            'locality_id' => $authUser->locality_id, 
             'created_by' => $authUser->id,
             'name' => $request->name,
             'zip_code' => $request->zip_code,
@@ -67,7 +66,6 @@ class SectionController extends Controller
     public function edit($id)
     {
         $section = Section::findOrFail($id);
-        $localities = Locality::all();
 
         return view('sections.edit', compact('section', 'localities'));
     }
@@ -81,14 +79,12 @@ class SectionController extends Controller
         }
 
         $request->validate([
-            'locality_id' => 'required|exists:localities,id',
             'name' => 'required|string|max:100',
             'zip_code' => 'required|string|max:5',
             'color' => 'required|string|max:20',
         ]);
 
         $section->update([
-            'locality_id' => $request->locality_id,
             'name' => $request->name,
             'zip_code' => $request->zip_code,
             'color' => $request->color,
