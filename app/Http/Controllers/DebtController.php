@@ -8,6 +8,7 @@ use App\Models\Debt;
 use App\Models\Payment;
 use App\Models\WaterConnection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DebtController extends Controller
 {
@@ -185,5 +186,43 @@ class DebtController extends Controller
 
         return redirect()->back()->with('success', 'Deuda eliminada con éxito.')
             ->with('modal_id', $request->input('modal_id'));
+    }
+
+    public function listCustomerDebts(Request $request)
+    {
+        $authUser = auth()->user();
+        $customer = $authUser->customer;
+        
+        if (!$customer) {
+            $waterConnections = WaterConnection::where('id', 0)->paginate(10);
+            return view('viewCustomerDebts.index', compact('waterConnections'))
+                ->with('error', 'No se encontró información del cliente.');
+        }
+
+        $search = $request->input('search');
+        $waterConnections = WaterConnection::where('customer_id', $customer->id)
+            ->where('locality_id', $authUser->locality_id)
+            ->whereHas('debts', function($query) {
+                $query->where(function($q) {
+                    $q->where('status', 'pending')
+                    ->orWhere('status', 'partial');
+                });
+            })
+            ->when($search, function($query) use ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('street', 'like', "%{$search}%")
+                    ->orWhere('exterior_number', 'like', "%{$search}%")
+                    ->orWhere('interior_number', 'like', "%{$search}%")
+                    ->orWhere('id', 'like', "%{$search}%");
+                });
+            })
+            ->with(['debts' => function($query) {
+                $query->orderBy('created_at', 'desc');
+            }])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('viewCustomerDebts.index', compact('waterConnections'));
     }
 }
