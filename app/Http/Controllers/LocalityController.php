@@ -108,4 +108,25 @@ class LocalityController extends Controller
             ->with('createdToken', $token)
             ->with('localityName', $locality->name);
     }
+
+    public function updatePdfBackground(Request $request, $id)
+    {
+        $locality = Locality::find($id);
+
+        if (!$locality) {
+            return redirect()->back()->with('error', 'Localidad no encontrada.');
+        }
+
+        if ($request->hasFile('pdf_background_vertical')) {
+            $locality->clearMediaCollection('pdfBackgroundVertical');
+            $locality->addMediaFromRequest('pdf_background_vertical')->toMediaCollection('pdfBackgroundVertical');
+        }
+
+        if ($request->hasFile('pdf_background_horizontal')) {
+            $locality->clearMediaCollection('pdfBackgroundHorizontal');
+            $locality->addMediaFromRequest('pdf_background_horizontal')->toMediaCollection('pdfBackgroundHorizontal');
+        }
+
+        return redirect()->route('localities.index')->with('success', 'Fondos de reportes actualizados correctamente.');
+    }
 }
