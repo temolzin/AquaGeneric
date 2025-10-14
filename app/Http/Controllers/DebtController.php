@@ -188,7 +188,7 @@ class DebtController extends Controller
             ->with('modal_id', $request->input('modal_id'));
     }
 
-    public function listCustomerDebts(Request $request)
+    public function showCustomerDebts(Request $request)
     {
         $authUser = auth()->user();
         $customer = $authUser->customer;
