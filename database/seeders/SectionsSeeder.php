@@ -10,7 +10,7 @@ class SectionsSeeder extends Seeder
 {
     public function run()
     {
-        $colors = ['purple', 'light-blue', 'orange', 'lime', 'navy', 'olive', 'secondary'];
+        $colors = ['purple', 'maroon', 'orange', 'lime', 'navy', 'olive', 'secondary'];
 
         $localities = Locality::all(); 
 
