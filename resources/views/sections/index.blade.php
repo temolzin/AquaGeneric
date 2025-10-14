@@ -72,8 +72,7 @@
                                                         </button>
                                                         @endcan
                                                     </div>
-
-                                                    {{-- Modales --}}
+                                                    @include('sections.create')
                                                     @include('sections.show')
                                                     @include('sections.edit')
                                                     @include('sections.delete')
@@ -86,23 +85,15 @@
                                         @endforelse
                                     </tbody>
                                 </table>
-
-                                @include('sections.create')
-
-                                <div class="d-flex justify-content-center">
-                                    {!! $sections->links('pagination::bootstrap-4') !!}
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 </section>
 @endsection
-
 @section('js')
 <script>
 $(document).ready(function() {

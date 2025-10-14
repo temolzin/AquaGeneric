@@ -246,6 +246,6 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'deleteSections',
             'description' => 'Permite eliminar las Secciones.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        ])->assignRole([$roleSupervisor]);
     }
 }

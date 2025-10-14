@@ -25,11 +25,9 @@ class SectionController extends Controller
             $q->orWhere('sections.name', 'LIKE', "%{$search}%");
         });
     }
-
-    $sections = $query->paginate(10);
-    $localities = Locality::all();
-
-    return view('sections.index', compact('sections', 'localities'));
+        $sections = $query->paginate(10);    
+        
+        return view('sections.index', compact('sections'));
     }
 
     public function store(Request $request)
@@ -56,7 +54,12 @@ class SectionController extends Controller
 
     public function show($id)
     {
-        $section = Section::with('locality')->findOrFail($id);
+        $authUser = auth()->user();
+        $section = Section::with('locality')
+            ->where('id', $id)
+            ->where('locality_id', $authUser->locality_id)
+            ->firstOrFail();
+
         return view('sections.show', compact('section'));
     }
 
@@ -64,6 +67,7 @@ class SectionController extends Controller
     {
         $section = Section::findOrFail($id);
         $localities = Locality::all();
+
         return view('sections.edit', compact('section', 'localities'));
     }
 

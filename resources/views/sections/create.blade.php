@@ -13,23 +13,18 @@
                     <div class="card border-0">
                         <div class="card-body">
                             <div class="row">
-                                <!-- Nombre de la sección (fila completa) -->
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label for="name" class="form-label">Nombre de la sección(*)</label>
                                         <input type="text" class="form-control" name="name" placeholder="Ejemplo: Sección A" value="{{ old('name') }}" required />
                                     </div>
                                 </div>
-
-                                <!-- Código Postal -->
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="zip_code" class="form-label">Código Postal(*)</label>
                                         <input type="text" class="form-control" name="zip_code" placeholder="Ejemplo: 55010" maxlength="5" value="{{ old('zip_code') }}" required />
                                     </div>
                                 </div>
-
-                                <!-- Color -->
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="color">Color de identificación(*)</label>
@@ -50,13 +45,11 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <input type="hidden" name="locality_id" value="{{ auth()->user()->locality_id }}">
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Guardar</button>
@@ -65,7 +58,6 @@
         </div>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const colorSelect = document.getElementById('colorSelect');

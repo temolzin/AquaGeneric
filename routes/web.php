@@ -205,6 +205,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewMemberships']], function () {
         Route::resource('memberships', MembershipController::class);
     });
+    
     Route::group(['middleware' => ['can:viewSections']], function () {
         Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
         Route::resource('sections', SectionController::class);

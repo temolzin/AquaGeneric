@@ -16,23 +16,18 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <!-- Nombre de la Sección (fila completa) -->
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label for="name" class="form-label">Nombre de la Sección(*)</label>
                                         <input type="text" class="form-control" name="name" placeholder="Ingresa el nombre de la sección" value="{{ $section->name }}" required />
                                     </div>
                                 </div>
-
-                                <!-- Código Postal -->
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="zip_code" class="form-label">Código Postal(*)</label>
                                         <input type="text" class="form-control" name="zip_code" placeholder="Ingresa el código postal" value="{{ $section->zip_code }}" required />
                                     </div>
                                 </div>
-
-                                <!-- Color -->
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="color" class="form-label">Color(*)</label>
@@ -53,13 +48,11 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <input type="hidden" name="locality_id" value="{{ auth()->user()->locality_id }}">
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm({{ $section->id }})">Cancelar</button>
                     <button type="submit" class="btn btn-warning">Actualizar</button>
@@ -68,7 +61,6 @@
         </div>
     </div>
 </div>
-
 <style>
     .form-group {
         margin-bottom: 0.5rem;
@@ -86,7 +78,6 @@
         align-items: center;
     }
 </style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const select = document.getElementById('colorSelect{{ $section->id }}');
