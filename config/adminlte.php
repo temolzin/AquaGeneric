@@ -426,7 +426,7 @@ return [
     ],
     [
         'text' => 'Mis Deudas',
-        'url' => '/viewMyDebts',
+        'url' => '/viewCustomerDebts',
         'can'  => 'viewCustomerDebts',
         'icon' => 'fas fa-fw fa-exclamation-circle text-white',
     ],
