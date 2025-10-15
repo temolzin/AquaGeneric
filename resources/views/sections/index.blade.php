@@ -42,7 +42,6 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>NOMBRE</th>
-                                            <th>LOCALIDAD</th>
                                             <th>CÓDIGO POSTAL</th>
                                             <th>OPCIONES</th>
                                         </tr>
@@ -52,7 +51,6 @@
                                             <tr>
                                                 <td>{{ $section->id }}</td>
                                                 <td>{{ $section->name }}</td>
-                                                <td>{{ $section->locality->name ?? 'Sin localidad' }}</td>
                                                 <td>{{ $section->zip_code }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Opciones">
@@ -67,9 +65,15 @@
                                                         </button>
                                                         @endcan
                                                         @can('deleteSections')
-                                                        <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Sección" data-target="#delete{{ $section->id }}">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
+                                                             @if($section->waterConnections()->count() > 0)
+                                                                <button type="button" class="btn btn-secondary mr-2" title="No se puede eliminar, tiene tomas" disabled>
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @else
+                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Sección" data-target="#delete{{ $section->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
                                                         @endcan
                                                     </div>
                                                     @include('sections.create')

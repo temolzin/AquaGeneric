@@ -21,6 +21,11 @@ class Section extends Model
     {
         return $this->belongsTo(Locality::class);
     }
+
+    public function waterConnections()
+    {
+        return $this->hasMany(\App\Models\WaterConnection::class, 'section_id');
+    }
     
     public function creator()
     {

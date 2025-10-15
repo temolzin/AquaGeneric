@@ -15,10 +15,23 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="nameUpdate" class="form-label">Nombre(*)</label>
                                             <input type="text" class="form-control" name="nameUpdate" id="nameUpdate" value="{{ $connection->name }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="section_id" class="form-label">Sección(*)</label>
+                                            <select class="form-control select2" name="section_id" id="section_id" required>
+                                                <option value="">Selecciona una sección</option>
+                                                @foreach($sections as $section)
+                                                    <option value="{{ $section->id }}" {{ $connection->section_id == $section->id ? 'selected' : '' }}>
+                                                        {{ $section->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
