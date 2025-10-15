@@ -18,7 +18,7 @@ class GeneralExpense extends Model implements HasMedia
         'concept',
         'description',
         'amount',
-        'type',
+        'expense_type_id', 
         'expense_date'
     ];
 
@@ -30,5 +30,10 @@ class GeneralExpense extends Model implements HasMedia
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function expenseType()
+    {
+        return $this->belongsTo(ExpenseType::class, 'expense_type_id');
     }
 }
