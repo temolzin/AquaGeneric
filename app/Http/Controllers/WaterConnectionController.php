@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WaterConnection;
 use App\Models\Customer;
 use App\Models\Cost;
+use App\Models\Locality;
 use Illuminate\Http\Request;
 
 class WaterConnectionController extends Controller
@@ -41,6 +42,21 @@ class WaterConnectionController extends Controller
     public function store(Request $request)
     {
         $authUser = auth()->user();
+
+        $locality = Locality::with('membership')->find($authUser->locality_id);
+        
+        if ($locality && $locality->membership) {
+            $currentConnectionsCount = WaterConnection::where('locality_id', $authUser->locality_id)
+                ->where('is_canceled', false)
+                ->count();
+
+            if ($currentConnectionsCount >= $locality->membership->water_connections_number) {
+                return redirect()->back()->with('error', 
+                    'No se pueden registrar más tomas de agua. Límite de ' . 
+                    $locality->membership->water_connections_number . 
+                    ' tomas de agua alcanzado para la localidad '. $locality->name. '. Contacte al administrador para habilitar más tomas de agua.');
+            }
+        }
 
         $waterConnectionData = $request->all();
 
@@ -123,6 +139,22 @@ class WaterConnectionController extends Controller
     public function reactivate(Request $request, $id)
     {
         $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)->findOrFail($id);
+
+        $authUser = auth()->user();
+        $locality = Locality::with('membership')->find($authUser->locality_id);
+        
+        if ($locality && $locality->membership) {
+            $currentConnectionsCount = WaterConnection::where('locality_id', $authUser->locality_id)
+                ->where('is_canceled', false)
+                ->count();
+
+            if ($currentConnectionsCount >= $locality->membership->water_connections_number) {
+                return redirect()->back()->with('error', 
+                    'No se puede reactivar la toma de agua. Límite de ' . 
+                    $locality->membership->water_connections_number . 
+                    ' tomas de agua alcanzado para esta localidad.');
+            }
+        }
 
         if ($request->has('customer_id')) {
             $connection->customer_id = $request->input('customer_id');

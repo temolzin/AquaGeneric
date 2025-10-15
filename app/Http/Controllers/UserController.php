@@ -9,7 +9,6 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 
-
 class UserController extends Controller
 {
     public function index()
@@ -23,26 +22,73 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $userData = $request->only(['name', 'last_name', 'email', 'phone','locality_id']);
-        $userData['password'] = bcrypt($request->input('password'));
+        $request->validate([
+            'locality_id' => 'required|exists:localities,id'
+        ]);
 
-        $user = User::create($userData);
+        try {
+            if ($request->has('roles')) {
+                $selectedRoles = Role::whereIn('id', $request->roles)->pluck('name')->toArray();
+                $allowedRoles = ['Supervisor', 'Secretaria'];
+                
+                $invalidRoles = array_diff($selectedRoles, $allowedRoles);
+                if (!empty($invalidRoles)) {
+                    return redirect()->back()->with('error', 
+                        'Roles no permitidos: ' . implode(', ', $invalidRoles) . 
+                        '. Solo se permiten los roles: supervisor y secretaria.');
+                }
+            }
 
-        if ($request->hasFile('photo')) {
-            $user->addMediaFromRequest('photo')->toMediaCollection('userGallery');
+            $locality = \App\Models\Locality::with('membership')->findOrFail($request->locality_id);
+            
+            if (!$locality->membership) {
+                return redirect()->back()->with('error', 'La localidad no tiene una membresía asignada. Por favor, contacte al administrador.');
+            }
+
+            $currentUsersCount = \App\Models\User::where('locality_id', $request->locality_id)->count();
+
+            if ($currentUsersCount >= $locality->membership->users_number) {
+                return redirect()->back()->with('error', 
+                    'No se pueden registrar más usuarios. Límite de ' . $locality->membership->users_number . 
+                    ' usuarios alcanzado para la localidad '. $locality->name .'.');
+            }
+
+            $userData = $request->only(['name', 'last_name', 'email', 'phone','locality_id']);
+            $userData['password'] = bcrypt($request->input('password'));
+
+            $user = User::create($userData);
+
+            if ($request->hasFile('photo')) {
+                $user->addMediaFromRequest('photo')->toMediaCollection('userGallery');
+            }
+
+            $user->roles()->sync($request->roles);
+
+            return redirect()->back()->with('success', 'Usuario creado exitosamente');
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->back()->with('error', 'Localidad no encontrada.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al crear el usuario: ' . $e->getMessage());
         }
-
-        $user->roles()->sync($request->roles);
-
-        return redirect()->back()->with('success', 'Usuario creado exitosamente');
     }
-
 
     public function update(Request $request, $id)
     {
-
         $user = User::find($id);
         if ($user) {
+            if ($request->has('roleUpdate')) {
+                $selectedRoles = Role::whereIn('id', $request->roleUpdate)->pluck('name')->toArray();
+                $allowedRoles = ['supervisor', 'secretaria'];
+                
+                $invalidRoles = array_diff($selectedRoles, $allowedRoles);
+                if (!empty($invalidRoles)) {
+                    return redirect()->back()->with('error', 
+                        'Roles no permitidos: ' . implode(', ', $invalidRoles) . 
+                        '. Solo se permiten los roles: supervisor y secretaria.');
+                }
+            }
+
             $user->name = $request->input('nameUpdate');
             $user->last_name = $request->input('lastNameUpdate');
             $user->phone = $request->input('phoneUpdate');
@@ -96,6 +142,5 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('users.index')->with('success', 'Contraseña actualizada correctamente.');
-
     }
 }

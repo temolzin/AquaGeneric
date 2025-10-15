@@ -11,24 +11,34 @@ class LocalitiesTableSeeder extends Seeder
 {
     public function run()
     {
+        $memberships = \App\Models\Membership::all();
+        
+        if ($memberships->isEmpty()) {
+            $this->call(MembershipsTableSeeder::class);
+            $memberships = \App\Models\Membership::all();
+        }
+
         $localitiesData = [
             [
                 'name' => 'Smallville',
                 'municipality' => 'Smallville',
                 'state' => 'Kansas',
                 'zip_code' => '66002',
+                'membership_id' => $memberships->where('name', 'Premium Plan - 6 Months')->first()->id ?? $memberships->first()->id,
             ],
             [
                 'name' => 'Springfield',
                 'municipality' => 'Springfield',
                 'state' => 'Oregon',
                 'zip_code' => '97477',
+                'membership_id' => $memberships->where('name', 'Enterprise Plan - 12 Months')->first()->id ?? $memberships->first()->id,
             ],
             [
                 'name' => 'Dunder Mifflin',
                 'municipality' => 'Scranton',
                 'state' => 'Pennsylvania',
                 'zip_code' => '18503',
+                'membership_id' => $memberships->where('name', 'Basic Plan - 3 Months')->first()->id ?? $memberships->first()->id,
                 'expired' => true
             ],
         ];
@@ -37,7 +47,10 @@ class LocalitiesTableSeeder extends Seeder
             $isExpired = $data['expired'] ?? false;
             unset($data['expired']);
 
-            $locality = Locality::updateOrCreate(['name' => $data['name']], $data);
+            $locality = Locality::updateOrCreate(
+                ['name' => $data['name']], 
+                $data
+            );
 
             $startDate = Carbon::now()->format('Y-m-d');
             $endDate = Carbon::now()->addYear()->format('Y-m-d');
@@ -51,11 +64,10 @@ class LocalitiesTableSeeder extends Seeder
             $locality->save();
         }
 
-        Locality::where(function ($query) {
-            $query->whereNull('token')->orWhere('token', '');
-        })->get()->each(function ($locality) {
-            $locality->token = Token::generateTokenForLocality($locality->id);
-            $locality->save();
+        Locality::whereNull('membership_id')->get()->each(function ($locality) use ($memberships) {
+            $locality->update([
+                'membership_id' => $memberships->random()->id
+            ]);
         });
     }
 }
