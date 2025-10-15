@@ -24,6 +24,7 @@ class WaterConnectionsTableSeeder extends Seeder
             $customers = DB::table('customers')->where('locality_id', $localityId)->whereNull('deleted_at')->pluck('id')->toArray();
             $costs = DB::table('costs')->where('locality_id', $localityId)->pluck('id')->toArray();
             $users = DB::table('users')->pluck('id')->toArray();
+            $localitySections = DB::table('sections')->where('locality_id', $localityId)->pluck('id')->toArray();
 
             foreach ($customers as $customerId) {
 
@@ -48,6 +49,7 @@ class WaterConnectionsTableSeeder extends Seeder
                     'has_water_pressure' => $faker->boolean,
                     'has_cistern' => $faker->boolean,
                     'type' => $faker->randomElement(['residencial', 'commercial']),
+                    'section_id' => $faker->randomElement($localitySections), 
                 ]);
 
                 if ($faker->boolean(30)) {
@@ -68,6 +70,7 @@ class WaterConnectionsTableSeeder extends Seeder
                         'has_water_pressure' => $faker->boolean,
                         'has_cistern' => $faker->boolean,
                         'type' => $faker->randomElement(['residencial', 'commercial']),
+                        'section_id' => $faker->randomElement($localitySections),
                     ]);
                 }
             }
