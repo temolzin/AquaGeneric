@@ -15,7 +15,7 @@ class AddSectionIdToWaterConnectionsTable extends Migration
     {
         Schema::table('water_connections', function (Blueprint $table) {
             $table->unsignedBigInteger('section_id')->nullable()->after('id');
-            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
         });
     }
 
