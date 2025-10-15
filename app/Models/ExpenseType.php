@@ -39,12 +39,5 @@ class ExpenseType extends Model
         return $this->hasMany(GeneralExpense::class);
     }
 
-    public function scopeByUserLocality($query)
-    {
-        $user = auth()->user();
-        if ($user && $user->locality_id) {
-            return $query->where('locality_id', $user->locality_id);
-        }
-        return $query;
-    }
+
 }
