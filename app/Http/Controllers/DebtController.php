@@ -18,9 +18,19 @@ class DebtController extends Controller
         $search = $request->input('search');
         $localityId = auth()->user()->locality_id;
 
-        $customers = Customer::where('locality_id', $localityId)
-            ->with('user')
-            ->get();
+        $customers = Customer::where('customers.locality_id', $localityId)
+                    ->with('user')
+                    ->select('customers.id', 'customers.user_id', 'customers.locality_id')
+                    ->where(function ($query) use ($search) {
+                        $query->where('customers.id', 'like', "%{$search}%")
+                            ->orWhereHas('user', function ($query) use ($search) {
+                                $query->where('name', 'like', "%{$search}%")
+                                    ->orWhere('last_name', 'like', "%{$search}%")
+                                    ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+                            });
+                    })
+                    ->groupBy('customers.id', 'customers.user_id', 'customers.locality_id')
+                    ->get();
 
         $waterConnections = WaterConnection::with(['customer', 'customer.user'])
             ->where('locality_id', $localityId)
@@ -58,7 +68,7 @@ class DebtController extends Controller
 
         return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts'));
     }
-    
+
     public function getWaterConnections(Request $request)
     {
         $authUser = auth()->user();
