@@ -251,5 +251,17 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteExpenseTypes',
             'description' => 'Permite eliminar tipos de gastos.'
         ])->assignRole($roleSupervisor);
+        Permission::firstOrCreate([
+            'name' => 'viewSections',
+            'description' => 'Permite ver las Secciones.'
+        ])->assignRole([$roleSecretariat, $roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'editSections',
+            'description' => 'Permite editar la información de las Secciones.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'deleteSections',
+            'description' => 'Permite eliminar las Secciones.'
+        ])->assignRole([$roleSupervisor]);
     }
 }

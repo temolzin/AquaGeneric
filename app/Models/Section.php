@@ -21,4 +21,9 @@ class Section extends Model
     {
         return $this->belongsTo(Locality::class);
     }
+    
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

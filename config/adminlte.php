@@ -312,6 +312,12 @@ return [
         'icon' => 'fas fa-fw fa-home',
     ],
     [
+        'text' => 'Secciones',
+        'url' => '/sections',
+        'icon' => 'fas fa-fw fa-th-large',
+        'can'  => 'viewSections'
+    ],    
+    [
         'text' => 'Usuarios',
         'url' => '/users',
         'icon' => 'fas fa-fw fa-user',

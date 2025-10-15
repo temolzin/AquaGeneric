@@ -29,6 +29,7 @@ use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\ExpenseTypeController;
+use App\Http\Controllers\SectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -209,6 +210,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewExpenseTypes']], function () {
         Route::get('/expenseTypes', [ExpenseTypeController::class, 'index'])->name('expenseTypes.index');
         Route::resource('expenseTypes', ExpenseTypeController::class);
+    });
+
+    Route::group(['middleware' => ['can:viewSections']], function () {
+        Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
+        Route::resource('sections', SectionController::class);
     });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
