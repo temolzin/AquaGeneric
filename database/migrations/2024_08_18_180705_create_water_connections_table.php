@@ -18,6 +18,7 @@ class CreateWaterConnectionsTable extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('cost_id');
+            $table->unsignedBigInteger('section_id');
             $table->unsignedBigInteger('created_by');
             $table->string('name');
             $table->integer('occupants_number');
@@ -37,6 +38,7 @@ class CreateWaterConnectionsTable extends Migration
             $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');
             $table->foreign('cost_id')->references('id')->on('costs')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
         });
     }
 
