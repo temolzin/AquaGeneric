@@ -219,3 +219,4 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
     Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');
+});
