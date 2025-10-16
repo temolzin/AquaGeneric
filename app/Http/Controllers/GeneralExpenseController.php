@@ -13,27 +13,27 @@ class GeneralExpenseController extends Controller
 {
     public function index(Request $request)
     {
-    $authUser = auth()->user();
-    $query = GeneralExpense::where('general_expenses.locality_id', $authUser->locality_id)
-        ->with('expenseType') 
-        ->orderBy('general_expenses.created_at', 'desc')
-        ->select('general_expenses.*');
+        $authUser = auth()->user();
+        $query = GeneralExpense::where('general_expenses.locality_id', $authUser->locality_id)
+            ->with('expenseType') 
+            ->orderBy('general_expenses.created_at', 'desc')
+            ->select('general_expenses.*');
 
-    if ($request->has('search')) {
-        $search = $request->input('search');
-        $query->where(function ($q) use ($search) {
-            $q->where('general_expenses.concept', 'LIKE', "%{$search}%")
-            ->orWhere('general_expenses.id', 'LIKE', "%{$search}%");
-        });
-    }
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('general_expenses.concept', 'LIKE', "%{$search}%")
+                ->orWhere('general_expenses.id', 'LIKE', "%{$search}%");
+            });
+        }
 
-    $expenses = $query->paginate(10);
-    
-    $expenseTypes = ExpenseType::where('locality_id', $authUser->locality_id)
-        ->orderBy('name')
-        ->get();
+        $expenses = $query->paginate(10);
+        
+        $expenseTypes = ExpenseType::where('locality_id', $authUser->locality_id)
+            ->orderBy('name')
+            ->get();
 
-    return view('generalExpenses.index', compact('expenses', 'expenseTypes'));
+        return view('generalExpenses.index', compact('expenses', 'expenseTypes'));
     }
 
     public function store(Request $request)

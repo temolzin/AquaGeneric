@@ -16,7 +16,7 @@ class ReplaceTypeWithExpenseTypeIdInGeneralExpenses extends Migration
             $table->foreign('expense_type_id')
                 ->references('id')
                 ->on('expense_types')
-                ->onDelete('set null');
+                ->onDelete('cascade');
         });
     }
 
