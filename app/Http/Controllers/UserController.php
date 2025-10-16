@@ -14,7 +14,9 @@ class UserController extends Controller
     public function index()
     {
         $currentUserId = auth()->id();
-        $roles = Role::all();
+        
+        $roles = Role::whereIn('name', ['Supervisor', 'Secretaria'])->get();
+        
         $localities = Locality::all();
         $users = User::where('id', '!=', $currentUserId)->get();
         return view('users.index', compact('users', 'localities', 'roles'));
@@ -27,25 +29,13 @@ class UserController extends Controller
         ]);
 
         try {
-            if ($request->has('roles')) {
-                $selectedRoles = Role::whereIn('id', $request->roles)->pluck('name')->toArray();
-                $allowedRoles = ['Supervisor', 'Secretaria'];
-                
-                $invalidRoles = array_diff($selectedRoles, $allowedRoles);
-                if (!empty($invalidRoles)) {
-                    return redirect()->back()->with('error', 
-                        'Roles no permitidos: ' . implode(', ', $invalidRoles) . 
-                        '. Solo se permiten los roles: supervisor y secretaria.');
-                }
-            }
-
-            $locality = \App\Models\Locality::with('membership')->findOrFail($request->locality_id);
+            $locality = Locality::with('membership')->findOrFail($request->locality_id);
             
             if (!$locality->membership) {
                 return redirect()->back()->with('error', 'La localidad no tiene una membresía asignada. Por favor, contacte al administrador.');
             }
 
-            $currentUsersCount = \App\Models\User::where('locality_id', $request->locality_id)->count();
+            $currentUsersCount = User::where('locality_id', $request->locality_id)->count();
 
             if ($currentUsersCount >= $locality->membership->users_number) {
                 return redirect()->back()->with('error', 
@@ -77,18 +67,6 @@ class UserController extends Controller
     {
         $user = User::find($id);
         if ($user) {
-            if ($request->has('roleUpdate')) {
-                $selectedRoles = Role::whereIn('id', $request->roleUpdate)->pluck('name')->toArray();
-                $allowedRoles = ['supervisor', 'secretaria'];
-                
-                $invalidRoles = array_diff($selectedRoles, $allowedRoles);
-                if (!empty($invalidRoles)) {
-                    return redirect()->back()->with('error', 
-                        'Roles no permitidos: ' . implode(', ', $invalidRoles) . 
-                        '. Solo se permiten los roles: supervisor y secretaria.');
-                }
-            }
-
             $user->name = $request->input('nameUpdate');
             $user->last_name = $request->input('lastNameUpdate');
             $user->phone = $request->input('phoneUpdate');
@@ -124,7 +102,9 @@ class UserController extends Controller
     {
         $userId = Crypt::decrypt($encryptedUserId);
         $user = User::findOrFail($userId);
-        $roles = Role::all();
+        
+        $roles = Role::whereIn('name', ['Supervisor', 'Secretaria'])->get();
+        
         return view('users.assignRole', compact('user', 'roles'));
     }
 

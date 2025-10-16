@@ -14,10 +14,9 @@
                     @if($locality->membership)
                     <div class="alert alert-info">
                         <strong>Membresía actual:</strong> {{ $locality->membership->name }}<br>
-                        <small>Límites: {{ $locality->membership->users_number }} usuarios / {{ $locality->membership->water_connections_number }} conexiones</small>
+                        <small>Límites: {{ $locality->membership->users_number }} usuarios / {{ $locality->membership->water_connections_number }} tomas</small>
                     </div>
                     @endif
-                    
                     <div class="form-group">
                         <label>Fecha de Inicio</label>
                         <input type="date" name="startDate" class="form-control" value="{{ date('Y-m-d') }}" required readonly>
@@ -32,12 +31,12 @@
                                     {{ $membership->name }} - 
                                     {{ $membership->term_months }} meses - 
                                     {{ $membership->users_number }} usuarios - 
-                                    {{ $membership->water_connections_number }} conexiones
+                                    {{ $membership->water_connections_number }} tomas
                                 </option>
                             @endforeach
                         </select>
                         <small class="form-text text-muted">
-                            Esta membresía se asignará a la localidad y definirá los límites de usuarios y conexiones.
+                            Esta membresía se asignará a la localidad y definirá los límites de usuarios y tomas.
                         </small>
                     </div>
                 </div>
