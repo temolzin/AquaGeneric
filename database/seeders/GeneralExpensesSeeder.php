@@ -18,7 +18,6 @@ class GeneralExpensesSeeder extends Seeder
     {
         $faker = Faker::create();
         $localities = DB::table('localities')->pluck('id')->toArray();
-        $types = ['mainteinence', 'services', 'supplies', 'taxes', 'staff'];
 
         foreach ($localities as $localityId) {
             $users = DB::table('users')
@@ -37,7 +36,6 @@ class GeneralExpensesSeeder extends Seeder
                     'concept' => $faker->word(),
                     'description' => $faker->sentence(),
                     'amount' => mt_rand(10, 50) * 100,
-                    'type' => $types[array_rand($types)],
                     'expense_date' => now(),
                     'created_at' => now(),
                     'updated_at' => now(),
