@@ -25,8 +25,14 @@ class Locality extends Model implements HasMedia
         'name',
         'municipality',
         'state',
-        'zip_code'
+        'zip_code',
+        'membership_id'
     ];
+
+    public function membership()
+    {
+        return $this->belongsTo(Membership::class);
+    }
 
     public function hasDependencies()
     {
