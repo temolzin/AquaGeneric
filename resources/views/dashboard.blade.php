@@ -118,7 +118,7 @@
                         </div>
                     @endcan
                     @can('viewCustomerDebts')
-                        <div class="row mb-4">
+                        <div class="row mb-1">
                             <div class="col-lg-6 col-xs-12">
                                 <div class="small-box bg-info">
                                     <div class="inner">
@@ -144,7 +144,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mb-4">
+                        <div class="row mb-1">
                             <div class="col-lg-6 col-xs-12">
                                 <div class="small-box bg-success">
                                     <div class="inner">

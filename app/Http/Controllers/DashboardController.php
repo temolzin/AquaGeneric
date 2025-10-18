@@ -45,7 +45,7 @@ class DashboardController extends Controller
             ->get();
 
         $earningsPerMonth = array_fill(1, 12, 0);
-        
+
         foreach ($monthlyEarnings as $earning) {
             $earningsPerMonth[$earning->month] = $earning->total;
         }
