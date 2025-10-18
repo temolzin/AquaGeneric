@@ -20,7 +20,6 @@ class DashboardController extends Controller
     public function index()
     {
         Carbon::setLocale('es');
-
         $authUser = Auth::user();
         $totalCustomers = Customer::count();
         $localities = Locality::all();
@@ -28,27 +27,28 @@ class DashboardController extends Controller
         $customersByLocality = Customer::where('locality_id', $authUser->locality_id)->count();
 
         $customersWithDebts = Customer::where('locality_id', $authUser->locality_id)
-        ->whereHas('waterConnections.debts', function ($query) {
-            $query->where('status', '!=', 'paid');
-        })
-        ->count();
+            ->whereHas('waterConnections.debts', function ($query) {
+                $query->where('status', '!=', 'paid');
+            })
+            ->count();
+
+        $customersWithoutDebts = Customer::where('locality_id', $authUser->locality_id)
+            ->whereDoesntHave('waterConnections.debts', function ($query) {
+                $query->where('status', '!=', 'paid');
+            })->count();
 
         $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(created_at) as month')
-        ->where('locality_id', $authUser->locality_id)
-        ->whereYear('created_at', Carbon::now()->year)
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get();
+            ->where('locality_id', $authUser->locality_id)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
         $earningsPerMonth = array_fill(1, 12, 0);
 
         foreach ($monthlyEarnings as $earning) {
             $earningsPerMonth[$earning->month] = $earning->total;
         }
-
-        $customersWithoutDebts = Customer::where('locality_id', $authUser->locality_id)->whereDoesntHave('waterConnections.debts', function ($query) {
-            $query->where('status', '!=', 'paid');
-        })->count();
 
         $currentMonth = Carbon::now();
         $debtsThisMonth = Debt::whereYear('start_date', $currentMonth->year)
@@ -64,6 +64,18 @@ class DashboardController extends Controller
         $mailConfig = $authUser->locality?->mailConfiguration;
         $hasMailConfig = $mailConfig && $mailConfig->isComplete();
 
+        if ($authUser->hasRole('Cliente')) {
+            $waterConnections = $authUser->customer?->waterConnections ?? collect();
+            $totalDebts = $waterConnections->flatMap->debts->count();
+            $pendingDebts = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->count();
+            $totalOwed = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->sum('amount');
+        } else {
+            $waterConnections = collect();
+            $totalDebts = 0;
+            $pendingDebts = 0;
+            $totalOwed = 0;
+        }
+
         $data = [
             'customersByLocality' => $customersByLocality,
             'customersWithDebts' => $customersWithDebts,
@@ -75,7 +87,15 @@ class DashboardController extends Controller
             'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
         ];
 
-        return view('dashboard', compact('data', 'authUser', 'hasMailConfig'));
+        return view('dashboard', compact(
+            'data',
+            'authUser',
+            'hasMailConfig',
+            'waterConnections',
+            'totalDebts',
+            'pendingDebts',
+            'totalOwed'
+        ));
     }
 
     public function getEarningsByLocality(Request $request)
