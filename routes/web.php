@@ -211,8 +211,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewExpenseTypes']], function () {
         Route::get('/expenseTypes', [ExpenseTypeController::class, 'index'])->name('expenseTypes.index');
         Route::resource('expenseTypes', ExpenseTypeController::class);
-    });
-
+    
     Route::group(['middleware' => ['can:viewSections']], function () {
         Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
         Route::resource('sections', SectionController::class);
@@ -220,3 +219,4 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
     Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');
+});
