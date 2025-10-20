@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\WaterConnection;
 
 class Section extends Model
 {
@@ -22,11 +23,16 @@ class Section extends Model
         return $this->belongsTo(Locality::class);
     }
 
+    public function hasDependencies()
+    {
+        return $this->waterConnections()->exists();
+    }
+
     public function waterConnections()
     {
-        return $this->hasMany(\App\Models\WaterConnection::class, 'section_id');
+        return $this->hasMany(WaterConnection::class);
     }
-    
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

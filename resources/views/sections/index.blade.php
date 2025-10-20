@@ -65,15 +65,14 @@
                                                         </button>
                                                         @endcan
                                                         @can('deleteSections')
-                                                             @if($section->waterConnections()->count() > 0)
-                                                                <button type="button" class="btn btn-secondary mr-2" title="No se puede eliminar, tiene tomas" disabled>
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                            @else
-                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Sección" data-target="#delete{{ $section->id }}">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                            @endif
+                                                            <button
+                                                                type="button"
+                                                                class="btn {{ $section->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2"
+                                                                title="{{ $section->hasDependencies() ? 'Eliminación no permitida: esta sección tiene tomas asociadas.' : 'Eliminar Sección' }}"
+                                                                {{ $section->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#delete' . $section->id }}
+                                                            >
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
                                                         @endcan
                                                     </div>
                                                     @include('sections.create')

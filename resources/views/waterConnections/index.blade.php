@@ -88,7 +88,6 @@
                                                             <span class="badge badge-secondary" style="font-size: 0.8em; padding: 4px 10px;">Sin sección</span>
                                                         @endif
                                                     </td>
-
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                             @can('viewWaterConnection')
