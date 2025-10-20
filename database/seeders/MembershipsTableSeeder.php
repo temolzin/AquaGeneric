@@ -39,7 +39,14 @@ class MembershipsTableSeeder extends Seeder
                 'term_months' => 12,
                 'water_connections_number' => 10000,
                 'users_number' => 5,
-            ]
+            ],
+            [
+                'name' => 'Ultimate Plan - 12 Months',
+                'price' => 1999.00,
+                'term_months' => 12,
+                'water_connections_number' => 20000,
+                'users_number' => 10,
+            ],
         ];
 
         foreach ($memberships as $membership) {
@@ -49,7 +56,6 @@ class MembershipsTableSeeder extends Seeder
                 'term_months' => $membership['term_months'],
                 'water_connections_number' => $membership['water_connections_number'],
                 'users_number' => $membership['users_number'],
-                'created_by' => $admin->id,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

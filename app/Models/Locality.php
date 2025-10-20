@@ -34,6 +34,11 @@ class Locality extends Model implements HasMedia
         return $this->belongsTo(Membership::class);
     }
 
+    public function waterConnections()
+    {
+        return $this->hasMany(WaterConnection::class);
+    }
+
     public function hasDependencies()
     {
         return $this->customers()->exists() || $this->users()->exists() || $this->costs()->exists();

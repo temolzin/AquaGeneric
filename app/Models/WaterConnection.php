@@ -27,7 +27,6 @@ class WaterConnection extends Model
 
     protected $fillable = [
         'locality_id',
-        'created_by',
         'customer_id',
         'cost_id',
         'name',
@@ -56,11 +55,6 @@ class WaterConnection extends Model
     public function cost()
     {
         return $this->belongsTo(Cost::class);
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function debts()

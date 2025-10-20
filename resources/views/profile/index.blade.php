@@ -135,6 +135,86 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Sección de Información de Membresía --}}
+                <div class="col-md-12">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Información de Membresía</h3>
+                        </div>
+                        <div class="card-body">
+                            @if($authUser->locality && $authUser->locality->membership)
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="info-box bg-light">
+                                            <span class="info-box-icon bg-info"><i class="fas fa-users"></i></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text">Usuarios</span>
+                                                <span class="info-box-number">
+                                                    {{ $membershipStats['users_count'] }} / {{ $membershipStats['users_limit'] }}
+                                                </span>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-info" style="width: {{ $membershipStats['users_limit'] > 0 ? ($membershipStats['users_count'] / $membershipStats['users_limit']) * 100 : 0 }}%"></div>
+                                                </div>
+                                                <span class="progress-description">
+                                                    {{ $membershipStats['users_count'] }} de {{ $membershipStats['users_limit'] }} usuarios utilizados
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-box bg-light">
+                                            <span class="info-box-icon bg-success"><i class="fas fa-faucet"></i></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text">Tomas de Agua</span>
+                                                <span class="info-box-number">
+                                                    {{ $membershipStats['water_connections_count'] }} / {{ $membershipStats['water_connections_limit'] }}
+                                                </span>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-success" style="width: {{ $membershipStats['water_connections_limit'] > 0 ? ($membershipStats['water_connections_count'] / $membershipStats['water_connections_limit']) * 100 : 0 }}%"></div>
+                                                </div>
+                                                <span class="progress-description">
+                                                    {{ $membershipStats['water_connections_count'] }} de {{ $membershipStats['water_connections_limit'] }} tomas utilizadas
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <strong>Plan de Membresía:</strong>
+                                        <p class="text-muted">{{ $membershipStats['membership_name'] }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Estado de Suscripción:</strong>
+                                        <p class="text-muted">
+                                            @if($membershipStats['subscription_status'] == 'Activa')
+                                                <span class="badge badge-success">Activa</span>
+                                            @elseif($membershipStats['subscription_status'] == 'Caducada')
+                                                <span class="badge badge-danger">Caducada</span>
+                                            @else
+                                                <span class="badge badge-warning">Sin token</span>
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                        <strong>Localidad:</strong>
+                                        <p class="text-muted">{{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}</p>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="alert alert-warning">
+                                    <h5><i class="icon fas fa-exclamation-triangle"></i> Sin membresía asignada</h5>
+                                    No tienes una membresía asignada a tu localidad. Contacta al administrador del sistema.
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

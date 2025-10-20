@@ -19,13 +19,15 @@ class LocalitiesTableSeeder extends Seeder
             $memberships = Membership::all();
         }
 
+        $ultimateMembership = $memberships->where('name', 'Ultimate Plan - 12 Months')->first();
+
         $localitiesData = [
             [
                 'name' => 'Smallville',
                 'municipality' => 'Smallville',
                 'state' => 'Kansas',
                 'zip_code' => '66002',
-                'membership_id' => 2,
+                'membership_id' => $ultimateMembership ? $ultimateMembership->id : null,
                 'token' => $this->generateTokenData(false)
             ],
             [
@@ -33,7 +35,7 @@ class LocalitiesTableSeeder extends Seeder
                 'municipality' => 'Springfield',
                 'state' => 'Oregon',
                 'zip_code' => '97477',
-                'membership_id' => 3,
+                'membership_id' => $ultimateMembership ? $ultimateMembership->id : null,
                 'token' => $this->generateTokenData(false)
             ],
             [
@@ -41,7 +43,7 @@ class LocalitiesTableSeeder extends Seeder
                 'municipality' => 'Scranton',
                 'state' => 'Pennsylvania',
                 'zip_code' => '18503',
-                'membership_id' => 1,
+                'membership_id' => $ultimateMembership ? $ultimateMembership->id : null,
                 'token' => $this->generateTokenData(true)
             ],
         ];
@@ -53,11 +55,11 @@ class LocalitiesTableSeeder extends Seeder
             );
         }
 
-        Locality::whereNull('membership_id')->orWhereNull('token')->get()->each(function ($locality) use ($memberships) {
+        Locality::whereNull('membership_id')->orWhereNull('token')->get()->each(function ($locality) use ($ultimateMembership) {
             $updateData = [];
             
             if (is_null($locality->membership_id)) {
-                $updateData['membership_id'] = $memberships->random()->id;
+                $updateData['membership_id'] = $ultimateMembership ? $ultimateMembership->id : null;
             }
             
             if (is_null($locality->token) || empty($locality->token)) {

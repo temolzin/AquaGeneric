@@ -19,14 +19,18 @@ class WaterConnectionsTableSeeder extends Seeder
         $faker = Faker::create();
 
         $localities = DB::table('localities')->pluck('id')->toArray();
+        $admin = DB::table('users')->first();
 
         foreach ($localities as $localityId) {
-            $customers = DB::table('customers')->where('locality_id', $localityId)->whereNull('deleted_at')->pluck('id')->toArray();
+            $customers = DB::table('customers')
+                ->where('locality_id', $localityId)
+                ->whereNull('deleted_at')
+                ->pluck('id')
+                ->toArray();
+
             $costs = DB::table('costs')->where('locality_id', $localityId)->pluck('id')->toArray();
-            $users = DB::table('users')->pluck('id')->toArray();
 
             foreach ($customers as $customerId) {
-
                 if (empty($costs)) {
                     continue;
                 }
@@ -39,15 +43,17 @@ class WaterConnectionsTableSeeder extends Seeder
                     'exterior_number' => $faker->numberBetween(1, 100),
                     'interior_number' => $faker->numberBetween(1, 100),
                     'cost_id' => $faker->randomElement($costs),
-                    'created_by' => $faker->randomElement($users),
                     'name' => $faker->streetName,
                     'occupants_number' => $faker->numberBetween(1, 10),
-                    'water_days' => $faker->boolean(20) ? json_encode('all') : json_encode($faker->randomElements([
-                        'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
-                    ])),
+                    'water_days' => $faker->boolean(20) 
+                        ? json_encode('all') 
+                        : json_encode($faker->randomElements([
+                            'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+                        ])),
                     'has_water_pressure' => $faker->boolean,
                     'has_cistern' => $faker->boolean,
                     'type' => $faker->randomElement(['residencial', 'commercial']),
+                    'created_by' => $admin->id,
                 ]);
 
                 if ($faker->boolean(30)) {
@@ -59,15 +65,17 @@ class WaterConnectionsTableSeeder extends Seeder
                         'exterior_number' => $faker->numberBetween(1, 100),
                         'interior_number' => $faker->numberBetween(1, 100),
                         'cost_id' => $faker->randomElement($costs),
-                        'created_by' => $faker->randomElement($users),
                         'name' => $faker->streetName,
                         'occupants_number' => $faker->numberBetween(1, 10),
-                        'water_days' => $faker->boolean(20) ? json_encode('all') : json_encode($faker->randomElements([
-                            'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
-                        ])),
+                        'water_days' => $faker->boolean(20) 
+                            ? json_encode('all') 
+                            : json_encode($faker->randomElements([
+                                'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+                            ])),
                         'has_water_pressure' => $faker->boolean,
                         'has_cistern' => $faker->boolean,
                         'type' => $faker->randomElement(['residencial', 'commercial']),
+                        'created_by' => $admin->id,
                     ]);
                 }
             }

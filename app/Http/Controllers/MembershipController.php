@@ -38,8 +38,7 @@ class MembershipController extends Controller
             'price' => $request->price,
             'term_months' => $request->term_months,
             'water_connections_number' => $request->water_connections_number, 
-            'users_number' => $request->users_number, 
-            'created_by' => auth()->id()
+            'users_number' => $request->users_number
         ]);
 
         return redirect()->route('memberships.index')->with('success', 'Membresía creada exitosamente.');
