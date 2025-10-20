@@ -119,48 +119,36 @@
                     @endcan
                     @can('viewCustomerDebts')
                         <div class="row mb-1">
-                            <div class="col-lg-6 col-xs-12">
-                                <div class="small-box bg-info">
+                            <div class="col-lg-4 col-xs-12">
+                                <div class="small-box bg-warning">
                                     <div class="inner">
                                         <h3>${{ number_format($totalOwed, 2) }}</h3>
                                         <p>Total Adeudado</p>
                                     </div>
                                     <div class="icon">
-                                        <i class="fas fa-faucet"></i>
+                                        <i class="fas fa-dollar-sign"></i>
                                     </div>
                                     <a href="{{ route('viewCustomerDebts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-xs-12">
-                                <div class="small-box bg-warning">
-                                    <div class="inner">
-                                        <h3>{{ $pendingDebts }}</h3>
-                                        <p>Deudas Pendientes</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-clock"></i>
-                                    </div>
-                                    <a href="{{ route('viewCustomerDebts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb-1">
-                            <div class="col-lg-6 col-xs-12">
-                                <div class="small-box bg-success">
+                            
+                            <div class="col-lg-4 col-xs-12">
+                                <div class="small-box bg-info">
                                     <div class="inner">
                                         <h3>{{ $waterConnections->count() }}</h3>
                                         <p>Tomas de agua</p>
                                     </div>
                                     <div class="icon">
-                                        <i class="fas fa-check-circle"></i>
+                                        <i class="fas fa-faucet"></i>
                                     </div>
                                     <a href="{{ route('viewCustomerWaterConnections.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-xs-12">
-                                <div class="small-box bg-primary">
+                            
+                            <div class="col-lg-4 col-xs-12">
+                                <div class="small-box bg-danger">
                                     <div class="inner">
-                                        <h3>{{ $totalDebts }}</h3>
+                                        <h3>{{ $pendingDebts }}</h3>
                                         <p>Total Deudas</p>
                                     </div>
                                     <div class="icon">
@@ -187,7 +175,7 @@
                             </div>
                         </div>
                     @endcan
-
+                    @can('viewDashboardCards')
                     <div class="row">
                         <div class="col-md-6">
                             <div class="card">
@@ -210,7 +198,7 @@
                             </div>
                         </div>
                     </div>
-                    @can('viewDashboardCards')
+                    
                     <div class="card">
                         <div class="card-header">
                             <div class="row w-100 align-items-center">

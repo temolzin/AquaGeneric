@@ -64,17 +64,12 @@ class DashboardController extends Controller
         $mailConfig = $authUser->locality?->mailConfiguration;
         $hasMailConfig = $mailConfig && $mailConfig->isComplete();
 
-        if ($authUser->hasRole('Cliente')) {
-            $waterConnections = $authUser->customer?->waterConnections ?? collect();
-            $totalDebts = $waterConnections->flatMap->debts->count();
-            $pendingDebts = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->count();
-            $totalOwed = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->sum('amount');
-        } else {
-            $waterConnections = collect();
-            $totalDebts = 0;
-            $pendingDebts = 0;
-            $totalOwed = 0;
-        }
+        $waterConnections = $authUser->customer?->waterConnections ?? collect();
+        $totalDebts = $waterConnections->flatMap->debts->count();
+        $pendingDebts = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->count();
+        $totalOwed = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->sum(function ($debt) {
+            return $debt->amount - $debt->debt_current;
+        });
 
         $data = [
             'customersByLocality' => $customersByLocality,
