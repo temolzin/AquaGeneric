@@ -205,7 +205,8 @@ class PaymentController extends Controller {
         return redirect()->route('payments.index')->with('success', 'Pago eliminado exitosamnete.');
     }
 
-    public function annualEarningsReport($year) {
+    public function annualEarningsReport($year)
+    {
         $authUser = auth()->user();
         $year = intval($year);
 
@@ -222,10 +223,10 @@ class PaymentController extends Controller {
             $totalEarnings += $earnings;
         }
 
-    $payments = Payment::with(['debt.customer.user'])
-        ->whereYear('created_at', $year)
-        ->where('locality_id', $authUser->locality_id)
-        ->get();
+        $payments = Payment::with(['debt.customer.user'])
+            ->whereYear('created_at', $year)
+            ->where('locality_id', $authUser->locality_id)
+            ->get();
 
         $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser', 'payments'))
         ->setPaper('A4', 'portrait');
