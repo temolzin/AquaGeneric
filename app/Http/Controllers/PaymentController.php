@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\Debt;
 use App\Models\Customer;
 use App\Models\GeneralExpense;
+use App\Models\User;
 use App\Models\WaterConnection;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
@@ -15,13 +16,13 @@ use Carbon\Carbon;
 class PaymentController extends Controller {
     public function index(Request $request) {
         $authUser = auth()->user();
-        $query = Payment::with('debt.customer')->orderBy('id', 'desc')
+        $query = Payment::with(['debt.customer.user'])->orderBy('id', 'desc')
             ->where('locality_id', $authUser->locality_id);
 
         if ($request->filled('name')) {
-            $query->whereHas('debt.customer', function ($q) use ($request) {
-            $q->whereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ['%' . $request->name . '%'])
-                ->orWhereRaw("CONCAT(customers.last_name, ' ', customers.name) LIKE ?", ['%' . $request->name . '%']);
+            $query->whereHas('debt.customer.user', function ($q) use ($request) {
+                $q->whereRaw("CONCAT(users.name, ' ', users.last_name) LIKE ?", ['%' . $request->name . '%'])
+                  ->orWhereRaw("CONCAT(users.last_name, ' ', users.name) LIKE ?", ['%' . $request->name . '%']);
             });
         }
 
@@ -60,7 +61,7 @@ class PaymentController extends Controller {
         }
 
         $payments = $query->paginate(10);
-        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
+        $customers = Customer::with('user')->where('locality_id', $authUser->locality_id)->get();
 
         return view('payments.index', compact('payments', 'customers'));
     }
@@ -207,8 +208,8 @@ class PaymentController extends Controller {
         $authUser = auth()->user();
         $year = intval($year);
 
-        $monthlyEarnings = [];
-        $totalEarnings = 0;
+    $monthlyEarnings = [];
+    $totalEarnings = 0;
 
         for ($month = 1; $month <= 12; $month++) {
             $earnings = Payment::whereYear('created_at', $year)
@@ -220,10 +221,16 @@ class PaymentController extends Controller {
             $totalEarnings += $earnings;
         }
 
-        $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser'))
-            ->setPaper('A4', 'portrait');
+    // Cargar la relación con el usuario para usar name y last_name desde users
+    $payments = Payment::with(['debt.customer.user'])
+        ->whereYear('created_at', $year)
+        ->where('locality_id', $authUser->locality_id)
+        ->get();
 
-        return $pdf->stream('annual_earnings_' . $year . '.pdf');
+    $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser', 'payments'))
+        ->setPaper('A4', 'portrait');
+
+    return $pdf->stream('annual_earnings_' . $year . '.pdf');
     }
 
     public function weeklyEarningsReport(Request $request) {
@@ -278,7 +285,7 @@ class PaymentController extends Controller {
         $decryptedId = Crypt::decrypt($paymentId);
         $payment = Payment::findOrFail($decryptedId);
         $debt = $payment->debt;
-        $client = $debt->client;
+        $client = $debt->customer;
 
         $startDate = Carbon::parse($debt->start_date);
         $endDate = Carbon::parse($debt->end_date);
@@ -324,7 +331,7 @@ class PaymentController extends Controller {
         $customerId = $request->input('customerId');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
-        $customer = Customer::findOrFail($customerId);
+        $customer = Customer::with('user')->findOrFail($customerId);
         $authUser = auth()->user();
 
         $payments = Payment::whereHas('debt.waterConnection', function ($query) use ($customerId) {
@@ -347,7 +354,7 @@ class PaymentController extends Controller {
         $startDate = $request->input('waterStartDate');
         $endDate = $request->input('waterEndDate');
 
-        $customer = Customer::findOrFail($customerId);
+        $customer = Customer::with('user')->findOrFail($customerId);
         $authUser = auth()->user();
 
         $waterConnection = WaterConnection::where('id', $waterConnectionId)
