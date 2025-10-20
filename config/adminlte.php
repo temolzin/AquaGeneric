@@ -346,7 +346,7 @@ return [
                 'can'  => 'viewPayments',
             ],
             [
-                'text' => 'Graficos de Pagos Adelantados',
+                'text' => 'Panel de Pagos Adelantados',
                 'url'  => '/advancePayments',
                 'icon' => 'fas fa-fw fa-calendar-plus',
                 'can'  => 'viewAdvancePayments',
@@ -378,10 +378,22 @@ return [
         'can'  => 'viewWaterConnection'
     ],
     [
-        'text' => 'Gastos',
-        'url' => '/generalExpenses',
-        'icon' => 'fas fa-fw fa-coins',
-        'can'  => 'viewGeneralExpense'
+        'text' => 'Gestión de Gastos',
+        'icon' => 'fas fa-fw fa-cogs',
+        'submenu' => [
+            [
+                'text' => 'Gastos',
+                'url' => '/generalExpenses',
+                'icon' => 'fas fa-fw fa-coins',
+                'can'  => 'viewGeneralExpense'
+            ],
+            [
+                'text' => 'Tipos de Gastos',
+                'url'  => '/expenseTypes',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewExpenseTypes',
+            ],
+        ],
     ],
     [
         'text' => 'Gestión de Incidencias',

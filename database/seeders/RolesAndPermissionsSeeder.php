@@ -14,7 +14,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $roleSecretariat = Role::firstOrCreate(['name' => 'Secretaria']);
         $roleSupervisor = Role::firstOrCreate(['name' => 'Supervisor']);
         $roleCliente = Role::firstOrCreate(['name' => 'Cliente']);
-      
+    
         Permission::firstOrCreate([
             'name' => 'viewUser',
             'description' => 'Permite ver los Usuario.'
@@ -143,7 +143,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteIncidents',
             'description' => 'Permite eliminar Incidentes.'
         ])->assignRole($roleSupervisor);
-              Permission::firstOrCreate([
+        Permission::firstOrCreate([
             'name' => 'viewEmployee',
             'description' => 'Permite ver a los Empleados.'
         ])->assignRole([$roleSupervisor, $roleSecretariat]);
@@ -195,7 +195,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'viewCustomerPayments',
             'description' => 'El cliente puede ver sus pagos'
         ])->assignRole([$roleCliente]);
-         Permission::firstOrCreate([
+        Permission::firstOrCreate([
             'name' => 'viewCustomerDebts',
             'description' => 'El cliente puede ver sus deudas'
         ])->assignRole([$roleCliente]);
@@ -235,6 +235,22 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'viewReportsLists',
             'description' => 'Permite ver la lista de reportes.'
         ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'viewExpenseTypes',
+            'description' => 'Permite ver los tipos de gastos.'
+        ])->assignRole($roleSupervisor, $roleSecretariat);
+        Permission::firstOrCreate([
+            'name' => 'createExpenseTypes',
+            'description' => 'Permite crear tipos de gastos.'
+        ])->assignRole($roleSupervisor);
+        Permission::firstOrCreate([
+            'name' => 'editExpenseTypes',
+            'description' => 'Permite editar tipos de gastos.'
+        ])->assignRole($roleSupervisor);
+        Permission::firstOrCreate([
+            'name' => 'deleteExpenseTypes',
+            'description' => 'Permite eliminar tipos de gastos.'
+        ])->assignRole($roleSupervisor);
         Permission::firstOrCreate([
             'name' => 'viewSections',
             'description' => 'Permite ver las Secciones.'

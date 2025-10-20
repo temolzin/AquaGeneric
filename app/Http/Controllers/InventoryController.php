@@ -118,6 +118,7 @@ class InventoryController extends Controller
 
     public function generateInventoryPdf(Request $request)
     {
+        set_time_limit(300);
         $authUser = Auth::user();
         $query = Inventory::where('locality_id', $authUser->locality_id);
         if ($request->has('search')) {

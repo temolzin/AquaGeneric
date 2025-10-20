@@ -38,10 +38,18 @@ class LocalityController extends Controller
 
     public function store(Request $request)
     {
-        $customer = Locality::create($request->all());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'municipality' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'zip_code' => 'required|string|max:10',
+            'membership_id' => 'nullable|exists:memberships,id'
+        ]);
+
+        $locality = Locality::create($request->all());
 
         if ($request->hasFile('photo')) {
-            $customer->addMediaFromRequest('photo')->toMediaCollection('localityGallery');
+            $locality->addMediaFromRequest('photo')->toMediaCollection('localityGallery');
         }
 
         return redirect()->route('localities.index')->with('success', 'Localidad registrada correctamente.');
@@ -57,11 +65,15 @@ class LocalityController extends Controller
     {
         $locality = Locality::find($id);
         if ($locality) {
+            $request->validate([
+                'membership_id' => 'nullable|exists:memberships,id'
+            ]);
+
             $locality->name = $request->input('localityNameUpdate');
             $locality->municipality = $request->input('municipalityUpdate');
             $locality->state = $request->input('stateUpdate');
             $locality->zip_code = $request->input('zipCodeUpdate');
-
+            $locality->membership_id = $request->input('membership_id');
             $locality->save();
 
             return redirect()->route('localities.index')->with('success', 'Localidad actualizada correctamente.');
@@ -101,15 +113,41 @@ class LocalityController extends Controller
         $startDate = $request->input('startDate');
         $membershipId = $request->input('membership_id');
 
+        $locality = Locality::findOrFail($id);
+        
+        $locality->update([
+            'membership_id' => $membershipId
+        ]);
+
         $membership = Membership::find($membershipId);
         $endDate = \Carbon\Carbon::parse($startDate)->addMonths($membership->term_months);
 
         $token = Token::generateTokenForLocality($id, $startDate, $endDate->toDateString());
 
-        $locality = Locality::find($id);
-
         return redirect()->route('localities.index')
             ->with('createdToken', $token)
-            ->with('localityName', $locality->name);
+            ->with('localityName', $locality->name)
+            ->with('success', 'Token generado y membresía asignada correctamente.');
+    }
+
+    public function updatePdfBackground(Request $request, $id)
+    {
+        $locality = Locality::find($id);
+
+        if (!$locality) {
+            return redirect()->back()->with('error', 'Localidad no encontrada.');
+        }
+
+        if ($request->hasFile('pdf_background_vertical')) {
+            $locality->clearMediaCollection('pdfBackgroundVertical');
+            $locality->addMediaFromRequest('pdf_background_vertical')->toMediaCollection('pdfBackgroundVertical');
+        }
+
+        if ($request->hasFile('pdf_background_horizontal')) {
+            $locality->clearMediaCollection('pdfBackgroundHorizontal');
+            $locality->addMediaFromRequest('pdf_background_horizontal')->toMediaCollection('pdfBackgroundHorizontal');
+        }
+
+        return redirect()->route('localities.index')->with('success', 'Fondos de reportes actualizados correctamente.');
     }
 }

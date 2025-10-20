@@ -28,6 +28,7 @@ use App\Http\Controllers\ReportListController;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\CheckSubscription;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\SectionController;
 
 /*
@@ -116,6 +117,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
         Route::put('/localities/{locality}/mailConfiguration',[MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
         Route::post('/localities/generateTeoken', [LocalityController::class, 'generateToken'])->name('localities.generateToken');
+        Route::post('/localities/{locality}/update-pdf-background', [LocalityController::class, 'updatePdfBackground'])->name('localities.updatePdfBackground');
     });
 
     Route::group(['middleware' => ['can:viewWaterConnection']], function () {
@@ -205,7 +207,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewMemberships']], function () {
         Route::resource('memberships', MembershipController::class);
     });
-    
+
+    Route::group(['middleware' => ['can:viewExpenseTypes']], function () {
+        Route::get('/expenseTypes', [ExpenseTypeController::class, 'index'])->name('expenseTypes.index');
+        Route::resource('expenseTypes', ExpenseTypeController::class);
+      
     Route::group(['middleware' => ['can:viewSections']], function () {
         Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
         Route::resource('sections', SectionController::class);
@@ -213,3 +219,4 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
     Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');
+});
