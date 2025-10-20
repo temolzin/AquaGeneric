@@ -66,7 +66,8 @@ class PaymentController extends Controller {
         return view('payments.index', compact('payments', 'customers'));
     }
 
-    public function getWaterConnectionsByCustomer(Request $request) {
+    public function getWaterConnectionsByCustomer(Request $request)
+    {
         $authUser = auth()->user();
         $customerId = $request->input('waterCustomerId');
         $waterConnections = WaterConnection::where('customer_id', $customerId)
@@ -208,8 +209,8 @@ class PaymentController extends Controller {
         $authUser = auth()->user();
         $year = intval($year);
 
-    $monthlyEarnings = [];
-    $totalEarnings = 0;
+        $monthlyEarnings = [];
+        $totalEarnings = 0;
 
         for ($month = 1; $month <= 12; $month++) {
             $earnings = Payment::whereYear('created_at', $year)
@@ -221,16 +222,15 @@ class PaymentController extends Controller {
             $totalEarnings += $earnings;
         }
 
-    // Cargar la relación con el usuario para usar name y last_name desde users
     $payments = Payment::with(['debt.customer.user'])
         ->whereYear('created_at', $year)
         ->where('locality_id', $authUser->locality_id)
         ->get();
 
-    $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser', 'payments'))
+        $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser', 'payments'))
         ->setPaper('A4', 'portrait');
 
-    return $pdf->stream('annual_earnings_' . $year . '.pdf');
+        return $pdf->stream('annual_earnings_' . $year . '.pdf');
     }
 
     public function weeklyEarningsReport(Request $request) {
