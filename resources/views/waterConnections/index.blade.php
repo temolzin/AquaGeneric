@@ -49,6 +49,7 @@
                                             <th>PROPIETARIO</th>
                                             <th>COSTO</th>
                                             <th>TIPO</th>
+                                            <th>SECCIÓN</th> 
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
@@ -75,6 +76,18 @@
                                                     @elseif ($connection->type === 'commercial')
                                                         <td>Comercial</td>
                                                     @endif
+                                                    <td>
+                                                        @if ($connection->section)
+                                                            @php
+                                                                $sectionColor = (preg_match('/^#[a-f0-9]{6}$/i', $connection->section->color)) ? $connection->section->color : '#6c757d';
+                                                            @endphp
+                                                            <span class="badge" style="background-color: {{ $sectionColor }}; color: #fff; border-radius: 12px; font-weight: 600; font-size: 0.8em; padding: 4px 10px;">
+                                                                {{ $connection->section->name }}
+                                                            </span>
+                                                        @else
+                                                            <span class="badge badge-secondary" style="font-size: 0.8em; padding: 4px 10px;">Sin sección</span>
+                                                        @endif
+                                                    </td>
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                             @can('viewWaterConnection')

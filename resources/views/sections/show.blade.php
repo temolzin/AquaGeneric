@@ -26,11 +26,6 @@
                                         <input type="text" disabled class="form-control" value="{{ $section->name }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Localidad</label>
-                                        <input type="text" disabled class="form-control" value="{{ $section->locality->name ?? 'Sin localidad' }}" />
-                                    </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">

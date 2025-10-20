@@ -42,7 +42,6 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>NOMBRE</th>
-                                            <th>LOCALIDAD</th>
                                             <th>CÓDIGO POSTAL</th>
                                             <th>OPCIONES</th>
                                         </tr>
@@ -52,7 +51,6 @@
                                             <tr>
                                                 <td>{{ $section->id }}</td>
                                                 <td>{{ $section->name }}</td>
-                                                <td>{{ $section->locality->name ?? 'Sin localidad' }}</td>
                                                 <td>{{ $section->zip_code }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Opciones">
@@ -67,9 +65,14 @@
                                                         </button>
                                                         @endcan
                                                         @can('deleteSections')
-                                                        <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Sección" data-target="#delete{{ $section->id }}">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
+                                                            <button
+                                                                type="button"
+                                                                class="btn {{ $section->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2"
+                                                                title="{{ $section->hasDependencies() ? 'Eliminación no permitida: esta sección tiene tomas asociadas.' : 'Eliminar Sección' }}"
+                                                                {{ $section->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#delete' . $section->id }}
+                                                            >
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
                                                         @endcan
                                                     </div>
                                                     @include('sections.create')

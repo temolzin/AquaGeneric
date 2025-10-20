@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WaterConnection;
 use App\Models\Customer;
 use App\Models\Cost;
+use App\Models\Section;
 use App\Models\Locality;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -38,8 +39,9 @@ class WaterConnectionController extends Controller
         $connections = $query->paginate(10);
         $customers = Customer::where('locality_id', $authUser->locality_id)->get();
         $costs = Cost::where('locality_id', $authUser->locality_id)->get();
+        $sections = Section::where('locality_id', $authUser->locality_id)->get();
 
-        return view('waterConnections.index', compact('connections', 'customers', 'costs'));
+        return view('waterConnections.index', compact('connections', 'customers', 'costs', 'sections'));
     }
 
     public function store(Request $request)
@@ -63,6 +65,7 @@ class WaterConnectionController extends Controller
 
         $waterConnectionData = $request->all();
 
+        $waterConnectionData['section_id'] = $request->input('section_id');
         $waterConnectionData['water_days'] = json_encode(
             $request->has('all_days') ? 'all' : $request->input('days', [])
         );
@@ -78,12 +81,14 @@ class WaterConnectionController extends Controller
     public function show($id)
     {
         $connections = WaterConnection::findOrFail($id);
-        return view('waterConnections.show', compact('connections'));
+        $sections = Section::where('locality_id', $connection->locality_id)->get();
+        return view('waterConnections.show', compact('connections', 'sections'));
     }
 
     public function update(Request $request, $id)
     {
         $connection = WaterConnection::find($id);
+        $sections = Section::where('locality_id', $connection->locality_id)->get(); 
 
         if (!$connection) {
             return redirect()->back()->with('error', 'Toma de Agua no encontrada.');
@@ -93,6 +98,7 @@ class WaterConnectionController extends Controller
         $connection->customer_id = $request->input('customerIdUpdate');
         $connection->type = $request->input('typeUpdate');
         $connection->occupants_number = $request->input('occupantsNumberUpdate');
+        $connection->section_id = $request->input('section_id');
 
         $connection->water_days = json_encode(
             $request->has('all_days_update') ? 'all' : $request->input('days_update', [])
