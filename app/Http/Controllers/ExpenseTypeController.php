@@ -21,8 +21,7 @@ class ExpenseTypeController extends Controller
 
     public function create()
     {
-        $localities = Locality::all();
-        return view('expenseTypes.create', compact('localities'));
+        
     }
 
     public function store(Request $request)

@@ -35,23 +35,11 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Tipo</label>
-                                        @switch($expense->type)
-                                            @case('mainteinence')
-                                            <input type="text" disabled class="form-control" value="Mantenimiento" />
-                                                @break
-                                            @case('services')
-                                            <input type="text" disabled class="form-control" value="Servicios" />
-                                                @break
-                                            @case('supplies')
-                                            <input type="text" disabled class="form-control" value="Insumos" />
-                                                @break
-                                            @case('taxes')
-                                            <input type="text" disabled class="form-control" value="Impuestos" />
-                                                @break
-                                            @case('staff')
-                                            <input type="text" disabled class="form-control" value="Personal" />
-                                                @break
-                                        @endswitch
+                                        @if($expense->expenseType)
+                                            <input type="text" disabled class="form-control" value="{{ $expense->expenseType->name }}" />
+                                        @else
+                                            <input type="text" disabled class="form-control" value="Sin tipo asignado" />
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
