@@ -172,36 +172,28 @@ class WaterConnectionController extends Controller
         return hash('sha256', $id . env('APP_KEY', 'default-secret-key'));
     }
 
-    /**
-     * Obtener ID desde el hash
-     */
     private function getIdFromHash($hash)
     {
-        $connections = WaterConnection::all();
+        $connections = WaterConnection::select('id')->get();
         
         foreach ($connections as $connection) {
             if ($this->generateConnectionHash($connection->id) === $hash) {
                 return $connection->id;
             }
         }
-        
         return null;
     }
 
-    /**
-     * Método PÚBLICO para mostrar información de la toma de agua (con hash)
-     */
     public function showPublic($hash)
     {
         try {
-            // Obtener el ID real desde el hash
+
             $id = $this->getIdFromHash($hash);
             
             if (!$id) {
                 abort(404, 'Toma de agua no encontrada');
             }
 
-            // Buscar la conexión con sus relaciones
             $connection = WaterConnection::with(['customer', 'locality'])
                 ->find($id);
 
@@ -209,31 +201,23 @@ class WaterConnectionController extends Controller
                 abort(404, 'Toma de agua no encontrada');
             }
 
-            // Verificar que la conexión pertenezca a una localidad válida
             if (!$connection->locality) {
                 abort(404, 'Localidad no encontrada para esta toma de agua');
             }
 
-            // Mostrar la vista pública
-            return view('public', compact('connection'));
+            return view('water_connections_info_qr', compact('connection'));
 
         } catch (\Exception $e) {
             abort(404, 'Error al cargar la información de la toma de agua');
         }
     }
 
-    /**
-     * Generar QR con hash
-     */
     public function generateQrAjax($id)
     {
         try {
+            
             $connection = WaterConnection::findOrFail($id);
-
-            // Generar hash para esta conexión
             $hash = $this->generateConnectionHash($id);
-
-            // URL pública con hash
             $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 
             $qrCode = base64_encode(
@@ -251,7 +235,7 @@ class WaterConnectionController extends Controller
                 'image' => 'data:image/svg+xml;base64,' . $qrCode,
                 'download_url' => $downloadUrl,
                 'public_url' => $publicUrl,
-                'hash' => $hash // Para referencia
+                'hash' => $hash 
             ]);
 
         } catch (\Exception $e) {
@@ -262,18 +246,12 @@ class WaterConnectionController extends Controller
         }
     }
 
-    /**
-     * Descargar QR con hash
-     */
     public function downloadQr($id)
     {
         try {
+
             $connection = WaterConnection::findOrFail($id);
-
-            // Generar hash para esta conexión
             $hash = $this->generateConnectionHash($id);
-
-            // URL pública con hash
             $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 
             $qrCode = QrCode::format('png')
