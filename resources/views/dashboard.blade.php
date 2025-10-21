@@ -131,7 +131,6 @@
                                     <a href="{{ route('viewCustomerDebts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
-                            
                             <div class="col-lg-4 col-xs-12">
                                 <div class="small-box bg-info">
                                     <div class="inner">

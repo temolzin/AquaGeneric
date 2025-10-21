@@ -68,7 +68,7 @@ class DashboardController extends Controller
         $totalDebts = $waterConnections->flatMap->debts->count();
         $pendingDebts = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->count();
         $totalOwed = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->sum(function ($debt) {
-            return $debt->amount - $debt->debt_current;
+        return $debt->amount - $debt->debt_current;
         });
 
         $data = [
