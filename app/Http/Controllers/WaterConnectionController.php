@@ -71,6 +71,8 @@ class WaterConnectionController extends Controller
         );
 
         $waterConnectionData['locality_id'] = $authUser->locality_id;
+        $waterConnectionData['created_by'] = $authUser->id;
+        
         WaterConnection::create($waterConnectionData);
 
         return redirect()->route('waterConnections.index')->with('success', 'Toma de agua registrada correctamente.');
