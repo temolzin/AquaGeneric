@@ -136,7 +136,7 @@
                     </div>
                 </div>
 
-                @role('Supervisor')
+                @can('view-membership-info')
                 <div class="col-md-12">
                     <div class="card card-info">
                         <div class="card-header">
@@ -215,7 +215,7 @@
                         </div>
                     </div>
                 </div>
-                @endrole
+                @endcan
             </div>
         </div>
     </section>
