@@ -167,16 +167,74 @@ class WaterConnectionController extends Controller
         return redirect()->route('waterConnections.index')->with('success', 'Toma reactivada y asignada correctamente.');
     }
     
+    private function generateConnectionHash($id)
+    {
+        return hash('sha256', $id . env('APP_KEY', 'default-secret-key'));
+    }
+
+    /**
+     * Obtener ID desde el hash
+     */
+    private function getIdFromHash($hash)
+    {
+        $connections = WaterConnection::all();
+        
+        foreach ($connections as $connection) {
+            if ($this->generateConnectionHash($connection->id) === $hash) {
+                return $connection->id;
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Método PÚBLICO para mostrar información de la toma de agua (con hash)
+     */
+    public function showPublic($hash)
+    {
+        try {
+            // Obtener el ID real desde el hash
+            $id = $this->getIdFromHash($hash);
+            
+            if (!$id) {
+                abort(404, 'Toma de agua no encontrada');
+            }
+
+            // Buscar la conexión con sus relaciones
+            $connection = WaterConnection::with(['customer', 'locality'])
+                ->find($id);
+
+            if (!$connection) {
+                abort(404, 'Toma de agua no encontrada');
+            }
+
+            // Verificar que la conexión pertenezca a una localidad válida
+            if (!$connection->locality) {
+                abort(404, 'Localidad no encontrada para esta toma de agua');
+            }
+
+            // Mostrar la vista pública
+            return view('public', compact('connection'));
+
+        } catch (\Exception $e) {
+            abort(404, 'Error al cargar la información de la toma de agua');
+        }
+    }
+
+    /**
+     * Generar QR con hash
+     */
     public function generateQrAjax($id)
     {
         try {
             $connection = WaterConnection::findOrFail($id);
 
-            $token = base64_encode($id . '|' . time() . '|' . Str::random(10));
+            // Generar hash para esta conexión
+            $hash = $this->generateConnectionHash($id);
 
-            \Cache::put('qr_token_' . $token, $id, now()->addDays(30));
-
-            $publicUrl = route('waterConnections.public.form', ['code' => $token]);
+            // URL pública con hash
+            $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 
             $qrCode = base64_encode(
                 QrCode::format('svg')
@@ -191,7 +249,9 @@ class WaterConnectionController extends Controller
             return response()->json([
                 'success' => true,
                 'image' => 'data:image/svg+xml;base64,' . $qrCode,
-                'download_url' => $downloadUrl
+                'download_url' => $downloadUrl,
+                'public_url' => $publicUrl,
+                'hash' => $hash // Para referencia
             ]);
 
         } catch (\Exception $e) {
@@ -202,15 +262,19 @@ class WaterConnectionController extends Controller
         }
     }
 
+    /**
+     * Descargar QR con hash
+     */
     public function downloadQr($id)
     {
         try {
             $connection = WaterConnection::findOrFail($id);
 
-            $token = base64_encode($id . '|' . time() . '|' . Str::random(10));
-            \Cache::put('qr_token_' . $token, $id, now()->addDays(30));
+            // Generar hash para esta conexión
+            $hash = $this->generateConnectionHash($id);
 
-            $publicUrl = route('waterConnections.public.form', ['code' => $token]);
+            // URL pública con hash
+            $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 
             $qrCode = QrCode::format('png')
                 ->size(400)
@@ -220,54 +284,12 @@ class WaterConnectionController extends Controller
 
             $fileName = "QR_Toma_{$connection->id}.png";
 
-            return response($qrCode)->header('Content-Type', 'image/png')->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+            return response($qrCode)
+                ->header('Content-Type', 'image/png')
+                ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
 
         } catch (\Exception $e) {
             return back()->with('error', 'Error al descargar el código QR');
-        }
-    }
-
-    public function showPublicForm($code)
-    {
-        if (!auth()->check()) {
-            return redirect()->route('login')
-                ->with('error', 'Debes iniciar sesión para ver esta información');
-        }
-
-        try {
-            $id = \Cache::get('qr_token_' . $code);
-
-            if (!$id) {
-                abort(404, 'Código no válido o expirado');
-            }
-
-            return view('waterConnections.public-form', compact('id'));
-
-        } catch (\Exception $e) {
-            abort(404, 'Error al procesar el código');
-        }
-    }
-
-    public function showPublic(Request $request)
-    {
-        try {
-
-            if (!auth()->check()) {
-                return redirect()->route('login')
-                    ->with('error', 'Debes iniciar sesión para ver esta información');
-            }
-
-            $request->validate([
-                'id' => 'required|integer|exists:water_connections,id',
-            ]);
-
-            $connection = WaterConnection::with(['customer', 'locality'])
-                ->findOrFail($request->id);
-
-            return view('waterConnections.public', compact('connection'));
-
-        } catch (\Exception $e) {
-            abort(404, 'Toma de agua no encontrada');
         }
     }
 }
