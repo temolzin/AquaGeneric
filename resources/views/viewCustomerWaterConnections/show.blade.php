@@ -28,100 +28,110 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label>Tipo</label>
-                                        @php
-                                            $type = 'Desconocido';
-                                            if ($connection->type === 'residencial') {
-                                                $type = 'Residencial';
-                                            } elseif ($connection->type === 'commercial') {
-                                                $type = 'Comercial';
-                                            } else {
-                                                $type = $connection->type;
-                                            }
-                                        @endphp
-                                        <input type="text" disabled class="form-control" value="{{ $type }}" />
+                                        <label>Propietario</label>
+                                        @if($connection->customer && $connection->customer->user)
+                                            <input type="text" disabled class="form-control"
+                                                value="{{ $connection->customer->user->name }} {{ $connection->customer->user->last_name }}" />
+                                        @else
+                                            <div class="alert alert-warning p-2 mb-2 small">
+                                                Esta toma de agua no tiene un cliente asignado.
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label>Fecha de Registro</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->created_at->format('d/m/Y') }}" />
+                                        <label for="type" class="form-label">Tipo de Toma</label>
+                                        @if ($connection->type === 'residencial')
+                                            <input type="text" disabled class="form-control" value="Residencial" />
+                                        @elseif ($connection->type === 'commercial')
+                                            <input type="text" disabled class="form-control" value="Comercial" />
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Calle</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->street ?? 'No especificada' }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $connection->street }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Colonia</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->locality->name ?? 'No especificada' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Número Exterior</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->exterior_number ?? 'No especificado' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Número Interior</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->interior_number ?? 'No especificado' }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $connection->block }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label>Código Postal</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->block ?? 'No especificado' }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $connection->locality->zip_code ?? 'Desconocido' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Número Exterior</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->exterior_number ?? 'Desconocido' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Número Interior</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->interior_number ?? 'Desconocido' }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Número de Ocupantes</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->occupants_number ?? 'No especificado' }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $connection->occupants_number }}" />
+                                    </div>
+                                </div>
+                                @php
+                                    $daysMap = [
+                                        'monday' => 'Lunes',
+                                        'tuesday' => 'Martes',
+                                        'wednesday' => 'Miércoles',
+                                        'thursday' => 'Jueves',
+                                        'friday' => 'Viernes',
+                                        'saturday' => 'Sábado',
+                                        'sunday' => 'Domingo'
+                                    ];
+                                    $waterDays = json_decode($connection->water_days);
+                                    $displayDays = match (true) {
+                                        is_array($waterDays) => implode(', ', array_map(fn($day) => $daysMap[$day], $waterDays)),
+                                        $waterDays === 'all' => 'Todos los días',
+                                        default => 'No definido',
+                                    };
+                                @endphp
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Días de Agua</label>
+                                        <input type="text" disabled class="form-control" value="{{ $displayDays }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label>Días de Agua</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->formatted_water_days }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
                                         <label>¿Tiene Presión de Agua?</label>
-                                        @php
-                                            $pressureWater = $connection->has_water_pressure ? 'Sí' : 'No';
-                                        @endphp
-                                        <input type="text" disabled class="form-control" value="{{ $pressureWater }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $connection->has_water_pressure ? 'Día si noche no' : 'Noche si día no' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>¿Tiene Cisterna?</label>
-                                        @php
-                                            $cistern = $connection->has_cistern ? 'Sí' : 'No';
-                                        @endphp
-                                        <input type="text" disabled class="form-control" value="{{ $cistern }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $connection->has_cistern ? 'Sí' : 'No' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label>Costo</label>
-                                        <input type="text" disabled class="form-control" value="${{ number_format($connection->cost->price, 2) }}" />
-                                    </div>
-                                </div>
-                                @if($connection->note)
                                 <div class="col-lg-12">
                                     <div class="form-group">
-                                        <label>Notas Adicionales</label>
+                                        <label>Costo</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->cost->category ?? 'NULL' }} - {{ $connection->cost->price ?? 'null'}}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Nota de la Toma de Agua</label>
                                         <textarea disabled class="form-control">{{ $connection->note }}</textarea>
                                     </div>
                                 </div>
-                                @endif
                             </div>
                         </div>
                     </div>
