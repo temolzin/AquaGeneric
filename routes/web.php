@@ -52,6 +52,7 @@ Route::get('/dashboard', function () {
 
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/toma/{hash}', [WaterConnectionController::class, 'showPublic'])->name('waterConnections.public');
 
 Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
@@ -127,11 +128,6 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::patch('/waterConnections/{id}/reactivate', [WaterConnectionController::class, 'reactivate'])->name('waterConnections.reactivate');
         Route::get('/waterConnections/{id}/qr-generate', [WaterConnectionController::class, 'generateQrAjax'])->name('waterConnections.qr-generate');
         Route::get('/waterConnections/{id}/qr-download', [WaterConnectionController::class, 'downloadQr'])->name('waterConnections.qr-download');
-    });
-
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/toma/{code}', [WaterConnectionController::class, 'showPublicForm'])->name('waterConnections.public.form');
-        Route::post('/toma', [WaterConnectionController::class, 'showPublic'])->name('waterConnections.public');
     });
 
     Route::group(['middleware' => ['can:viewInventory']], function () {
