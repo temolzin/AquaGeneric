@@ -312,6 +312,12 @@ return [
         'icon' => 'fas fa-fw fa-home',
     ],
     [
+        'text' => 'Secciones',
+        'url' => '/sections',
+        'icon' => 'fas fa-fw fa-th-large',
+        'can'  => 'viewSections'
+    ],    
+    [
         'text' => 'Usuarios',
         'url' => '/users',
         'icon' => 'fas fa-fw fa-user',
@@ -340,7 +346,7 @@ return [
                 'can'  => 'viewPayments',
             ],
             [
-                'text' => 'Pagos Adelantados',
+                'text' => 'Panel de Pagos Adelantados',
                 'url'  => '/advancePayments',
                 'icon' => 'fas fa-fw fa-calendar-plus',
                 'can'  => 'viewAdvancePayments',
@@ -372,10 +378,22 @@ return [
         'can'  => 'viewWaterConnection'
     ],
     [
-        'text' => 'Gastos',
-        'url' => '/generalExpenses',
-        'icon' => 'fas fa-fw fa-coins',
-        'can'  => 'viewGeneralExpense'
+        'text' => 'Gestión de Gastos',
+        'icon' => 'fas fa-fw fa-cogs',
+        'submenu' => [
+            [
+                'text' => 'Gastos',
+                'url' => '/generalExpenses',
+                'icon' => 'fas fa-fw fa-coins',
+                'can'  => 'viewGeneralExpense'
+            ],
+            [
+                'text' => 'Tipos de Gastos',
+                'url'  => '/expenseTypes',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewExpenseTypes',
+            ],
+        ],
     ],
     [
         'text' => 'Gestión de Incidencias',
@@ -453,6 +471,12 @@ return [
         'url' => '/faultReport',
         'icon' => 'fa fa-clipboard-list',
         'can'  => 'viewFaultReport'
+    ],
+    [
+        'text' => 'Lista de Reportes',
+        'url' => '/reportList',
+        'icon' => 'fas fa-fw fa-file-alt',
+        'can' => 'viewReportsLists',
     ],
 ],
 

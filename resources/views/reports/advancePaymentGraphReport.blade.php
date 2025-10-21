@@ -248,22 +248,26 @@
                     </td>
                 </tr>
             </table>  
-            <table style="height:10% ; width: 100%;">
+            <table style="height:30% ; width: 100%;">
                 <tbody>
                     <tr>
                         <td style="padding: 8px; text-align: center; width: 50%;">
-                        <img src="{{ $chartImages[0]}}" style="max-width: 90%; height: auto;">
-                        </td>
-                        <td style="padding: 8px; text-align: center; width: 50%;">
-                        <img src="{{ $chartImages[1]}}" style="max-width: 90%; height: auto;">
+                        <img src="{{ $chartImages[0]}}" style="max-width: 800px; height: 170px;">
                         </td>
                     </tr>
                     <tr>
                         <td style="padding: 8px; text-align: center; width: 50%;">
-                            <img src="{{ $chartImages[2] }}" style="max-width: 80%; height: auto;">
+                        <img src="{{ $chartImages[1]}}" style="max-width: 800px; height: 170px; margin-top:50px;">
                         </td>
+                    </tr>
+                    <tr>
                         <td style="padding: 8px; text-align: center; width: 50%;">
-                            <img src="{{ $chartImages[3] }}" style="max-width: 80%; height: auto;">
+                            <img src="{{ $chartImages[2] }}" style="max-width: 800px; height: 170px; margin-top:250px;">
+                        </td>
+                    </tr>
+                    <tr>
+                            <td style="padding: 8px; text-align: center; width: 50%;">
+                            <img src="{{ $chartImages[3] }}" style="max-width: 800px; height: 170px; margin-top:50px;">
                        </td>
                     </tr>
                 </tbody>

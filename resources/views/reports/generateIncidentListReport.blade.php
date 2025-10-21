@@ -1,3 +1,13 @@
+@php
+$locality = Auth::user()->locality ?? null;
+$verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
+    ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
+    : public_path('img/backgroundReport.png');
+
+$horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizontal')
+    ? $locality->getFirstMedia('pdfBackgroundHorizontal')->getPath()
+    : public_path('img/customersBackground.png');
+@endphp
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -5,6 +15,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Lista de Incidencias</title>
         <style>
+            @page {
+                size: A4 portrait;
+                margin: 15mm;
+            }
             html {
                 margin: 0;
                 padding: 15px;
@@ -14,25 +28,33 @@
                 height: 100%;
                 margin: 0;
                 padding: 0;
-                background-image: url('img/customersBackground.png');
+                background-image: url('file://{{ $verticalBgPath }}');
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
             }
 
             #pdfPage {
+                margin-top: 10%;
                 margin: 40px;
+                text-align: center;
+                width: 90%;
+                min-height: 80%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
             }
 
-            .companyInfo {
-                width: 75%;
+            .company_info {
+                width: 100%;
+                margin-top: 60px;
                 text-align: center;
                 align-content: stretch;
                 font-family: 'Montserrat', sans-serif;
             }
 
-            .titleAqua {
-                padding-top: 25px;
+            .aqua_title {
                 font-family: 'Montserrat', sans-serif;
                 font-size: 20pt;
                 font-weight: bold;
@@ -59,22 +81,25 @@
                 font-size: 15pt;
                 display: block;
                 color: #0B1C80;
-                text-align: left;
+                text-align: center;
                 margin-bottom: 5px;
             }
 
-            .textable {
+            .text_table {
                 text-align: center;
                 font-family: 'Montserrat', sans-serif;
                 font-size: 12pt;
                 color: #FFF;
             }
 
-            .textcenter {
+            .text_center {
+                padding: 5px;
                 background-color: #FFF;
                 text-align: center;
                 font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
+                vertical-align: middle;
+                line-height: 1.6;
             }
 
             #detailedReport {
@@ -82,6 +107,10 @@
                 width: 100%;
                 margin-bottom: 150px;
                 page-break-inside: auto;
+            }
+
+            #detailedReport thead {
+                display: table-header-group;
             }
 
             #detailedReport thead th {
@@ -92,11 +121,12 @@
 
             #statusDetails tr {
                 border-top: 1px solid #bfc9ff;
+                min-height: 60px;
             }
 
-            .infoBelow {
+            .footer_info {
                 text-align: center;
-                margin-top: 22px;
+                margin-top: 20px;
                 padding: 10px;
                 position: absolute;
                 bottom: 5px;
@@ -104,9 +134,9 @@
                 right: 20px;
             }
 
-            .textInfo {
+            .footer_text {
                 text-align: center;
-                font-size: 10pt;
+                font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
                 color: white;
                 text-decoration: none;
@@ -115,11 +145,12 @@
 
             #headReport {
                 justify-content: center;
+                width: 100%;
             }
 
             #headReport .logo {
                 height: auto;
-                margin-top: 60px;
+                margin-left: 60px;
             }
 
             #headReport .logo img {
@@ -149,46 +180,44 @@
                             @endif
                         </div>
                     </td>
-                    <td class="companyInfo">
-                        <div>
-                            <p class="titleAqua">
-                                COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
-                            </p>
-                        </div>
-                    </td>
                 </tr>
             </table>
+            <div class="company_info">
+                <p class="aqua_title">
+                    COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
+                </p>
+            </div>
             <div class="title">
                 <h3>LISTA DE INCIDENCIAS</h3>
             </div>
             <table id="detailedReport">
                 <thead>
                     <tr>
-                        <th class="textable">ID</th>
-                        <th class="textable">NAME</th>
-                        <th class="textable">FECHA INICIO</th>
-                        <th class="textable">DESCRIPCIÓN</th>
-                        <th class="textable">CATEGORIA</th>
-                        <th class="textable">ESTATUS</th>
+                        <th class="text_table">ID</th>
+                        <th class="text_table">NOMBRE</th>
+                        <th class="text_table">ESTATUS</th>
+                        <th class="text_table">CATEGORIA</th>
+                        <th class="text_table">FECHA INICIO</th>
+                        <th class="text_table">DESCRIPCIÓN</th>
                     </tr>
                 </thead>
                 <tbody id="statusDetails">
                     @foreach ($incidents as $incident)
                         <tr>
-                            <td class="textcenter">{{ $incident->id }}</td>
-                            <td class="textcenter">{{ $incident->name }}</td>
-                            <td class="textcenter">{{ $incident->start_date }}</td>
-                            <td class="textcenter">{{ $incident->description }}</td>
-                            <td class="textcenter">{{ $incident->incidentCategory->name}}</td>
-                            <td class="textcenter">{{ $incident->status }}</td>
+                            <td class="text_center">{{ $incident->id }}</td>
+                            <td class="text_center">{{ $incident->name }}</td>
+                            <td class="text_center">{{ $incident->getLatestStatus() }}</td>
+                            <td class="text_center">{{ $incident->incidentCategory->name}}</td>
+                            <td class="text_center">{{ \Carbon\Carbon::parse($incident->start_date)->format('d/m/Y') }}</td>
+                            <td class="text_center">{{ $incident->description }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-        <div class="infoBelow">
-            <a class="textInfo" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
-            <a class="textInfo" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="20px" height="15px">
+        <div class="footer_info">
+            <a class="footer_text" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+            <a class="footer_text" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="15px" height="15px">
         </div>
     </body>
 </html>

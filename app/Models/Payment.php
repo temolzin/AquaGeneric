@@ -20,6 +20,11 @@ class Payment extends Model
         'method',
         'amount',
         'note',
+        'is_future_payment',
+    ];
+
+    protected $casts = [
+        'is_future_payment' => 'boolean',
     ];
 
     public function debt()

@@ -1,4 +1,3 @@
-
 <div class="modal fade" id="createResponsible" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -11,7 +10,7 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('logsIncidents.store') }}" method="post" enctype="multipart/form-data">
+                <form id="changeStatusForm" action="{{ route('incidents.updateStatus') }}" method="POST">
                     @csrf
                     <div class="card-body">
                         <div class="card">
@@ -29,7 +28,7 @@
                                         <div class="form-group">
                                             <label for="incident_name" class="form-label">Incidencia</label>
                                             <p class="form-control-plaintext mb-0" id="incidentNameDisplay"></p>
-                                            <input type="hidden" name="incidentId" id="incidentId">
+                                            <input type="hidden" name="incident_id" id="incidentId">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -48,7 +47,7 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estatus(*)</label>
-                                            <select class="form-control select2" name="status" required>
+                                            <select class="form-control select2" name="status_id" id="status_id" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($statuses as $status)
                                                     <option value="{{ $status->id }}">{{ $status->status }}</option>

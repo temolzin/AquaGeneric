@@ -29,6 +29,7 @@ class WaterConnection extends Model
         'locality_id',
         'customer_id',
         'cost_id',
+        'section_id',
         'name',
         'block',
         'street',
@@ -55,6 +56,11 @@ class WaterConnection extends Model
     public function cost()
     {
         return $this->belongsTo(Cost::class);
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
     }
 
     public function debts()

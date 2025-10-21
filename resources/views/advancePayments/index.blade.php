@@ -44,7 +44,7 @@
             ['id' => 'pieChart', 'title' => 'Gráfica de Pastel'],
             ['id' => 'doughnutChart', 'title' => 'Gráfica de Dona']
         ] as $chart)
-            <div class="col-md-6">
+            <div class="col-md-6" style="margin-top: 20px">
                 <div class="card h-100">
                     <div class="card-header d-flex align-items-center">
                         <strong class="flex-grow-1">{{ $chart['title'] }}</strong>

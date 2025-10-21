@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\WaterConnection;
 use App\Models\Customer;
 use App\Models\Cost;
+use App\Models\Section;
 use App\Models\Locality;
 use Illuminate\Http\Request;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class WaterConnectionController extends Controller
 {
@@ -35,8 +39,9 @@ class WaterConnectionController extends Controller
         $connections = $query->paginate(10);
         $customers = Customer::where('locality_id', $authUser->locality_id)->get();
         $costs = Cost::where('locality_id', $authUser->locality_id)->get();
+        $sections = Section::where('locality_id', $authUser->locality_id)->get();
 
-        return view('waterConnections.index', compact('connections', 'customers', 'costs'));
+        return view('waterConnections.index', compact('connections', 'customers', 'costs', 'sections'));
     }
 
     public function store(Request $request)
@@ -60,6 +65,7 @@ class WaterConnectionController extends Controller
 
         $waterConnectionData = $request->all();
 
+        $waterConnectionData['section_id'] = $request->input('section_id');
         $waterConnectionData['water_days'] = json_encode(
             $request->has('all_days') ? 'all' : $request->input('days', [])
         );
@@ -73,12 +79,14 @@ class WaterConnectionController extends Controller
     public function show($id)
     {
         $connections = WaterConnection::findOrFail($id);
-        return view('waterConnections.show', compact('connections'));
+        $sections = Section::where('locality_id', $connection->locality_id)->get();
+        return view('waterConnections.show', compact('connections', 'sections'));
     }
 
     public function update(Request $request, $id)
     {
         $connection = WaterConnection::find($id);
+        $sections = Section::where('locality_id', $connection->locality_id)->get(); 
 
         if (!$connection) {
             return redirect()->back()->with('error', 'Toma de Agua no encontrada.');
@@ -88,11 +96,10 @@ class WaterConnectionController extends Controller
         $connection->customer_id = $request->input('customerIdUpdate');
         $connection->type = $request->input('typeUpdate');
         $connection->occupants_number = $request->input('occupantsNumberUpdate');
+        $connection->section_id = $request->input('section_id');
 
         $connection->water_days = json_encode(
-            $request->has('all_days_update') 
-                ? 'all' 
-                : $request->input('days_update', [])
+            $request->has('all_days_update') ? 'all' : $request->input('days_update', [])
         );
 
         $connection->street = $request->input('streetUpdate');
@@ -121,9 +128,7 @@ class WaterConnectionController extends Controller
         $connection = WaterConnection::findOrFail($id);
 
         if ($connection->hasDebt()) {
-            return redirect()->route('waterConnections.index')
-                ->with('debtError', true)
-                ->with('connectionName', $connection->name);
+            return redirect()->route('waterConnections.index')->with('debtError', true)->with('connectionName', $connection->name);
         }
 
         $connection->cancel_description = $request->input('cancelDescription');
@@ -164,5 +169,109 @@ class WaterConnectionController extends Controller
         $connection->save();
 
         return redirect()->route('waterConnections.index')->with('success', 'Toma reactivada y asignada correctamente.');
+    }
+    
+    public function generateQrAjax($id)
+    {
+        try {
+            $connection = WaterConnection::findOrFail($id);
+
+            $token = base64_encode($id . '|' . time() . '|' . Str::random(10));
+
+            \Cache::put('qr_token_' . $token, $id, now()->addDays(30));
+
+            $publicUrl = route('waterConnections.public.form', ['code' => $token]);
+
+            $qrCode = base64_encode(
+                QrCode::format('svg')
+                    ->size(300)
+                    ->margin(2)
+                    ->errorCorrection('H')
+                    ->generate($publicUrl)
+            );
+
+            $downloadUrl = route('waterConnections.qr-download', $id);
+
+            return response()->json([
+                'success' => true,
+                'image' => 'data:image/svg+xml;base64,' . $qrCode,
+                'download_url' => $downloadUrl
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el código QR: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function downloadQr($id)
+    {
+        try {
+            $connection = WaterConnection::findOrFail($id);
+
+            $token = base64_encode($id . '|' . time() . '|' . Str::random(10));
+            \Cache::put('qr_token_' . $token, $id, now()->addDays(30));
+
+            $publicUrl = route('waterConnections.public.form', ['code' => $token]);
+
+            $qrCode = QrCode::format('png')
+                ->size(400)
+                ->margin(2)
+                ->errorCorrection('H')
+                ->generate($publicUrl);
+
+            $fileName = "QR_Toma_{$connection->id}.png";
+
+            return response($qrCode)->header('Content-Type', 'image/png')->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al descargar el código QR');
+        }
+    }
+
+    public function showPublicForm($code)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login')
+                ->with('error', 'Debes iniciar sesión para ver esta información');
+        }
+
+        try {
+            $id = \Cache::get('qr_token_' . $code);
+
+            if (!$id) {
+                abort(404, 'Código no válido o expirado');
+            }
+
+            return view('waterConnections.public-form', compact('id'));
+
+        } catch (\Exception $e) {
+            abort(404, 'Error al procesar el código');
+        }
+    }
+
+    public function showPublic(Request $request)
+    {
+        try {
+
+            if (!auth()->check()) {
+                return redirect()->route('login')
+                    ->with('error', 'Debes iniciar sesión para ver esta información');
+            }
+
+            $request->validate([
+                'id' => 'required|integer|exists:water_connections,id',
+            ]);
+
+            $connection = WaterConnection::with(['customer', 'locality'])
+                ->findOrFail($request->id);
+
+            return view('waterConnections.public', compact('connection'));
+
+        } catch (\Exception $e) {
+            abort(404, 'Toma de agua no encontrada');
+        }
     }
 }
