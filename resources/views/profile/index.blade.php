@@ -136,7 +136,7 @@
                     </div>
                 </div>
 
-                {{-- Sección de Información de Membresía --}}
+                @role('Supervisor')
                 <div class="col-md-12">
                     <div class="card card-info">
                         <div class="card-header">
@@ -215,6 +215,7 @@
                         </div>
                     </div>
                 </div>
+                @endrole
             </div>
         </div>
     </section>
