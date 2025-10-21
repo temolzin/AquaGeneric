@@ -108,6 +108,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/weekly-earnings-report', [PaymentController::class, 'weeklyEarningsReport'])->name('report.weeklyEarningsReport');
         Route::get('/water-connection-payments', [PaymentController::class, 'waterConnectionPaymentsReport'])->name('report.waterConnectionPayments');
         Route::get('/annual-earnings-report/{year}', [PaymentController::class, 'annualEarningsReport']);
+        Route::get('/cash-closures-report', [PaymentController::class, 'cashClosurePaymentsReport'])->name('cash-closures.report');
     });
 
     Route::group(['middleware' => ['can:viewLocality']], function () {
@@ -192,9 +193,6 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/api/localities/{localityId}/active-notices', [LocalityNoticeController::class, 'getActiveByLocality'])->name('localityNotices.active-by-locality');
         Route::get('localityNotices/{id}/download', [LocalityNoticeController::class, 'downloadAttachment'])->name('localityNotices.download');
     });
-    
-    Route::get('/cash-closures-report', [PaymentController::class, 'cashClosurePaymentsReport'])
-    ->name('cash-closures.report');
 
     Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
     Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
@@ -216,6 +214,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewSections']], function () {
         Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
         Route::resource('sections', SectionController::class);
+        Route::get('/reports/pdfSections', [SectionController::class, 'pdfSections'])->name('reports.pdfSections');
     });
 });
     Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');

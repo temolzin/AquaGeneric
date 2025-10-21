@@ -19,7 +19,7 @@ class SectionsSeeder extends Seeder
                 Section::updateOrCreate(
                     [
                         'locality_id' => $locality->id,
-                        'name' => 'Sección ' . $i . ' - Localidad ' . $locality->id,
+                        'name' => 'Sección ' . $i,
                     ],
                     [
                         'created_by' => 1,
