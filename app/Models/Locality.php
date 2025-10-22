@@ -76,17 +76,4 @@ class Locality extends Model implements HasMedia
 
         return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
     }
-
-    public function registerMediaCollections(): void
-    {
-        $this
-            ->addMediaCollection('pdfBackgroundVertical')
-            ->useDisk('public')
-            ->singleFile();
-
-        $this
-            ->addMediaCollection('pdfBackgroundHorizontal')
-            ->useDisk('public')
-            ->singleFile();
-    }
 }

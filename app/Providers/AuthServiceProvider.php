@@ -25,6 +25,9 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::define('view_membership_info', function ($user) {
+            return $user->hasRole(['Supervisor', 'Secretaria']);
+        });
         //
     }
 }

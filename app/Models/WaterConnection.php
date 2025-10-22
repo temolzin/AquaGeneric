@@ -27,6 +27,7 @@ class WaterConnection extends Model
 
     protected $fillable = [
         'locality_id',
+        'created_by',
         'customer_id',
         'cost_id',
         'section_id',
