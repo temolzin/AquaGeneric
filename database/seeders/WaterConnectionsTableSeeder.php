@@ -35,7 +35,6 @@ class WaterConnectionsTableSeeder extends Seeder
                     'section_id' => $faker->randomElement($localitySections)
             ]);
 
-
             foreach ($customers as $customerId) {
 
                 if (empty($costs)) {

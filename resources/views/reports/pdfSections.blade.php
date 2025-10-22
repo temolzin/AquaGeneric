@@ -88,22 +88,18 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
                 </td>
             </tr>
         </table>
-
         <div class="info_empresa">
             <p class="aqua_titulo">
                 COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name ?? '-' }}, {{ $authUser->locality->municipality ?? '-' }}, {{ $authUser->locality->state ?? '-' }}
             </p>
         </div>
-
         <div class="section_info_header">
             <h4>Sección: <span class="oval_color">{{ $section->name }}</span></h4>
             <p><strong>Total de Tomas:</strong> {{ $section->waterConnections->count() }}</p>
         </div>
-
         <div class="title">
-            <h3>TOMAS DE AGUA DE LA SECCIÓN {{ $section->name }}</h3>
+            <h3>TOMAS DE AGUA DE LA {{ $section->name }}</h3>
         </div>
-
         <table id="reporte_detalle">
             <thead>
                 <tr>
@@ -125,7 +121,6 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
             </tbody>
         </table>
     </div>
-
     <div class="info_Eabajo">
         <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
         <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
