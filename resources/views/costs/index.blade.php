@@ -4,7 +4,7 @@
 
 @section('content')
 <section class="content">
-    <div class="right_col" role="main">
+    <div class="right_col" cost="main">
         <div class="col-md-12 col-sm-12 ">
             <div class="x_panel">
                 <div class="x_title">
@@ -37,7 +37,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>CATEGORÍA</th>
+                                            <th>CATEGORIA</th>
                                             <th>PRECIO</th>
                                             <th>OPCIONES</th>
                                         </tr>
@@ -54,7 +54,7 @@
                                                     <td>{{ $cost->category }}</td>
                                                     <td>${{ number_format($cost->price, 2) }}</td>
                                                     <td>
-                                                        <div class="btn-group" role="group" aria-label="Opciones">
+                                                        <div class="btn-group" cost="group" aria-label="Opciones">
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $cost->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
