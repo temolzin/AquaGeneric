@@ -131,14 +131,23 @@
             datasets: [{
                 label: 'Pagos',
                 data: data,
-                backgroundColor: 'rgba(255,99,132,0.2)',
-                borderColor: 'rgba(255,99,132,1)',
-                pointBackgroundColor: 'rgba(255,99,132,1)'
+                backgroundColor: [
+                    '#FF1493', 
+                    '#00FF00', 
+                    '#FF0000', 
+                    '#0000FF', 
+                    '#FFFF00', 
+                    '#FF00FF'  
+                ],
+                borderColor: '#FFFFFF',
+                borderWidth: 4,
+                hoverBorderWidth: 6
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            cutout: '60%'
         }
     });
 
