@@ -38,7 +38,9 @@ class WaterConnectionController extends Controller
 
         $connections = $query->paginate(10);
         $customers = Customer::where('locality_id', $authUser->locality_id)->get();
-        $costs = Cost::where('locality_id', $authUser->locality_id)->get();
+        $costs = Cost::where('locality_id', $authUser->locality_id)
+                     ->orWhere('locality_id', 0)
+                     ->get();
         $sections = Section::where('locality_id', $authUser->locality_id)->get();
 
         return view('waterConnections.index', compact('connections', 'customers', 'costs', 'sections'));

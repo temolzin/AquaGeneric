@@ -17,7 +17,7 @@ class UserController extends Controller
         
         $roles = Role::whereIn('name', ['Supervisor', 'Secretaria'])->get();
         
-        $localities = Locality::all();
+        $localities = Locality::where('id', '!=', 0)->get();
         $users = User::where('id', '!=', $currentUserId)->get();
         return view('users.index', compact('users', 'localities', 'roles'));
     }
