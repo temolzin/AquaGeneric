@@ -14,7 +14,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $roleSecretariat = Role::firstOrCreate(['name' => 'Secretaria']);
         $roleSupervisor = Role::firstOrCreate(['name' => 'Supervisor']);
         $roleCliente = Role::firstOrCreate(['name' => 'Cliente']);
-    
+
         Permission::firstOrCreate([
             'name' => 'viewUser',
             'description' => 'Permite ver los Usuario.'
@@ -94,7 +94,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'selectLocality',
             'description' => 'Permite seleccionar Localidades.'
-        ])->assignRole([$roleSecretariat, $roleSupervisor]);        
+        ])->assignRole([$roleSecretariat, $roleSupervisor]);
         Permission::firstOrCreate([
             'name' => 'viewDashboardCards',
             'description' => 'Permite ver las tarjetas de información en el dashboard.'
@@ -179,7 +179,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteFaultReport',
             'description' => 'Permite eliminar el reporte de fallas.'
         ])->assignRole([$roleSupervisor]);
-        Permission::firstOrCreate([ 
+        Permission::firstOrCreate([
             'name' => 'viewNotice',
             'description' => 'Permite ver los Avisos de Localidades.'
         ])->assignRole([$roleSupervisor]);
@@ -222,6 +222,10 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'deleteFaultReports',
             'description' => 'El cliente permite eliminar el reporte de fallas.'
+        ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
+            'name' => 'viewCustomerCards',
+            'description' => 'El cliente puede ver cartas de información sobre sus pagos, deudas y tomas de agua'
         ])->assignRole([$roleCliente]);
         Permission::firstOrCreate([
             'name' => 'viewInventory',
@@ -295,5 +299,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteInventoryCategories',
             'description' => 'Permite eliminar Categorías de Inventario.'
         ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'viewGraficsEarningsAnnual',
+            'description' => 'Permite ver gráficos de ingresos mensuales y anuales.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat, $roleAdmin]);
     }
 }

@@ -36,5 +36,62 @@ class MigrateCustomersToUsersSeeder extends Seeder
                 ->where('id', $customer->id)
                 ->update(['user_id' => $userId]);
         }
+
+        $alonsoUser = DB::table('users')->where('email', 'alonso@gmail.com')->first();
+        
+        if ($alonsoUser) {
+            $existingCustomer = DB::table('customers')->where('user_id', $alonsoUser->id)->first();
+            
+            if (!$existingCustomer) {
+                $sampleCustomer = DB::table('customers')->first();
+                
+                if ($sampleCustomer) {
+                    $customerData = [
+                        'user_id' => $alonsoUser->id,
+                        'locality_id' => $alonsoUser->locality_id,
+                        'name' => $alonsoUser->name,
+                        'last_name' => $alonsoUser->last_name,
+                        'email' => $alonsoUser->email,
+                        'created_by' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+
+                    foreach ($sampleCustomer as $field => $value) {
+                        if ($field !== 'id' && $field !== 'user_id' && !array_key_exists($field, $customerData)) {
+                            $customerData[$field] = $value;
+                        }
+                    }
+
+                    DB::table('customers')->insert($customerData);
+                } else {
+                    $customerData = [
+                        'user_id' => $alonsoUser->id,
+                        'locality_id' => $alonsoUser->locality_id,
+                        'name' => $alonsoUser->name,
+                        'last_name' => $alonsoUser->last_name,
+                        'email' => $alonsoUser->email,
+                        'locality' => 'Default Locality',
+                        'zip_code' => '00000',
+                        'state' => 'Default State',
+                        'street' => 'Default Street',
+                        'exterior_number' => '0',
+                        'interior_number' => null,
+                        'block' => '0',
+                        'city' => 'Default City',
+                        'suburb' => 'Default Suburb',
+                        'created_by' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                    DB::table('customers')->insert($customerData);
+                }
+            }
+
+            $userModel = User::find($alonsoUser->id);
+            if ($userModel && !$userModel->hasRole('Cliente')) {
+                $userModel->assignRole('Cliente');
+            }
+        }
     }
 }

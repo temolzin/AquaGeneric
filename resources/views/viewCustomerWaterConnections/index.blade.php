@@ -43,8 +43,12 @@
                                     </thead>
                                     <tbody>
                                         @if(count($connections) <= 0)
-                                        <tr>
-                                            <td colspan="6" class="text-center">No hay tomas de agua registradas</td>
+                                        <tr class="text-center py-5">
+                                            <td colspan="6">
+                                                <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+                                                <h1 style="font-size: 1.3em;">¡No hay tomas de agua registradas!</h1>
+                                                <p class="text-muted">Aún no tienes tomas de agua asociadas a tu cuenta.</p>
+                                            </td>
                                         </tr>
                                         @else
                                         @foreach($connections as $connection)
