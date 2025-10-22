@@ -4,7 +4,7 @@
 
 @section('content')
 <section class="content">
-    <div class="right_col" cost="main">
+    <div class="right_col" role="main">
         <div class="col-md-12 col-sm-12 ">
             <div class="x_panel">
                 <div class="x_title">
@@ -37,7 +37,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>CATEGORIA</th>
+                                            <th>CATEGORÍA</th>
                                             <th>PRECIO</th>
                                             <th>OPCIONES</th>
                                         </tr>
@@ -54,19 +54,23 @@
                                                     <td>{{ $cost->category }}</td>
                                                     <td>${{ number_format($cost->price, 2) }}</td>
                                                     <td>
-                                                        <div class="btn-group" cost="group" aria-label="Opciones">
+                                                        <div class="btn-group" role="group" aria-label="Opciones">
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $cost->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
                                                             @can('editCost')
-                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $cost->id }}">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
+                                                            @if ($cost->locality_id != 0)
+                                                                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $cost->id }}">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                            @endif
                                                             @endcan
                                                             @can('deleteCost')
-                                                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $cost->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
+                                                            @if ($cost->locality_id != 0)
+                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $cost->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
                                                             @endcan
                                                         </div>
                                                     </td>

@@ -9,6 +9,27 @@ class CostsTableSeeder extends Seeder
 {
     public function run()
     {
+        $defaultCost = [
+            'locality_id' => 0,
+            'created_by' => 1,
+            'category' => 'Por Defecto',
+            'price' => 130.00,
+            'description' => 'Tarifa por defecto para todas las localidades',
+        ];
+
+        Cost::updateOrCreate(
+            [
+                'locality_id' => 0,
+                'category' => $defaultCost['category'],
+            ],
+            [
+                'price' => $defaultCost['price'],
+                'description' => $defaultCost['description'],
+                'created_by' => $defaultCost['created_by'],
+                'updated_at' => now(),
+            ]
+        );
+
         $costs = [
             [
                 'locality_id' => 1,

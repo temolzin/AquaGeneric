@@ -7,11 +7,34 @@ use Illuminate\Database\Seeder;
 use App\Models\Locality;
 use App\Models\Membership;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class LocalitiesTableSeeder extends Seeder
 {
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        DB::statement('SET SESSION sql_mode = "NO_AUTO_VALUE_ON_ZERO";');
+
+        DB::table('localities')->updateOrInsert(
+            ['id' => 0],
+            [
+                'name' => 'Global',
+                'municipality' => 'N/A',
+                'state' => 'N/A',
+                'zip_code' => '00000',
+                'membership_id' => null,
+                'token' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        DB::statement('SET SESSION sql_mode = "";');
+
         $memberships = Membership::all();
         
         if ($memberships->isEmpty()) {
@@ -80,6 +103,6 @@ class LocalitiesTableSeeder extends Seeder
             $endDate = Carbon::now()->subDay()->format('Y-m-d');
         }
 
-        return Token::generateTokenForLocality(0, $startDate, $endDate);
+        return Token::generateTokenForLocality($localityId ?? 1, $startDate, $endDate);
     }
 }

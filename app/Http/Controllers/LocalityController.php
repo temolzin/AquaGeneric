@@ -13,7 +13,7 @@ class LocalityController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Locality::query()->orderBy('created_at', 'desc');
+        $query = Locality::query()->where('id', '!=', 0)->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->input('search');
