@@ -14,7 +14,7 @@
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
                                 <form method="GET" action="{{ route('viewCustomerPayments.index') }}" class="mb-3 mb-lg-0" style="min-width: 300px;">
                                     <div class="input-group">
-                                        <input type="text" name="search" class="form-control" placeholder="Buscar" value="{{ request('search') }}">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Id, Dirección" value="{{ request('search') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary" title="Buscar Pagos">
                                                 <i class="fa fa-search"></i> Buscar
@@ -44,10 +44,22 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(count($payments) <= 0)
-                                        <tr>
-                                            <td colspan="8" class="text-center">No hay pagos registrados</td>
-                                        </tr>
+                                        @if(!$customer)
+                                            <tr class="text-center py-5">
+                                                <td colspan="7">
+                                                    <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+                                                    <h5>No se encontró información de cliente</h5>
+                                                    <p class="text-muted">No hay datos de cliente asociados a tu usuario.</p>
+                                                </td>
+                                            </tr>
+                                        @elseif($payments->count() == 0)
+                                            <tr class="text-center py-5">
+                                                <td colspan="7">
+                                                    <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                                                    <h5>No hay pagos registrados</h5>
+                                                    <p class="text-muted">Aún no has realizado ningún pago.</p>
+                                                </td>
+                                            </tr>
                                         @else
                                         @foreach($payments as $payment)
                                         <tr>
@@ -84,13 +96,15 @@
                                             </td>
                                         </tr>
                                         @endforeach
-                                        @endif
                                     </tbody>
                                 </table>
+                                @endif
                                 
+                                @if($payments->total() > $payments->perPage())
                                 <div class="d-flex justify-content-center mt-3">
                                     {!! $payments->links('pagination::bootstrap-4') !!}
                                 </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -104,6 +118,7 @@
 @section('js')
 <script>
     $(document).ready(function() {
+        @if($payments->count() > 0)
         $('#myPayments').DataTable({
             responsive: true,
             buttons: ['csv', 'excel', 'print'],
@@ -113,6 +128,7 @@
             searching: false,
             order: [[1, 'desc']] 
         });
+        @endif
 
         $('[data-toggle="tooltip"]').tooltip();
 

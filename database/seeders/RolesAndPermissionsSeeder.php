@@ -192,6 +192,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'El cliente puede ver sus tomas de agua'
         ])->assignRole([$roleCliente]);
         Permission::firstOrCreate([
+            'name' => 'viewCustomerCards',
+            'description' => 'El cliente puede ver cartas de información sobre sus pagos, deudas y tomas de agua'
+        ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
             'name' => 'viewInventory',
             'description' => 'Permite ver el Inventario.'
         ])->assignRole([$roleSupervisor]);
@@ -203,5 +207,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'deleteInventory',
             'description' => 'Permite eliminar el Inventario.'
         ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'viewGraficsEarningsAnnual',
+            'description' => 'Permite ver gráficos de ingresos mensuales y anuales.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat, $roleAdmin]);
     }
 }

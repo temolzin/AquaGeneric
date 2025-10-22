@@ -117,7 +117,7 @@
                             </div>
                         </div>
                     @endcan
-                    @can('viewCustomerDebts')
+                    @can('viewCustomerCards')
                         <div class="row mb-1">
                             <div class="col-lg-4 col-xs-12">
                                 <div class="small-box bg-warning">
@@ -174,7 +174,7 @@
                             </div>
                         </div>
                     @endcan
-                    @can('viewDashboardCards')
+                    @can('viewGraficsEarningsAnnual')
                     <div class="row">
                         <div class="col-md-6">
                             <div class="card">
@@ -197,7 +197,8 @@
                             </div>
                         </div>
                     </div>
-                    
+                    @endcan
+                    @can('viewDashboardCards')
                     <div class="card">
                         <div class="card-header">
                             <div class="row w-100 align-items-center">

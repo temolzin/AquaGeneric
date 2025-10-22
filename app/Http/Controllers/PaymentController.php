@@ -377,7 +377,8 @@ class PaymentController extends Controller
                         ->first();
 
         if (!$customer) {
-            return redirect()->back()->with('error', 'No se encontró información de cliente.');
+            $payments = Payment::where('id', 0)->paginate(10);
+            return view('viewCustomerPayments.index', compact('payments', 'customer'));
         }
 
         $query = Payment::with(['debt.waterConnection'])
