@@ -26,6 +26,15 @@ class WaterConnectionsTableSeeder extends Seeder
             $users = DB::table('users')->pluck('id')->toArray();
             $localitySections = DB::table('sections')->where('locality_id', $localityId)->pluck('id')->toArray();
 
+            if (empty($localitySections)) {
+                continue;
+            }
+
+            DB::table('water_connections')->where('locality_id', $localityId)->whereNull('section_id')
+                ->update([
+                    'section_id' => $faker->randomElement($localitySections)
+            ]);
+
             foreach ($customers as $customerId) {
 
                 if (empty($costs)) {

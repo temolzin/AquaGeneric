@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Section;
 use App\Models\Locality;
+use PDF;
 
 class SectionController extends Controller
 {
@@ -104,5 +105,27 @@ class SectionController extends Controller
         $section->delete();
 
         return redirect()->route('sections.index')->with('success', 'Sección eliminada correctamente.');
+    }
+
+    public function pdfSections(Request $request)
+    {
+        $authUser = auth()->user();
+        $sectionId = $request->input('section_id'); 
+    
+        if (!$sectionId) {
+            return redirect()->back()->with('error', 'Debe seleccionar una sección.');
+        }
+    
+        $section = Section::where('id', $sectionId)
+            ->where('locality_id', $authUser->locality_id) 
+            ->with(['waterConnections.customer', 'waterConnections.cost', 'locality']) 
+            ->firstOrFail();
+    
+        $pdf = PDF::loadView('reports.pdfSections', compact('section', 'authUser'))
+            ->setPaper('A4', 'portrait');
+
+        $fileName = 'Tomas_de_agua_de_la_' . str_replace(' ', '_', $section->name) . '.pdf';
+        
+        return $pdf->stream($fileName);
     }
 }
