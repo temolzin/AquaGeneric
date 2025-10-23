@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Locality;
+use App\Models\WaterConnection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,8 +13,24 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        $authUser = Auth::user();
-        return view('profile.index', compact('authUser'));
+        $authUser = Auth::user()->load([
+            'locality.membership',
+            'locality.users',
+            'locality.waterConnections' => function($query) {
+                $query->where('is_canceled', false);
+            }
+        ]);
+
+        $membershipStats = [
+            'users_count' => $authUser->locality ? $authUser->locality->users->count() : 0,
+            'users_limit' => $authUser->locality && $authUser->locality->membership ? $authUser->locality->membership->users_number : 0,
+            'water_connections_count' => $authUser->locality ? $authUser->locality->waterConnections->count() : 0,
+            'water_connections_limit' => $authUser->locality && $authUser->locality->membership ? $authUser->locality->membership->water_connections_number : 0,
+            'subscription_status' => $authUser->locality ? $authUser->locality->getSubscriptionStatus() : 'Sin localidad',
+            'membership_name' => $authUser->locality && $authUser->locality->membership ? $authUser->locality->membership->name : 'Sin membresía'
+        ];
+
+        return view('profile.index', compact('authUser', 'membershipStats'));
     }
 
     public function profileUpdate(Request $request)
