@@ -49,7 +49,6 @@ class MembershipsTableSeeder extends Seeder
                 'term_months' => $membership['term_months'],
                 'water_connections_number' => $membership['water_connections_number'],
                 'users_number' => $membership['users_number'],
-                'created_by' => $admin->id,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
