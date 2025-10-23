@@ -7,10 +7,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use App\Models\Customer;
 
-class ReportListController extends Controller {
-    
-    public function index(Request $request) {
-        
+class ReportListController extends Controller
+{
+    public function index(Request $request)
+    {
         $menuItems = config('adminlte.menu');
         $sections = [];
 
@@ -48,7 +48,7 @@ class ReportListController extends Controller {
         }
 
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 10;
+        $perPage = 15;
         $currentItems = $sectionsCollection->slice(($currentPage - 1) * $perPage, $perPage)->all();
         $sections = new LengthAwarePaginator($currentItems, $sectionsCollection->count(), $perPage, $currentPage, [
             'path' => LengthAwarePaginator::resolveCurrentPath(),
@@ -59,8 +59,8 @@ class ReportListController extends Controller {
         return view('reportList.index', compact('sections', 'customers'));
     }
 
-    private function getReportsForSection($sectionText, $submenu = null) {
-        
+    private function getReportsForSection($sectionText, $submenu = null)
+    {
         $reports = [];
 
         switch ($sectionText) {
@@ -130,7 +130,7 @@ class ReportListController extends Controller {
                 $reports = [];
                 break;
 
-            case 'Gastos':
+            case 'Gestión de Gastos':
                 $reports = [];
                 break;
 
@@ -149,7 +149,9 @@ class ReportListController extends Controller {
                 break;
 
             case 'Inventario':
-                $reports = [];
+                $reports = [
+                    ['text' => 'Inventario de Componentes', 'url' => '/reports/pdfInventory', 'type' => 'pdf'],
+                ];
                 break;
 
             case 'Mis Pagos':
@@ -159,6 +161,75 @@ class ReportListController extends Controller {
             case 'Reporte de fallas':
             case 'Falta de pago':
                 $reports = [];
+                break;
+
+            case 'Panel':
+                $reports = [
+                    [
+                        'text' => 'Ingresos Anuales',
+                        'type' => 'button',
+                        'button_class' => 'btn btn-info report-btn',
+                        'icon' => '<i class="fa fa-dollar-sign"></i>',
+                        'modal' => '#annualEarnings',
+                        'title' => 'Ingresos Anuales',
+                        'label' => ['d-none d-md-inline' => 'Ingresos Anuales', 'd-inline d-md-none' => ' ']
+                    ],
+                    [
+                        'text' => 'Ingresos Semanales',
+                        'type' => 'button',
+                        'button_class' => 'btn bg-olive report-btn',
+                        'icon' => '<i class="fa fa-dollar-sign"></i>',
+                        'modal' => '#weeklyEarnings',
+                        'title' => 'Ingresos Semanales',
+                        'label' => ['d-none d-md-inline' => 'Ingresos Semanales', 'd-inline d-md-none' => ' ']
+                    ],
+                    [
+                        'text' => 'Egresos Anuales',
+                        'type' => 'button',
+                        'button_class' => 'btn btn-info report-btn',
+                        'icon' => '<i class="fa fa-dollar-sign"></i>',
+                        'modal' => '#annualExpenses',
+                        'title' => 'Egresos Anuales',
+                        'label' => ['d-none d-md-inline' => 'Egresos Anuales', 'd-inline d-md-none' => ' ']
+                    ],
+                    [
+                        'text' => 'Egresos Semanales',
+                        'type' => 'button',
+                        'button_class' => 'btn bg-olive report-btn',
+                        'icon' => '<i class="fa fa-dollar-sign"></i>',
+                        'modal' => '#weeklyExpenses',
+                        'title' => 'Egresos Semanales',
+                        'label' => ['d-none d-md-inline' => 'Egresos Semanales', 'd-inline d-md-none' => ' ']
+                    ],
+                    [
+                        'text' => 'Ganancias Anuales',
+                        'type' => 'button',
+                        'button_class' => 'btn btn-info report-btn',
+                        'icon' => '<i class="fa fa-dollar-sign"></i>',
+                        'modal' => '#annualGains',
+                        'title' => 'Ganancias Anuales',
+                        'label' => ['d-none d-md-inline' => 'Ganancias Anuales', 'd-inline d-md-none' => ' ']
+                    ],
+                    [
+                        'text' => 'Ganancias Semanales',
+                        'type' => 'button',
+                        'button_class' => 'btn bg-olive report-btn',
+                        'icon' => '<i class="fa fa-dollar-sign"></i>',
+                        'modal' => '#weeklyGains',
+                        'title' => 'Ganancias Semanales',
+                        'label' => ['d-none d-md-inline' => 'Ganancias Semanales', 'd-inline d-md-none' => ' ']
+                    ],
+                    [
+                        'text' => 'Corte de caja',
+                        'type' => 'button',
+                        'button_class' => 'btn report-btn btn-orange',
+                        'icon' => '<i class="fa fa-dollar-sign"></i>',
+                        'url' => route('cash-closures.report'),
+                        'target' => '_blank',
+                        'title' => 'Corte de caja',
+                        'label' => ['d-none d-md-inline' => 'Corte de caja', 'd-inline d-md-none' => ' ']
+                    ],
+                ];
                 break;
         }
 
