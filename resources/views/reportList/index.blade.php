@@ -31,81 +31,43 @@
                 <div class="x_content">
                     <div class="row">
                         <div class="col-sm-12">
-                            <div class="card-box table-responsive">
-                                <table id="reportsTable" class="table table-striped display responsive nowrap" style="width:100%; max-width: 100%; margin: 0 auto; margin-top: 30px;">
-                                    <thead>
-                                        <tr>
-                                            <th>Secciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if($sections->isEmpty())
-                                            <tr>
-                                                <td colspan="1" class="text-center">No hay secciones disponibles</td>
-                                            </tr>
-                                        @else
-                                            @foreach($sections as $section)
-                                                <tr class="clickable-row" data-toggle="collapse" data-target="#collapse-{{ str_replace(' ', '-', strtolower($section['text'])) }}">
-                                                    <td>
-                                                        <span class="text-dark">{{ $section['text'] }}</span> <i class="fas fa-chevron-down rotate-icon ml-2"></i>
-                                                        @if (!empty($section['reports']))
-                                                            <div id="collapse-{{ str_replace(' ', '-', strtolower($section['text'])) }}" class="collapse">
-                                                                <div class="button-group-uniform">
-                                                                    @foreach ($section['reports'] as $report)
-                                                                        @if (isset($report['type']) && $report['type'] === 'pdf')
-                                                                            <a type="button" class="btn btn-secondary report-btn" target="_blank" title="{{ $report['text'] }}" href="{{ $report['url'] }}">
-                                                                                <i class="fas fa-file-pdf"></i> {{ $report['text'] }}
-                                                                            </a>
-                                                                        @elseif (isset($report['type']) && $report['type'] === 'button')
-                                                                            <button type="button" class="{{ $report['button_class'] }} report-btn" data-toggle="modal" data-target="{{ $report['modal'] ?? '' }}" title="{{ $report['title'] }}" {{ isset($report['url']) ? 'href="' . $report['url'] . '"' : '' }} {{ isset($report['target']) ? 'target="' . $report['target'] . '"' : '' }}>
-                                                                                {!! $report['icon'] ?? '' !!}
-                                                                                <span class="{{ $report['label']['d-none d-md-inline'] ?? '' }}"> {{ $report['label']['d-none d-md-inline'] ?? $report['text'] }}</span>
-                                                                                <span class="{{ $report['label']['d-inline d-md-none'] ?? '' }}"> {{ $report['label']['d-inline d-md-none'] ?? $report['text'] }}</span>
-                                                                            </button>
-                                                                        @endif
-                                                                    @endforeach
-                                                                </div>
-                                                            </div>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                            <tr class="clickable-row" data-toggle="collapse" data-target="#collapse-panel">
-                                                <td>
-                                                    <span class="text-dark">Panel</span> <i class="fas fa-chevron-down rotate-icon ml-2"></i>
-                                                    <div id="collapse-panel" class="collapse">
+                            <div class="card-box text-center">
+                                <div id="reportsList" class="expandable-list mt-5 mx-auto">
+                                    @if($sections->isEmpty())
+                                        <div class="text-center p-4">No hay secciones disponibles</div>
+                                    @else
+                                        @php
+                                            $colors = ['blue', 'green', 'red', 'yellow', 'cyan', 'purple', 'teal', 'orange', 'indigo', 'pink', 'gray', 'dark-gray', 'dark-green', 'deep-pink', 'light-gray', 'orange-red', 'sea-green', 'steel-blue', 'amethyst', 'coral'];
+                                            $colorIndex = 0;
+                                        @endphp
+                                        @foreach($sections as $index => $section)
+                                            <div class="expandable-card" data-color="{{ $colors[$colorIndex++ % count($colors)] }}">
+                                                <div class="card-header expandable-header">
+                                                    <span class="text-white">{{ $section['text'] }}</span>
+                                                    <i class="fas fa-minus icon-toggle rotate-icon ml-auto" data-toggle="collapse" data-target="#collapse-{{ $index }}-{{ str_replace(' ', '-', strtolower($section['text'])) }}"></i>
+                                                </div>
+                                                @if (!empty($section['reports']))
+                                                    <div id="collapse-{{ $index }}-{{ str_replace(' ', '-', strtolower($section['text'])) }}" class="collapse show card-body">
                                                         <div class="button-group-uniform">
-                                                            <button type="button" class="btn btn-info report-btn" data-toggle="modal" data-target="#annualEarnings" title="Ingresos Anuales">
-                                                                <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Ingresos Anuales</span><span class="d-inline d-md-none">Ingresos Anuales</span>
-                                                            </button>
-                                                            <button type="button" class="btn bg-olive report-btn" data-toggle="modal" data-target="#weeklyEarnings" title="Ingresos Semanales">
-                                                                <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Ingresos Semanales</span><span class="d-inline d-md-none">Ingresos Semanales</span>
-                                                            </button>
-                                                            <button type="button" class="btn btn-info report-btn" data-toggle="modal" data-target="#annualExpenses" title="Egresos Anuales">
-                                                                <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Egresos Anuales</span><span class="d-inline d-md-none">Egresos Anuales</span>
-                                                            </button>
-                                                            <button type="button" class="btn bg-olive report-btn" data-toggle="modal" data-target="#weeklyExpenses" title="Egresos Semanales">
-                                                                <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Egresos Semanales</span><span class="d-inline d-md-none">Egresos Semanales</span>
-                                                            </button>
-                                                            <button type="button" class="btn btn-info report-btn" data-toggle="modal" data-target="#annualGains" title="Ganancias Anuales">
-                                                                <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Ganancias Anuales</span><span class="d-inline d-md-none">Ganancias Anuales</span>
-                                                            </button>
-                                                            <button type="button" class="btn bg-olive report-btn" data-toggle="modal" data-target="#weeklyGains" title="Ganancias Semanales">
-                                                                <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Ganancias Semanales</span><span class="d-inline d-md-none">Ganancias Semanales</span>
-                                                            <button type="button" class="btn report-btn btn-orange" title="Corte de caja"
-                                                            onclick="window.open('{{ route('cash-closures.report') }}', '_blank')">
-                                                                <i class="fa fa-dollar-sign"></i> <span class="d-none d-md-inline">Corte de caja</span><span class="d-inline d-md-none">Corte</span>
-                                                            </button>
-                                                            </button>
+                                                            @foreach ($section['reports'] as $report)
+                                                                @if (isset($report['type']) && $report['type'] === 'pdf')
+                                                                    <a type="button" class="btn btn-secondary report-btn" target="_blank" title="{{ $report['text'] }}" href="{{ $report['url'] }}">
+                                                                        <i class="fas fa-file-pdf"></i> {{ $report['text'] }}
+                                                                    </a>
+                                                                @elseif (isset($report['type']) && $report['type'] === 'button')
+                                                                    <button type="button" class="btn btn-secondary report-btn" data-toggle="modal" data-target="{{ $report['modal'] ?? '' }}" title="{{ $report['title'] }}" {{ isset($report['url']) ? 'href="' . $report['url'] . '"' : '' }} {{ isset($report['target']) ? 'target="' . $report['target'] . '"' : '' }}>
+                                                                        {!! $report['icon'] ?? '' !!}
+                                                                        <span class="{{ $report['label']['d-none d-md-inline'] ?? '' }}"> {{ $report['label']['d-none d-md-inline'] ?? $report['text'] }}</span>
+                                                                        <span class="{{ $report['label']['d-inline d-md-none'] ?? '' }}"> {{ $report['label']['d-inline d-md-none'] ?? $report['text'] }}</span>
+                                                                    </button>
+                                                                @endif
+                                                            @endforeach
                                                         </div>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                                <div class="d-flex justify-content-center">
-                                    {!! $sections->links('pagination::bootstrap-4') !!}
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -131,83 +93,180 @@
 @section('css')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-    .rotate-icon {
-        transition: transform 0.3s ease;
-        transform-origin: center;
+    :root {
+        --color-blue: #007bff;
+        --color-green: #28a745;
+        --color-red: #dc3545;
+        --color-yellow: #ffc107;
+        --color-cyan: #17a2b8;
+        --color-purple: #6f42c1;
+        --color-teal: #20c997;
+        --color-orange: #fd7e14;
+        --color-indigo: #6610f2;
+        --color-pink: #e83e8c;
+        --color-gray: #6c757d;
+        --color-dark-gray: #343a40;
+        --color-dark-green: #00796b;
+        --color-deep-pink: #d81b60;
+        --color-light-gray: #f8f9fa;
+        --color-orange-red: #ff4500;
+        --color-sea-green: #2e8b57;
+        --color-steel-blue: #4682b4;
+        --color-amethyst: #9b59b6;
+        --color-coral: #e74c3c;
     }
-    .collapse.show .rotate-icon {
-        transform: rotate(180deg);
+
+    .expandable-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
     }
-    .clickable-row {
+    .expandable-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+        background: white;
+        border: 1px solid #e0e0e0;
+        transition: transform 0.5s ease, opacity 0.5s ease, box-shadow 0.5s ease;
+    }
+    .expandable-card[data-color] .expandable-header {
+        background-color: var(--color-blue);
+    }
+    .expandable-card[data-color="blue"] .expandable-header { background-color: var(--color-blue); }
+    .expandable-card[data-color="green"] .expandable-header { background-color: var(--color-green); }
+    .expandable-card[data-color="red"] .expandable-header { background-color: var(--color-red); }
+    .expandable-card[data-color="yellow"] .expandable-header { background-color: var(--color-yellow); }
+    .expandable-card[data-color="cyan"] .expandable-header { background-color: var(--color-cyan); }
+    .expandable-card[data-color="purple"] .expandable-header { background-color: var(--color-purple); }
+    .expandable-card[data-color="teal"] .expandable-header { background-color: var(--color-teal); }
+    .expandable-card[data-color="orange"] .expandable-header { background-color: var(--color-orange); }
+    .expandable-card[data-color="indigo"] .expandable-header { background-color: var(--color-indigo); }
+    .expandable-card[data-color="pink"] .expandable-header { background-color: var(--color-pink); }
+    .expandable-card[data-color="gray"] .expandable-header { background-color: var(--color-gray); }
+    .expandable-card[data-color="dark-gray"] .expandable-header { background-color: var(--color-dark-gray); }
+    .expandable-card[data-color="dark-green"] .expandable-header { background-color: var(--color-dark-green); }
+    .expandable-card[data-color="deep-pink"] .expandable-header { background-color: var(--color-deep-pink); }
+    .expandable-card[data-color="light-gray"] .expandable-header { background-color: var(--color-light-gray); }
+    .expandable-card[data-color="orange-red"] .expandable-header { background-color: var(--color-orange-red); }
+    .expandable-card[data-color="sea-green"] .expandable-header { background-color: var(--color-sea-green); }
+    .expandable-card[data-color="steel-blue"] .expandable-header { background-color: var(--color-steel-blue); }
+    .expandable-card[data-color="amethyst"] .expandable-header { background-color: var(--color-amethyst); }
+    .expandable-card[data-color="coral"] .expandable-header { background-color: var(--color-coral); }
+    .expandable-header {
+        color: white;
+        padding: 12px 20px;
+        cursor: default;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 500;
+        transition: background-color 0.3s ease, opacity 0.3s ease;
+    }
+    .expandable-header:hover {
+        opacity: 0.9;
+    }
+    .card-body {
+        background: white;
+        padding: 15px;
+        border-top: 1px solid #e0e0e0;
+        transition: all 0.5s ease-in-out;
+        overflow: hidden;
+    }
+    .collapse {
+        display: none;
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    .collapse.show {
+        display: block;
+        height: auto;
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 0.5s ease-in-out, height 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+    .icon-toggle {
         cursor: pointer;
+        transition: transform 0.5s ease-in-out, color 0.3s ease;
+        transform-origin: center;
+        color: white;
+        font-size: 1.2em;
     }
-    .clickable-row:hover {
-        background-color: #f5f5f5;
+    @keyframes collapseFromCross {
+        0% { transform: rotate(45deg); opacity: 0.6; }
+        50% { opacity: 0.8; }
+        100% { transform: rotate(0deg); opacity: 1; }
+    }
+    @keyframes expandToCross {
+        0% { transform: rotate(0deg); opacity: 0.6; }
+        50% { opacity: 0.8; }
+        100% { transform: rotate(45deg); opacity: 1; }
+    }
+    .collapse:not(.show) + .expandable-header .icon-toggle {
+        animation: collapseFromCross 0.5s ease-in-out;
+    }
+    .collapse.show + .expandable-header .icon-toggle {
+        animation: expandToCross 0.5s ease-in-out;
     }
     .button-group-uniform {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         justify-content: center;
         align-items: center;
         gap: 5px;
-        margin-top: 10px;
-        flex-wrap: nowrap;
+        max-width: 100%;
+        padding: 0 10px;
     }
     .button-group-uniform .report-btn {
-        min-width: 140px;
-        height: 38px;
+        min-width: 0;
+        width: 100%;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 0 8px;
+        padding: 0 12px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         box-sizing: border-box;
-        margin: 0;
+        margin: 0 auto;
+        background-color: #6c757d !important;
+        color: #fff !important;
+        border-color: #6c757d !important;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-size: 0.9em;
+    }
+    .button-group-uniform .report-btn:hover {
+        background-color: #5a6268 !important;
+        transform: translateY(-2px);
     }
     .button-group-uniform .report-btn i {
-        margin-right: 8px;
+        margin-right: 6px;
     }
     @media (max-width: 768px) {
+        .expandable-list {
+            grid-template-columns: 1fr;
+        }
         .button-group-uniform {
-            flex-wrap: wrap;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            padding: 0 5px;
         }
         .button-group-uniform .report-btn {
-            min-width: 110px;
+            min-width: 0;
             height: 36px;
+            font-size: 0.8em;
+            padding: 0 8px;
         }
-    }
-    .btn.bg-maroon { background-color: #d81b60; color: #fff !important; }
-    .btn.bg-purple { background-color: #6f42c1; color: #fff !important; }
-    .btn.bg-teal { background-color: #20c997; color: #fff !important; }
-    .btn.btn-success { background-color: #28a745; color: #fff !important; }
-    .btn.bg-olive { background-color: #3d9970; color: #fff !important; }
-    .btn-orange {background-color: #ff7f00; color: white !important; border: none; }
-    .btn-orange:hover {background-color: #e67300; color: white !important; }
-    table.dataTable thead th {
-        position: relative;
-        cursor: pointer;
-    }
-    table.dataTable thead th:after {
-        content: '';
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 0;
-        height: 0;
-        border-left: 4px solid transparent;
-        border-right: 4px solid transparent;
-        border-top: 4px solid #333;
-    }
-    table.dataTable thead th.sorting_asc:after,
-    table.dataTable thead th.sorting_desc:after {
-        border-top: none;
-        border-bottom: 4px solid #333;
-    }
-    table.dataTable thead th.sorting:after {
-        border-top: 4px solid #333;
+        .expandable-header {
+            padding: 10px 15px;
+        }
+        .card-body {
+            padding: 10px;
+        }
     }
 </style>
 @endsection
@@ -215,43 +274,55 @@
 @section('js')
 <script>
     $(document).ready(function() {
-        $('#reportsTable').DataTable({
-            responsive: true,
-            buttons: ['csv', 'excel', 'print'],
-            dom: 'Bfrtip',
-            paging: true,
-            pageLength: 10,
-            deferRender: true,
-            info: true,
-            searching: true,
-            order: [[0, 'asc']],
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json"
-            },
-            columnDefs: [
-                { targets: 0, orderable: true }
-            ]
+        $('.collapse').collapse({
+            toggle: false
         });
 
-        $('#reportsTable').on('click', '.clickable-row', function(e) {
-            if (!$(e.target).is('.report-btn') && !$(e.target).closest('.report-btn').length &&
-                !$(e.target).is('a') && !$(e.target).closest('a').length) {
-                var target = $(this).data('target');
-                var $target = $(target);
-                var icon = $(this).find('.rotate-icon');
-                if ($target.length) {
-                    $target.collapse('toggle');
-                    if ($target.hasClass('show')) {
-                        icon.addClass('rotate-down');
-                    } else {
-                        icon.removeClass('rotate-down');
-                    }
-                }
-                e.stopPropagation();
+        $('.icon-toggle').on('click', function(e) {
+            e.stopPropagation();
+            var target = $(this).data('target');
+            var $target = $(target);
+            var $icon = $(this);
+            var $card = $target.closest('.expandable-card');
+
+            if ($target.hasClass('show')) {
+                $card.css({ transform: 'scale(1)', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' })
+                    .animate({ opacity: 0 }, 500, 'easeInOutCubic', function() {
+                        $target.collapse('hide');
+                        $card.css({ transform: 'scale(0.95)', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' });
+                    });
             } else {
-                e.preventDefault();
-                e.stopPropagation();
+                $target.closest('.expandable-list')
+                    .find('.collapse.show')
+                    .not($target)
+                    .collapse('hide');
+                $target.css({ display: 'block', opacity: 0, transform: 'translateY(-10px)' })
+                    .animate({ opacity: 1, transform: 'translateY(0)' }, 500, 'easeInOutCubic', function() {
+                        $target.collapse('show');
+                        $card.css({ transform: 'scale(1)', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' });
+                    });
             }
+
+            $target.off('shown.bs.collapse hidden.bs.collapse');
+            $target.on('shown.bs.collapse', function() {
+                $icon.removeClass('fa-plus').addClass('fa-minus');
+            });
+            $target.on('hidden.bs.collapse', function() {
+                $icon.removeClass('fa-minus').addClass('fa-plus');
+            });
+        });
+
+        $('.expandable-header').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        $('.modal').on('shown.bs.modal', function() {
+            $(this).find('[autofocus]').focus();
+        }).on('hidden.bs.modal', function() {
+            $(document.body).addClass('modal-open');
+            $(this).attr('aria-hidden', 'false').removeAttr('inert');
+            $(document).off('focusin.modal');
         });
     });
 </script>
