@@ -10,6 +10,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Mpdf\Mpdf;
 use App\Models\Debt;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
@@ -48,12 +50,15 @@ class CustomerController extends Controller
             'interior_number' => 'required|string',
             'email' => 'required|email|unique:users,email', 
         ]);
-        
+
+        $temporaryPassword = Str::random(8);
+
         $user = User::create([
             'name' => $request->name,
             'last_name' => $request->last_name,
             'email' => $request->email,
-            'password' => bcrypt('12345'),
+            'password' => Hash::make($temporaryPassword),
+            'temporary_password' => $temporaryPassword, 
             'locality_id' => $authUser->locality_id, 
         ]);
 
@@ -161,6 +166,40 @@ class CustomerController extends Controller
         $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers', 'authUser'))
             ->setPaper('A4', 'portrait');
         return $pdf->stream('reporte_clientes_con_deudas.pdf');
+    }
+
+    public function generateUserAccessPDF($id)
+    {
+        try {
+            $customer = Customer::with('user')->findOrFail($id);
+            
+            $temporaryPassword = $customer->user->temporary_password;
+
+            if (!$temporaryPassword) {
+                $temporaryPassword = 'Contraseña temporal no disponible';
+            }
+
+            $data = [
+                'customer' => $customer,
+                'user' => $customer->user,
+                'temporaryPassword' => $temporaryPassword,
+                'authUser' => auth()->user(),
+                'date' => now()->format('j \\d\\e F \\d\\e Y'),
+            ];
+
+            $pdf = Pdf::loadView('reports.genneratepasswordforcustomer', $data)
+                    ->setPaper('A4', 'portrait');
+
+            if ($customer->user->temporary_password) {
+                $customer->user->update(['temporary_password' => null]);
+            }
+
+            return $pdf->stream('DatosUsuario_'.$customer->id.'.pdf');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error al generar PDF: ' . $e->getMessage());
+        }
     }
 
     public function generatePaymentHistoryReport($debt_id)

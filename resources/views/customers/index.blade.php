@@ -120,6 +120,9 @@
                                                     <button type="button" class="btn bg-blue mr-2" data-toggle="modal" title="Ver Deudas Por Toma de Agua" data-target="#showDebtsPerWaterConnection{{$customer->id}}">
                                                         <i class="fa fa-dollar-sign"></i>
                                                     </button>
+                                                    <button type="button" class="btn btn-success mr-2" title="Generar PDF" onclick="generateUserAccessPDF(event, {{ $customer->id }})">
+                                                        <i class="fas fa-file-pdf"></i>
+                                                    </button>
                                                     @can('deleteCustomer')
                                                         @if($customer->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
@@ -190,5 +193,20 @@
             });
         }
     });
+
+    function generateUserAccessPDF(event, customerId) {
+        const button = event.currentTarget;
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        button.disabled = true;
+
+        const url = `/generate-user-access-pdf/${customerId}`;
+        window.open(url, '_blank');
+
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+        }, 2000);
+    }
 </script>
 @endsection
