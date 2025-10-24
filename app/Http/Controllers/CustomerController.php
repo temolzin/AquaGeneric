@@ -168,7 +168,7 @@ class CustomerController extends Controller
         return $pdf->stream('reporte_clientes_con_deudas.pdf');
     }
 
-    public function generatePDF($id)
+    public function generateUserAccessPDF($id)
     {
         try {
             $customer = Customer::with('user')->findOrFail($id);
