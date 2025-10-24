@@ -22,7 +22,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 height: 100%;
                 margin: 0;
                 padding: 0;
-                background-image: url('file://{{ $horizontalBgPath }}');
+                background-image: url("{{ public_path('img/customersBackgroundHorizontal.png') }}");
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
