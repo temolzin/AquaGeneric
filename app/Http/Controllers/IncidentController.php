@@ -26,9 +26,13 @@ class IncidentController extends Controller
 
         $incidents = $query->paginate(10);
 
-        $categories = IncidentCategory::all();
+        $categories = IncidentCategory::where(function ($query) use ($authUser) {
+            $query->where('locality_id', $authUser->locality_id)
+                  ->orWhere('name', 'Por Defecto');
+        })->get();
+
         $employees = Employee::where('locality_id', $authUser->locality_id)->get();
-        $statuses = IncidentStatus::all();
+        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)->get();
 
         return view('incidents.index', compact('incidents', 'categories', 'employees', 'statuses'));
     }
@@ -75,7 +79,7 @@ class IncidentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $incident = incident::find($id);
+        $incident = Incident::find($id);
         if ($incident) {
             $incident->name = $request->input('nameUpdate');
             $incident->start_date = $request->input('startDateUpdate');
@@ -108,13 +112,13 @@ class IncidentController extends Controller
     public function generateIncidentListReport()
     {
         $authUser = auth()->user();
-        $incidents = Incident::all();
+        $incidents = Incident::where('locality_id', $authUser->locality_id)->get();
         $pdf = PDF::loadView('reports.generateIncidentListReport', compact('incidents', 'authUser'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('incidents.pdf');
     }
-    
+
     public function updateStatus(Request $request)
     {
         try {

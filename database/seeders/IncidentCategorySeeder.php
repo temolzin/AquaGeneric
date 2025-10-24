@@ -11,6 +11,12 @@ class IncidentCategorySeeder extends Seeder
     {
         $categories = [
             [
+                'name' => 'Por Defecto',
+                'description' => 'Categoría por defecto para incidencias.',
+                'created_by' => 3,
+                'locality_id' => null,
+            ],
+            [
                 'name' => 'Eléctrica',
                 'description' => 'Problemas con instalación o alumbrado eléctrico.',
                 'created_by' => 3,
