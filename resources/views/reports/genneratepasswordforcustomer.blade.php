@@ -231,8 +231,8 @@
     </div>
     
     <div class="footer_info">
-        <a class="footer-text" href="#"><strong>AquaControl</strong></a>
-        <a class="footer-text" href="#">powered by<strong> Root Heim Company </strong></a>
+        <a class="footer-text" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+        <a class="footer-text" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
         <img src="img/rootheim.png" width="15px" height="15px">
     </div>
 </body>
