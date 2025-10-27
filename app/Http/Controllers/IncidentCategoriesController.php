@@ -33,14 +33,12 @@ class IncidentCategoriesController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'locality_id' => 'nullable|exists:localities,id',
         ]);
-        $locality_id = $request->input('locality_id') !== null ? $request->input('locality_id') : $authUser->locality_id;
 
         IncidentCategory::create([
             'name' => $validated['name'],
             'description' => $validated['description'],
-            'locality_id' => $locality_id,
+            'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
         ]);
 
