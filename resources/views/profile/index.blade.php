@@ -113,7 +113,7 @@
                                     Telefono
                                 </label>
                                 <div class="col-sm-10">
-                                    <p class="form-control-plaintext">{{ $authUser->phone }}</p>
+                                    <p class="form-control-plaintext">{{ $authUser->phone ?? 'Sin número de teléfono' }}</p>
                                 </div>
                                 <label for="email" class="col-sm-2 col-form-label">
                                     Correo
