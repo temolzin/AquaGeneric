@@ -59,7 +59,7 @@
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $category->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
-                                                            @if ($category->name !== 'Por Defecto')
+                                                            @if ($category->name !== 'Mantenimiento  General')
                                                                 @can('editIncidentCategories')
                                                                     <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $category->id }}">
                                                                         <i class="fas fa-edit"></i>
