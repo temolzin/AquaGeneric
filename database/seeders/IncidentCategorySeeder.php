@@ -11,8 +11,8 @@ class IncidentCategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Por Defecto',
-                'description' => 'Categoría por defecto para incidencias.',
+                'name' => 'Mantenimiento  General',
+                'description' => 'Trabajos generales de reparación o conservación del sistema de agua.',
                 'created_by' => 3,
                 'locality_id' => null,
             ],
