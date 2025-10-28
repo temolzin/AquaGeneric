@@ -208,6 +208,22 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite ver los avisos por localidad a los clientes.'
         ])->assignRole([$roleCliente]);
         Permission::firstOrCreate([
+            'name' => 'viewCustomerFaultReports',
+            'description' => 'Permite ver sus reportes de fallas.'
+        ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
+            'name' => 'editFaultReports',
+            'description' => 'Permite editar el reporte de fallas.'
+        ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
+            'name' => 'deleteFaultReports',
+            'description' => 'Permite eliminar el reporte de fallas.'
+        ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
+            'name' => 'createFaultReports',
+            'description' => 'Permite crear nuevos reportes de fallas.'
+        ])->assignRole([$roleCliente]);
+        Permission::firstOrCreate([
             'name' => 'viewInventory',
             'description' => 'Permite ver el Inventario.'
         ])->assignRole([$roleSupervisor]);
