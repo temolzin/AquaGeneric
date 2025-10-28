@@ -28,7 +28,7 @@ class IncidentController extends Controller
 
         $categories = IncidentCategory::where(function ($query) use ($authUser) {
             $query->where('locality_id', $authUser->locality_id)
-                  ->orWhere('name', 'Por Defecto');
+                  ->orWhereNull('locality_id');
         })->get();
 
         $employees = Employee::where('locality_id', $authUser->locality_id)->get();
