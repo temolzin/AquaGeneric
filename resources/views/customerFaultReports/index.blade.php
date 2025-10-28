@@ -24,7 +24,7 @@
                                     </div>
                                 </form>
                                 <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2" data-toggle='modal' 
-                                    data-target="#createFaultReports" title="Registrar Reporte">
+                                    data-target="#createCustomerFaultReports" title="Registrar Reporte">
                                     <i class="fa fa-plus"></i>
                                     <span class="d-none d-md-inline">Registrar Reporte</span>
                                     <span class="d-inline d-md-none">Registrar Reporte</span>
@@ -34,7 +34,6 @@
                     </div>
                     <div class="clearfix"></div>
                 </div>
-
                 <div class="x_content">
                     <div class="row">
                         <div class="col-sm-12">
@@ -116,7 +115,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

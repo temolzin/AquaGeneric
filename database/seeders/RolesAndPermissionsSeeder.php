@@ -174,11 +174,11 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'editFaultReport',
             'description' => 'Permite editar el reporte de fallas.'
-        ])->assignRole([$roleSupervisor]);
+        ])->assignRole([$roleSupervisor, $roleCliente]);
         Permission::firstOrCreate([
             'name' => 'deleteFaultReport',
             'description' => 'Permite eliminar el reporte de fallas.'
-        ])->assignRole([$roleSupervisor]);
+        ])->assignRole([$roleSupervisor, $roleCliente]);
         Permission::firstOrCreate([ 
             'name' => 'viewNotice',
             'description' => 'Permite ver los Avisos de Localidades.'
@@ -212,15 +212,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite ver sus reportes de fallas.'
         ])->assignRole([$roleCliente]);
         Permission::firstOrCreate([
-            'name' => 'editFaultReports',
-            'description' => 'Permite editar el reporte de fallas.'
-        ])->assignRole([$roleCliente]);
-        Permission::firstOrCreate([
-            'name' => 'deleteFaultReports',
-            'description' => 'Permite eliminar el reporte de fallas.'
-        ])->assignRole([$roleCliente]);
-        Permission::firstOrCreate([
-            'name' => 'createFaultReports',
+            'name' => 'createCustomerFaultReports',
             'description' => 'Permite crear nuevos reportes de fallas.'
         ])->assignRole([$roleCliente]);
         Permission::firstOrCreate([

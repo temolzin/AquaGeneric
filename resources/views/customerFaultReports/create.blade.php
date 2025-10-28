@@ -1,4 +1,4 @@
-<div class="modal fade" id="createFaultReports" tabindex="-1" role="dialog" aria-labelledby="createFaultReportsLabel" aria-hidden="true">
+<div class="modal fade" id="createCustomerFaultReports" tabindex="-1" role="dialog" aria-labelledby="createCustomerFaultReportsLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="card-success">
