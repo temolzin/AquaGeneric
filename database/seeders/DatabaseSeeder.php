@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AdvancePaymentsSeeder::class);
         $this->call(LocalityNoticesSeeder::class);
         $this->call(FaultReportSeeder::class);
+        $this->call(InventoryCategorySeeder::class);
         $this->call(InventoryTableSeeder::class);
         $this->call(MembershipsTableSeeder::class);
         $this->call(SectionsSeeder::class);
