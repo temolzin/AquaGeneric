@@ -41,7 +41,9 @@ class WaterConnectionController extends Controller
         $costs = Cost::where('locality_id', $authUser->locality_id)
                      ->orWhereNull('locality_id')
                      ->get();
-        $sections = Section::where('locality_id', $authUser->locality_id)->get();
+        $sections = Section::where('locality_id', $authUser->locality_id)
+                     ->orWhereNull('locality_id')
+                     ->get();
 
         return view('waterConnections.index', compact('connections', 'customers', 'costs', 'sections'));
     }
@@ -83,14 +85,18 @@ class WaterConnectionController extends Controller
     public function show($id)
     {
         $connections = WaterConnection::findOrFail($id);
-        $sections = Section::where('locality_id', $connection->locality_id)->get();
+        $sections = Section::where('locality_id', $connection->locality_id)
+                    ->orWhereNull('locality_id')
+                    ->get();
         return view('waterConnections.show', compact('connections', 'sections'));
     }
 
     public function update(Request $request, $id)
     {
         $connection = WaterConnection::find($id);
-        $sections = Section::where('locality_id', $connection->locality_id)->get(); 
+        $sections = Section::where('locality_id', $connection->locality_id)
+                    ->orWhereNull('locality_id')
+                    ->get(); 
 
         if (!$connection) {
             return redirect()->back()->with('error', 'Toma de Agua no encontrada.');

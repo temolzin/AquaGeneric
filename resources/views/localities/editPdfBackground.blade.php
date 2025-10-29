@@ -32,7 +32,7 @@
                             </div>
                             <div class="card-body text-center">
                                 <img id="preview-horizontal-{{ $locality->id }}"
-                                    src="{{ $locality->getFirstMediaUrl('pdfBackgroundHorizontal') ?: asset('img/customersBackground.png') }}"
+                                    src="{{ $locality->getFirstMediaUrl('pdfBackgroundHorizontal') ?: asset('img/customersBackgroundHorizontal.png') }}"
                                     alt="Fondo Horizontal" style="width: 280px; height: 200px; border-radius: 10px; margin-bottom: 10px;">
                                 <input type="file" accept="image/*" name="pdf_background_horizontal"
                                     class="form-control" onchange="previewImageEdit(event, 'horizontal', {{ $locality->id }})">
@@ -74,6 +74,6 @@ function previewImageEdit(event, type, id) {
 function resetForm(id) {
     document.getElementById('edit-locality-form-' + id).reset();
     document.getElementById('preview-vertical-' + id).src = "{{ asset('img/backgroundReport.png') }}";
-    document.getElementById('preview-horizontal-' + id).src = "{{ asset('img/customersBackground.png') }}";
+    document.getElementById('preview-horizontal-' + id).src = "{{ asset('img/customersBackgroundHorizontal.png') }}";
 }
 </script>

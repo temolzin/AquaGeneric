@@ -31,6 +31,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\InventoryCategoryController;
+use App\Http\Controllers\CustomerFaultReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -186,6 +187,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewFaultReport']], function () {
         Route::get('/faultReport', [FaultReportController::class, 'index'])->name('faultReport.index');
         Route::resource('faultReport', FaultReportController::class);
+    });
+
+    Route::group(['middleware' => ['can:viewCustomerFaultReports']], function () {
+        Route::get('/viewMyFaultReports', [CustomerFaultReportController::class, 'index'])->name('customerFaultReports.index');
+        Route::resource('customerFaultReports', CustomerFaultReportController::class);
     });
 
     Route::group(['middleware' => ['can:viewNotice']], function () {
