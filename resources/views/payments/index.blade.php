@@ -84,7 +84,7 @@
                                                 <th>ID PAGO</th>
                                                 <th>CLIENTE</th>
                                                 <th>DEUDA</th>
-                                                <th>FECHA DE PAGO</th>
+                                                <th>FECHA Y HORA DE PAGO</th>
                                                 <th>MONTO</th>
                                                 <th>OPCIONES</th>
                                             </tr>
