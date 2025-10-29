@@ -22,6 +22,9 @@
                                     <i class="fas fa-map"></i> Generar Lista
                                 </a>
                             </div>
+                                <button type="button" class="btn bg-secondary" data-toggle="modal" data-target="#movementHistoryModal">
+                                    <i class="fas fa-history"></i> Historial de Movimientos
+                                </button>
                         </div>
                     </div>                    
                     <div class="clearfix"></div>
@@ -154,6 +157,43 @@
         </div>
     </div>
 </section>
+<!-- Modal: Generar historial de movimientos -->
+<div class="modal fade" id="movementHistoryModal" tabindex="-1" role="dialog" aria-labelledby="movementHistoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form method="GET" action="{{ route('reports.pdfMovementsHistory') }}" target="_blank">
+      <div class="modal-content">
+        <div class="modal-header bg-secondary text-white">
+          <h5 class="modal-title" id="movementHistoryModalLabel">
+            <i class="fas fa-history"></i> Historial de movimientos diarios
+          </h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="locality_id">Seleccione la localidad</label>
+            <select class="form-control" name="locality_id" required>
+              <option value="">-- Seleccione --</option>
+              @foreach (\App\Models\Locality::all() as $locality)
+                <option value="{{ $locality->id }}">{{ $locality->name }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn bg-secondary text-white">
+            <i class="fas fa-file-pdf"></i> Generar PDF
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 @endsection
 
 @section('js')
