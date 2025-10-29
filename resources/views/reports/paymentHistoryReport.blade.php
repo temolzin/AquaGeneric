@@ -7,7 +7,7 @@
 
     $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizontal')
         ? $locality->getFirstMedia('pdfBackgroundHorizontal')->getPath()
-        : public_path('img/customersBackground.png');
+        : public_path('img/customersBackgroundHorizontal.png');
 @endphp
 <!DOCTYPE html>
 <html lang="es">
