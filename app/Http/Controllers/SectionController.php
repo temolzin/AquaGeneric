@@ -13,6 +13,7 @@ class SectionController extends Controller
     {
         $authUser = auth()->user();
         $query = Section::where('sections.locality_id', $authUser->locality_id)
+            ->orWhereNull('locality_id')
             ->orderBy('sections.created_at', 'desc')
             ->select('sections.*');
 
@@ -118,6 +119,7 @@ class SectionController extends Controller
     
         $section = Section::where('id', $sectionId)
             ->where('locality_id', $authUser->locality_id) 
+            ->orWhereNull('locality_id')
             ->with(['waterConnections.customer', 'waterConnections.cost', 'locality']) 
             ->firstOrFail();
     

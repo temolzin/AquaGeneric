@@ -12,6 +12,19 @@ class SectionsSeeder extends Seeder
     {
         $colors = ['purple', 'maroon', 'orange', 'lime', 'navy', 'olive', 'secondary'];
 
+        Section::updateOrCreate(
+            [
+                'locality_id' => null,
+                'name' => 'Sección General',
+            ],
+            [
+                'created_by' => 1,
+                'zip_code' => '00010',
+                'color' => $colors[0],
+                'updated_at' => now(),
+            ]
+        );
+
         $localities = Locality::all(); 
 
         foreach ($localities as $locality) {
