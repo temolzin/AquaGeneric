@@ -30,6 +30,7 @@ use App\Http\Middleware\CheckSubscription;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\CustomerFaultReportController;
 
 /*
@@ -136,6 +137,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::resource('inventory', InventoryController::class);
         Route::get('/reports/pdfInventory', [InventoryController::class, 'generateInventoryPdf'])->name('inventory.pdfInventory');
+    });
+
+    Route::group(['middleware' => ['can:viewInventoryCategories']], function () {
+        Route::get('/inventoryCategories', [InventoryCategoryController::class, 'index'])->name('inventoryCategories.index');
+        Route::resource('inventoryCategories', InventoryCategoryController::class);
     });
 
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
