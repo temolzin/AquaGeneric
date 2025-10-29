@@ -46,7 +46,7 @@ class MembershipsTableSeeder extends Seeder
                 'name' => $membership['name'],
                 'price' => $membership['price'],
                 'term_months' => $membership['term_months'],
-                'created_by' => $admin->id,
+                //'created_by' => $admin->id,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
