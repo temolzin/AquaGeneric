@@ -74,6 +74,7 @@
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
                                                         @endcan
+                                                        @if (!is_null($section->locality_id))
                                                         @can('editSections')
                                                             <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Sección" data-target="#edit{{ $section->id }}">
                                                                 <i class="fas fa-edit"></i>
@@ -87,6 +88,7 @@
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         @endcan
+                                                        @endif
                                                     </div>
                                                     @include('sections.create')
                                                     @include('sections.show')
