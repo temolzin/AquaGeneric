@@ -12,7 +12,6 @@ class InventoryCategorySeeder extends Seeder
         $existingCount = DB::table('inventory_categories')->count();
         
         if ($existingCount > 0) {
-            $this->command->info('Inventory categories already exist. Skipping seeder.');
             return;
         }
 

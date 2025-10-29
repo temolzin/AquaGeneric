@@ -31,8 +31,15 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="categoryUpdate{{ $component->id }}" class="form-label">Categoría(*)</label>
-                                            <input type="text" class="form-control" name="category" id="categoryUpdate{{ $component->id }}" value="{{ $component->category }}" required>
+                                            <label for="inventory_category_idUpdate{{ $component->id }}" class="form-label">Categoría(*)</label>
+                                            <select class="form-control select2" id="inventory_category_idUpdate{{ $component->id }}" name="inventory_category_id" required style="width: 100%;">
+                                                <option value="">Selecciona la categoría</option>
+                                                @foreach($categories as $category)
+                                                    <option value="{{ $category->id }}" {{ old('inventory_category_id', $component->inventory_category_id) == $category->id ? 'selected' : '' }}>
+                                                        {{ $category->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -72,5 +79,9 @@
         height: 40px;
         display: flex;
         align-items: center;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px;
     }
 </style>

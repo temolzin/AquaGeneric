@@ -12,7 +12,6 @@ class ExpenseTypeSeeder extends Seeder
         $existingCount = DB::table('expense_types')->count();
         
         if ($existingCount > 0) {
-            $this->command->info('Expense types already exist. Skipping seeder.');
             return;
         }
 

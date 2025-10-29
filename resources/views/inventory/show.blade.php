@@ -41,7 +41,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Categoría</label>
-                                        <input type="text" disabled class="form-control" value="{{ $component->category }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $component->category->name ?? 'Sin categoría' }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -59,7 +59,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Descripción</label>
-                                        <textarea disabled class="form-control">{{ $component->description ?? 'No especificado' }}</textarea>
+                                        <textarea disabled class="form-control" rows="3">{{ $component->description ?? 'No especificado' }}</textarea>
                                     </div>
                                 </div>
                             </div>

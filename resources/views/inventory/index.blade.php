@@ -14,7 +14,7 @@
                             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
                                 <form method="GET" action="{{ route('inventory.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
                                     <div class="input-group">
-                                        <input type="text" name="search" class="form-control" placeholder="Buscar por ID, Nombre, Categoría" value="{{ request('search') }}">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por ID, Nombre, Categoría, Material" value="{{ request('search') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary" title="Buscar Componente">
                                                 <i class="fas fa-search d-lg-none"></i>
@@ -67,7 +67,15 @@
                                                     <td scope="row">{{ $component->id }}</td>
                                                     <td>{{ $component->name }}</td>
                                                     <td>{{ $component->amount }}</td>
-                                                    <td>{{ $component->category }}</td>
+                                                    <td>
+                                                        @if($component->category)
+                                                            <span class="badge color-badge" style="background-color: {{ $component->category->color }}; color: white;">
+                                                                {{ $component->category->name }}
+                                                            </span>
+                                                        @else
+                                                            <span class="badge badge-secondary color-badge">Sin categoría</span>
+                                                        @endif
+                                                    </td>
                                                     <td>{{ $component->material ?? 'N/A' }}</td>
                                                     <td>{{ $component->dimensions ?? 'N/A' }}</td>
                                                     <td>
@@ -89,13 +97,13 @@
                                                     </td>
                                                 </tr>
                                                 @include('inventory.show', ['component' => $component])
-                                                @include('inventory.edit', ['component' => $component, 'localities' => $localities, 'users' => $users])
+                                                @include('inventory.edit', ['component' => $component, 'localities' => $localities, 'users' => $users, 'categories' => $categories])
                                                 @include('inventory.delete', ['component' => $component])
                                             @endforeach
                                         @endif
                                     </tbody>
                                 </table>
-                                @include('inventory.create', ['localities' => $localities, 'users' => $users])
+                                @include('inventory.create', ['localities' => $localities, 'users' => $users, 'categories' => $categories])
                                 <div class="d-flex justify-content-center">
                                     {!! $components->links('pagination::bootstrap-4') !!}
                                 </div>
@@ -107,6 +115,24 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('css')
+<style>
+    .color-badge {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .color-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .table-dark .color-badge {
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+</style>
 @endsection
 
 @section('js')
