@@ -46,21 +46,17 @@ class InventoryCategoryController extends Controller
 
     public function show(InventoryCategory $inventoryCategory)
     {
-        $this->authorizeLocality($inventoryCategory);
         return view('inventoryCategories.show', compact('inventoryCategory'));
     }
 
     public function edit(InventoryCategory $inventoryCategory)
     {
-        $this->authorizeLocality($inventoryCategory);
         $localities = Locality::all();
         return view('inventoryCategories.edit', compact('inventoryCategory', 'localities'));
     }
 
     public function update(Request $request, InventoryCategory $inventoryCategory)
     {
-        $this->authorizeLocality($inventoryCategory);
-
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -79,19 +75,9 @@ class InventoryCategoryController extends Controller
 
     public function destroy(InventoryCategory $inventoryCategory)
     {
-        $this->authorizeLocality($inventoryCategory);
-    
         $inventoryCategory->delete();
 
         return redirect()->route('inventoryCategories.index')
             ->with('success', 'Categoría de inventario eliminada exitosamente.');
-    }
-
-    private function authorizeLocality(InventoryCategory $inventoryCategory)
-    {
-        $user = Auth::user();
-        if ($user->locality_id && $inventoryCategory->locality_id !== $user->locality_id) {
-            abort(403, 'No tienes permisos para acceder a este recurso.');
-        }
     }
 }

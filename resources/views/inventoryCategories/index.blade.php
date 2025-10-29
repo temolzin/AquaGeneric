@@ -76,7 +76,6 @@
                                                     </div>
                                                 </td>
                                             </tr>
-
                                             @include('inventoryCategories.show')
                                             @include('inventoryCategories.edit')
                                             @include('inventoryCategories.delete')
