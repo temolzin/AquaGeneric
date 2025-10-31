@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\IncidentStatus; // Asegúrate de tener este modelo
+use App\Models\IncidentStatus;
 
 class IncidentStatusSeeder extends Seeder
 {
@@ -13,18 +13,21 @@ class IncidentStatusSeeder extends Seeder
             [
                 'status' => 'Pendiente',
                 'description' => 'Incidencia en proceso de ser atendida',
+                'color' => '#e74c3c', 
                 'created_by' => 3,
                 'locality_id' => 1,
             ],
             [
-                'status' => 'En progreso',
+                'status' => 'En progreso', 
                 'description' => 'Incidencia en proceso de resolución',
+                'color' => '#f39c12', 
                 'created_by' => 3,
                 'locality_id' => 1,
             ],
             [
                 'status' => 'Terminada',
                 'description' => 'Incidencia resuelta y cerrada.',
+                'color' => '#2ecc71', 
                 'created_by' => 3,
                 'locality_id' => 1,
             ],
@@ -38,6 +41,7 @@ class IncidentStatusSeeder extends Seeder
                 ],
                 [
                     'description' => $status['description'],
+                    'color' => $status['color'],
                     'created_by' => $status['created_by'],
                     'updated_at' => now(),
                 ]
