@@ -1,9 +1,8 @@
 @php
-$authUser = Auth::user();
-$locality = $locality ?? $authUser->locality ?? null;
+use Illuminate\Support\Facades\Auth;
 
-$verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
-    ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
+$verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBackgroundVertical')
+    ? $authUserLocality->getFirstMedia('pdfBackgroundVertical')->getPath()
     : public_path('img/backgroundReport.png');
 @endphp
 
@@ -11,7 +10,7 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Historial de Movimientos - {{ $locality->name ?? '-' }}</title>
+    <title>Historial de Movimientos - {{ $authUserLocality->name ?? '-' }}</title>
     <style>
         html {
             margin: 0;
@@ -31,10 +30,6 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
         #page_pdf {
             margin: 40px;
             margin-top: 10%;
-        }
-
-        #reporte_header {
-            justify-content: center;
         }
 
         .logo {
@@ -99,7 +94,7 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
             border-top: 1px solid #bfc9ff;
         }
 
-        .info_Eabajo {
+        .footer_info {
             text-align: center;
             margin-top: 20px;
             padding: 10px;
@@ -109,7 +104,7 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
             right: 20px;
         }
 
-        .text_infoE {
+        .footer_text {
             text-align: center;
             font-size: 12pt;
             color: white;
@@ -117,15 +112,14 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
             display: inline-block;
             font-family: 'Montserrat', sans-serif;
         }
-
     </style>
 </head>
 <body>
     <div id="page_pdf">
         <div id="reporte_head">
             <div class="logo">
-                @if ($locality && $locality->hasMedia('localityGallery'))
-                    <img src="{{ $locality->getFirstMediaUrl('localityGallery') }}" alt="Logo de {{ $locality->name }}">
+                @if ($authUserLocality && $authUserLocality->hasMedia('localityGallery'))
+                    <img src="{{ $authUserLocality->getFirstMediaUrl('localityGallery') }}" alt="Logo">
                 @else
                     <img src="img/localityDefault.png" alt="Default Photo">
                 @endif
@@ -133,48 +127,48 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
             <div class="titulo">
                 <p class="aqua_titulo">
                     COMITÉ DEL SISTEMA DE AGUA POTABLE DE<br>
-                    {{ $locality->name ?? '-' }}, {{ $locality->municipality ?? '-' }}, {{ $locality->state ?? '-' }}
+                    {{ $authUserLocality->name ?? '-' }}, {{ $authUserLocality->municipality ?? '-' }}, {{ $authUserLocality->state ?? '-' }}
                 </p>
             </div>
         </div>
         <div class="title">
             <h3>HISTORIAL DE MOVIMIENTOS</h3>
         </div>
-        @foreach($groupedByDay as $day => $movements)
+        @foreach($groupedByDay as $day => $entries)
             <h4>{{ $day }}</h4>
             <table>
                 <thead>
                     <tr>
                         <th>Responsable</th>
                         <th>Hora</th>
+                        <th>ID</th>
                         <th>Módulo</th>
                         <th>Movimiento</th>
-                        <th>Nota</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($movements as $entry)
+                    @foreach($entries as $entry)
                         @php
                             $movement = $entry['movement'];
                             $moduleName = $entry['module'];
-                            $tipo = !empty($movement->deleted_at) ? 'Eliminación' : 'Edición';
+                            $actionType = !empty($movement->deleted_at) ? 'Eliminación' : 'Edición';
                         @endphp
                         <tr>
-                            <td>{{ $movement->user->name }}</td>
+                            <td>{{ $movement->user->name ?? '-' }}</td>
                             <td>{{ \Carbon\Carbon::parse($movement->updated_at)->format('H:i:s') }}</td>
+                            <td>{{ $movement->id }}</td>
                             <td>{{ $moduleName }}</td>
-                            <td>{{ $tipo }}</td>
-                            <td>{{ $movement->note ?? '-' }}</td>
+                            <td>{{ $actionType }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         @endforeach
-    <div class="info_Eabajo">
-        <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
-        <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
-        <img src="img/rootheim.png" width="15px" height="15px">
-    </div>
+        <div class="footer_info">
+            <a class="footer_text" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+            <a class="footer_text" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
+            <img src="img/rootheim.png" width="15px" height="15px">
+        </div>
     </div>
 </body>
 </html>
