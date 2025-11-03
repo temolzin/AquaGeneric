@@ -5,11 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\WaterConnection;
 use App\Models\User;
 use App\Models\Cost;
-<<<<<<< HEAD
-=======
 use App\Models\Section;
 use App\Models\Locality;
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -22,21 +19,12 @@ class WaterConnectionController extends Controller
     {
         $authUser = auth()->user();
 
-<<<<<<< HEAD
-            $query = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
-                ->where('water_connections.locality_id', $authUser->locality_id)
-                ->join('users', 'water_connections.customer_id', '=', 'users.id') 
-                ->with(['customer.user'])
-                ->orderBy('water_connections.created_at', 'desc')
-                ->select('water_connections.*');
-=======
         $query = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
             ->where('water_connections.locality_id', $authUser->locality_id)
             ->join('users', 'water_connections.customer_id', '=', 'users.id')
             ->with(['customer.user'])
             ->orderBy('water_connections.created_at', 'desc')
             ->select('water_connections.*');
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -52,16 +40,12 @@ class WaterConnectionController extends Controller
 
         $connections = $query->paginate(10);
         $customers = Customer::where('locality_id', $authUser->locality_id)->with('user')->get();
-<<<<<<< HEAD
-        $costs = Cost::where('locality_id', $authUser->locality_id)->get();
-=======
         $costs = Cost::where('locality_id', $authUser->locality_id)
                      ->orWhereNull('locality_id')
                      ->get();
         $sections = Section::where('locality_id', $authUser->locality_id)
                      ->orWhereNull('locality_id')
                      ->get();
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
 
         return view('waterConnections.index', compact('connections', 'customers', 'costs', 'sections'));
     }
@@ -103,33 +87,18 @@ class WaterConnectionController extends Controller
     public function show($id)
     {
         $connection = WaterConnection::with('customer.user')->findOrFail($id);
-<<<<<<< HEAD
-=======
-        $sections = Section::where('locality_id', $connection->locality_id)
-                    ->orWhereNull('locality_id')
-                    ->get();
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
         return view('waterConnections.show', compact('connection'));
     }
 
     public function edit($id)
     {
         $authUser = auth()->user();
-<<<<<<< HEAD
-        
-        $connection = WaterConnection::with('customer.user')->findOrFail($id);
-        $customers = Customer::where('locality_id', $authUser->locality_id)->with('user')->get();
-        $costs = Cost::where('locality_id', $authUser->locality_id)->get();
-        
-        return view('waterConnections.edit', compact('connection', 'customers', 'costs'));
-=======
 
         $connection = WaterConnection::with('customer.user')->findOrFail($id);
         $customers = Customer::where('locality_id', $authUser->locality_id)->with('user')->get();
         $costs = Cost::where('locality_id', $authUser->locality_id)->get();
 
         return view('waterConnections.edit', compact('connection', 'customers', 'costs', 'sections'));
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
     }
 
     public function update(Request $request, $id)
@@ -222,14 +191,6 @@ class WaterConnectionController extends Controller
         return redirect()->route('waterConnections.index')->with('success', 'Toma reactivada y asignada correctamente.');
     }
 
-<<<<<<< HEAD
-    public function showCustomerWaterConnections()
-    {
-        $authUser = auth()->user();
-        
-        $customer = $authUser->customer;
-        
-=======
     private function generateConnectionHash($id)
     {
         return hash('sha256', $id . env('APP_KEY', 'default-secret-key'));
@@ -340,18 +301,12 @@ class WaterConnectionController extends Controller
 
         $customer = $authUser->customer;
 
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
         if (!$customer) {
             $connections = collect();
         } else {
             $query = WaterConnection::with(['cost', 'locality'])
                 ->where('customer_id', $customer->id)
                 ->where('locality_id', $authUser->locality_id);
-<<<<<<< HEAD
-            
-=======
-
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
             if (request()->has('search') && request('search') != '') {
                 $search = request('search');
                 $query->where(function($q) use ($search) {
@@ -362,21 +317,11 @@ class WaterConnectionController extends Controller
                     ->orWhere('block', 'like', "%{$search}%");
                 });
             }
-<<<<<<< HEAD
-            
-=======
-
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
             $connections = $query->paginate(10)->appends(request()->query());
             $connections->getCollection()->transform(function ($connection) {
                 $connection->formatted_water_days = $this->getFormattedWaterDays($connection->water_days);
                 $connection->water_pressure_text = $connection->has_water_pressure ? 'Sí' : 'No';
                 $connection->cistern_text = $connection->has_cistern ? 'Sí' : 'No';
-<<<<<<< HEAD
-                
-=======
-
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
                 return $connection;
             });
         }
@@ -389,7 +334,6 @@ class WaterConnectionController extends Controller
         if (empty($waterDays) || $waterDays === 'null' || $waterDays === '[]') {
             return 'No hay días específicos asignados';
         }
-<<<<<<< HEAD
         
         if ($waterDays === '"all"' || $waterDays === 'all') {
             return 'Todos los días';
@@ -407,36 +351,13 @@ class WaterConnectionController extends Controller
         foreach ($daysArray as $day) {
             $dayLower = strtolower(trim($day));
             
-=======
-
-        if ($waterDays === '"all"' || $waterDays === 'all') {
-            return 'Todos los días';
-        }
-
-        $daysArray = json_decode($waterDays, true) ?: [$waterDays];
-
-        $daysMap = [
-            'monday' => 'Lunes', 'tuesday' => 'Martes', 'wednesday' => 'Miércoles',
-            'thursday' => 'Jueves', 'friday' => 'Viernes', 'saturday' => 'Sábado',
-            'sunday' => 'Domingo'
-        ];
-
-        $spanishDays = [];
-        foreach ($daysArray as $day) {
-            $dayLower = strtolower(trim($day));
-
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
             foreach ($daysMap as $en => $es) {
                 if ($dayLower === $en || $dayLower === strtolower($es) || $dayLower === 'all') {
                     $spanishDays[] = $es;
                 }
             }
         }
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
         return empty($spanishDays) ? 'No hay días activos' : implode(', ', array_unique($spanishDays));
     }
 }

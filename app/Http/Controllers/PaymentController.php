@@ -6,10 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Debt;
 use App\Models\Customer;
-<<<<<<< HEAD
-=======
 use App\Models\GeneralExpense;
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
 use App\Models\User;
 use App\Models\WaterConnection;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -318,10 +315,6 @@ class PaymentController extends Controller {
             $months[$monthName]['note'] = $payment->note;
         }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
         $note = $payment->note;
         $message = $numberOfMonths > 1
             ? "Monto total del pago $" . number_format($payment->amount, 2) .
@@ -388,8 +381,6 @@ class PaymentController extends Controller {
         return $pdf->stream('reporte_pagos_tomas.pdf');
     }
 
-<<<<<<< HEAD
-=======
     public function cashClosurePaymentsReport() {
         $authUser = auth()->user();
         $today = now()->toDateString();
@@ -433,7 +424,6 @@ class PaymentController extends Controller {
         return $pdf->stream('reporte_corte_caja.pdf');
     }
 
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
     public function showCustomerPayments(Request $request)
     {
         $authUser = auth()->user();
@@ -462,11 +452,7 @@ class PaymentController extends Controller {
                         'transferencia' => 'transfer',
                         'tarjeta' => 'card'
                     ];
-<<<<<<< HEAD
-                    
-=======
 
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
                     foreach ($methodMappings as $spanish => $english) {
                         if (stripos($search, $spanish) !== false) {
                             $q->orWhere('method', $english);

@@ -71,16 +71,6 @@ class DashboardController extends Controller
         return $debt->amount - $debt->debt_current;
         });
 
-<<<<<<< HEAD
-=======
-        $notices = \App\Models\LocalityNotice::with(['creator', 'locality'])
-            ->where('locality_id', $authUser->locality_id)
-            ->where('is_active', true)
-            ->where('end_date', '>=', now())
-            ->orderBy('created_at', 'desc')
-            ->get();
-
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
         $data = [
             'customersByLocality' => $customersByLocality,
             'customersWithDebts' => $customersWithDebts,
@@ -99,12 +89,8 @@ class DashboardController extends Controller
             'waterConnections',
             'totalDebts',
             'pendingDebts',
-<<<<<<< HEAD
-            'totalOwed'
-=======
             'totalOwed',
             'notices'
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
         ));
     }
 
