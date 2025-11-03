@@ -11,6 +11,12 @@ class IncidentCategorySeeder extends Seeder
     {
         $categories = [
             [
+                'name' => 'Mantenimiento  General',
+                'description' => 'Trabajos generales de reparación o conservación del sistema de agua.',
+                'created_by' => 3,
+                'locality_id' => null,
+            ],
+            [
                 'name' => 'Eléctrica',
                 'description' => 'Problemas con instalación o alumbrado eléctrico.',
                 'created_by' => 3,

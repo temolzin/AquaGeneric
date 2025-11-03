@@ -1,28 +1,39 @@
+@php
+$locality = Auth::user()->locality ?? null;
+$verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
+    ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
+    : public_path('img/backgroundReport.png');
+
+$horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizontal')
+    ? $locality->getFirstMedia('pdfBackgroundHorizontal')->getPath()
+    : public_path('img/customersBackgroundHorizontal.png');
+@endphp
 <!DOCTYPE html>
 <html>
     <head>
-        <title>RESUMEN DE TOMAS DE AGUA POR CLIENTE</title>
+        <title>Resumen de Tomas de Agua por Cliente</title>
         <style>
+            @page {
+                size: A4 portrait;
+                margin: 15mm;
+            }
             html {
                 margin: 0;
                 padding: 15px;
-                height: 100%;
             }
 
             body {
                 height: 100%;
                 margin: 0;
                 padding: 0;
-                background-image: url('img/customersBackgroundHorizontal.png');
+                background-image: url('file://{{ $verticalBgPath }}');
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
-                display: flex;
-                justify-content: center;
-                align-items: center;
             }
 
             #page_pdf {
+                margin-top: 10%;
                 margin: 40px;
                 text-align: center;
                 width: 90%;
@@ -34,17 +45,16 @@
             }
 
             .company_info {
-                width: 85%;
+                width: 100%;
+                margin-top: 60px;
                 text-align: center;
                 align-content: stretch;
                 font-family: 'Montserrat', sans-serif;
             }
 
             .aqua_title {
-                padding-right: 80px;
-                padding-top: 60px;
                 font-family: 'Montserrat', sans-serif;
-                font-size: 18pt;
+                font-size: 20pt;
                 font-weight: bold;
                 margin-right: 5px;
                 display: inline-block;
@@ -60,13 +70,13 @@
 
             .h2 {
                 font-family: 'Montserrat', sans-serif;
-                font-size: 15pt;
+                font-size: 17pt;
             }
 
             .h3 {
                 font-weight: bold;
                 font-family: 'Montserrat', sans-serif;
-                font-size: 13pt;
+                font-size: 15pt;
                 display: block;
                 color: #0B1C80;
                 text-align: center;
@@ -76,17 +86,17 @@
             .text_table {
                 text-align: center;
                 font-family: 'Montserrat', sans-serif;
-                font-size: 11pt;
+                font-size: 12pt;
                 color: #FFF;
             }
 
             .text_center {
+                padding: 5px;
                 background-color: #FFF;
                 text-align: center;
-                font-size: 11pt;
+                font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
                 vertical-align: middle;
-                padding: 8px 5px;
                 line-height: 1.6;
             }
 
@@ -97,7 +107,7 @@
                 justify-content: center;
                 align-items: center;
                 min-height: 50px;
-                font-size: 11pt;
+                font-size: 12pt;
             }
 
             .address_cell .connection_separator {
@@ -107,7 +117,7 @@
                 justify-content: center;
                 align-items: center;
                 min-height: 50px; 
-                font-size: 11pt;
+                font-size: 12pt;
             }
 
             #report_detail {
@@ -134,17 +144,17 @@
 
             .footer_info {
                 text-align: center;
-                margin-top: 22px;
+                margin-top: 20px;
                 padding: 10px;
                 position: absolute;
-                bottom: 1px;
+                bottom: 5px;
                 left: 20px;
                 right: 20px;
             }
 
             .footer_text {
                 text-align: center;
-                font-size: 10pt;
+                font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
                 color: white;
                 text-decoration: none;
@@ -154,26 +164,23 @@
             #report_head {
                 justify-content: center;
                 width: 100%;
-                text-align: center;
             }
 
             #report_head .logo {
                 height: auto;
-                margin-left: 70px;
-                margin-top: 60px;
-                display: inline-block;
+                margin-left: 60px;
             }
 
             #report_head .logo img {
                 border-radius: 50%;
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
             }
 
             .title {
                 color: #0B1C80;
                 font-family: 'Montserrat', sans-serif;
-                font-size: 12pt;
+                font-size: 14pt;
                 text-align: center;
             }
         </style>
@@ -191,15 +198,13 @@
                             @endif
                         </div>
                     </td>
-                    <td class="company_info">
-                        <div>
-                            <p class="aqua_title">
-                                COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
-                            </p>
-                        </div>
-                    </td>
                 </tr>
             </table>
+            <div class="company_info">
+                <p class="aqua_title">
+                    COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
+                </p>
+            </div>
             <div class="title">
                 <h3>RESUMEN DE TOMAS DE AGUA POR CLIENTE</h3>
             </div>
@@ -208,11 +213,8 @@
                     <tr>
                         <th class="text_table">ID</th>
                         <th class="text_table">NOMBRE</th>
-                        <th class="text_table">NOMBRE DE LA TOMA</th>
-                        <th class="text_table">COLONIA</th>
-                        <th class="text_table">CALLE</th>
-                        <th class="text_table">NUM. EXTERIOR</th>
-                        <th class="text_table">NUM. INTERIOR</th>
+                        <th class="text_table">TOMA DE AGUA</th>
+                        <th class="text_table">NUM. DE TOMAS</th>
                     </tr>
                 </thead>
                 <tbody id="customer_detail">
@@ -238,34 +240,7 @@
                                     </div>
                                 @endforeach
                             </td>
-                            <td class="text_center address_cell">
-                                @foreach ($customer->waterConnections as $connection)
-                                    <div class="connection_separator">
-                                        {{ $connection->block ?: '-' }}
-                                    </div>
-                                @endforeach
-                            </td>
-                            <td class="text_center address_cell">
-                                @foreach ($customer->waterConnections as $connection)
-                                    <div class="connection_separator">
-                                        {{ $connection->street ?: '-' }}
-                                    </div>
-                                @endforeach
-                            </td>
-                            <td class="text_center address_cell">
-                                @foreach ($customer->waterConnections as $connection)
-                                    <div class="connection_separator">
-                                        {{ $connection->exterior_number ?: '-' }}
-                                    </div>
-                                @endforeach
-                            </td>
-                            <td class="text_center address_cell">
-                                @foreach ($customer->waterConnections as $connection)
-                                    <div class="connection_separator">
-                                        {{ $connection->interior_number ?: '-' }}
-                                    </div>
-                                @endforeach
-                            </td>
+                            <td class="text_center">{{ $customer->waterConnections->count() }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -273,7 +248,7 @@
         </div>
         <div class="footer_info">
             <a class="footer_text" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
-            <a class="footer_text" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="20px" height="15px">
+            <a class="footer_text" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="15px" height="15px">
         </div>
     </body>
 </html>

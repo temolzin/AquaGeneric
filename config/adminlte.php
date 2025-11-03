@@ -312,6 +312,12 @@ return [
         'icon' => 'fas fa-fw fa-home',
     ],
     [
+        'text' => 'Secciones',
+        'url' => '/sections',
+        'icon' => 'fas fa-fw fa-th-large',
+        'can'  => 'viewSections'
+    ],    
+    [
         'text' => 'Usuarios',
         'url' => '/users',
         'icon' => 'fas fa-fw fa-user',
@@ -340,7 +346,7 @@ return [
                 'can'  => 'viewPayments',
             ],
             [
-                'text' => 'Pagos Adelantados',
+                'text' => 'Panel de Pagos Adelantados',
                 'url'  => '/advancePayments',
                 'icon' => 'fas fa-fw fa-calendar-plus',
                 'can'  => 'viewAdvancePayments',
@@ -372,10 +378,22 @@ return [
         'can'  => 'viewWaterConnection'
     ],
     [
-        'text' => 'Gastos',
-        'url' => '/generalExpenses',
-        'icon' => 'fas fa-fw fa-coins',
-        'can'  => 'viewGeneralExpense'
+        'text' => 'Gestión de Gastos',
+        'icon' => 'fas fa-fw fa-cogs',
+        'submenu' => [
+            [
+                'text' => 'Gastos',
+                'url' => '/generalExpenses',
+                'icon' => 'fas fa-fw fa-coins',
+                'can'  => 'viewGeneralExpense'
+            ],
+            [
+                'text' => 'Tipos de Gastos',
+                'url'  => '/expenseTypes',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewExpenseTypes',
+            ],
+        ],
     ],
     [
         'text' => 'Gestión de Incidencias',
@@ -408,15 +426,33 @@ return [
         'can' => 'viewEmployee'
     ],
     [
+        'text' => 'Membresías',
+        'url' => '/memberships',
+        'icon' => 'fas fa-fw fa-id-card',
+        'can' => 'viewMemberships'
+    ],
+    [
         'text' => 'Falta de pago',
         'url'  => '/expiredSubscriptions/expired',
         'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
     ],
     [
-        'text' => 'Inventario',
-        'url' => '/inventory',
-        'icon' => 'fas fa-fw fa-boxes',
-        'can'  => 'viewInventory'
+        'text' => 'Gestion de Inventario',
+        'icon' => 'fas fa-fw fa-warehouse',
+        'submenu' => [
+            [
+                'text' => 'Inventario',
+                'url' => '/inventory',
+                'icon' => 'fas fa-fw fa-boxes',
+                'can'  => 'viewInventory'
+            ],
+            [
+                'text' => 'Categorías de Inventario',
+                'url'  => '/inventoryCategories',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewInventoryCategories',
+            ],
+        ],
     ],
     [
         'text' => 'Mis Pagos',
@@ -437,10 +473,28 @@ return [
         'icon' => 'fas fa-fw fa-water text-white',
     ],
     [
+        'text' => 'Mis Reportes de Fallas',
+        'url' => '/viewMyFaultReports',
+        'can' => 'viewCustomerFaultReports',
+        'icon' => 'fa fa-clipboard-list',
+    ],
+    [
         'text' => 'Avisos',
         'url' => '/localityNotices',
         'can' => 'viewNotice',
         'icon' => 'fas fa-fw fa-bell text-white',
+    ],
+    [
+        'text' => 'Reporte de fallas',
+        'url' => '/faultReport',
+        'icon' => 'fa fa-clipboard-list',
+        'can'  => 'viewFaultReport'
+    ],
+    [
+        'text' => 'Lista de Reportes',
+        'url' => '/reportList',
+        'icon' => 'fas fa-fw fa-file-alt',
+        'can' => 'viewReportsLists',
     ],
 ],
 

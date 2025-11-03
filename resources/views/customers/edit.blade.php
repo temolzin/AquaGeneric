@@ -27,7 +27,7 @@
                                         <div class="form-group text-center">
                                             <label for="photo-{{ $customer->id }}" class="form-label"></label>
                                             <div class="image-preview-container" style="display: flex; justify-content: center; margin-bottom: 10px;">
-                                                <img id="photo-preview-edit-{{ $customer->id }}" src="{{ $customer->getFirstMediaUrl('customerGallery') ? $customer->getFirstMediaUrl('customerGallery') : asset('img/userDefault.png') }}" 
+                                                <img id="photo-preview-edit-{{ $customer->id }}" src="{{ $customer->getFirstMediaUrl('customerGallery') ? $customer->getFirstMediaUrl('customerGallery') : asset('img/userDefault.png') }}"
                                                     alt="Foto Actual" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                             </div>
                                             <input type="file" accept="image/*" class="form-control" name="photo" id="photo-{{ $customer->id }}" onchange="previewImageEdit(event, {{ $customer->id }})">
@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="exteriorNumberUpdate" class="form-label">Manzana</label>
+                                            <label for="exteriorNumberUpdate" class="form-label">Número Exterior(*)</label>
                                             <input type="text" class="form-control" name="exteriorNumberUpdate" id="exteriorNumberUpdate" value="{{ $customer->exterior_number }}" >
                                         </div>
                                     </div>

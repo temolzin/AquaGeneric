@@ -27,6 +27,56 @@
                             </div>
                         </div>
                     </div>
+                    @can ('viewCustomerNotices')
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-danger">
+                                        <h3 class="card-title mb-0">
+                                            <i class="fas fa-bullhorn mr-2"></i>Avisos de {{ $authUser->locality->name }}
+                                        </h3>
+                                    </div>
+                                    <div class="card-body">
+                                        @if($notices && $notices->count() > 0)
+                                            <div class="row">
+                                                @foreach($notices->take(3) as $notice)
+                                                    <div class="col-md-4 mb-3">
+                                                        <div class="card h-100 border-left-{{ $notice->is_active ? 'success' : 'secondary' }} border-left-3">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-dark">{{ $notice->title }}</h5>
+                                                                <p class="card-text text-muted small">{{ Str::limit($notice->description, 100) }}</p>
+                                                                <div class="form-group mb-2">
+                                                                    @if ($notice->hasMedia('notice_attachments'))
+                                                                        <a href="{{ route('customer.notices.file', $notice->id) }}" class="btn btn-primary btn-sm" target="_blank">
+                                                                            <i class="fas fa-eye"></i> Ver archivo
+                                                                        </a>
+                                                                    @else
+                                                                        <button class="btn btn-secondary btn-sm" disabled>
+                                                                            <i class="fas fa-eye-slash"></i> Sin archivo adjunto
+                                                                        </button>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <small class="text-muted">
+                                                                        <i class="far fa-calendar-alt mr-1"></i>Este anuncio expira el {{ $notice->end_date->format('d/m/Y') }}
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="text-center py-4">
+                                                <i class="fas fa-info-circle fa-2x text-muted mb-2"></i>
+                                                <p class="text-muted mb-0">No hay avisos disponibles para tu localidad</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endcan
                     @can('viewDashboardCards')
                         @if ($data['noDebtsForCurrentMonth'])
                             <div class="alert alert-warning" role="alert">
@@ -111,6 +161,12 @@
                                             data-target="#weeklyGains" title="Ganancias Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Ganancias Semanales
                                             </button>
+                                            <button type="button" class="btn bg-orange w-100 w-md-auto m-1"
+                                            style="color: white !important;" title="Corte de caja"
+                                            onclick="window.open('{{ route('cash-closures.report') }}', '_blank')">
+                                                <i class="fa fa-dollar-sign"></i> Corte de caja
+                                            </button>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -131,6 +187,10 @@
                                     <a href="{{ route('viewCustomerDebts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
                             <div class="col-lg-4 col-xs-12">
                                 <div class="small-box bg-info">
                                     <div class="inner">
@@ -143,7 +203,11 @@
                                     <a href="{{ route('viewCustomerWaterConnections.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
+<<<<<<< HEAD
                             
+=======
+
+>>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
                             <div class="col-lg-4 col-xs-12">
                                 <div class="small-box bg-danger">
                                     <div class="inner">
@@ -195,8 +259,12 @@
                                     <canvas id="annualEarningsChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
+                            </div>
                         </div>
+<<<<<<< HEAD
                     </div>
+=======
+>>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
                     @endcan
                     @can('viewDashboardCards')
                     <div class="card">
@@ -304,10 +372,10 @@
                     $('#localityInfoMonthly').text(' de ' + localityName + ', ' + municipality);
                     $('#localityInfoAnnual').text(' de ' + localityName + ', ' + municipality);
                 } else {
-                    earningsChart.data.datasets[0].data = Array(12).fill(0); 
+                    earningsChart.data.datasets[0].data = Array(12).fill(0);
                     earningsChart.update();
 
-                    annualEarningsChart.data.datasets[0].data = Array(12).fill(0); 
+                    annualEarningsChart.data.datasets[0].data = Array(12).fill(0);
                     annualEarningsChart.update();
 
                     $('#localityInfoMonthly').text('');
@@ -340,7 +408,7 @@
                     text: warningMessage,
                     confirmButtonText: 'Aceptar'
                 });
-            }   
+            }
             $('#emails').DataTable({
                 responsive: true,
                 paging: false,
@@ -351,7 +419,7 @@
 
         var ctx = document.getElementById('earningsChart').getContext('2d');
         var earningsChart = new Chart(ctx, {
-            type: 'bar', 
+            type: 'bar',
             data: {
                 labels: @json($data['months']),
                 datasets: [{

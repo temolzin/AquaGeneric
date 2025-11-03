@@ -9,6 +9,7 @@ use App\Models\IncidentCategory;
 use App\Models\Employee;
 use App\Models\IncidentStatus;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\LogIncident;
 
 class IncidentController extends Controller
 {
@@ -25,9 +26,13 @@ class IncidentController extends Controller
 
         $incidents = $query->paginate(10);
 
-        $categories = IncidentCategory::all();
+        $categories = IncidentCategory::where(function ($query) use ($authUser) {
+            $query->where('locality_id', $authUser->locality_id)
+                  ->orWhereNull('locality_id');
+        })->get();
+
         $employees = Employee::where('locality_id', $authUser->locality_id)->get();
-        $statuses = IncidentStatus::all();
+        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)->get();
 
         return view('incidents.index', compact('incidents', 'categories', 'employees', 'statuses'));
     }
@@ -74,7 +79,7 @@ class IncidentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $incident = incident::find($id);
+        $incident = Incident::find($id);
         if ($incident) {
             $incident->name = $request->input('nameUpdate');
             $incident->start_date = $request->input('startDateUpdate');
@@ -107,10 +112,79 @@ class IncidentController extends Controller
     public function generateIncidentListReport()
     {
         $authUser = auth()->user();
-        $incidents = Incident::all();
+        $incidents = Incident::where('locality_id', $authUser->locality_id)->get();
         $pdf = PDF::loadView('reports.generateIncidentListReport', compact('incidents', 'authUser'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('incidents.pdf');
+    }
+
+    public function updateStatus(Request $request)
+    {
+        try {
+            \Log::info('updateStatus called', $request->all());
+
+            $request->validate([
+                'incident_id' => 'required|exists:incidents,id',
+                'status_id' => 'required|exists:incident_statuses,id',
+                'employee' => 'required|exists:employees,id',
+                'description' => 'sometimes|string|max:500'
+            ]);
+
+            $authUser = auth()->user();
+            $incident = Incident::findOrFail($request->incident_id);
+
+            if ($incident->locality_id != $authUser->locality_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No tienes permisos para actualizar esta incidencia'
+                ], 403);
+            }
+
+            $newStatus = IncidentStatus::find($request->status_id);
+            $previousStatus = IncidentStatus::find($incident->status_id);
+            $previousStatusName = $previousStatus ? $previousStatus->status : 'Desconocido';
+            $incident->status_id = $request->status_id;
+            $incident->save();
+
+            \Log::info('Incident updated', ['incident_id' => $incident->id, 'new_status' => $request->status_id]);
+
+            $logDescription = $request->description ?: 'Cambio de estatus: ' . 
+                $previousStatusName . ' → ' . $newStatus->status;
+
+            $logIncident = LogIncident::create([
+                'incident_id' => $incident->id,
+                'status' => $newStatus->status, 
+                'employee_id' => $request->employee,
+                'description' => $logDescription,
+                'created_by' => $authUser->id,
+                'locality_id' => $authUser->locality_id,
+            ]);
+
+            \Log::info('Log created successfully:', [
+                'log_id' => $logIncident->id, 
+                'status_value' => $logIncident->status,
+                'status_type' => gettype($logIncident->status)
+            ]);
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $logIncident->addMedia($image)->toMediaCollection('logIncidentImages');
+                }
+                \Log::info('Images saved:', ['count' => count($request->file('images'))]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estatus actualizado correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in updateStatus: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estatus: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

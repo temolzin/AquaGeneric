@@ -1,3 +1,13 @@
+@php
+$locality = Auth::user()->locality ?? null;
+$verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
+    ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
+    : public_path('img/backgroundReport.png');
+
+$horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizontal')
+    ? $locality->getFirstMedia('pdfBackgroundHorizontal')->getPath()
+    : public_path('img/customersBackgroundHorizontal.png');
+@endphp
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,7 +22,7 @@
                 height: 100%;
                 margin: 0;
                 padding: 0;
-                background-image: url('img/customersBackgroundHorizontal.png');
+                background-image: url('file://{{ $horizontalBgPath }}');
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;

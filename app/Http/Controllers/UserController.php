@@ -9,13 +9,14 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 
-
 class UserController extends Controller
 {
     public function index()
     {
         $currentUserId = auth()->id();
-        $roles = Role::all();
+        
+        $roles = Role::whereIn('name', ['Supervisor', 'Secretaria'])->get();
+        
         $localities = Locality::all();
         
         $users = User::where('id', '!=', $currentUserId)
@@ -30,24 +31,47 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $userData = $request->only(['name', 'last_name', 'email', 'phone','locality_id']);
-        $userData['password'] = bcrypt($request->input('password'));
+        $request->validate([
+            'locality_id' => 'required|exists:localities,id'
+        ]);
 
-        $user = User::create($userData);
+        try {
+            $locality = Locality::with('membership')->findOrFail($request->locality_id);
+            
+            if (!$locality->membership) {
+                return redirect()->back()->with('error', 'La localidad no tiene una membresía asignada. Por favor, contacte al administrador.');
+            }
 
-        if ($request->hasFile('photo')) {
-            $user->addMediaFromRequest('photo')->toMediaCollection('userGallery');
+            $currentUsersCount = User::where('locality_id', $request->locality_id)->count();
+
+            if ($currentUsersCount >= $locality->membership->users_number) {
+                return redirect()->back()->with('error', 
+                    'No se pueden registrar más usuarios. Límite de ' . $locality->membership->users_number . 
+                    ' usuarios alcanzado para la localidad '. $locality->name .'.');
+            }
+
+            $userData = $request->only(['name', 'last_name', 'email', 'phone','locality_id']);
+            $userData['password'] = bcrypt($request->input('password'));
+
+            $user = User::create($userData);
+
+            if ($request->hasFile('photo')) {
+                $user->addMediaFromRequest('photo')->toMediaCollection('userGallery');
+            }
+
+            $user->roles()->sync($request->roles);
+
+            return redirect()->back()->with('success', 'Usuario creado exitosamente');
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->back()->with('error', 'Localidad no encontrada.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al crear el usuario: ' . $e->getMessage());
         }
-
-        $user->roles()->sync($request->roles);
-
-        return redirect()->back()->with('success', 'Usuario creado exitosamente');
     }
-
 
     public function update(Request $request, $id)
     {
-
         $user = User::find($id);
         if ($user) {
             $user->name = $request->input('nameUpdate');
@@ -85,7 +109,9 @@ class UserController extends Controller
     {
         $userId = Crypt::decrypt($encryptedUserId);
         $user = User::findOrFail($userId);
-        $roles = Role::all();
+        
+        $roles = Role::whereIn('name', ['Supervisor', 'Secretaria'])->get();
+        
         return view('users.assignRole', compact('user', 'roles'));
     }
 
@@ -103,6 +129,5 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('users.index')->with('success', 'Contraseña actualizada correctamente.');
-
     }
 }

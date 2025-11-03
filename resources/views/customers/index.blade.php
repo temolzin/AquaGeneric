@@ -27,7 +27,7 @@
                                         <a type="button" class="btn btn-secondary me-2" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista
                                         </a>
-                                        <a type="button" class="btn btn-secondary ms-2" style="margin-left: 10px;" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
+                                        <a type="button" class="btn btn-primary ms-2" style="margin-left: 10px;" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista Resumen
                                         </a>
                                     </div>

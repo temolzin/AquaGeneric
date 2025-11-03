@@ -90,23 +90,114 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('attachment_edit{{$notice->id}}').addEventListener('change', function(e) {
-        var fileName = e.target.files[0] ? e.target.files[0].name : "Seleccionar archivo";
-        e.target.nextElementSibling.textContent = fileName;
-    });
+    const editFileInput = document.getElementById('attachment_edit{{$notice->id}}');
+    const editFileLabel = document.querySelector('#edit{{$notice->id}} .custom-file-label');
+    
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    document.getElementById('edit-notice-form-{{$notice->id}}').addEventListener('submit', function(e) {
-        var startDate = new Date(document.getElementById('start_date_edit{{$notice->id}}').value);
-        var endDate = new Date(document.getElementById('end_date_edit{{$notice->id}}').value);
+    const startDateEdit = document.getElementById('start_date_edit{{$notice->id}}');
+    const endDateEdit = document.getElementById('end_date_edit{{$notice->id}}');
 
-        if (endDate <= startDate) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error en fechas',
-                text: 'La fecha de fin debe ser posterior a la fecha de inicio.'
-            });
-            return false;
+    if (startDateEdit && endDateEdit) {
+        startDateEdit.min = today.toISOString().split('T')[0];
+        
+        const currentStartDate = new Date(startDateEdit.value);
+        const minEndDate = new Date(currentStartDate);
+        minEndDate.setDate(minEndDate.getDate() + 1);
+        
+        if (minEndDate > today) {
+            endDateEdit.min = minEndDate.toISOString().split('T')[0];
+        } else {
+            endDateEdit.min = tomorrow.toISOString().split('T')[0];
+        }
+
+        startDateEdit.addEventListener('change', function() {
+            const selectedStartDate = new Date(this.value);
+            const newMinEndDate = new Date(selectedStartDate);
+            newMinEndDate.setDate(newMinEndDate.getDate() + 1);
+            endDateEdit.min = newMinEndDate.toISOString().split('T')[0];
+            
+            const currentEndDate = new Date(endDateEdit.value);
+            if (endDateEdit.value && currentEndDate <= selectedStartDate) {
+                endDateEdit.value = '';
+            }
+        });
+
+        endDateEdit.addEventListener('change', function() {
+            const startDate = new Date(startDateEdit.value);
+            const endDate = new Date(this.value);
+            
+            if (endDate <= startDate) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error en fecha',
+                    text: 'La fecha de fin debe ser posterior a la fecha de inicio.',
+                    confirmButtonText: 'Aceptar'
+                });
+                this.value = '';
+            }
+        });
+    }
+
+    if (editFileInput) {
+        editFileInput.addEventListener('change', function (event) {
+            const input = event.target;
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+            const file = input.files[0];
+
+            if (file) {
+                const fileType = file.type;
+                const fileName = file.name.toLowerCase();
+                const validExtensions = ['.jpg', '.jpeg', '.png', '.pdf'];
+                const isValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
+
+                if (!allowedTypes.includes(fileType) || !isValidExtension) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Por favor, sube un archivo PDF o una imagen (JPG, JPEG, PNG).',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    input.value = '';
+                    editFileLabel.textContent = 'Seleccionar archivo...';
+                    return;
+                }
+
+                const maxSize = 10 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'El archivo es demasiado grande. Tamaño máximo permitido: 10MB.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    input.value = '';
+                    editFileLabel.textContent = 'Seleccionar archivo...';
+                    return;
+                }
+
+                editFileLabel.textContent = file.name;
+                
+            } else {
+                editFileLabel.textContent = 'Seleccionar archivo...';
+            }
+        });
+    }
+
+    $('#edit{{$notice->id}}').on('hidden.bs.modal', function () {
+        document.getElementById('edit-notice-form-{{$notice->id}}').reset();
+        
+        if (editFileLabel) {
+            const hasExistingFile = {{ $notice->getFirstMedia('notice_attachments') ? 'true' : 'false' }};
+            editFileLabel.textContent = hasExistingFile ? 'Seleccionar nuevo archivo' : 'Seleccionar archivo';
+        }
+        
+        var updateBtn = document.getElementById('updateBtn{{$notice->id}}');
+        if (updateBtn) {
+            updateBtn.disabled = false;
+            updateBtn.innerHTML = 'Actualizar Aviso';
         }
     });
 });
@@ -118,20 +209,24 @@ function handleUpdateSubmit(form, noticeId) {
         return false;
     }
     
-    var startDate = new Date(document.getElementById('start_date_edit' + noticeId).value);
-    var endDate = new Date(document.getElementById('end_date_edit' + noticeId).value);
+    var startDateValue = document.getElementById('start_date_edit' + noticeId).value;
+    var endDateValue = document.getElementById('end_date_edit' + noticeId).value;
 
-    if (endDate <= startDate) {
+    if (!startDateValue || !endDateValue) {
         Swal.fire({
             icon: 'error',
-            title: 'Error en fechas',
-            text: 'La fecha de fin debe ser posterior a la fecha de inicio.'
+            title: 'Fechas incompletas',
+            text: 'Por favor, complete ambas fechas.',
+            confirmButtonText: 'Aceptar'
         });
         return false;
     }
     
+    var startDate = new Date(startDateValue);
+    var endDate = new Date(endDateValue);
+    
     submitBtn.disabled = true;
-    submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Actualizando...`;
+    submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Actualizando...`;
 
     return true;
 }

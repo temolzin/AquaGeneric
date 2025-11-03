@@ -28,6 +28,12 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
+                                        <label>Sección</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->section ? $connection->section->name : 'Sin sección' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
                                         <label>Propietario</label>
                                         @if($connection->customer && $connection->customer->user)
                                             <input type="text" disabled class="form-control"

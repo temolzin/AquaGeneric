@@ -6,16 +6,18 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Debt;
 use App\Models\Customer;
+<<<<<<< HEAD
+=======
+use App\Models\GeneralExpense;
+>>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
 use App\Models\User;
 use App\Models\WaterConnection;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 
-class PaymentController extends Controller
-{
-    public function index(Request $request)
-    {
+class PaymentController extends Controller {
+    public function index(Request $request) {
         $authUser = auth()->user();
         $query = Payment::with(['debt.customer.user'])->orderBy('id', 'desc')
             ->where('locality_id', $authUser->locality_id);
@@ -84,8 +86,7 @@ class PaymentController extends Controller
         return response()->json(['waterConnections' => $waterConnections]);
     }
 
-    public function getDebtsByWaterConnection(Request $request)
-    {
+    public function getDebtsByWaterConnection(Request $request) {
         $waterConnectionId = $request->input('water_connection_id');
         $debts = Debt::where('water_connection_id', $waterConnectionId)
                  ->where('status', '!=', 'paid')
@@ -105,13 +106,29 @@ class PaymentController extends Controller
         return response()->json(['debts' => $debts]);
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
+        \Log::info('Request data:', $request->all());
+
         $authUser = auth()->user();
         $debt = Debt::findOrFail($request->debt_id);
 
-        $paymentData = $request->all();
-        $paymentData['created_by'] = $authUser->id;
+        $debtStart = Carbon::parse($debt->start_date);
+        $current = Carbon::now();
+        $isFutureDebt = $debtStart->year > $current->year || ($debtStart->year == $current->year && $debtStart->month > $current->month);
+
+        \Log::info('Debt start date:', ['start_date' => $debt->start_date, 'is_future_debt' => $isFutureDebt]);
+
+        $isFuturePayment = $isFutureDebt;
+
+        if ($isFutureDebt && !$request->has('is_future_payment')) {
+            return redirect()->route('payments.index')
+                ->with('error', 'La deuda seleccionada es de un periodo futuro. Debe marcarse como pago anticipado.');
+        }
+
+        if ($request->has('is_future_payment') && !$isFutureDebt) {
+            return redirect()->route('payments.index')
+                ->with('error', 'La deuda seleccionada no corresponde a un periodo futuro.');
+        }
 
         $remainingAmount = $debt->amount - $debt->debt_current;
 
@@ -120,7 +137,7 @@ class PaymentController extends Controller
                 ->with('error', 'El monto del pago supera la cantidad restante de la deuda.');
         }
 
-        Payment::create([
+        $payment = Payment::create([
             'customer_id' => $request->customer_id,
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
@@ -128,7 +145,10 @@ class PaymentController extends Controller
             'method' => $request->method,
             'amount' => $request->amount,
             'note' => $request->note,
+            'is_future_payment' => $isFuturePayment,
         ]);
+
+        \Log::info('Payment created:', ['id' => $payment->id, 'is_future_payment' => $payment->is_future_payment]);
 
         $debt->debt_current += $request->amount;
 
@@ -142,11 +162,10 @@ class PaymentController extends Controller
 
         $debt->save();
 
-        return redirect()->route('payments.index')->with('success', 'Pago creado exitosamnete.');
+        return redirect()->route('payments.index')->with('success', 'Pago creado exitosamente.');
     }
 
-    public function update(Request $request, Payment $payment)
-    {
+    public function update(Request $request, Payment $payment) {
         $debt = $payment->debt;
 
         $previousAmount = $payment->amount;
@@ -178,8 +197,7 @@ class PaymentController extends Controller
         return redirect()->route('payments.index')->with('success', 'Pago actualizado exitosamnete.');
     }
 
-    public function destroy($id)
-    {
+    public function destroy($id) {
         $payment = Payment::findOrFail($id);
         $payment->delete();
 
@@ -219,8 +237,7 @@ class PaymentController extends Controller
         return $pdf->stream('annual_earnings_' . $year . '.pdf');
     }
 
-    public function weeklyEarningsReport(Request $request)
-    {
+    public function weeklyEarningsReport(Request $request) {
         $authUser = auth()->user();
         $startDate = Carbon::parse($request->input('weekStartDate'));
         $endDate = Carbon::parse($request->input('weekEndDate'));
@@ -228,7 +245,7 @@ class PaymentController extends Controller
         $weeks = [];
         $currentStart = $startDate->copy();
         $totalPeriodEarnings = 0;
-        
+
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
             if ($currentEnd->gt($endDate)) {
@@ -268,8 +285,7 @@ class PaymentController extends Controller
         return $pdf->stream('weekly_earnings_' . now()->format('Ymd') . '.pdf');
     }
 
-    public function receiptPayment($paymentId)
-    {
+    public function receiptPayment($paymentId) {
         $decryptedId = Crypt::decrypt($paymentId);
         $payment = Payment::findOrFail($decryptedId);
         $debt = $payment->debt;
@@ -302,9 +318,13 @@ class PaymentController extends Controller
             $months[$monthName]['note'] = $payment->note;
         }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
         $note = $payment->note;
         $message = $numberOfMonths > 1
-            ? "Monto total del pago $" . number_format($payment->amount, 2) . 
+            ? "Monto total del pago $" . number_format($payment->amount, 2) .
             ". Nota: " . $note
             : null;
 
@@ -314,7 +334,7 @@ class PaymentController extends Controller
         return $pdf->stream('comprobante_de_pago.pdf');
     }
 
-    public function clientPaymentReport(Request $request){
+    public function clientPaymentReport(Request $request) {
         $customerId = $request->input('customerId');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
@@ -335,8 +355,7 @@ class PaymentController extends Controller
         return $pdf->stream('reporte_pagos_cliente.pdf');
     }
 
-    public function waterConnectionPaymentsReport(Request $request)
-    {
+    public function waterConnectionPaymentsReport(Request $request) {
         $customerId = $request->input('waterCustomerId');
         $waterConnectionId = $request->input('waterConnectionId');
         $startDate = $request->input('waterStartDate');
@@ -369,6 +388,52 @@ class PaymentController extends Controller
         return $pdf->stream('reporte_pagos_tomas.pdf');
     }
 
+<<<<<<< HEAD
+=======
+    public function cashClosurePaymentsReport() {
+        $authUser = auth()->user();
+        $today = now()->toDateString();
+
+        $payments = Payment::where('locality_id', $authUser->locality_id)
+            ->whereDate('created_at', $today)
+            ->get();
+
+        $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
+            ->whereDate('expense_date', $today)
+            ->get();
+
+        $totalPayments = $payments->sum('amount');
+        $totalExpenses = $expenses->sum('amount');
+        $totalCash = $payments->where('method', 'cash')->sum('amount');
+        $totalCard = $payments->where('method', 'card')->sum('amount');
+        $totalTransfer = $payments->where('method', 'transfer')->sum('amount');
+        $finalAmount = $totalPayments - $totalExpenses;
+
+        $latestClosure = (object)[
+            'opened_at'      => now()->startOfDay(),
+            'closed_at'      => now()->endOfDay(),
+            'initial_amount' => 0,
+            'final_amount'   => $finalAmount,
+            'total_sales'    => $totalPayments,
+            'total_expenses' => $totalExpenses,
+        ];
+
+        $pdf = PDF::loadView('reports.pdfCashClosures', [
+            'closures'       => collect([$latestClosure]),
+            'payments'       => $payments,
+            'expenses'       => $expenses,
+            'authUser'       => $authUser,
+            'totalPayments'  => $totalPayments,
+            'totalExpenses'  => $totalExpenses,
+            'totalCash'      => $totalCash,
+            'totalCard'      => $totalCard,
+            'totalTransfer'  => $totalTransfer,
+        ])->setPaper('A4', 'portrait');
+
+        return $pdf->stream('reporte_corte_caja.pdf');
+    }
+
+>>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
     public function showCustomerPayments(Request $request)
     {
         $authUser = auth()->user();
@@ -397,7 +462,11 @@ class PaymentController extends Controller
                         'transferencia' => 'transfer',
                         'tarjeta' => 'card'
                     ];
+<<<<<<< HEAD
                     
+=======
+
+>>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
                     foreach ($methodMappings as $spanish => $english) {
                         if (stripos($search, $spanish) !== false) {
                             $q->orWhere('method', $english);

@@ -25,8 +25,19 @@ class Locality extends Model implements HasMedia
         'name',
         'municipality',
         'state',
-        'zip_code'
+        'zip_code',
+        'membership_id'
     ];
+
+    public function membership()
+    {
+        return $this->belongsTo(Membership::class);
+    }
+
+    public function waterConnections()
+    {
+        return $this->hasMany(WaterConnection::class);
+    }
 
     public function hasDependencies()
     {
@@ -64,5 +75,18 @@ class Locality extends Model implements HasMedia
         $today = now()->startOfDay();
 
         return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('pdfBackgroundVertical')
+            ->useDisk('public')
+            ->singleFile();
+
+        $this
+            ->addMediaCollection('pdfBackgroundHorizontal')
+            ->useDisk('public')
+            ->singleFile();
     }
 }

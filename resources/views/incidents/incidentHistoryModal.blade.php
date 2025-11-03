@@ -21,13 +21,13 @@
                             </div>
                         </div>
                         <div class="card-body" style="padding-left: 0;">
-                            <div style="margin-left: 40px; margin-bottom: 10px; font-size: 0.95rem;">
+                            <div style="margin-left: 27px; margin-bottom: 10px; font-size: 0.95rem;">
                                 <strong>Incidencia:</strong> {{ $incident->name }}
                             </div>
                             <ul class="timeline timeline-inverse">
                                 @forelse($incident->getstatusChangeLogs as $log)
-                                    <div class="time-label">
-                                        <span class="bg-maroon">{{ $log->created_at->format('d/m/Y') }}</span>
+                                    <div class="time-label" style="margin-left: 25px; margin-bottom: 10px;">
+                                        <span class="bg-maroon" style="padding: 4px 12px; border-radius: 9px; font-weight: 500;">{{ $log->created_at->format('d/m/Y') }}</span>
                                     </div>
                                     <div class="timeline-item d-flex align-items-start" style="margin-left: 17px; margin-bottom: 15px;">
                                         <img src="{{ $log->employee?->getFirstMediaUrl('employeeGallery') ?: asset('img/userDefault.png') }}"
@@ -44,7 +44,23 @@
                                             </div>
                                             <hr style="margin: 8px 0; border-top: 1px solid #aaa;">
                                             <div style="font-size: 0.9rem;">
-                                                <p class="mb-1"><strong>Estatus:</strong> <span class="badge badge-info">{{ $log->status }}</span></p>
+                                                <p class="mb-1"><strong>Estatus:</strong>
+                                                    @php
+                                                        $statusName = $log->status;
+                                                        $statusColor = '#6c757d';
+                                                        
+                                                        $incidentStatus = \App\Models\IncidentStatus::where('status', $statusName)->first();
+                                                        
+                                                        if ($incidentStatus) {
+                                                            $statusName = $incidentStatus->status;
+                                                            $statusColor = $incidentStatus->color;
+                                                            
+                                                            echo '<span class="badge" style="background-color: ' . $statusColor . '; color: white; padding: 6px 10px; font-size: 12px; border-radius: 4px;">' . $statusName . '</span>';
+                                                        } else {
+                                                            echo '<span class="badge" style="background-color: #6c757d; color: white; padding: 6px 10px; font-size: 12px; border-radius: 4px;">' . $statusName . '</span>';
+                                                        }
+                                                    @endphp
+                                                </p>
                                                 <p class="mb-1"><strong>Descripción:</strong> {{ $log->description ?: 'Sin descripción' }}</p>
                                                 <hr style="margin: 8px 0; border-top: 1px solid #aaa;">
                                                 @if ($log->getMedia('logIncidentImages')->count())
