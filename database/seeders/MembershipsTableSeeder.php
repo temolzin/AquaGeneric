@@ -42,17 +42,31 @@ class MembershipsTableSeeder extends Seeder
             ]
         ];
 
-        foreach ($memberships as $membership) {
-            DB::table('memberships')->insert([
-                'name' => $membership['name'],
-                'price' => $membership['price'],
-                'term_months' => $membership['term_months'],
-                'water_connections_number' => $membership['water_connections_number'],
-                'users_number' => $membership['users_number'],
-                'created_by' => $admin->id,
-                'created_at' => now(),
+        DB::table('memberships')
+            ->where('water_connections_number', 0)
+            ->orWhere('users_number', 0)
+            ->update([
+                'water_connections_number' => 1000,
+                'users_number' => 1,
                 'updated_at' => now(),
             ]);
+
+        foreach ($memberships as $membership) {
+            $existing = DB::table('memberships')
+                ->where('name', $membership['name'])
+                ->first();
+            
+            if (!$existing) {
+                DB::table('memberships')->insert([
+                    'name' => $membership['name'],
+                    'price' => $membership['price'],
+                    'term_months' => $membership['term_months'],
+                    'water_connections_number' => $membership['water_connections_number'],
+                    'users_number' => $membership['users_number'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 }

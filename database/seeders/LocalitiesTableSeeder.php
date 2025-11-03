@@ -80,6 +80,6 @@ class LocalitiesTableSeeder extends Seeder
             $endDate = Carbon::now()->subDay()->format('Y-m-d');
         }
 
-        return Token::generateTokenForLocality(0, $startDate, $endDate);
+        return Token::generateTokenForLocality($localityId ?? 1, $startDate, $endDate);
     }
 }

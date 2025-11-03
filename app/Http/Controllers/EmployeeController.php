@@ -128,7 +128,11 @@ class EmployeeController extends Controller
     public function generateEmployeeListReport()
     {
         $authUser = auth()->user();
-        $employees = Employee::all();
+        
+        $employees = Employee::where('locality_id', $authUser->locality_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
         $pdf = PDF::loadView('reports.generateEmployeeListReport', compact('employees', 'authUser'))
             ->setPaper('A4', 'landscape');
 

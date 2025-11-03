@@ -437,10 +437,22 @@ return [
         'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
     ],
     [
-        'text' => 'Inventario',
-        'url' => '/inventory',
-        'icon' => 'fas fa-fw fa-boxes',
-        'can'  => 'viewInventory'
+        'text' => 'Gestion de Inventario',
+        'icon' => 'fas fa-fw fa-warehouse',
+        'submenu' => [
+            [
+                'text' => 'Inventario',
+                'url' => '/inventory',
+                'icon' => 'fas fa-fw fa-boxes',
+                'can'  => 'viewInventory'
+            ],
+            [
+                'text' => 'Categorías de Inventario',
+                'url'  => '/inventoryCategories',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewInventoryCategories',
+            ],
+        ],
     ],
     [
         'text' => 'Mis Pagos',
@@ -459,6 +471,12 @@ return [
         'url' => '/viewMyWaterConnections',
         'can' => 'viewWaterConnections',
         'icon' => 'fas fa-fw fa-water text-white',
+    ],
+    [
+        'text' => 'Mis Reportes de Fallas',
+        'url' => '/viewMyFaultReports',
+        'can' => 'viewCustomerFaultReports',
+        'icon' => 'fa fa-clipboard-list',
     ],
     [
         'text' => 'Avisos',

@@ -18,7 +18,7 @@ class Inventory extends Model
         'name',
         'description',
         'amount',
-        'category',
+        'inventory_category_id', 
         'material',
         'dimensions',
     ];
@@ -31,6 +31,11 @@ class Inventory extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(InventoryCategory::class, 'inventory_category_id');
     }
 
     public function setAmountAttribute($value)
