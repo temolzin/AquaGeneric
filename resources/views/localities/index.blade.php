@@ -122,6 +122,12 @@
                                                             <i class="fas fa-key"></i>
                                                         </button>
                                                     </form>
+                                                    <form action="{{ route('reports.pdfMovementsHistory') }}" method="GET" target="_blank" style="display:inline;">
+                                                        <input type="hidden" name="locality_id" value="{{ $locality->id }}">
+                                                        <button type="submit" class="btn bg-maroon ml-2" title="Historial de Movimientos">
+                                                            <i class="fas fa-history"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </td>
                                             @include('localities.edit')
@@ -155,7 +161,6 @@
     </div>
 </section>
 @endsection
-
 @section('js')
 <script>
     $(document).ready(function() {
