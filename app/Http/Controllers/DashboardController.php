@@ -71,6 +71,13 @@ class DashboardController extends Controller
         return $debt->amount - $debt->debt_current;
         });
 
+        $notices = \App\Models\LocalityNotice::with(['creator', 'locality'])
+            ->where('locality_id', $authUser->locality_id)
+            ->where('is_active', true)
+            ->where('end_date', '>=', now())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         $data = [
             'customersByLocality' => $customersByLocality,
             'customersWithDebts' => $customersWithDebts,
