@@ -187,10 +187,6 @@
                                     <a href="{{ route('viewCustomerDebts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
-<<<<<<< HEAD
-=======
-
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
                             <div class="col-lg-4 col-xs-12">
                                 <div class="small-box bg-info">
                                     <div class="inner">
@@ -203,11 +199,7 @@
                                     <a href="{{ route('viewCustomerWaterConnections.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
-<<<<<<< HEAD
                             
-=======
-
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
                             <div class="col-lg-4 col-xs-12">
                                 <div class="small-box bg-danger">
                                     <div class="inner">
@@ -261,10 +253,7 @@
                             </div>
                             </div>
                         </div>
-<<<<<<< HEAD
                     </div>
-=======
->>>>>>> 9aa44b9d2a131d1404153117fc55b0fc43de6bd5
                     @endcan
                     @can('viewDashboardCards')
                     <div class="card">
