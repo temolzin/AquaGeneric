@@ -182,5 +182,4 @@ class LocalityController extends Controller
 
         return redirect()->route('localities.index')->with('success', 'Fondos de reportes actualizados correctamente.');
     }
-
 }
