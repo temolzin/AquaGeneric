@@ -49,6 +49,10 @@ class CustomerController extends Controller
             'exterior_number' => 'nullable|string',
             'interior_number' => 'required|string',
             'email' => 'required|email|unique:users,email', 
+            'marital_status' => 'required|string',
+            'status' => 'required|string',
+            'responsible_name' => 'nullable|string',
+            'note' => 'nullable|string',
         ]);
 
         $temporaryPassword = Str::random(8);
@@ -168,16 +172,18 @@ class CustomerController extends Controller
         return $pdf->stream('reporte_clientes_con_deudas.pdf');
     }
 
-    public function generateUserAccessPDF($id)
+    public function generateUserAccessPDF($hash)
     {
         try {
-            $customer = Customer::with('user')->findOrFail($id);
-            
-            $temporaryPassword = $customer->user->temporary_password;
+            $customer = Customer::all()->first(function ($c) use ($hash) {
+                return md5($c->id) === $hash;
+            });
 
-            if (!$temporaryPassword) {
-                $temporaryPassword = 'Contraseña temporal no disponible';
+            if (!$customer) {
+                abort(404, 'Cliente no encontrado');
             }
+
+            $temporaryPassword = $customer->user->temporary_password ?? 'Contraseña temporal no disponible';
 
             $data = [
                 'customer' => $customer,
