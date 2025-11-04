@@ -120,7 +120,7 @@
                                                     <button type="button" class="btn bg-blue mr-2" data-toggle="modal" title="Ver Deudas Por Toma de Agua" data-target="#showDebtsPerWaterConnection{{$customer->id}}">
                                                         <i class="fa fa-dollar-sign"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-success mr-2" title="Generar PDF" onclick="generateUserAccessPDF(event, {{ $customer->id }})">
+                                                    <button type="button" class="btn btn-success mr-2" title="Ver credenciales" onclick="generateUserAccessPDF(event, '{{ md5($customer->id) }}')">
                                                         <i class="fas fa-file-pdf"></i>
                                                     </button>
                                                     @can('deleteCustomer')
