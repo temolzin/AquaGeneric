@@ -105,8 +105,8 @@
                                                             | Deuda: ${{ number_format($payment->debt->amount, 2) }}
                                                         </td>
                                                         <td>
-                                                            {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('DD [/] MMMM [/] YYYY HH:mm:ss')}}
-                                                        </td>
+                                                            {{ str_replace(['am', 'pm'], ['a.m.', 'p.m.'], \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('DD[/]MMMM[/]YYYY hh:mm:ss a')) }}
+                                                        </td>                                         
                                                         <td>${{ number_format($payment->amount, 2) }}</td>
                                                         <td>
                                                             <div class="btn-group" payment="group" aria-label="Opciones">

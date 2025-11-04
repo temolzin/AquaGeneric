@@ -15,7 +15,9 @@
                         <div class="card mb-3">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Fondo Reporte Vertical</h3><br>
-                                <small class="text-light">Formato sugerido</small>
+                                <small class="text-light">Formato sugerido: 2MB<br>
+                            Dimensión recomendada: No mayor a 1600 x 2000
+                                </small>
                             </div>
                             <div class="card-body text-center">
                                 <img id="preview-vertical-{{ $locality->id }}"
@@ -28,7 +30,9 @@
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Fondo Reporte Horizontal </h3><br>
-                                <small class="text-light">Formato sugerido</small>
+                                <small class="text-light">Formato sugerido: 2MB<br>
+                            Dimensión recomendada: No mayor a 2000 x 1600
+                                </small>
                             </div>
                             <div class="card-body text-center">
                                 <img id="preview-horizontal-{{ $locality->id }}"
