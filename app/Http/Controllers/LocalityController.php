@@ -138,44 +138,12 @@ class LocalityController extends Controller
             return redirect()->back()->with('error', 'Localidad no encontrada.');
         }
 
-        $maxVertical = ['width' => 1600, 'height' => 2000];
-        $maxHorizontal = ['width' => 2000, 'height' => 1600];
-        $maxFileSize = 2 * 1024 * 1024;
-
         if ($request->hasFile('pdf_background_vertical')) {
-            $file = $request->file('pdf_background_vertical');
-
-            if ($file->getSize() > $maxFileSize) {
-                return redirect()->back()->with('error', 'El fondo vertical no debe exceder los 2 MB.');
-            }
-
-            $size = getimagesize($file);
-            $width = $size[0];
-            $height = $size[1];
-
-            if ($width > $maxVertical['width'] || $height > $maxVertical['height']) {
-                return redirect()->back()->with('error', "El fondo vertical no debe exceder los {$maxVertical['width']}x{$maxVertical['height']} píxeles. Imagen cargada: {$width}x{$height}px");
-            }
-
             $locality->clearMediaCollection('pdfBackgroundVertical');
             $locality->addMediaFromRequest('pdf_background_vertical')->toMediaCollection('pdfBackgroundVertical');
         }
 
         if ($request->hasFile('pdf_background_horizontal')) {
-            $file = $request->file('pdf_background_horizontal');
-
-            if ($file->getSize() > $maxFileSize) {
-                return redirect()->back()->with('error', 'El fondo horizontal no debe exceder los 2 MB.');
-            }
-
-            $size = getimagesize($file);
-            $width = $size[0];
-            $height = $size[1];
-
-            if ($width > $maxHorizontal['width'] || $height > $maxHorizontal['height']) {
-                return redirect()->back()->with('error', "El fondo horizontal no debe exceder los {$maxHorizontal['width']}x{$maxHorizontal['height']} píxeles. Imagen cargada: {$width}x{$height}px");
-            }
-
             $locality->clearMediaCollection('pdfBackgroundHorizontal');
             $locality->addMediaFromRequest('pdf_background_horizontal')->toMediaCollection('pdfBackgroundHorizontal');
         }
