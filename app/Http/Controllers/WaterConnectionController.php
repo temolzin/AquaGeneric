@@ -39,11 +39,11 @@ class WaterConnectionController extends Controller
         $connections = $query->paginate(10);
         $customers = Customer::where('locality_id', $authUser->locality_id)->get();
         $costs = Cost::where('locality_id', $authUser->locality_id)
-                     ->orWhereNull('locality_id')
-                     ->get();
+                    ->orWhereNull('locality_id')
+                    ->get();
         $sections = Section::where('locality_id', $authUser->locality_id)
-                     ->orWhereNull('locality_id')
-                     ->get();
+                    ->orWhereNull('locality_id')
+                    ->get();
 
         return view('waterConnections.index', compact('connections', 'customers', 'costs', 'sections'));
     }
@@ -84,11 +84,13 @@ class WaterConnectionController extends Controller
 
     public function show($id)
     {
-        $connections = WaterConnection::findOrFail($id);
+        $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+            ->findOrFail($id);
+            
         $sections = Section::where('locality_id', $connection->locality_id)
                     ->orWhereNull('locality_id')
                     ->get();
-        return view('waterConnections.show', compact('connections', 'sections'));
+        return view('waterConnections.show', compact('connection', 'sections'));
     }
 
     public function update(Request $request, $id)
@@ -188,7 +190,9 @@ class WaterConnectionController extends Controller
 
     private function getIdFromHash($hash)
     {
-        $connections = WaterConnection::select('id')->get();
+        $connections = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+            ->select('id')
+            ->get();
         
         foreach ($connections as $connection) {
             if ($this->generateConnectionHash($connection->id) === $hash) {
@@ -201,14 +205,14 @@ class WaterConnectionController extends Controller
     public function showPublic($hash)
     {
         try {
-
             $id = $this->getIdFromHash($hash);
             
             if (!$id) {
                 abort(404, 'Toma de agua no encontrada');
             }
 
-            $connection = WaterConnection::with(['customer', 'locality'])
+            $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+                ->with(['customer', 'locality'])
                 ->find($id);
 
             if (!$connection) {
@@ -229,8 +233,9 @@ class WaterConnectionController extends Controller
     public function generateQrAjax($id)
     {
         try {
-            
-            $connection = WaterConnection::findOrFail($id);
+            $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+                ->findOrFail($id);
+                
             $hash = $this->generateConnectionHash($id);
             $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 
@@ -263,8 +268,9 @@ class WaterConnectionController extends Controller
     public function downloadQr($id)
     {
         try {
-
-            $connection = WaterConnection::findOrFail($id);
+            $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+                ->findOrFail($id);
+                
             $hash = $this->generateConnectionHash($id);
             $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 
