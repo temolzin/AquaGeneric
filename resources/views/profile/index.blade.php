@@ -142,6 +142,28 @@
                             </div>
                             <div class="card-body">
                                 @if($authUser->locality && $authUser->locality->membership)
+                                    @php
+                                        $usersPercentage = $membershipStats['users_limit'] > 0 ? ($membershipStats['users_count'] / $membershipStats['users_limit']) * 100 : 0;
+                                        $waterPercentage = $membershipStats['water_connections_limit'] > 0 ? ($membershipStats['water_connections_count'] / $membershipStats['water_connections_limit']) * 100 : 0;
+                                        
+                                        $usersProgressColor = $usersPercentage >= 80 ? 'bg-danger' : ($usersPercentage >= 60 ? 'bg-warning' : 'bg-info');
+                                        $waterProgressColor = $waterPercentage >= 80 ? 'bg-danger' : ($waterPercentage >= 60 ? 'bg-warning' : 'bg-success');
+                                    @endphp
+
+                                    @if($usersPercentage >= 80 || $waterPercentage >= 80)
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <h4><i class="icon fas fa-exclamation-triangle"></i> ¡Capacidad Casi Llena!</h4>
+                                            @if($usersPercentage >= 80)
+                                                <p><strong>Usuarios:</strong> Has alcanzado el {{ number_format($usersPercentage, 0) }}% de la capacidad. Contacta a un administrador para expandir tu membresía.</p>
+                                            @endif
+                                            @if($waterPercentage >= 80)
+                                                <p><strong>Tomas de agua:</strong> Has alcanzado el {{ number_format($waterPercentage, 0) }}% de la capacidad. Contacta a un administrador para expandir tu membresía.</p>
+                                            @endif
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    @endif
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="info-box bg-light">
@@ -150,12 +172,22 @@
                                                     <span class="info-box-text">Usuarios</span>
                                                     <span class="info-box-number">
                                                         {{ $membershipStats['users_count'] }} / {{ $membershipStats['users_limit'] }}
+                                                        @if($usersPercentage >= 80)
+                                                            <span class="badge badge-danger ml-2">¡ALTO!</span>
+                                                        @elseif($usersPercentage >= 60)
+                                                            <span class="badge badge-warning ml-2">MEDIO</span>
+                                                        @endif
                                                     </span>
                                                     <div class="progress">
-                                                        <div class="progress-bar bg-info" style="width: {{ $membershipStats['users_limit'] > 0 ? ($membershipStats['users_count'] / $membershipStats['users_limit']) * 100 : 0 }}%"></div>
+                                                        <div class="progress-bar {{ $usersProgressColor }}" style="width: {{ $usersPercentage }}%"></div>
                                                     </div>
                                                     <span class="progress-description">
                                                         {{ $membershipStats['users_count'] }} de {{ $membershipStats['users_limit'] }} usuarios utilizados
+                                                        @if($usersPercentage >= 80)
+                                                            <span class="text-danger font-weight-bold"> - Capacidad crítica</span>
+                                                        @elseif($usersPercentage >= 60)
+                                                            <span class="text-warning font-weight-bold"> - Capacidad media</span>
+                                                        @endif
                                                     </span>
                                                 </div>
                                             </div>
@@ -167,12 +199,22 @@
                                                     <span class="info-box-text">Tomas de Agua</span>
                                                     <span class="info-box-number">
                                                         {{ $membershipStats['water_connections_count'] }} / {{ $membershipStats['water_connections_limit'] }}
+                                                        @if($waterPercentage >= 80)
+                                                            <span class="badge badge-danger ml-2">¡ALTO!</span>
+                                                        @elseif($waterPercentage >= 60)
+                                                            <span class="badge badge-warning ml-2">MEDIO</span>
+                                                        @endif
                                                     </span>
                                                     <div class="progress">
-                                                        <div class="progress-bar bg-success" style="width: {{ $membershipStats['water_connections_limit'] > 0 ? ($membershipStats['water_connections_count'] / $membershipStats['water_connections_limit']) * 100 : 0 }}%"></div>
+                                                        <div class="progress-bar {{ $waterProgressColor }}" style="width: {{ $waterPercentage }}%"></div>
                                                     </div>
                                                     <span class="progress-description">
                                                         {{ $membershipStats['water_connections_count'] }} de {{ $membershipStats['water_connections_limit'] }} tomas utilizadas
+                                                        @if($waterPercentage >= 80)
+                                                            <span class="text-danger font-weight-bold"> - Capacidad crítica</span>
+                                                        @elseif($waterPercentage >= 60)
+                                                            <span class="text-warning font-weight-bold"> - Capacidad media</span>
+                                                        @endif
                                                     </span>
                                                 </div>
                                             </div>
@@ -255,6 +297,19 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
+            @if($usersPercentage >= 80 || $waterPercentage >= 80)
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '¡Capacidad Casi Llena!',
+                        html: `@if($usersPercentage >= 80)<p><strong>Usuarios:</strong> Has alcanzado el {{ number_format($usersPercentage, 0) }}% de la capacidad.</p>@endif
+                            @if($waterPercentage >= 80)<p><strong>Tomas de agua:</strong> Has alcanzado el {{ number_format($waterPercentage, 0) }}% de la capacidad.</p>@endif
+                            <p class="text-danger"><strong>Contacta a un administrador para expandir tu membresía.</strong></p>`,
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#d33'
+                    });
+                }, 1000);
+            @endif
         });
     </script>
 @endsection
