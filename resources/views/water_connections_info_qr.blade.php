@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-blue: #0066cc;
-            --secondary-blue: #0099ff;
-            --accent-teal: #00cccc;
-            --light-blue: #e6f7ff;
-            --dark-blue: #004d99;
+            --primary-blue: #0056b3;
+            --secondary-blue: #007bff;
+            --accent-teal: #00a8e8;
+            --light-blue: #e3f2fd;
+            --dark-blue: #003d7a;
             --text-dark: #2c3e50;
             --text-light: #5d6d7e;
             --white: #ffffff;
@@ -21,7 +21,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #004d99 0%, #0066cc 25%, #0099ff 50%, #00b3b3 75%, #00cccc 100%);
+            background: linear-gradient(135deg, #003366 0%, #0047ab 25%, #0066cc 50%, #0080ff 75%, #00a8e8 100%);
             min-height: 100vh;
             padding: 15px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -36,8 +36,8 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(0, 204, 204, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(102, 204, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(0, 168, 232, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 128, 255, 0.2) 0%, transparent 50%),
                 radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
             z-index: -1;
         }
@@ -59,7 +59,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #0066cc, #0099ff, #00cccc, #66ccff, #99e6e6);
+            background: linear-gradient(90deg, #003366, #0047ab, #0066cc, #0080ff, #00a8e8);
         }
         @keyframes slideUp {
             from {
@@ -72,7 +72,7 @@
             }
         }
         .header {
-            background: var(--gradient-primary);
+            background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
             color: white;
             padding: 35px 25px 25px 25px;
             text-align: center;
@@ -170,14 +170,14 @@
         }
         .info-item {
             padding: 20px 25px;
-            border-bottom: 1px solid rgba(0, 102, 204, 0.1);
+            border-bottom: 1px solid rgba(0, 86, 179, 0.1);
             display: flex;
             align-items: flex-start;
             transition: all 0.3s ease;
             background: transparent;
         }
         .info-item:hover {
-            background: linear-gradient(135deg, rgba(0, 102, 204, 0.05) 0%, rgba(0, 204, 204, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(0, 86, 179, 0.05) 0%, rgba(0, 168, 232, 0.05) 100%);
             transform: translateX(8px);
             border-left: 4px solid var(--primary-blue);
         }
@@ -190,10 +190,10 @@
             margin-right: 18px;
             min-width: 30px;
             margin-top: 2px;
-            background: var(--gradient-primary);
+            background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 4px rgba(0, 102, 204, 0.3));
+            filter: drop-shadow(0 2px 4px rgba(0, 86, 179, 0.3));
         }
         .info-content {
             flex: 1;
@@ -234,7 +234,7 @@
             padding: 25px;
             color: white;
             margin-top: 20px;
-            background: var(--gradient-secondary);
+            background: linear-gradient(135deg, #0047ab 0%, #003366 100%);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             margin: 20px;
@@ -414,7 +414,7 @@
                                 Int. {{ $connection->interior_number }}
                             @endif
                             @if($connection->block)
-                                <br><small style="color: var(--primary-blue);">Colonia: {{ $connection->block }}</small>
+                                <br><small style="color: #003366;">Colonia: {{ $connection->block }}</small>
                             @endif
                         </div>
                     </div>
@@ -497,6 +497,18 @@
                         </div>
                     </div>
                 </div>
+
+                @if($connection->getStatusCalculatedAttribute() === 'Adeudo')
+                <div class="info-item">
+                    <i class="fas fa-money-bill-wave info-icon"></i>
+                    <div class="info-content">
+                        <div class="info-label">Monto Adeudado</div>
+                        <div class="info-value">
+                            ${{ number_format($connection->getPendingBalance(), 2) }}
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 @if($connection->note)
                 <div class="info-item">
