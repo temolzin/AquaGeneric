@@ -165,6 +165,20 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 font-size: 14pt;
                 text-align: center;
             }
+            .oval_color {
+                display: inline-block;
+                background-color: #6c757d;
+                color: #fff;
+                font-weight: bold;
+                font-size: 9pt;
+                border-radius: 18px;
+                padding: 3px 12px;
+                margin: 0 2px;
+                min-width: 70px;
+                text-align: center;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+                line-height: 1.2;
+            }
         </style>
     </head>
     <body>
@@ -202,7 +216,11 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                     @foreach ($incidentStatus as $status)
                         <tr>
                             <td class="text_center">{{ $status->id }}</td>
-                            <td class="text_center">{{ $status->status }}</td>
+                            <td class="text_center" style="vertical-align: middle;">
+                                <span class="oval_color" style="background-color: {{ $status->color ?? '#6c757d' }};">
+                                    {{ strtoupper($status->status) }}
+                                </span>
+                            </td>
                             <td class="text_center">{{ $status->description }}</td>
                         </tr>
                     @endforeach
