@@ -29,13 +29,13 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Fecha de Inicio</label>
-                                        <input type="text" disabled class="form-control" value="{{ $notice->start_date->format('d/m/Y') }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $notice->start_date->format('d/m/Y H:i') }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Fecha de Fin</label>
-                                        <input type="text" disabled class="form-control" value="{{ $notice->end_date->format('d/m/Y') }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $notice->end_date->format('d/m/Y H:i') }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
