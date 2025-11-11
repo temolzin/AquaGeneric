@@ -174,7 +174,15 @@
         }
 
         $('#createSection').on('shown.bs.modal', function() {
-            $('.select2').select2({ dropdownParent: $('#createSection') });
+            $('.select2').select2({
+                dropdownParent: $('#createSection')
+            });
+        });
+
+        $('[id^="edit"]').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $(this)
+            });
         });
     });
 </script>

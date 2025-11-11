@@ -29,7 +29,7 @@
                                     <div class="form-group">
                                         <label for="color">Color de identificación(*)</label>
                                         <div class="input-group">
-                                            <select name="color" class="form-control" id="colorSelect" required>
+                                            <select name="color" class="form-control select2" id="colorSelect" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="#e74c3c" {{ old('color') == '#e74c3c' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="#3498db" {{ old('color') == '#3498db' ? 'selected' : '' }}>Azul</option>
@@ -57,23 +57,34 @@
         </div>
     </div>
 </div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const colorSelect = document.getElementById('colorSelect');
         const colorPreview = document.getElementById('colorPreview');
 
-        if (colorSelect && colorPreview) {
-            const updatePreview = () => {
-                if (colorSelect.value) {
-                    colorPreview.style.backgroundColor = colorSelect.value;
-                    colorPreview.style.border = '1px solid ' + colorSelect.value;
-                } else {
-                    colorPreview.style.backgroundColor = '#f8f9fa';
-                    colorPreview.style.border = '1px solid #ccc';
-                }
-            };
+        const updatePreview = () => {
+            if (colorSelect.value) {
+                colorPreview.style.backgroundColor = colorSelect.value;
+                colorPreview.style.border = '1px solid ' + colorSelect.value;
+            } else {
+                colorPreview.style.backgroundColor = '#f8f9fa';
+                colorPreview.style.border = '1px solid #ccc';
+            }
+        };
 
-            colorSelect.addEventListener('change', updatePreview);
+        if (colorSelect && colorPreview) {
+            $('#colorSelect').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Seleccione un color',
+                allowClear: false
+            });
+
+            $('#colorSelect').on('change', function() {
+                updatePreview();
+            });
+
             updatePreview();
 
             $('#createSection').on('shown.bs.modal', function () {
