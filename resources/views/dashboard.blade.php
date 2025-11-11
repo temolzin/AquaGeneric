@@ -58,7 +58,7 @@
                                                                 </div>
                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                     <small class="text-muted">
-                                                                        <i class="far fa-calendar-alt mr-1"></i>Este anuncio expira el {{ $notice->end_date->format('d/m/Y') }}
+                                                                        <i class="far fa-calendar-alt mr-1"></i>Este anuncio expira el {{ $notice->end_date->format('d/m/Y h:i A') }}
                                                                     </small>
                                                                 </div>
                                                             </div>
@@ -175,8 +175,8 @@
                     @endcan
                     @can('viewCustomerCards')
                         <div class="row mb-1">
-                            <div class="col-lg-4 col-xs-12">
-                                <div class="small-box bg-warning">
+                            <div class="col-lg-6 col-xs-12">
+                                <div class="small-box bg-danger">
                                     <div class="inner">
                                         <h3>${{ number_format($totalOwed, 2) }}</h3>
                                         <p>Total Adeudado</p>
@@ -187,7 +187,7 @@
                                     <a href="{{ route('viewCustomerDebts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-xs-12">
+                            <div class="col-lg-6 col-xs-12">
                                 <div class="small-box bg-info">
                                     <div class="inner">
                                         <h3>{{ $waterConnections->count() }}</h3>
@@ -197,19 +197,6 @@
                                         <i class="fas fa-faucet"></i>
                                     </div>
                                     <a href="{{ route('viewCustomerWaterConnections.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            
-                            <div class="col-lg-4 col-xs-12">
-                                <div class="small-box bg-danger">
-                                    <div class="inner">
-                                        <h3>{{ $pendingDebts }}</h3>
-                                        <p>Total Deudas</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-list"></i>
-                                    </div>
-                                    <a href="{{ route('viewCustomerDebts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                         </div>
