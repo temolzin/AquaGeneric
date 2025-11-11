@@ -32,11 +32,6 @@ class GeneralExpense extends Model implements HasMedia
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'created_by'); 
-    }
-
     public function expenseType()
     {
         return $this->belongsTo(ExpenseType::class, 'expense_type_id');

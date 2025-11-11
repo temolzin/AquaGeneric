@@ -16,7 +16,6 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             margin: 0;
             padding: 15px;
         }
-
         body {
             margin: 0;
             padding: 0;
@@ -26,29 +25,24 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             background-repeat: no-repeat;
             font-family: 'Montserrat', sans-serif;
         }
-
         #page_pdf {
             margin: 40px;
             margin-top: 10%;
         }
-
         .logo {
             height: auto;
             margin-left: 60px;
         }
-
         .logo img {
             width: 120px;
             height: 120px;
             border-radius: 50%;
         }
-
         .titulo {
             width: 100%;
             margin-top: 60px;
             text-align: center;
         }
-
         .aqua_titulo {
             font-size: 20pt;
             font-weight: bold;
@@ -58,34 +52,29 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             color: #0B1C80;
             text-transform: uppercase;
         }
-
         .title {
             color: #0B1C80;
             font-size: 14pt;
             text-align: center;
             margin-bottom: 15px;
         }
-
         h4 {
             color: #0B1C80;
             text-align: left;
             margin-top: 25px;
             margin-bottom: 10px;
         }
-
         table {
             border-collapse: collapse;
             width: 100%;
             margin-bottom: 25px;
         }
-
         table thead th {
             background: #0B1C80;
             color: #FFF;
             padding: 5px;
             font-size: 10pt;
         }
-
         table tbody td {
             background: rgba(255,255,255,0.95);
             text-align: center;
@@ -93,7 +82,6 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             padding: 6px;
             border-top: 1px solid #bfc9ff;
         }
-
         .footer_info {
             text-align: center;
             margin-top: 20px;
@@ -103,7 +91,6 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             left: 20px;
             right: 20px;
         }
-
         .footer_text {
             text-align: center;
             font-size: 12pt;
@@ -132,7 +119,7 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             </div>
         </div>
         <div class="title">
-            <h3>HISTORIAL DE MOVIMIENTOS</h3>
+            <h3>HISTORIAL DE MOVIMIENTOS {{ strtoupper($selectedModuleName ?? '') }}</h3>
         </div>
         @foreach($groupedByDay as $day => $entries)
             <h4>{{ $day }}</h4>
@@ -142,7 +129,6 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
                         <th>Responsable</th>
                         <th>Hora</th>
                         <th>ID</th>
-                        <th>Módulo</th>
                         <th>Movimiento</th>
                     </tr>
                 </thead>
@@ -150,14 +136,12 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
                     @foreach($entries as $entry)
                         @php
                             $movement = $entry['movement'];
-                            $moduleName = $entry['module'];
                             $actionType = !empty($movement->deleted_at) ? 'Eliminación' : 'Edición';
                         @endphp
                         <tr>
                             <td>{{ trim(optional($movement->creator)->name . ' ' . optional($movement->creator)->last_name . ' ' . optional($movement->creator)->second_last_name) }}</td>
                             <td>{{ \Carbon\Carbon::parse($movement->updated_at)->format('H:i:s') }}</td>
                             <td>{{ $movement->id }}</td>
-                            <td>{{ $moduleName }}</td>
                             <td>{{ $actionType }}</td>
                         </tr>
                     @endforeach

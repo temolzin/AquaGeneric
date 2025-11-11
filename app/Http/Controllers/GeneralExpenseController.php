@@ -15,10 +15,13 @@ class GeneralExpenseController extends Controller
     {
         $authUser = auth()->user();
         $query = GeneralExpense::where('general_expenses.locality_id', $authUser->locality_id)
-            ->with('expenseType') 
+            ->whereHas('creator', function ($q) use ($authUser) {
+                $q->where('locality_id', $authUser->locality_id);
+            })
+            ->with(['expenseType', 'creator'])
             ->orderBy('general_expenses.created_at', 'desc')
             ->select('general_expenses.*');
-
+            
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -58,13 +61,20 @@ class GeneralExpenseController extends Controller
 
     public function show($id)
     {
-        $expenses = GeneralExpense::findOrFail($id);
-        return view('generalExpenses.show', compact('expenses'));
+        $authUser = auth()->user();
+
+        $expense = GeneralExpense::with(['expenseType', 'creator'])
+            ->where('locality_id', $authUser->locality_id)
+            ->findOrFail($id);
+        return view('generalExpenses.show', compact('expense'));
     }
 
     public function update(Request $request, $id)
     {
-        $expense = GeneralExpense::find($id);
+        $authUser = auth()->user();
+
+        $expense = GeneralExpense::where('locality_id', $authUser->locality_id)
+            ->find($id);
 
         if (!$expense) {
             return redirect()->back()->with('error', 'Gasto no encontrado.');

@@ -10,7 +10,7 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Historial de Movimientos - {{ $authUserLocality->name ?? '-' }}</title>
+    <title>Historial de Movimientos por Módulo - {{ $authUserLocality->name ?? '-' }}</title>
     <style>
         html {
             margin: 0;
@@ -73,6 +73,16 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             margin-bottom: 10px;
         }
 
+        h3.module-title {
+            color: #0B1C80;
+            text-transform: uppercase;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 15pt;
+            border-bottom: 2px solid #0B1C80;
+            padding-bottom: 5px;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
@@ -132,37 +142,37 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             </div>
         </div>
         <div class="title">
-            <h3>HISTORIAL DE MOVIMIENTOS</h3>
+            <h3>HISTORIAL DE MOVIMIENTOS POR MÓDULO</h3>
         </div>
-        @foreach($groupedByDay as $day => $entries)
-            <h4>{{ $day }}</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Responsable</th>
-                        <th>Hora</th>
-                        <th>ID</th>
-                        <th>Módulo</th>
-                        <th>Movimiento</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($entries as $entry)
-                        @php
-                            $movement = $entry['movement'];
-                            $moduleName = $entry['module'];
-                            $actionType = !empty($movement->deleted_at) ? 'Eliminación' : 'Edición';
-                        @endphp
+        @foreach($groupedByModule as $moduleName => $days)
+            <h3 class="module-title">{{ strtoupper($moduleName) }}</h3>
+            @foreach($days as $day => $entries)
+                <h4>{{ $day }}</h4>
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ trim(optional($movement->creator)->name . ' ' . optional($movement->creator)->last_name . ' ' . optional($movement->creator)->second_last_name) }}</td>
-                            <td>{{ \Carbon\Carbon::parse($movement->updated_at)->format('H:i:s') }}</td>
-                            <td>{{ $movement->id }}</td>
-                            <td>{{ $moduleName }}</td>
-                            <td>{{ $actionType }}</td>
+                            <th>Responsable</th>
+                            <th>Hora</th>
+                            <th>ID</th>
+                            <th>Movimiento</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($entries as $entry)
+                            @php
+                                $movement = $entry['movement'];
+                                $actionType = !empty($movement->deleted_at) ? 'Eliminación' : 'Edición';
+                            @endphp
+                            <tr>
+                                <td>{{ trim(optional($movement->creator)->name . ' ' . optional($movement->creator)->last_name . ' ' . optional($movement->creator)->second_last_name) }}</td>
+                                <td>{{ \Carbon\Carbon::parse($movement->updated_at)->format('H:i:s') }}</td>
+                                <td>{{ $movement->id }}</td>
+                                <td>{{ $actionType }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endforeach
         @endforeach
         <div class="footer_info">
             <a class="footer_text" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
