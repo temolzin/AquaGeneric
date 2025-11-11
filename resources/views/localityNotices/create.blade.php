@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
         startDateInput.addEventListener('change', function() {
             const selectedStartDate = new Date(this.value);
             const minEndDate = new Date(selectedStartDate);
-            minEndDate.setMinutes(minEndDate.getMinutes() + 30); // Mínimo 30 minutos después
+            minEndDate.setMinutes(minEndDate.getMinutes() + 30);
             
             const endDateInput = document.getElementById('end_date');
             if (endDateInput) {
