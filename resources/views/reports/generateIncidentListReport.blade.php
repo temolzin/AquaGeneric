@@ -165,6 +165,20 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 font-size: 14pt;
                 text-align: center;
             }
+            .oval_color {
+                display: inline-block;
+                background-color: #6c757d;
+                color: #fff;
+                font-weight: bold;
+                font-size: 9pt;
+                border-radius: 18px;
+                padding: 3px 12px;
+                margin: 0 2px;
+                min-width: 70px;
+                text-align: center;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+                line-height: 1.2;
+            }
         </style>
     </head>
     <body>
@@ -198,7 +212,6 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         <th class="text_table">ESTATUS</th>
                         <th class="text_table">CATEGORIA</th>
                         <th class="text_table">FECHA INICIO</th>
-                        <th class="text_table">DESCRIPCIÓN</th>
                     </tr>
                 </thead>
                 <tbody id="statusDetails">
@@ -206,10 +219,13 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         <tr>
                             <td class="text_center">{{ $incident->id }}</td>
                             <td class="text_center">{{ $incident->name }}</td>
-                            <td class="text_center">{{ $incident->getLatestStatus() }}</td>
+                            <td class="text_center" style="vertical-align:middle;">
+                                <span class="oval_color" style="background:{{ $incident->current_status_color }}">
+                                    {{ $incident->current_status_name }}
+                                </span>
+                            </td>
                             <td class="text_center">{{ $incident->incidentCategory->name}}</td>
                             <td class="text_center">{{ \Carbon\Carbon::parse($incident->start_date)->format('d/m/Y') }}</td>
-                            <td class="text_center">{{ $incident->description }}</td>
                         </tr>
                     @endforeach
                 </tbody>
