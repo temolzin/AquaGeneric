@@ -112,7 +112,23 @@ class IncidentController extends Controller
     public function generateIncidentListReport()
     {
         $authUser = auth()->user();
-        $incidents = Incident::where('locality_id', $authUser->locality_id)->get();
+        $incidents = Incident::with(['incidentCategory', 'getstatusChangeLogs'])
+            ->where('locality_id', $authUser->locality_id)
+            ->get();
+
+        foreach ($incidents as $incident) {
+            $latest = $incident->getLatestStatus();
+            $incident->current_status_name = $latest ? strtoupper($latest) : 'SIN ESTATUS';
+            $incident->current_status_color = '#6c757d';
+
+            if ($latest) {
+                $status = IncidentStatus::where('status', $latest)->first();
+                if ($status) {
+                    $incident->current_status_color = $status->color;
+                }
+            }
+        }
+        
         $pdf = PDF::loadView('reports.generateIncidentListReport', compact('incidents', 'authUser'))
             ->setPaper('A4', 'portrait');
 
