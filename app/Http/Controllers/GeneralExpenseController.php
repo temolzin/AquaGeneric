@@ -20,8 +20,7 @@ class GeneralExpenseController extends Controller
             })
             ->with(['expenseType', 'creator'])
             ->orderBy('general_expenses.created_at', 'desc')
-            ->select('general_expenses.*');
-            
+            ->select('general_expenses.*');            
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -63,7 +62,7 @@ class GeneralExpenseController extends Controller
     {
         $authUser = auth()->user();
 
-        $expense = GeneralExpense::with(['expenseType', 'creator'])
+        $expenses = GeneralExpense::with(['expenseType', 'creator'])
             ->where('locality_id', $authUser->locality_id)
             ->findOrFail($id);
         return view('generalExpenses.show', compact('expense'));
