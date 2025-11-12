@@ -80,16 +80,14 @@
         const colorPreview = document.getElementById('colorPreview');
 
         const updatePreview = () => {
-            if (colorSelect.value) {
-                colorPreview.style.backgroundColor = colorSelect.value;
-                colorPreview.style.border = '1px solid ' + colorSelect.value;
-            } else {
-                colorPreview.style.backgroundColor = '#f8f9fa';
-                colorPreview.style.border = '1px solid #ccc';
-            }
+            const hasValue = colorSelect.value;
+            colorPreview.style.backgroundColor = hasValue ? colorSelect.value : '#f8f9fa';
+            colorPreview.style.border = hasValue ? `1px solid ${colorSelect.value}` : '1px solid #ccc';
         };
 
-        if (colorSelect && colorPreview) {
+        const initializeColorSelect = () => {
+            if (!colorSelect || !colorPreview) return;
+
             $('#colorSelect').select2({
                 theme: 'bootstrap4',
                 width: '100%',
@@ -97,15 +95,12 @@
                 allowClear: false
             });
 
-            $('#colorSelect').on('change', function() {
-                updatePreview();
-            });
-
+            $('#colorSelect').on('change', updatePreview);
             updatePreview();
+        };
 
-            $('#createInventoryCategoryModal').on('shown.bs.modal', function () {
-                updatePreview();
-            });
-        }
+        initializeColorSelect();
+
+        $('#createInventoryCategoryModal').on('shown.bs.modal', updatePreview);
     });
 </script>

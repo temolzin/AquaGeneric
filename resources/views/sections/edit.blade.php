@@ -81,35 +81,35 @@
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const select = document.getElementById('colorSelect{{ $section->id }}');
-    const preview = document.getElementById('colorPreview{{ $section->id }}');
+    document.addEventListener('DOMContentLoaded', function() {
+        const select = document.getElementById('colorSelect{{ $section->id }}');
+        const preview = document.getElementById('colorPreview{{ $section->id }}');
 
-    if (select && preview) {
-        $('#colorSelect{{ $section->id }}').select2({
-            theme: 'bootstrap4',
-            width: '100%',
-            placeholder: 'Selecciona un color',
-            allowClear: false,
-            dropdownParent: $('#edit{{ $section->id }}')
-        });
+        if (select && preview) {
+            $('#colorSelect{{ $section->id }}').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Selecciona un color',
+                allowClear: false,
+                dropdownParent: $('#edit{{ $section->id }}')
+            });
 
-        const updatePreview = () => {
-            if (select.value) {
-                preview.style.backgroundColor = select.value;
-                preview.style.border = '1px solid ' + select.value;
-            } else {
-                preview.style.backgroundColor = '#f8f9fa';
-                preview.style.border = '1px solid #ccc';
-            }
-        };
+            const updatePreview = () => {
+                if (select.value) {
+                    preview.style.backgroundColor = select.value;
+                    preview.style.border = '1px solid ' + select.value;
+                } else {
+                    preview.style.backgroundColor = '#f8f9fa';
+                    preview.style.border = '1px solid #ccc';
+                }
+            };
 
-        $('#colorSelect{{ $section->id }}').on('change', updatePreview);
-        updatePreview();
-
-        $('#edit{{ $section->id }}').on('shown.bs.modal', function () {
+            $('#colorSelect{{ $section->id }}').on('change', updatePreview);
             updatePreview();
-        });
-    }
-});
+
+            $('#edit{{ $section->id }}').on('shown.bs.modal', function () {
+                updatePreview();
+            });
+        }
+    });
 </script>

@@ -72,35 +72,36 @@
     document.addEventListener('DOMContentLoaded', function() {
         const editModals = document.querySelectorAll('[id^="editExpenseType"]');
         
-        editModals.forEach(modal => {
-            const modalId = modal.id.replace('editExpenseType', '');
+        const updatePreview = (select, preview) => {
+            const hasValue = select.value;
+            preview.style.backgroundColor = hasValue ? select.value : '#f8f9fa';
+            preview.style.border = hasValue ? `1px solid ${select.value}` : '1px solid #ccc';
+        };
+
+        const initializeColorSelect = (modalId) => {
             const colorSelect = document.getElementById('colorSelect' + modalId);
             const colorPreview = document.getElementById('colorPreview' + modalId);
             
-            if (colorSelect && colorPreview) {
-                $('#colorSelect' + modalId).select2({
-                    theme: 'bootstrap4',
-                    width: '100%',
-                    placeholder: 'Seleccione un color',
-                    allowClear: false,
-                    dropdownParent: $('#editExpenseType' + modalId)
-                });
-                
-                $('#colorSelect' + modalId).on('change', function() {
-                    if (this.value) {
-                        colorPreview.style.backgroundColor = this.value;
-                        colorPreview.style.border = '1px solid ' + this.value;
-                    } else {
-                        colorPreview.style.backgroundColor = '#f8f9fa';
-                        colorPreview.style.border = '1px solid #ccc';
-                    }
-                });
-                
-                if (colorSelect.value) {
-                    colorPreview.style.backgroundColor = colorSelect.value;
-                    colorPreview.style.border = '1px solid ' + colorSelect.value;
-                }
-            }
+            if (!colorSelect || !colorPreview) return;
+
+            $('#colorSelect' + modalId).select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Seleccione un color',
+                allowClear: false,
+                dropdownParent: $('#editExpenseType' + modalId)
+            });
+            
+            $('#colorSelect' + modalId).on('change', function() {
+                updatePreview(this, colorPreview);
+            });
+            
+            updatePreview(colorSelect, colorPreview);
+        };
+
+        editModals.forEach(modal => {
+            const modalId = modal.id.replace('editExpenseType', '');
+            initializeColorSelect(modalId);
         });
     });
 </script>
