@@ -30,7 +30,7 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color" class="form-control @error('color') is-invalid @enderror" id="colorSelect" required>
+                                            <select name="color" class="form-control select2" id="colorSelect" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="#e74c3c" {{ old('color') == '#e74c3c' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="#3498db" {{ old('color') == '#3498db' ? 'selected' : '' }}>Azul</option>
@@ -67,33 +67,39 @@
     </div>
 </div>
 
+<style>
+    .input-group .select2-container .select2-selection--single {
+        height: 38px;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const colorSelect = document.getElementById('colorSelect');
         const colorPreview = document.getElementById('colorPreview');
-        
-        if (colorSelect && colorPreview) {
-            colorSelect.addEventListener('change', function() {
-                if (this.value) {
-                    colorPreview.style.backgroundColor = this.value;
-                    colorPreview.style.border = '1px solid ' + this.value;
-                } else {
-                    colorPreview.style.backgroundColor = '#f8f9fa';
-                    colorPreview.style.border = '1px solid #ccc';
-                }
+
+        const updatePreview = () => {
+            const hasValue = colorSelect.value;
+            colorPreview.style.backgroundColor = hasValue ? colorSelect.value : '#f8f9fa';
+            colorPreview.style.border = hasValue ? `1px solid ${colorSelect.value}` : '1px solid #ccc';
+        };
+
+        const initializeColorSelect = () => {
+            if (!colorSelect || !colorPreview) return;
+
+            $('#colorSelect').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Seleccione un color',
+                allowClear: false
             });
-            
-            if (colorSelect.value) {
-                colorPreview.style.backgroundColor = colorSelect.value;
-                colorPreview.style.border = '1px solid ' + colorSelect.value;
-            }
-        }
-        
-        $('#createIncidentStatusModal').on('shown.bs.modal', function () {
-            if (colorSelect && colorSelect.value) {
-                colorPreview.style.backgroundColor = colorSelect.value;
-                colorPreview.style.border = '1px solid ' + colorSelect.value;
-            }
-        });
+
+            $('#colorSelect').on('change', updatePreview);
+            updatePreview();
+        };
+
+        initializeColorSelect();
+
+        $('#createIncidentStatusModal').on('shown.bs.modal', updatePreview);
     });
 </script>

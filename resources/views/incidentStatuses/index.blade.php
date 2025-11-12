@@ -130,13 +130,34 @@
         var errorMessage = "{{ session('error') }}";
 
         if (successMessage) {
-            Swal.fire({ icon: 'success', title: 'Éxito', text: successMessage, confirmButtonText: 'Aceptar' });
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: successMessage,
+                confirmButtonText: 'Aceptar'
+            });
         }
 
         if (errorMessage) {
-            Swal.fire({ icon: 'error', title: 'Error', text: errorMessage, confirmButtonText: 'Aceptar' });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonText: 'Aceptar'
+            });
         }
 
+        $('#createIncidentStatusModal').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $('#createIncidentStatusModal')
+            });
+        });
+
+        $('[id^="editIncidentStatus"]').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $(this)
+            });
+        });
     });
 </script>
 @endsection

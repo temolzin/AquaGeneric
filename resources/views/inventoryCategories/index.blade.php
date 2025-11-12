@@ -135,24 +135,36 @@
         var errorMessage = "{{ session('error') }}";
 
         if (successMessage) {
-            Swal.fire({ 
-                icon: 'success', 
-                title: 'Éxito', 
-                text: successMessage, 
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: successMessage,
                 confirmButtonText: 'Aceptar',
                 timer: 3000
             });
         }
 
         if (errorMessage) {
-            Swal.fire({ 
-                icon: 'error', 
-                title: 'Error', 
-                text: errorMessage, 
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
                 confirmButtonText: 'Aceptar',
                 timer: 4000
             });
         }
+
+        $('#createInventoryCategoryModal').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $('#createInventoryCategoryModal')
+            });
+        });
+
+        $('[id^="editInventoryCategory"]').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $(this)
+            });
+        });
     });
 </script>
 @endsection
