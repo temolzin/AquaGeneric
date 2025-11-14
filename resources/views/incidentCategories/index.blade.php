@@ -52,14 +52,18 @@
                                             @foreach($categories as $category)
                                                 <tr>
                                                     <td>{{ $category->id }}</td>
-                                                    <td>{{ $category->name }}</td>
+                                                    <td>
+                                                        <span class="badge status-badge" style="background-color: {{ $category->color ?? '#6c757d' }}; color: white;">
+                                                            {{ $category->name }}
+                                                        </span>
+                                                    </td>
                                                     <td>{{ $category->description }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $category->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
-                                                            @if ($category->name !== 'Mantenimiento  General')
+                                                            @if ($category->name !== 'Mantenimiento General')
                                                                 @can('editIncidentCategories')
                                                                     <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $category->id }}">
                                                                         <i class="fas fa-edit"></i>
@@ -70,8 +74,7 @@
                                                                         type="button"
                                                                         class="btn {{ $category->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2"
                                                                         title="{{ $category->hasDependencies() ? 'Eliminación no permitida: Existen incidencias asociadas a esta categoría.' : 'Eliminar Registro' }}"
-                                                                        {{ $category->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#delete' . $category->id }}
-                                                                    >
+                                                                        {{ $category->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#delete' . $category->id }}>
                                                                         <i class="fas fa-trash-alt"></i>
                                                                     </button>
                                                                 @endcan
@@ -98,6 +101,24 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('css')
+<style>
+    .status-badge {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .status-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .table-dark .status-badge {
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+</style>
 @endsection
 
 @section('js')
@@ -132,6 +153,18 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+
+        $('#create').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $('#create')
+            });
+        });
+
+        $('[id^="edit"]').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $(this)
+            });
+        });
     });
 </script>
 @endsection
