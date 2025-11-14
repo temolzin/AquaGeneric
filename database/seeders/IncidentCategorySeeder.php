@@ -13,30 +13,35 @@ class IncidentCategorySeeder extends Seeder
             [
                 'name' => 'Mantenimiento  General',
                 'description' => 'Trabajos generales de reparación o conservación del sistema de agua.',
+                'color' => '#3498db',
                 'created_by' => 3,
                 'locality_id' => null,
             ],
             [
                 'name' => 'Eléctrica',
                 'description' => 'Problemas con instalación o alumbrado eléctrico.',
+                'color' => '#f1c40f',
                 'created_by' => 3,
                 'locality_id' => 1,
             ],
             [
                 'name' => 'Plomería',
                 'description' => 'Fugas, tuberías dañadas o problemas de agua.',
+                'color' => '#2980b9',
                 'created_by' => 3,
                 'locality_id' => 1,
             ],
             [
                 'name' => 'Infraestructura',
                 'description' => 'Daños estructurales como techos, paredes o pisos.',
+                'color' => '#e67e22',
                 'created_by' => 3,
                 'locality_id' => 1,
             ],
             [
                 'name' => 'Tecnología',
                 'description' => 'Fallas con equipo de cómputo, redes o sistemas.',
+                'color' => '#9b59b6',
                 'created_by' => 3,
                 'locality_id' => 1,
             ],
@@ -50,6 +55,7 @@ class IncidentCategorySeeder extends Seeder
                 ],
                 [
                     'description' => $category['description'],
+                    'color' => $category['color'],
                     'created_by' => $category['created_by'],
                     'updated_at' => now(),
                 ]
