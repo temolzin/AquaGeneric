@@ -73,6 +73,10 @@ class LocalityController extends Controller
             $locality->municipality = $request->input('municipalityUpdate');
             $locality->state = $request->input('stateUpdate');
             $locality->zip_code = $request->input('zipCodeUpdate');
+            if ($locality->membership_id != $request->input('membership_id')) {
+                $locality->membership_assigned_at = now();
+            }
+            
             $locality->membership_id = $request->input('membership_id');
             $locality->save();
 
@@ -116,7 +120,8 @@ class LocalityController extends Controller
         $locality = Locality::findOrFail($id);
         
         $locality->update([
-            'membership_id' => $membershipId
+            'membership_id' => $membershipId,
+            'membership_assigned_at' => now()
         ]);
 
         $membership = Membership::find($membershipId);
