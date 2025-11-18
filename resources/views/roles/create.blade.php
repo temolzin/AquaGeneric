@@ -25,33 +25,57 @@
                                     <input type="text" name="name" class="form-control" placeholder="Ingresar nombre"
                                         value="{{ old('name') }}" required>
                                 </div>
-                                <h2>Permisos</h2>
-                                <div class="table-responsive">
-                                    <table class="table table-sm table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 100px;">Seleccionar</th>
-                                                <th>Permiso</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($permissions as $permission)
-                                                <tr>
-                                                    <td>
-                                                        <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                                            <input type="checkbox" name="permissions[]"
-                                                                value="{{ $permission->id }}"
-                                                                class="custom-control-input"
-                                                                id="permission{{ $permission->id }}">
-                                                            <label class="custom-control-label"
-                                                                for="permission{{ $permission->id }}"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>{{ $permission->description }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                <h2 class="mt-4">Permisos</h2>
+                                <div id="accordion">
+                                    @foreach ($permissions as $module => $modulePermissions)
+                                        @php
+                                            $moduleTitle = $moduleNames[$module] ?? ucfirst($module);
+                                        @endphp
+                                        <div class="card">
+                                            <div class="card-header p-2" id="heading{{ Str::slug($module) }}">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link text-left w-100 collapsed" data-toggle="collapse"
+                                                        data-target="#collapse{{ Str::slug($module) }}"
+                                                        aria-expanded="false"
+                                                        aria-controls="collapse{{ Str::slug($module) }}">
+                                                        <strong>{{ $moduleTitle }}</strong>
+                                                    </button>
+                                                </h5>
+                                            </div>
+                                            <div id="collapse{{ Str::slug($module) }}" class="collapse show"
+                                                aria-labelledby="heading{{ Str::slug($module) }}">
+                                                <div class="card-body p-0">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-sm table-bordered table-striped mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="width: 100px;">Seleccionar</th>
+                                                                    <th>Permiso</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($modulePermissions as $permission)
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div class="custom-control custom-checkbox custom-checkbox-lg">
+                                                                                <input type="checkbox" name="permissions[]"
+                                                                                    value="{{ $permission->id }}"
+                                                                                    class="custom-control-input"
+                                                                                    id="permission{{ $permission->id }}">
+                                                                                <label class="custom-control-label"
+                                                                                    for="permission{{ $permission->id }}"></label>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>{{ $permission->description }}</td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -65,3 +89,14 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('#createRoleModal form');
+
+        form.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
