@@ -1,3 +1,13 @@
+@php
+$locality = Auth::user()->locality ?? null;
+$verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
+    ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
+    : public_path('img/backgroundReport.png');
+
+$horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizontal')
+    ? $locality->getFirstMedia('pdfBackgroundHorizontal')->getPath()
+    : public_path('img/customersBackgroundHorizontal.png');
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +22,7 @@
         }
 
         body{
-            background-image: url('img/backgroundReport.png');
+            background-image: url('file://{{ $verticalBgPath }}');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -388,21 +398,17 @@
             </thead>
         </table>
     </div>
-
     <div id="page_pdf">
         @php
             $totalGeneral = 0;
             $connectionCounter = 0;
             $totalConnections = count($paymentsByWaterConnection);
         @endphp
-
         @foreach($paymentsByWaterConnection as $waterConnectionId => $waterConnectionData)
             @php $connectionCounter++; @endphp
-            
             @if($connectionCounter > 1)
                 <div style="page-break-before: auto;"></div>
             @endif
-
             <div class="table_group">
                 <div class="water_connection_content">
                     <table id="client_report">
@@ -461,7 +467,6 @@
                             </td>
                         </tr>
                     </table>
-
                     <table id="report_detail" class="consecutive_table">
                         <thead>
                             <tr>
@@ -475,7 +480,6 @@
                             @php
                                 $subtotalConnection = 0;
                             @endphp
-                            
                             @if(count($waterConnectionData['payments']) > 0)
                                 @foreach($waterConnectionData['payments'] as $debtId => $debtPayments)
                                     @foreach($debtPayments as $payment)
@@ -492,7 +496,7 @@
                                     @endforeach
                                 @endforeach
                                 <tr>
-                                    <td colspan="3" class="total_payment"><strong>Total {{ $waterConnectionData['water_connection']->name }}:</strong></td>
+                                    <td colspan="3" class="total_payment"><strong>Total pagado por la toma {{ $waterConnectionData['water_connection']->name }}:</strong></td>
                                     <td class="text_center"><strong>$ {{ number_format($subtotalConnection, 2) }}</strong></td>
                                 </tr>
                             @else
@@ -505,17 +509,7 @@
                 </div>
             </div>
         @endforeach
-
-        @if(count($paymentsByWaterConnection) > 1)
-        <table style="width: 100%; margin-top: 15px;">
-            <tr>
-                <td colspan="3" class="total_payment"><strong>Total General:</strong></td>
-                <td class="text_center"><strong>$ {{ number_format($totalGeneral, 2) }}</strong></td>
-            </tr>
-        </table>
-        @endif
     </div>
-
     <div class="footer_last_page">
         <div class="info_bottom">
             <a class="text_info" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>

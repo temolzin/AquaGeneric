@@ -242,7 +242,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewCustomerPayments']], function () {
         Route::get('/viewCustomerPayments', [PaymentController::class, 'showCustomerPayments'])->name('viewCustomerPayments.index');
         Route::get('/receipt/{paymentId}', [PaymentController::class, 'receiptPayment'])->name('viewCustomerPayments.receipt');
-        Route::get('/viewCustomerPayments/quarterlyReport', [PaymentController::class, 'quarterlyReport'])->name('viewCustomerPayments.quarterlyReport');
+        Route::get('/viewCustomerPayments/quarterlyReport', [PaymentController::class, 'showQuarterlyReport'])->name('viewCustomerPayments.quarterlyReport');
     });
 
     Route::group(['middleware' => ['can:viewWaterConnections']], function () {

@@ -471,7 +471,7 @@ class PaymentController extends Controller {
         return view('viewCustomerPayments.index', compact('payments', 'customer'));
     }
 
-    public function quarterlyReport(Request $request)
+    public function showQuarterlyReport(Request $request)
     {
         try {
             $customer = Customer::where('user_id', Auth::id())->first();
@@ -491,7 +491,11 @@ class PaymentController extends Controller {
             $startDate = $dateRange['start'];
             $endDate = $dateRange['end'];
 
-            $waterConnections = WaterConnection::where('customer_id', $customer->id)->get();
+            $waterConnections = WaterConnection::where('customer_id', $customer->id)
+                ->whereHas('debts.payments', function($query) use ($startDate, $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                })
+                ->get();
 
             $paymentsByWaterConnection = [];
             $totalGeneral = 0;
@@ -535,8 +539,6 @@ class PaymentController extends Controller {
             return $pdf->stream("reporte-trimestral-{$year}-T{$quarter}.pdf");
 
         } catch (\Exception $e) {
-            \Log::error('Error en quarterlyReport: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
             return redirect()->back()->with('error', 'Error al generar el reporte: ' . $e->getMessage());
         }
     }
