@@ -58,6 +58,7 @@
                                                         <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewIncidentStatus{{ $status->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
+                                                        @if (!is_null($status->locality_id))
                                                         @can('editIncidentStatuses')
                                                         <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editIncidentStatus{{ $status->id }}">
                                                             <i class="fas fa-edit"></i>
@@ -69,6 +70,7 @@
                                                         <i class="fas fa-trash-alt"></i>
                                                         </button>
                                                         @endcan
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>

@@ -11,6 +11,13 @@ class IncidentStatusSeeder extends Seeder
     {
         $statuses = [
             [
+                'status' => 'Reportada',
+                'description' => 'Incidencia registrada y en espera de ser evaluada o asignada para su atención.',
+                'color' => '#7900be', 
+                'created_by' => 3,
+                'locality_id' => null,
+            ],
+            [
                 'status' => 'Pendiente',
                 'description' => 'Incidencia en proceso de ser atendida',
                 'color' => '#e74c3c', 

@@ -32,7 +32,10 @@ class IncidentController extends Controller
         })->get();
 
         $employees = Employee::where('locality_id', $authUser->locality_id)->get();
-        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)->get();
+        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)
+                  ->orWhereNull('locality_id')
+                  ->orderBy('created_at', 'desc')
+                  ->get();
 
         return view('incidents.index', compact('incidents', 'categories', 'employees', 'statuses'));
     }

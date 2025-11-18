@@ -13,7 +13,10 @@ class IncidentStatusController extends Controller
     {
         $authUser = auth()->user();
 
-        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)->paginate(10);
+        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)
+                    ->orWhereNull('locality_id')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
 
         return view('incidentStatuses.index', compact('statuses'));
     }
@@ -72,7 +75,10 @@ class IncidentStatusController extends Controller
     public function generateIncidentStatusListReport()
     {
         $authUser = auth()->user();
-        $incidentStatus = IncidentStatus::where('locality_id', $authUser->locality_id)->get();
+        $incidentStatus = IncidentStatus::where('locality_id', $authUser->locality_id)
+                          ->orWhereNull('locality_id')
+                          ->orderBy('created_at', 'desc')
+                          ->get();
         $pdf = PDF::loadView('reports.generateIncidentStatusListReport', compact('incidentStatus', 'authUser'))
             ->setPaper('A4', 'portrait');
 
