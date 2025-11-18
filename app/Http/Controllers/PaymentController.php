@@ -16,11 +16,11 @@ class PaymentController extends Controller {
     public function index(Request $request) {
         $authUser = auth()->user();
         $query = Payment::with(['debt.customer', 'creator'])
-        ->where('locality_id', $authUser->locality_id)
-        ->whereHas('creator', function ($q) use ($authUser) {
-            $q->where('locality_id', $authUser->locality_id);
-        })
-        ->orderBy('id', 'desc');
+            ->where('locality_id', $authUser->locality_id)
+            ->whereHas('creator', function ($q) use ($authUser) {
+                $q->where('locality_id', $authUser->locality_id);
+            })
+            ->orderBy('id', 'desc');
 
         if ($request->filled('name')) {
             $query->whereHas('debt.customer', function ($q) use ($request) {

@@ -124,7 +124,6 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::put('/localities/{locality}/mailConfiguration',[MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
         Route::post('/localities/generateTeoken', [LocalityController::class, 'generateToken'])->name('localities.generateToken');
         Route::post('/localities/{locality}/update-pdf-background', [LocalityController::class, 'updatePdfBackground'])->name('localities.updatePdfBackground');
-        Route::get('/reports/pdfMovementsHistory', [MovementHistoryController::class, 'generatePDF'])->name('reports.pdfMovementsHistory');
         Route::get('/reports/movements/generate', [MovementHistoryController::class, 'generatePDF'])->name('reports.generatePdfMovementsHistory');
     });
 

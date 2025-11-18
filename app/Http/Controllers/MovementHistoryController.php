@@ -32,7 +32,50 @@ class MovementHistoryController extends Controller
         }
 
         switch (true) {
-            case $includeAllModules && $showModuleColumn:
+            case (!$includeAllModules && $showModuleColumn):
+                return back()->with('error', 'Cuando seleccionas un módulo, no debes marcar "Agrupar por módulo".');
+            
+            case (!$includeAllModules && empty($module)):
+                return back()->with('error', 'Selecciona un módulo o elige "todos".');
+        }
+
+        $reportType = 'single-module';
+
+        switch (true) {
+            case ($includeAllModules && $showModuleColumn):
+                $reportType = 'all-modules-grouped';
+                break;
+        
+        case ($includeAllModules && !$showModuleColumn):
+            $reportType = 'all-modules-ungrouped';
+            break;
+        
+        default:
+            $reportType = 'single-module';
+            break;
+        }
+        
+        $reportTitles = [
+            'single-module' => 'HISTORIAL DE MOVIMIENTOS ' . strtoupper($data['moduleNames'][ucfirst($module)] ?? ucfirst($module)),
+            'all-modules-grouped' => 'HISTORIAL DE MOVIMIENTOS POR MÓDULO',
+            'all-modules-ungrouped' => 'HISTORIAL DE MOVIMIENTOS'
+        ];
+
+        $pdfData = [
+            'authUserLocality' => $locality,
+            'startDate'        => $startDate,
+            'endDate'          => $endDate,
+            'module'           => $module,
+            'showModuleColumn' => $showModuleColumn,
+            'reportType'       => $reportType,
+            'reportTitles'     => $reportTitles,
+        ];
+
+        $pdfData['groupedByDay'] = [];
+        $pdfData['groupedByModule'] = [];
+
+        switch (true) {
+            case ($includeAllModules && $showModuleColumn):
                 $groupedByModule = [];
                 foreach ($data['modulesRequested'] as $moduleKey => $movements) {
                     $moduleName = $data['moduleNames'][$moduleKey] ?? $moduleKey;
@@ -46,54 +89,49 @@ class MovementHistoryController extends Controller
                         ];
                     }
                 }
+                $pdfData['groupedByModule'] = $groupedByModule;
+                break;
 
-                return Pdf::loadView('reports.pdfMovementsHistoryGroupedByModule', [
-                    'groupedByModule'  => $groupedByModule,
-                    'authUserLocality' => $locality,
-                    'startDate'        => $startDate,
-                    'endDate'          => $endDate,
-                ])->setPaper('a4', 'portrait')
-                  ->stream('Historial_Movimientos_PorModulo_Fechas_' . $locality->name . '_' . now()->format('d_m_Y') . '.pdf');
-
-            case $includeAllModules && !$showModuleColumn:
-                return Pdf::loadView('reports.pdfMovementsHistory', [
-                    'groupedByDay'     => $data['groupedByDay'],
-                    'authUserLocality' => $locality,
-                    'startDate'        => $startDate,
-                    'endDate'          => $endDate,
-                ])->setPaper('a4', 'portrait')
-                  ->stream('Historial_Movimientos_TodosModulos_' . $locality->name . '_' . now()->format('d_m_Y') . '.pdf');
-
-            case !$includeAllModules && $showModuleColumn:
-                return back()->with('error', 'Cuando seleccionas un módulo, no debes marcar "Mostrar módulo como columna".');
-
-            case !$includeAllModules && empty($module):
-                return back()->with('error', 'Selecciona un módulo o elige "todos".');
+            case ($includeAllModules && !$showModuleColumn):
+                $pdfData['groupedByDay'] = $data['groupedByDay'];
+                break;
 
             default:
-                $moduleLabelMap = [
-                    'pagos' => 'Pagos',
-                    'payments' => 'Pagos',
-                    'deudas' => 'Deudas',
-                    'debts' => 'Deudas',
-                    'costos' => 'Costos',
-                    'costs' => 'Costos',
-                    'gastos' => 'Gastos',
-                    'generalexpenses' => 'GastosGenerales',
-                    'general_expenses' => 'GastosGenerales',
-                ];
-
-                $moduleLabelForFile = $moduleLabelMap[$module] ?? ucfirst($module);
-
-                return Pdf::loadView('reports.pdfMovementsHistoryModuleTitle', [
-                    'groupedByDay'       => $data['groupedByDay'],
-                    'authUserLocality'   => $locality,
-                    'startDate'          => $startDate,
-                    'endDate'            => $endDate,
-                    'selectedModuleName' => $data['moduleNames'][ucfirst($module)] ?? ucfirst($module),
-                ])->setPaper('a4', 'portrait')
-                  ->stream('Historial_Movimientos_' . $moduleLabelForFile . '_' . $locality->name . '_' . now()->format('d_m_Y') . '.pdf');
+                $pdfData['groupedByDay'] = $data['groupedByDay'];
+                $pdfData['selectedModuleName'] = $data['moduleNames'][ucfirst($module)] ?? ucfirst($module);
+                break;
         }
+
+        $moduleLabelMap = [
+            'pagos' => 'Pagos',
+            'payments' => 'Pagos',
+            'deudas' => 'Deudas',
+            'debts' => 'Deudas',
+            'costos' => 'Costos',
+            'costs' => 'Costos',
+            'gastos' => 'Gastos',
+            'generalexpenses' => 'GastosGenerales',
+            'general_expenses' => 'GastosGenerales',
+        ];
+
+        switch (true) {
+            case ($includeAllModules && $showModuleColumn):
+                $fileName = 'Historial_Movimientos_PorModulo_' . $locality->name . '_' . now()->format('d_m_Y') . '.pdf';
+                break;
+            
+            case ($includeAllModules && !$showModuleColumn):
+                $fileName = 'Historial_Movimientos_TodosModulos_' . $locality->name . '_' . now()->format('d_m_Y') . '.pdf';
+                break;
+            
+            default:
+                $moduleLabelForFile = $moduleLabelMap[$module] ?? ucfirst($module);
+                $fileName = 'Historial_Movimientos_' . $moduleLabelForFile . '_' . $locality->name . '_' . now()->format('d_m_Y') . '.pdf';
+                break;
+        }
+
+        return Pdf::loadView('reports.pdfMovementsHistory', $pdfData)
+                  ->setPaper('a4', 'portrait')
+                  ->stream($fileName);
     }
 
     private function getFilteredMovements($localityId, $module, $startDate, $endDate, $includeAllModules = false)
