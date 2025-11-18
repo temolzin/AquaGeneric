@@ -27,7 +27,6 @@
                             @endfor
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label for="quarter"><strong>Trimestre:</strong></label>
                         <select class="form-control" id="quarter" name="quarter" required>
@@ -44,7 +43,7 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
                     Cerrar
                 </button>
-                <button type="button" class="btn bg-purple" onclick="generateReport()">
+                <button type="button" class="btn bg-purple" onclick="generateQuarterlyReport()">
                     Generar Reporte
                 </button>
             </div>

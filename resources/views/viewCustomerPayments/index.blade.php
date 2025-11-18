@@ -165,28 +165,29 @@
     function autoSelectCurrentQuarter() {
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
-
         let currentQuarter;
-        if (currentMonth >= 1 && currentMonth <= 3) {
-            currentQuarter = 1;
-        } else if (currentMonth >= 4 && currentMonth <= 6) {
-            currentQuarter = 2;
-        } else if (currentMonth >= 7 && currentMonth <= 9) {
-            currentQuarter = 3;
-        } else {
-            currentQuarter = 4;
+        
+        switch (true) {
+            case (currentMonth >= 1 && currentMonth <= 3):
+                currentQuarter = 1;
+                break;
+            case (currentMonth >= 4 && currentMonth <= 6):
+                currentQuarter = 2;
+                break;
+            case (currentMonth >= 7 && currentMonth <= 9):
+                currentQuarter = 3;
+                break;
+            default:
+                currentQuarter = 4;
+                break;
         }
 
         $('#quarter').val(currentQuarter);
     }
 
-    function generateReport() {
-        console.log('Función generateReport ejecutada');
-
+    function generateQuarterlyReport() {
         const year = document.getElementById('year').value;
         const quarter = document.getElementById('quarter').value;
-
-        console.log('Año:', year, 'Trimestre:', quarter);
 
         if (!year || !quarter) {
             Swal.fire({
