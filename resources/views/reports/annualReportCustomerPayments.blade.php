@@ -1,12 +1,12 @@
 @php
-$locality = Auth::user()->locality ?? null;
-$verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
-    ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
-    : public_path('img/backgroundReport.png');
+    $locality = Auth::user()->locality ?? null;
+    $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
+        ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
+        : public_path('img/backgroundReport.png');
 
-$horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizontal')
-    ? $locality->getFirstMedia('pdfBackgroundHorizontal')->getPath()
-    : public_path('img/customersBackgroundHorizontal.png');
+    $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizontal')
+        ? $locality->getFirstMedia('pdfBackgroundHorizontal')->getPath()
+        : public_path('img/customersBackgroundHorizontal.png');
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -429,12 +429,12 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                                                     <label>Tipo:</label> 
                                                     <p>
                                                         @php
-                                                            $tipos = [
+                                                            $type = [
                                                                 'commercial' => 'Comercial',
-                                                                'residencial' => 'Residencial'
+                                                                'residential' => 'Residencial'
                                                             ];
                                                         @endphp
-                                                        {{ $tipos[$waterConnectionData['water_connection']->type] ?? ucfirst($waterConnectionData['water_connection']->type) }}
+                                                        {{ $type[$waterConnectionData['water_connection']->type] ?? ucfirst($waterConnectionData['water_connection']->type) }}
                                                     </p>
                                                 </div>
                                             </td>
