@@ -22,16 +22,12 @@
             @method('PUT')
             <div class="form-group">
                 <label for="name">Nombre</label>
-                <input type="text"
-                       name="name"
-                       class="form-control"
-                       value="{{ $role->name }}"
-                       placeholder="Ingresar nombre">
+                <input type="text" name="name" class="form-control" value="{{ $role->name }}" placeholder="Ingresar nombre">
                 @error('name')
                     <small class="text-danger">{{ $message }}</small>
                 @enderror
             </div>
-            <h2 class="h5 my-3">Permisos</h2>
+            <label for="name">Permisos</label>
             <div id="accordionPermissions">
                 @foreach ($permissions as $module => $perms)
                     <div class="card mb-2" style="border-radius: 8px; border: 1px solid #e6e6e6;">  
@@ -51,7 +47,7 @@
                         </div>
                         <div id="module-{{ $module }}" class="collapse show">
                             <div class="card-body p-0">
-                                <table class="table table-bordered m-0">
+                                <table class="table table-striped table-bordered m-0">
                                     <thead>
                                         <tr>
                                             <th style="width: 80px;">Seleccionar</th>

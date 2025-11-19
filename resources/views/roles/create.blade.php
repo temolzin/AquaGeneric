@@ -25,35 +25,38 @@
                                     <input type="text" name="name" class="form-control"
                                         placeholder="Ingresar nombre" value="{{ old('name') }}" required>
                                 </div>
-                                <h2 class="mt-4">Permisos</h2>
+                                <label for="name">Permisos</label>
                                 <div id="accordion">
                                     @foreach ($permissions as $module => $modulePermissions)
                                         @php
                                             $moduleTitle = $moduleNames[$module] ?? ucfirst($module);
                                         @endphp
                                         <div class="card">
-                                            <div class="card-header p-2 d-flex justify-content-between align-items-center"
-                                                id="heading{{ Str::slug($module) }}">
-                                                <button class="btn btn-link text-left"
-                                                    data-toggle="collapse"
-                                                    data-target="#collapse{{ Str::slug($module) }}"
-                                                    aria-expanded="true"
-                                                    aria-controls="collapse{{ Str::slug($module) }}">
-                                                    <strong>{{ $moduleTitle }}</strong>
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-light btn-sm select-all-btn"
-                                                    style="
-                                                        border: 1px solid #d9d9d9;
-                                                        border-radius: 20px;
-                                                        padding: 3px 16px;
-                                                        font-size: 14px;
-                                                        color: #007bff;
-                                                        background-color: #f8f9fa;
-                                                    "
-                                                    data-target="module-{{ Str::slug($module) }}">
-                                                    Seleccionar todo
-                                                </button>
+                                            <div class="card-header p-2">
+                                                <div class="d-flex justify-content-between align-items-center w-100">
+                                                    <button class="btn btn-link p-0 text-left"
+                                                            data-toggle="collapse"
+                                                            data-target="#collapse{{ Str::slug($module) }}"
+                                                            aria-expanded="true"
+                                                            aria-controls="collapse{{ Str::slug($module) }}">
+                                                        <strong>{{ $moduleTitle }}</strong>
+                                                    </button>
+
+                                                    <!-- Botón Seleccionar todo alineado como en la imagen -->
+                                                    <button type="button"
+                                                        class="btn btn-sm select-all-btn"
+                                                        style="
+                                                            background-color: #f2f2f2;
+                                                            border: 1px solid #d9d9d9;
+                                                            border-radius: 20px;
+                                                            padding: 3px 14px;
+                                                            font-size: 12px;
+                                                            color: #4d4d4d;
+                                                        "
+                                                        data-target="module-{{ Str::slug($module) }}">
+                                                        Seleccionar todo
+                                                    </button>
+                                                </div>
                                             </div>
                                             <div id="collapse{{ Str::slug($module) }}" class="collapse show"
                                                 aria-labelledby="heading{{ Str::slug($module) }}">
