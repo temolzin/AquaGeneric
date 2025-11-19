@@ -21,6 +21,7 @@ class WaterConnectionController extends Controller
         $query = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
             ->where('water_connections.locality_id', $authUser->locality_id)
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
+            ->leftJoin('sections', 'water_connections.section_id', '=', 'sections.id')
             ->orderBy('water_connections.created_at', 'desc')
             ->select('water_connections.*');
 
@@ -32,7 +33,8 @@ class WaterConnectionController extends Controller
                 ->orWhere('water_connections.name', 'LIKE', "%{$search}%")
                 ->orWhere('water_connections.type', $search)
                 ->orWhere('customers.name', 'LIKE', "%{$search}%")
-                ->orWhere('customers.last_name', 'LIKE', "%{$search}%");
+                ->orWhere('customers.last_name', 'LIKE', "%{$search}%")
+                ->orWhere('sections.name', 'LIKE', "%{$search}%");
             });
         }
 
