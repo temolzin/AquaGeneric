@@ -584,4 +584,56 @@ class PaymentController extends Controller {
 
         return $names[$quarter] ?? 'Trimestre Desconocido';
     }
+
+    public function showAnnualReport(Request $request)
+    {
+        try {
+            $year = $request->get('year', date('Y'));
+            $customer = Customer::where('user_id', Auth::id())->first();
+
+            if (!$customer) {
+                return redirect()->back()->with('error', 'No se encontró información del cliente.');
+            }
+
+            $authUser = Auth::user();
+            $payments = Payment::where('customer_id', $customer->id)
+                ->whereYear('created_at', $year)
+                ->with(['debt.waterConnection'])
+                ->get();
+
+            $paymentsByWaterConnection = [];
+            foreach ($payments as $payment) {
+                $waterConnectionId = $payment->debt->water_connection_id;
+
+                if (!isset($paymentsByWaterConnection[$waterConnectionId])) {
+                    $paymentsByWaterConnection[$waterConnectionId] = [
+                        'water_connection' => $payment->debt->waterConnection,
+                        'payments' => []
+                    ];
+                }
+
+                $debtId = $payment->debt_id;
+                if (!isset($paymentsByWaterConnection[$waterConnectionId]['payments'][$debtId])) {
+                    $paymentsByWaterConnection[$waterConnectionId]['payments'][$debtId] = [];
+                }
+
+                $paymentsByWaterConnection[$waterConnectionId]['payments'][$debtId][] = $payment;
+            }
+
+            $data = [
+                'paymentsByWaterConnection' => $paymentsByWaterConnection,
+                'customer' => $customer,
+                'authUser' => $authUser,
+                'year' => $year
+            ];
+
+            $pdf = PDF::loadView('reports.annualReportCustomerPayments', $data)
+                    ->setPaper('a4', 'portrait');
+
+            return $pdf->stream("reporte-anual-{$year}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al generar el reporte anual: ' . $e->getMessage());
+        }
+    }
 }

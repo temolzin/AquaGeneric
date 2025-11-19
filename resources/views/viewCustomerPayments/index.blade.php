@@ -22,9 +22,14 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button type="button" class="btn bg-purple ml-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
-                                    <i class="fas fa-chart-bar"></i> Reporte Trimestral
-                                </button>
+                                <div class="btn-group d-none d-md-flex" role="group" aria-label="Reportes de Pagos">
+                                    <button type="button" class="btn bg-purple mr-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
+                                        <i class="fas fa-chart-bar"></i> Reporte Trimestral
+                                    </button>
+                                    <button type="button" class="btn btn-success me-2" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
+                                        <i class="fas fa-chart-line"></i> Reporte Anual
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -118,6 +123,7 @@
 </section>
 @endsection
 @include('viewCustomerPayments.quarterly-report')
+@include('viewCustomerPayments.annualReportTemplate')
 
 @section('js')
 <script>
@@ -204,6 +210,22 @@
         setTimeout(function() {
             document.getElementById('quarterForm').submit();
         }, 300);
+    }
+
+    function generateAnnualReport() {
+        const year = document.getElementById('annualYear').value;
+
+        if (!year) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campo requerido',
+                text: 'Por favor selecciona un año',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
+
+        document.getElementById('annualForm').submit();
     }
 </script>
 @endsection
