@@ -103,23 +103,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.querySelector('#createRoleModal form');
-
         form.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
             }
         });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-
         document.querySelectorAll('.select-all-btn').forEach(button => {
-
             button.addEventListener('click', function (event) {
-                event.stopPropagation();
+                event.stopPropagation(); 
                 const moduleClass = this.getAttribute('data-target');
-                const checkboxes = document.querySelectorAll('.' + moduleClass + ' input[type="checkbox"]');
+                const checkboxes = document.querySelectorAll(
+                    '.' + moduleClass + ' input[type="checkbox"]'
+                );
                 const allChecked = Array.from(checkboxes).every(cb => cb.checked);
                 checkboxes.forEach(cb => cb.checked = !allChecked);
                 this.textContent = allChecked ? 'Seleccionar todo' : 'Deseleccionar todo';
