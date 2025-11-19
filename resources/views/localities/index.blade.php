@@ -136,6 +136,7 @@
                                             @include('localities.editPdfBackground')
                                             @include('localities.tokenModal')
                                             @include('localities.historyModal')
+                                        </tr>
                                         @endforeach
                                         @endif
                                     </tbody>

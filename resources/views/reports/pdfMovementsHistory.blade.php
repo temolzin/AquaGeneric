@@ -156,7 +156,7 @@ $titles = [
                     {{ $authUserLocality->name ?? '-' }}, {{ $authUserLocality->municipality ?? '-' }}, {{ $authUserLocality->state ?? '-' }}
                 </p>
             </div>
-        </div>        
+        </div>     
         <div class="title">
             <h3>{{ $titles[$reportType] }}</h3>
         </div> 

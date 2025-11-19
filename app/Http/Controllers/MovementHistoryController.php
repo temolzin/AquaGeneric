@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Payment, Debt, Cost, GeneralExpense, Locality};
+use App\Models\Payment;
+use App\Models\Debt;
+use App\Models\Cost;
+use App\Models\GeneralExpense;
+use App\Models\Locality;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
@@ -54,7 +58,7 @@ class MovementHistoryController extends Controller
             $reportType = 'single-module';
             break;
         }
-        
+
         $reportTitles = [
             'single-module' => 'HISTORIAL DE MOVIMIENTOS ' . strtoupper($data['moduleNames'][ucfirst($module)] ?? ucfirst($module)),
             'all-modules-grouped' => 'HISTORIAL DE MOVIMIENTOS POR MÓDULO',
@@ -221,7 +225,6 @@ class MovementHistoryController extends Controller
             $dayEs = $weekDays[$date->format('l')] ?? $date->format('l');
             $formattedGroupedByDay[$dayEs . ', ' . $date->format('d/m/Y')] = $entries;
         }
-
         return [
             'groupedByDay' => $formattedGroupedByDay,
             'modulesRequested' => $modulesRequested,
