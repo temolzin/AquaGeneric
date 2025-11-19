@@ -26,7 +26,8 @@ class Locality extends Model implements HasMedia
         'municipality',
         'state',
         'zip_code',
-        'membership_id'
+        'membership_id',
+        'membership_assigned_at'
     ];
 
     public function membership()

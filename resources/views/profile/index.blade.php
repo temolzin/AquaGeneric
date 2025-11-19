@@ -13,6 +13,15 @@
 @stop
 
 @section('content')
+    @php
+        $usersPercentage = 0;
+        $waterPercentage = 0;
+        
+        if($authUser->locality && $authUser->locality->membership) {
+            $usersPercentage = $membershipStats['users_limit'] > 0 ? ($membershipStats['users_count'] / $membershipStats['users_limit']) * 100 : 0;
+            $waterPercentage = $membershipStats['water_connections_limit'] > 0 ? ($membershipStats['water_connections_count'] / $membershipStats['water_connections_limit']) * 100 : 0;
+        }
+    @endphp
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -143,9 +152,6 @@
                             <div class="card-body">
                                 @if($authUser->locality && $authUser->locality->membership)
                                     @php
-                                        $usersPercentage = $membershipStats['users_limit'] > 0 ? ($membershipStats['users_count'] / $membershipStats['users_limit']) * 100 : 0;
-                                        $waterPercentage = $membershipStats['water_connections_limit'] > 0 ? ($membershipStats['water_connections_count'] / $membershipStats['water_connections_limit']) * 100 : 0;
-                                        
                                         $usersProgressColor = $usersPercentage >= 80 ? 'bg-danger' : ($usersPercentage >= 60 ? 'bg-warning' : 'bg-info');
                                         $waterProgressColor = $waterPercentage >= 80 ? 'bg-danger' : ($waterPercentage >= 60 ? 'bg-warning' : 'bg-success');
                                     @endphp

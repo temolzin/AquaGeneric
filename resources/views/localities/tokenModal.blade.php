@@ -14,12 +14,33 @@
                     @if($locality->membership)
                     <div class="alert alert-info">
                         <strong>Membresía actual:</strong> {{ $locality->membership->name }}<br>
-                        <small>Límites: {{ $locality->membership->users_number }} usuarios / {{ $locality->membership->water_connections_number }} tomas</small>
+                        <small>
+                            <strong>Límites:</strong> {{ $locality->membership->users_number }} usuarios / {{ $locality->membership->water_connections_number }} tomas<br>
+                            <strong>Duración:</strong> {{ $locality->membership->term_months }} meses<br>
+                            <strong>Precio:</strong> ${{ number_format($locality->membership->price, 2) }}<br>
+                            @if($locality->membership_assigned_at)
+                                @php
+                                    $assignedDate = \Carbon\Carbon::parse($locality->membership_assigned_at);
+                                    $endDate = $assignedDate->copy()->addMonths($locality->membership->term_months);
+                                @endphp
+                                <strong>Asignada el:</strong> {{ $assignedDate->format('d/m/Y H:i') }}<br>
+                                <strong>Termina el:</strong> {{ $endDate->format('d/m/Y H:i') }}
+                            @else
+                                <strong>Asignada el:</strong> <span class="text-muted">Fecha no registrada</span><br>
+                                <strong>Termina el:</strong> <span class="text-muted">No calculable</span>
+                            @endif
+                        </small>
                     </div>
                     @endif
                     <div class="form-group">
                         <label>Fecha de Inicio</label>
-                        <input type="date" name="startDate" class="form-control" value="{{ date('Y-m-d') }}" required readonly>
+                        <input type="date" name="startDate" class="form-control"
+                            value="{{ date('Y-m-d') }}"
+                            required readonly
+                            style="background-color: #f8f9fa; cursor: not-allowed;">
+                        <small class="form-text text-muted">
+                            Fecha actual (no modificable)
+                        </small>
                     </div>
                     <div class="form-group">
                         <label>Plan de Membresía</label>
@@ -31,7 +52,8 @@
                                     {{ $membership->name }} - 
                                     {{ $membership->term_months }} meses - 
                                     {{ $membership->users_number }} usuarios - 
-                                    {{ $membership->water_connections_number }} tomas
+                                    {{ $membership->water_connections_number }} tomas -
+                                    ${{ number_format($membership->price, 2) }}
                                 </option>
                             @endforeach
                         </select>
