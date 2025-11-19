@@ -41,18 +41,10 @@
                                                             aria-controls="collapse{{ Str::slug($module) }}">
                                                         <strong>{{ $moduleTitle }}</strong>
                                                     </button>
-
-                                                    <!-- Botón Seleccionar todo alineado como en la imagen -->
                                                     <button type="button"
                                                         class="btn btn-sm select-all-btn"
-                                                        style="
-                                                            background-color: #f2f2f2;
-                                                            border: 1px solid #d9d9d9;
-                                                            border-radius: 20px;
-                                                            padding: 3px 14px;
-                                                            font-size: 12px;
-                                                            color: #4d4d4d;
-                                                        "
+                                                        style="background-color: #f2f2f2; border: 1px solid #d9d9d9; border-radius: 20px;
+                                                            padding: 3px 14px; font-size: 12px; color: #4d4d4d;"
                                                         data-target="module-{{ Str::slug($module) }}">
                                                         Seleccionar todo
                                                     </button>
@@ -109,29 +101,29 @@
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('#createRoleModal form');
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('#createRoleModal form');
 
-    form.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-        }
-    });
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    document.querySelectorAll('.select-all-btn').forEach(button => {
-
-        button.addEventListener('click', function (event) {
-            event.stopPropagation();
-            const moduleClass = this.getAttribute('data-target');
-            const checkboxes = document.querySelectorAll('.' + moduleClass + ' input[type="checkbox"]');
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach(cb => cb.checked = !allChecked);
-            this.textContent = allChecked ? 'Seleccionar todo' : 'Deseleccionar todo';
+        form.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
         });
     });
-});
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        document.querySelectorAll('.select-all-btn').forEach(button => {
+
+            button.addEventListener('click', function (event) {
+                event.stopPropagation();
+                const moduleClass = this.getAttribute('data-target');
+                const checkboxes = document.querySelectorAll('.' + moduleClass + ' input[type="checkbox"]');
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                checkboxes.forEach(cb => cb.checked = !allChecked);
+                this.textContent = allChecked ? 'Seleccionar todo' : 'Deseleccionar todo';
+            });
+        });
+    });
 </script>
