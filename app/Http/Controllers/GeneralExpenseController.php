@@ -33,6 +33,7 @@ class GeneralExpenseController extends Controller
         
         $expenseTypes = ExpenseType::where('locality_id', $authUser->locality_id)
             ->orderBy('name')
+            ->orWhereNull('locality_id')
             ->get();
 
         return view('generalExpenses.index', compact('expenses', 'expenseTypes'));

@@ -53,6 +53,16 @@ class ExpenseTypeSeeder extends Seeder
 
         $expenseTypesData = [];
 
+        $expenseTypesData[] = [
+            'name' => 'Operación Administrativa',
+            'description' => 'Costos operativos y administrativos generales sin asignación a una localidad específica.',
+            'color' => '#d800b4',
+            'locality_id' => null,
+            'created_by' => $users[0],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+
         foreach ($localities as $localityId) {
             foreach ($baseTypes as $type) {
                 $expenseTypesData[] = [
