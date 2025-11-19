@@ -48,11 +48,6 @@ class Debt extends Model
         return $this->hasMany(Payment::class, 'debt_id');
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'created_by'); 
-    }   
-
     protected static function boot()
     {
         parent::boot();

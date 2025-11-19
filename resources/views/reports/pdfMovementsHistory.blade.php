@@ -4,8 +4,20 @@ use Illuminate\Support\Facades\Auth;
 $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBackgroundVertical')
     ? $authUserLocality->getFirstMedia('pdfBackgroundVertical')->getPath()
     : public_path('img/backgroundReport.png');
-@endphp
 
+$reportType = 'individual';
+if ($module === 'todos' && $showModuleColumn) {
+    $reportType = 'grouped-by-module';
+} elseif ($module === 'todos' && !$showModuleColumn) {
+    $reportType = 'all-without-grouping';
+}
+
+$titles = [
+    'individual' => 'HISTORIAL DE MOVIMIENTOS ' . strtoupper($selectedModuleName ?? ''),
+    'grouped-by-module' => 'HISTORIAL DE MOVIMIENTOS POR MÓDULO',
+    'all-without-grouping' => 'HISTORIAL DE MOVIMIENTOS'
+];
+@endphp
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -73,6 +85,16 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             margin-bottom: 10px;
         }
 
+        h3.module-title {
+            color: #0B1C80;
+            text-transform: uppercase;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 15pt;
+            border-bottom: 2px solid #0B1C80;
+            padding-bottom: 5px;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
@@ -112,6 +134,10 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
             display: inline-block;
             font-family: 'Montserrat', sans-serif;
         }
+
+        .page-break {
+            page-break-after: always;
+        }
     </style>
 </head>
 <body>
@@ -130,40 +156,104 @@ $verticalBgPath = $authUserLocality && $authUserLocality->getFirstMedia('pdfBack
                     {{ $authUserLocality->name ?? '-' }}, {{ $authUserLocality->municipality ?? '-' }}, {{ $authUserLocality->state ?? '-' }}
                 </p>
             </div>
-        </div>
+        </div>     
         <div class="title">
-            <h3>HISTORIAL DE MOVIMIENTOS</h3>
-        </div>
-        @foreach($groupedByDay as $day => $entries)
-            <h4>{{ $day }}</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Responsable</th>
-                        <th>Hora</th>
-                        <th>ID</th>
-                        <th>Módulo</th>
-                        <th>Movimiento</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($entries as $entry)
-                        @php
-                            $movement = $entry['movement'];
-                            $moduleName = $entry['module'];
-                            $actionType = !empty($movement->deleted_at) ? 'Eliminación' : 'Edición';
-                        @endphp
+            <h3>{{ $titles[$reportType] }}</h3>
+        </div> 
+        @if($reportType === 'grouped-by-module' && !empty($groupedByModule))
+            @foreach($groupedByModule as $moduleName => $days)
+                <h3 class="module-title">{{ strtoupper($moduleName) }}</h3>
+                @foreach($days as $day => $entries)
+                    <h4>{{ $day }}</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Responsable</th>
+                                <th>Hora</th>
+                                <th>ID</th>
+                                <th>Movimiento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($entries as $entry)
+                                @php
+                                    $movement = $entry['movement'];
+                                    $actionType = !empty($movement->deleted_at) ? 'Eliminación' : 'Edición';
+                                @endphp
+                                <tr>
+                                    <td>{{ trim(optional($movement->creator)->name . ' ' . optional($movement->creator)->last_name . ' ' . optional($movement->creator)->second_last_name) }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($movement->updated_at)->format('H:i:s') }}</td>
+                                    <td>{{ $movement->id }}</td>
+                                    <td>{{ $actionType }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endforeach
+                @if(!$loop->last)
+                    <div class="page-break"></div>
+                @endif
+            @endforeach
+        @elseif($reportType === 'all-without-grouping' && !empty($groupedByDay))
+            @foreach($groupedByDay as $day => $entries)
+                <h4>{{ $day }}</h4>
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ $movement->user->name ?? '-' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($movement->updated_at)->format('H:i:s') }}</td>
-                            <td>{{ $movement->id }}</td>
-                            <td>{{ $moduleName }}</td>
-                            <td>{{ $actionType }}</td>
+                            <th>Responsable</th>
+                            <th>Hora</th>
+                            <th>ID</th>
+                            <th>Módulo</th>
+                            <th>Movimiento</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @endforeach
+                    </thead>
+                    <tbody>
+                        @foreach($entries as $entry)
+                            @php
+                                $movement = $entry['movement'];
+                                $moduleName = $entry['module'];
+                                $actionType = !empty($movement->deleted_at) ? 'Eliminación' : 'Edición';
+                            @endphp
+                            <tr>
+                                <td>{{ trim(optional($movement->creator)->name . ' ' . optional($movement->creator)->last_name . ' ' . optional($movement->creator)->second_last_name) }}</td>
+                                <td>{{ \Carbon\Carbon::parse($movement->updated_at)->format('H:i:s') }}</td>
+                                <td>{{ $movement->id }}</td>
+                                <td>{{ $moduleName }}</td>
+                                <td>{{ $actionType }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endforeach
+        @elseif($reportType === 'individual' && !empty($groupedByDay))
+            @foreach($groupedByDay as $day => $entries)
+                <h4>{{ $day }}</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Responsable</th>
+                            <th>Hora</th>
+                            <th>ID</th>
+                            <th>Movimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($entries as $entry)
+                            @php
+                                $movement = $entry['movement'];
+                                $actionType = !empty($movement->deleted_at) ? 'Eliminación' : 'Edición';
+                            @endphp
+                            <tr>
+                                <td>{{ trim(optional($movement->creator)->name . ' ' . optional($movement->creator)->last_name . ' ' . optional($movement->creator)->second_last_name) }}</td>
+                                <td>{{ \Carbon\Carbon::parse($movement->updated_at)->format('H:i:s') }}</td>
+                                <td>{{ $movement->id }}</td>
+                                <td>{{ $actionType }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endforeach
+        @endif
         <div class="footer_info">
             <a class="footer_text" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
             <a class="footer_text" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>

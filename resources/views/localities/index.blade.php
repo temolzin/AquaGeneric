@@ -122,12 +122,10 @@
                                                             <i class="fas fa-key"></i>
                                                         </button>
                                                     </form>
-                                                    <form action="{{ route('reports.pdfMovementsHistory') }}" method="GET" target="_blank" style="display:inline;">
-                                                        <input type="hidden" name="locality_id" value="{{ $locality->id }}">
-                                                        <button type="submit" class="btn bg-maroon ml-2" title="Historial de Movimientos">
+                                                    <button type="button" class="btn bg-maroon ml-2" title="Historial de Movimientos"
+                                                            data-toggle="modal" data-target="#historyModal{{ $locality->id }}">
                                                             <i class="fas fa-history"></i>
-                                                        </button>
-                                                    </form>
+                                                    </button>
                                                 </div>
                                             </td>
                                             @include('localities.edit')
@@ -137,6 +135,7 @@
                                             @include('localities.mailConfiguration')
                                             @include('localities.editPdfBackground')
                                             @include('localities.tokenModal')
+                                            @include('localities.historyModal')
                                         </tr>
                                         @endforeach
                                         @endif
