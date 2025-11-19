@@ -32,16 +32,12 @@ class DebtController extends Controller
         ->where('locality_id', $localityId)
         ->get();
 
-        $debts = Debt::with(['waterConnection.customer', 'creator'])
-                ->where('debts.locality_id', $localityId)
-                ->whereHas('creator', function ($query) use ($localityId) {
-                        $query->where('locality_id', $localityId);
-                    })
-                    ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
-                        $query->where('locality_id', $localityId)
-                            ->whereHas('customer', function ($query) use ($search) {
-                        $query->when($search, function ($subQuery) use ($search) {
-                            $subQuery->where('id', 'like', "%{$search}%")
+        $debts = Debt::with('waterConnection.customer', 'creator')
+            ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
+                $query->where('locality_id', $localityId)
+                    ->whereHas('customer', function ($query) use ($search) {
+                        $query->where(function ($query) use ($search) {
+                            $query->where('id', 'like', "%{$search}%")
                                 ->orWhere('name', 'like', "%{$search}%")
                                 ->orWhere('last_name', 'like', "%{$search}%")
                                 ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
