@@ -310,13 +310,7 @@ return [
         'text' => 'Panel',
         'url' => '/dashboard',
         'icon' => 'fas fa-fw fa-home',
-    ],
-    [
-        'text' => 'Secciones',
-        'url' => '/sections',
-        'icon' => 'fas fa-fw fa-th-large',
-        'can'  => 'viewSections'
-    ],    
+    ], 
     [
         'text' => 'Usuarios',
         'url' => '/users',
@@ -360,22 +354,34 @@ return [
         'can'  => 'viewDebts'
     ],
     [
-        'text' => 'Costos',
-        'url' => '/costs',
-        'icon' => 'fas fa-fw fa-money-bill-wave',
-        'can'  => 'viewCost'
+        'text' => 'Gestión de Tomas de Agua',
+        'icon' => 'fas fa-fw fa-tint',
+        'submenu' => [
+            [
+                'text' => 'Tomas de Agua',
+                'url' => '/waterConnections',
+                'icon' => 'fas fa-fw fa-water',
+                'can'  => 'viewWaterConnection'
+            ],
+            [
+                'text' => 'Costos',
+                'url' => '/costs',
+                'icon' => 'fas fa-fw fa-money-bill-wave',
+                'can'  => 'viewCost'
+            ],
+            [
+                'text' => 'Secciones',
+                'url' => '/sections',
+                'icon' => 'fas fa-fw fa-th-large',
+                'can'  => 'viewSections'
+            ],   
+        ],
     ],
     [
         'text' => 'Localidades',
         'url' => '/localities',
         'icon' => 'fas fa-fw fa-map-marker-alt',
         'can'  => 'viewLocality'
-    ],
-    [
-        'text' => 'Tomas de Agua',
-        'url' => '/waterConnections',
-        'icon' => 'fas fa-fw fa-water',
-        'can'  => 'viewWaterConnection'
     ],
     [
         'text' => 'Gestión de Gastos',
