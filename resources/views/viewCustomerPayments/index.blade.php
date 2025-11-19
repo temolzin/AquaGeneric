@@ -22,6 +22,9 @@
                                         </div>
                                     </div>
                                 </form>
+                                <button type="button" class="btn bg-purple ml-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
+                                    <i class="fas fa-chart-bar"></i> Reporte Trimestral
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -114,6 +117,7 @@
     </div>
 </section>
 @endsection
+@include('viewCustomerPayments.quarterly-report')
 
 @section('js')
 <script>
@@ -153,5 +157,53 @@
             });
         }
     });
+
+    $('#quarterModal').on('show.bs.modal', function () {
+        autoSelectCurrentQuarter();
+    });
+
+    function autoSelectCurrentQuarter() {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        let currentQuarter;
+        
+        switch (true) {
+            case (currentMonth >= 1 && currentMonth <= 3):
+                currentQuarter = 1;
+                break;
+            case (currentMonth >= 4 && currentMonth <= 6):
+                currentQuarter = 2;
+                break;
+            case (currentMonth >= 7 && currentMonth <= 9):
+                currentQuarter = 3;
+                break;
+            default:
+                currentQuarter = 4;
+                break;
+        }
+
+        $('#quarter').val(currentQuarter);
+    }
+
+    function generateQuarterlyReport() {
+        const year = document.getElementById('year').value;
+        const quarter = document.getElementById('quarter').value;
+
+        if (!year || !quarter) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos requeridos',
+                text: 'Por favor selecciona el año y el trimestre',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        $('#quarterModal').modal('hide');
+
+        setTimeout(function() {
+            document.getElementById('quarterForm').submit();
+        }, 300);
+    }
 </script>
 @endsection

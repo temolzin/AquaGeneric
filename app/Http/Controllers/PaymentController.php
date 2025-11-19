@@ -12,6 +12,7 @@ use App\Models\WaterConnection;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller {
     public function index(Request $request) {
@@ -468,5 +469,119 @@ class PaymentController extends Controller {
         $payments = $query->paginate(10);
 
         return view('viewCustomerPayments.index', compact('payments', 'customer'));
+    }
+
+    public function showQuarterlyReport(Request $request)
+    {
+        try {
+            $customer = Customer::where('user_id', Auth::id())->first();
+
+            if (!$customer) {
+                return redirect()->back()->with('error', 'No se encontró información del cliente.');
+            }
+
+            $year = $request->input('year');
+            $quarter = $request->input('quarter');
+
+            if (!$year || !$quarter) {
+                return redirect()->back()->with('error', 'Debe seleccionar año y trimestre.');
+            }
+
+            $dateRange = $this->getQuarterDateRange($year, $quarter);
+            $startDate = $dateRange['start'];
+            $endDate = $dateRange['end'];
+
+            $waterConnections = WaterConnection::where('customer_id', $customer->id)
+                ->whereHas('debts.payments', function($query) use ($startDate, $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                })
+                ->get();
+
+            $paymentsByWaterConnection = [];
+            $totalGeneral = 0;
+
+            foreach ($waterConnections as $waterConnection) {
+                $payments = Payment::whereHas('debt', function($query) use ($waterConnection) {
+                        $query->where('water_connection_id', $waterConnection->id);
+                    })
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->with(['debt.waterConnection'])
+                    ->get()
+                    ->groupBy('debt_id');
+
+                $subtotalToma = $payments->flatten()->sum('amount');
+                $totalGeneral += $subtotalToma;
+
+                $paymentsByWaterConnection[$waterConnection->id] = [
+                    'water_connection' => $waterConnection,
+                    'payments' => $payments,
+                    'subtotal' => $subtotalToma
+                ];
+            }
+
+            $authUser = Auth::user();
+
+            $data = [
+                'paymentsByWaterConnection' => $paymentsByWaterConnection,
+                'customer' => $customer,
+                'authUser' => $authUser,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'year' => $year,
+                'quarter' => $quarter,
+                'totalGeneral' => $totalGeneral,
+                'quarterName' => $this->getQuarterName($quarter)
+            ];
+
+            $pdf = PDF::loadView('reports.customerPaymentsReport', $data)
+                    ->setPaper('a4', 'portrait');
+
+            return $pdf->stream("reporte-trimestral-{$year}-T{$quarter}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al generar el reporte: ' . $e->getMessage());
+        }
+    }
+
+    private function getQuarterDateRange($year, $quarter)
+    {
+        switch ($quarter) {
+            case 1:
+                $start = Carbon::create($year, 1, 1)->startOfDay();
+                $end = Carbon::create($year, 3, 31)->endOfDay();
+                break;
+            case 2:
+                $start = Carbon::create($year, 4, 1)->startOfDay();
+                $end = Carbon::create($year, 6, 30)->endOfDay();
+                break;
+            case 3:
+                $start = Carbon::create($year, 7, 1)->startOfDay();
+                $end = Carbon::create($year, 9, 30)->endOfDay();
+                break;
+            case 4:
+                $start = Carbon::create($year, 10, 1)->startOfDay();
+                $end = Carbon::create($year, 12, 31)->endOfDay();
+                break;
+            default:
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+        }
+
+        return [
+            'start' => $start,
+            'end' => $end
+        ];
+    }
+
+    private function getQuarterName($quarter)
+    {
+        $names = [
+            1 => 'Primer Trimestre (Enero - Marzo)',
+            2 => 'Segundo Trimestre (Abril - Junio)',
+            3 => 'Tercer Trimestre (Julio - Septiembre)',
+            4 => 'Cuarto Trimestre (Octubre - Diciembre)'
+        ];
+
+        return $names[$quarter] ?? 'Trimestre Desconocido';
     }
 }
