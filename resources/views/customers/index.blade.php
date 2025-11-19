@@ -90,8 +90,8 @@
                                             @endif
                                             </td>
                                             <td>
-                                                {{ $customer->user?->name ?? $customer->name ?? 'N/A' }}
-                                                {{ $customer->user?->last_name ?? $customer->last_name ?? '' }}
+                                                {{ $customer->name ?? 'N/A' }}
+                                                {{ $customer->last_name ?? '' }}
                                             </td>
                                             <td>{{$customer->state}}, {{$customer->locality}}</td>
                                             <td>
@@ -131,7 +131,6 @@
                                                             <i class="fas fa-key"></i>
                                                         </button>
                                                     @endif
-
                                                     @can('deleteCustomer')
                                                         @if($customer->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>

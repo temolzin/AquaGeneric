@@ -16,13 +16,14 @@ use Carbon\Carbon;
 class PaymentController extends Controller {
     public function index(Request $request) {
         $authUser = auth()->user();
-        $query = Payment::with(['debt.customer.user'])->orderBy('id', 'desc')
+            $query = Payment::with(['debt.customer'])
+            ->orderBy('id', 'desc')
             ->where('locality_id', $authUser->locality_id);
 
         if ($request->filled('name')) {
-            $query->whereHas('debt.customer.user', function ($q) use ($request) {
-                $q->whereRaw("CONCAT(users.name, ' ', users.last_name) LIKE ?", ['%' . $request->name . '%'])
-                  ->orWhereRaw("CONCAT(users.last_name, ' ', users.name) LIKE ?", ['%' . $request->name . '%']);
+            $query->whereHas('debt.customer', function ($q) use ($request) {
+                $q->whereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ['%' . $request->name . '%'])
+                ->orWhereRaw("CONCAT(customers.last_name, ' ', customers.name) LIKE ?", ['%' . $request->name . '%']);
             });
         }
 

@@ -25,7 +25,7 @@ class CustomerController extends Controller
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function($q) use ($search) {
-            $q->whereHas('user', function($u) use ($search) {
+            $q->whereHas('customer', function($u) use ($search) {
                 $u->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
                 ->orWhere('email', 'LIKE', "%{$search}%");
             })

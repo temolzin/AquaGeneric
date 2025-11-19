@@ -42,9 +42,9 @@
                                             <select class="form-control select2" name="customer_id" id="customer_id" required>
                                                 <option value="">Selecciona un cliente</option>
                                                 @foreach($customers as $customer)
-                                                    @if($customer->user)
+                                                    @if($customerd)
                                                         <option value="{{ $customer->id }}">
-                                                            {{ $customer->user->id }} - {{ $customer->user->name }} {{ $customer->user->last_name }}
+                                                            {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
                                                         </option>
                                                     @endif
                                                 @endforeach

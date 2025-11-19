@@ -67,8 +67,8 @@
                                         @forelse ($debts as $debt)
                                             @if (!in_array($debt->waterConnection->customer_id, $shownCustomers))
                                                 <tr>
-                                                    <td>{{ $debt->waterConnection->customer->user->id }}</td>
-                                                    <td>{{ $debt->waterConnection->customer->user->name }} {{ $debt->waterConnection->customer->user->last_name }}</td>
+                                                    <td>{{ $debt->waterConnection->customer->id }}</td>
+                                                    <td>{{ $debt->waterConnection->customer->name }} {{ $debt->waterConnection->customer->last_name }}</td>
                                                     <td>
                                                         @php
                                                             $unpaidDebts = collect($debt->waterConnection->customer->waterConnections)->flatMap(function ($waterConnection) {

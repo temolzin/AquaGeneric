@@ -62,16 +62,11 @@
             input.value = pw;
         }
     });
-</script>
 
-@if (session('pdf_url'))
-    <script>
-        if (!window.pdfOpened) {
-            window.pdfOpened = true;
-            window.open("{{ session('pdf_url') }}", "_blank");
-        }
+    @if (session('pdf_url'))
+            if (!window.pdfOpened) {
+                window.pdfOpened = true;
+                window.open("{{ session('pdf_url') }}", "_blank");
+            }
+    @endif
     </script>
-@endif
-
-
-

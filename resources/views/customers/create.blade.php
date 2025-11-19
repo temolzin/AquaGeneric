@@ -215,37 +215,35 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-        const showPasswordCheckbox = document.getElementById('showPassword');
-        const passwordField = document.getElementById('passwordField');
-        const passwordInput = document.getElementById('password');
-        const generatePasswordBtn = document.getElementById('generatePasswordBtn');
-        const togglePassword = document.getElementById('togglePassword');
+            const showPasswordCheckbox = document.getElementById('showPassword');
+            const passwordField = document.getElementById('passwordField');
+            const passwordInput = document.getElementById('password');
+            const generatePasswordBtn = document.getElementById('generatePasswordBtn');
+            const togglePassword = document.getElementById('togglePassword');
 
-        showPasswordCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            passwordField.style.display = 'block';
-            passwordInput.required = true;
-        } else {
-            passwordField.style.display = 'none';
-            passwordInput.required = false;
-            passwordInput.value = '';
-        }
+            showPasswordCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    passwordField.style.display = 'block';
+                    passwordInput.required = true;
+                } else{
+                    passwordField.style.display = 'none';
+                    passwordInput.required = false;
+                    passwordInput.value = '';
+                }
         });
 
         generatePasswordBtn.addEventListener('click', function() {
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        let randomPassword = "";
-        for (let i = 0; i < 10; i++) {
-            randomPassword += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        passwordInput.value = randomPassword;
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let randomPassword = "";
+            for (let i = 0; i < 10; i++) {
+                randomPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            passwordInput.value = randomPassword;
         });
         
         $('#generatePass{{ $customer->id }}').on('click', function () {
-
             const randomPass = Math.random().toString(36).slice(-8);
             $('#passwordInput{{ $customer->id }}').val(randomPass);
-
             $('#passwordInput{{ $customer->id }}').password();
         });
     });

@@ -19,40 +19,39 @@ class DebtController extends Controller
         $localityId = auth()->user()->locality_id;
 
         $customers = Customer::where('customers.locality_id', $localityId)
-                    ->with('user')
-                    ->select('customers.id', 'customers.user_id', 'customers.locality_id')
-                    ->where(function ($query) use ($search) {
-                        $query->where('customers.id', 'like', "%{$search}%")
-                            ->orWhereHas('user', function ($query) use ($search) {
-                                $query->where('name', 'like', "%{$search}%")
-                                    ->orWhere('last_name', 'like', "%{$search}%")
-                                    ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
-                            });
-                    })
-                    ->groupBy('customers.id', 'customers.user_id', 'customers.locality_id')
-                    ->get();
-
-        $waterConnections = WaterConnection::with(['customer', 'customer.user'])
-        ->where('locality_id', $localityId)
-        ->get();
-
-        $debts = Debt::with(['waterConnection.customer.user', 'creator'])
-            ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
-                $query->where('locality_id', $localityId)
-                    ->whereHas('customer.user', function ($query) use ($search) {
-                        $query->where(function ($query) use ($search) {
-                            $query->where('customers.id', 'like', "%{$search}%")
-                                ->orWhere('users.name', 'like', "%{$search}%")
-                                ->orWhere('users.last_name', 'like', "%{$search}%")
-                                ->orWhereRaw("CONCAT(users.name, ' ', users.last_name) LIKE ?", ["%{$search}%"]);
-                        });
-                    });
+            ->select('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
+            ->where(function ($query) use ($search) {
+                $query->where('customers.id', 'like', "%{$search}%")
+                    ->orWhere('customers.name', 'like', "%{$search}%")
+                    ->orWhere('customers.last_name', 'like', "%{$search}%")
+                    ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"]);
             })
-            ->selectRaw('water_connection_id, debts.created_at, SUM(amount) as total_amount')
-            ->where('status', '!=', 'paid')
-            ->groupBy('water_connection_id', 'debts.created_at')
-            ->orderByDesc('debts.created_at')
-            ->paginate(10);
+
+            ->groupBy('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
+            ->get();
+
+
+        $waterConnections = WaterConnection::with(['customer'])
+            ->where('locality_id', $localityId)
+            ->get();
+
+        $debts = Debt::with(['waterConnection.customer', 'creator'])
+        ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
+            $query->where('locality_id', $localityId)
+                ->whereHas('customer', function ($query) use ($search) {
+                    $query->where(function ($query) use ($search) {
+                        $query->where('customers.id', 'like', "%{$search}%")
+                            ->orWhere('customers.name', 'like', "%{$search}%")
+                            ->orWhere('customers.last_name', 'like', "%{$search}%")
+                            ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"]);
+                    });
+                });
+        })
+        ->selectRaw('water_connection_id, debts.created_at, SUM(amount) as total_amount')
+        ->where('status', '!=', 'paid')
+        ->groupBy('water_connection_id', 'debts.created_at')
+        ->orderByDesc('debts.created_at')
+        ->paginate(10);
 
         $totalDebts = [];
         foreach ($debts as $debt) {

@@ -92,7 +92,7 @@ class Customer extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
-        public function getNameAttribute($value)
+    public function getNameAttribute($value)
     {
         return $this->user ? $this->user->name : $value;
     }
