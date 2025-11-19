@@ -44,16 +44,22 @@ return new class extends Migration
     {
         Schema::table('incidents', function (Blueprint $table) {
             $table->string('status')->nullable();
-
-            DB::table('incidents')->get()->each(function ($incident) {
-                $statusName = DB::table('incident_statuses')->where('id', $incident->status_id)->value('status');
-
-                if ($statusName) {
-                    DB::table('incidents')->where('id', $incident->id)->update(['status' => $statusName]);
-                }
-            });
-
             $table->dropForeign(['status_id']);
+        });
+
+        DB::table('incidents')->get()->each(function ($incident) {
+            $statusName = DB::table('incident_statuses')
+                ->where('id', $incident->status_id)
+                ->value('status');
+
+            if ($statusName) {
+                DB::table('incidents')
+                    ->where('id', $incident->id)
+                    ->update(['status' => $statusName]);
+            }
+        });
+
+        Schema::table('incidents', function (Blueprint $table) {
             $table->dropColumn('status_id');
         });
     }
