@@ -34,15 +34,20 @@
             <h2 class="h5 my-3">Permisos</h2>
             <div id="accordionPermissions">
                 @foreach ($permissions as $module => $perms)
-                    <div class="card mb-2"
-                         style="border-radius: 8px; border: 1px solid #e6e6e6;">
-                        <div class="p-3"
+                    <div class="card mb-2" style="border-radius: 8px; border: 1px solid #e6e6e6;">  
+                        {{-- Header --}}
+                        <div class="p-3 d-flex justify-content-between align-items-center"
                              data-toggle="collapse"
                              data-target="#module-{{ $module }}"
                              style="cursor: pointer;">
                             <strong style="color:#007bff;">
                                 {{ $moduleNames[$module] ?? $module }}
                             </strong>
+                            <button type="button"
+                                class="btn btn-sm select-all-btn"
+                                data-module="{{ $module }}">
+                                Seleccionar todo
+                            </button>
                         </div>
                         <div id="module-{{ $module }}" class="collapse show">
                             <div class="card-body p-0">
@@ -58,6 +63,7 @@
                                             <tr>
                                                 <td class="text-center">
                                                     <input type="checkbox"
+                                                           class="perm-checkbox module-{{ $module }}"
                                                            name="permissions[]"
                                                            value="{{ $permission->id }}"
                                                            {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
@@ -89,8 +95,23 @@
 
 @stop
 @section('css')
-    <link rel="stylesheet" href="{{ asset('css/roles/editRol.css') }}">
+<style>
+    .select-all-btn {
+        background: #f1f1f1;
+        border: 1px solid #d9d9d9;
+        font-size: 12px;
+        border-radius: 20px;
+        padding: 4px 12px;
+        transition: 0.2s ease-in-out;
+    }
+
+    .select-all-btn:hover {
+        background: #e2e2e2;
+        border-color: #bfbfbf;
+    }
+</style>
 @stop
+
 @section('js')
 <script>
     document.getElementById('close-button').addEventListener('click', function() {
@@ -99,6 +120,17 @@
     document.getElementById('close-form-button').addEventListener('click', function() {
         window.location.href = "{{ route('roles.index') }}";
     });
+    document.querySelectorAll('.select-all-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            let module = this.getAttribute('data-module');
+
+            document.querySelectorAll('.module-' + module).forEach(chk => {
+                chk.checked = true;
+            });
+        });
+    });
+
     var errorMessage = "{{ session('error') }}";
     if (errorMessage) {
         Swal.fire({

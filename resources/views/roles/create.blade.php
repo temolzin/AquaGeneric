@@ -22,8 +22,8 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="name">Nombre</label>
-                                    <input type="text" name="name" class="form-control" placeholder="Ingresar nombre"
-                                        value="{{ old('name') }}" required>
+                                    <input type="text" name="name" class="form-control"
+                                        placeholder="Ingresar nombre" value="{{ old('name') }}" required>
                                 </div>
                                 <h2 class="mt-4">Permisos</h2>
                                 <div id="accordion">
@@ -32,21 +32,35 @@
                                             $moduleTitle = $moduleNames[$module] ?? ucfirst($module);
                                         @endphp
                                         <div class="card">
-                                            <div class="card-header p-2" id="heading{{ Str::slug($module) }}">
-                                                <h5 class="mb-0">
-                                                    <button class="btn btn-link text-left w-100 collapsed" data-toggle="collapse"
-                                                        data-target="#collapse{{ Str::slug($module) }}"
-                                                        aria-expanded="false"
-                                                        aria-controls="collapse{{ Str::slug($module) }}">
-                                                        <strong>{{ $moduleTitle }}</strong>
-                                                    </button>
-                                                </h5>
+                                            <div class="card-header p-2 d-flex justify-content-between align-items-center"
+                                                id="heading{{ Str::slug($module) }}">
+                                                <button class="btn btn-link text-left"
+                                                    data-toggle="collapse"
+                                                    data-target="#collapse{{ Str::slug($module) }}"
+                                                    aria-expanded="true"
+                                                    aria-controls="collapse{{ Str::slug($module) }}">
+                                                    <strong>{{ $moduleTitle }}</strong>
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-light btn-sm select-all-btn"
+                                                    style="
+                                                        border: 1px solid #d9d9d9;
+                                                        border-radius: 20px;
+                                                        padding: 3px 16px;
+                                                        font-size: 14px;
+                                                        color: #007bff;
+                                                        background-color: #f8f9fa;
+                                                    "
+                                                    data-target="module-{{ Str::slug($module) }}">
+                                                    Seleccionar todo
+                                                </button>
                                             </div>
                                             <div id="collapse{{ Str::slug($module) }}" class="collapse show"
                                                 aria-labelledby="heading{{ Str::slug($module) }}">
                                                 <div class="card-body p-0">
                                                     <div class="table-responsive">
-                                                        <table class="table table-sm table-bordered table-striped mb-0">
+                                                        <table
+                                                            class="table table-sm table-bordered table-striped mb-0 module-{{ Str::slug($module) }}">
                                                             <thead>
                                                                 <tr>
                                                                     <th style="width: 100px;">Seleccionar</th>
@@ -57,8 +71,10 @@
                                                                 @foreach ($modulePermissions as $permission)
                                                                     <tr>
                                                                         <td>
-                                                                            <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                                                                <input type="checkbox" name="permissions[]"
+                                                                            <div
+                                                                                class="custom-control custom-checkbox custom-checkbox-lg">
+                                                                                <input type="checkbox"
+                                                                                    name="permissions[]"
                                                                                     value="{{ $permission->id }}"
                                                                                     class="custom-control-input"
                                                                                     id="permission{{ $permission->id }}">
@@ -90,13 +106,29 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.querySelector('#createRoleModal form');
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('#createRoleModal form');
 
-        form.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-            }
+    form.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.select-all-btn').forEach(button => {
+
+        button.addEventListener('click', function (event) {
+            event.stopPropagation();
+            const moduleClass = this.getAttribute('data-target');
+            const checkboxes = document.querySelectorAll('.' + moduleClass + ' input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+            this.textContent = allChecked ? 'Seleccionar todo' : 'Deseleccionar todo';
         });
     });
+});
 </script>
