@@ -20,6 +20,9 @@ class Customer extends Model implements HasMedia
      * @var array
      */
     protected $fillable = [
+        'name',
+        'last_name',
+        'email',
         'locality',
         'state',
         'zip_code',
@@ -89,18 +92,18 @@ class Customer extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
-    public function getNameAttribute()
+        public function getNameAttribute($value)
     {
-        return $this->user ? $this->user->name : null;
+        return $this->user ? $this->user->name : $value;
     }
 
-    public function getEmailAttribute()
+    public function getEmailAttribute($value)
     {
-        return $this->user ? $this->user->email : null;
+        return $this->user ? $this->user->email : $value;
     }
 
-    public function getLastNameAttribute()
+    public function getLastNameAttribute($value)
     {
-        return $this->user ? $this->user->last_name : null;
+        return $this->user ? $this->user->last_name : $value;
     }
 }

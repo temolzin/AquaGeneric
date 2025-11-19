@@ -89,7 +89,10 @@
                                                     style="width: 50px; height: 50px; border-radius: 50%;">
                                             @endif
                                             </td>
-                                            <td>{{$customer->user->name ?? 'N/A'}} {{$customer->user->last_name ?? ''}}</td>
+                                            <td>
+                                                {{ $customer->user?->name ?? $customer->name ?? 'N/A' }}
+                                                {{ $customer->user?->last_name ?? $customer->last_name ?? '' }}
+                                            </td>
                                             <td>{{$customer->state}}, {{$customer->locality}}</td>
                                             <td>
                                                 @switch($customer->status)
@@ -120,9 +123,15 @@
                                                     <button type="button" class="btn bg-blue mr-2" data-toggle="modal" title="Ver Deudas Por Toma de Agua" data-target="#showDebtsPerWaterConnection{{$customer->id}}">
                                                         <i class="fa fa-dollar-sign"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-success mr-2" title="Ver credenciales" onclick="generateUserAccessPDF(event, '{{ md5($customer->id) }}')">
-                                                        <i class="fas fa-file-pdf"></i>
-                                                    </button>
+                                                    @if (!$customer->user)
+                                                        <button type="button" class="btn bg-green mr-2"
+                                                                title="Ingresar Contraseña"
+                                                                data-toggle="modal"
+                                                                data-target="#passwordModal{{$customer->id}}">
+                                                            <i class="fas fa-key"></i>
+                                                        </button>
+                                                    @endif
+
                                                     @can('deleteCustomer')
                                                         @if($customer->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
@@ -141,6 +150,7 @@
                                             @include('customers.show')
                                             @include('customers.waterConnections')
                                             @include('customers.showDebtsPerWaterConnection')
+                                            @include('customers.passwordModal')
                                         </tr>
                                         @endforeach
                                         @endif
@@ -208,5 +218,10 @@
             button.disabled = false;
         }, 2000);
     }
+
+    @if(session('pdf_hash'))
+    window.open("{{ route('generate.user.access.pdf', session('pdf_hash')) }}", "_blank");
+    @endif
+
 </script>
 @endsection

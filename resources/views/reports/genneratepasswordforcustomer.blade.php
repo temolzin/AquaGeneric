@@ -177,8 +177,16 @@
                 </td>
                 <td class="report_info">
                     <div class="rounded">
-                        <span class="subtitle">Información de Cuenta</span>
-                        <p><strong>Date: </strong><?php echo $_GET['date'] ?? date('j \d\e F \d\e Y'); ?></p> 
+                        <span class="subtitle">Información de Cuenta</span> 
+                        <?php
+                        setlocale(LC_TIME, 'es_ES.UTF-8', 'es_MX.UTF-8', 'spanish');
+                        if (isset($_GET['date']) && !empty($_GET['date'])) {
+                            $fecha = strftime('%e de %B de %Y', strtotime($_GET['date']));
+                        } else {
+                            $fecha = strftime('%e de %B de %Y');
+                        }
+                        ?>
+                        <p><strong>Fecha: </strong><?php echo $fecha; ?></p> 
                     </div>
                 </td>
             </tr>
@@ -192,7 +200,7 @@
                         <table class="client_data">
                             <tr>
                                 <td><label>ID Cliente:</label> <p>{{ $customer->id }}</p></td>
-                                <td><label>Fecha de Registro:</label> <p>{{ $customer->created_at }}</p></td>
+                                <td><label>Fecha de Registro:</label> <p>{{ $customer->updated_at }}</p></td>
                             </tr>
                             <tr>
                                 <td><label>Nombre:</label> <p>{{ $user->name }} {{ $user->last_name }}</p></td>
@@ -200,12 +208,12 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <label>Contraseña Temporal:</label>
+                                    <label>Contraseña:</label>
                                     <p>
                                         {{ $temporaryPassword }}
                                     </p>
                                     <p style="color: red; font-size: 12px; font-style: italic;">
-                                        Esta contraseña es temporal y solo se mostrara una vez. Te recomendamos guardarla y actualizarla inmediatamente después de iniciar sesión.
+                                        Credenciales para tu inicio de sesion. Te recomendamos guardarlos bien para poder iniciar sesión.
                                     </p>
                                 </td>
                             </tr>

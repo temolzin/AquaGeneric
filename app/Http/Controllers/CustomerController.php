@@ -24,10 +24,13 @@ class CustomerController extends Controller
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->whereHas('user', function($q) use ($search) {
-                $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
+            $query->where(function($q) use ($search) {
+            $q->whereHas('user', function($u) use ($search) {
+                $u->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
                 ->orWhere('email', 'LIKE', "%{$search}%");
-            })->orWhere('id', 'LIKE', "%{$search}%");
+            })
+            ->orWhere('id', 'LIKE', "%{$search}%");
+        });
         }
 
         $customers = $query->with('user')->paginate(10);
@@ -37,6 +40,10 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $authUser = auth()->user();
+
+        $emailRule = $request->has('showPassword')
+            ? 'required|email|unique:users,email'
+            : 'required|email|unique:customers,email';
 
         $validatedData = $request->validate([
             'name' => 'required|string',
@@ -48,35 +55,72 @@ class CustomerController extends Controller
             'zip_code' => 'required|string',
             'exterior_number' => 'nullable|string',
             'interior_number' => 'required|string',
-            'email' => 'required|email|unique:users,email', 
+            'email' => $emailRule, 
             'marital_status' => 'required|string',
             'status' => 'required|string',
             'responsible_name' => 'nullable|string',
             'note' => 'nullable|string',
         ]);
 
-        $temporaryPassword = Str::random(8);
-
-        $user = User::create([
-            'name' => $request->name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($temporaryPassword),
-            'temporary_password' => $temporaryPassword, 
-            'locality_id' => $authUser->locality_id, 
-        ]);
-
-        $user->assignRole('cliente');
         $customerData = $request->all();
         $customerData['locality_id'] = $authUser->locality_id;
         $customerData['created_by'] = $authUser->id;
-        $customerData['user_id'] = $user->id;
+
+        if ($request->has('showPassword')) {
+
+            $passview = $request->password ?? Str::random(8);
+
+            $user = User::create([
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => Hash::make($passview),
+                'locality_id' => $authUser->locality_id, 
+            ]);
+
+            session(['passview_'.$user->id => $passview]);
+
+            $user->assignRole('cliente');
+            
+            $customerData['user_id'] = $user->id;
+            $customerData['name'] = $user->name;
+            $customerData['last_name'] = $user->last_name;
+            $customerData['email'] = $user->email;
+
+            $customer = Customer::create($customerData);
+
+            if ($request->hasFile('photo')) {
+                $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
+            }
+
+            try {
+                $hash = md5($customer->id);
+                $this->generateUserAccessPDF($hash);
+            } catch (\Exception $e) {
+                return redirect()->route('customers.index')
+                    ->with('warning', 'Usuario creado, pero hubo un error al generar el PDF: ' . $e->getMessage());
+            }
+
+            try {
+                $hash = md5($customer->id);
+            } catch (\Exception $e) {
+                return redirect()->route('customers.index')
+                    ->with('warning', 'Usuario creado, pero hubo un error al generar el hash.');
+            }
+
+            return redirect()
+                ->route('customers.index')
+                ->with([
+                    'success' => 'Cliente registrado correctamente.',
+                    'pdf_hash' => $hash 
+                ]);
+        }
 
         $customer = Customer::create($customerData);
 
         if ($request->hasFile('photo')) {
-            $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
-        }
+        $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
+    }
 
         return redirect()->route('customers.index')->with('success', 'Cliente registrado correctamente.');
     }
@@ -115,6 +159,54 @@ class CustomerController extends Controller
         }
 
         return redirect()->back()->with('error', 'Cliente no encontrado.');
+    }
+
+    public function assignOrUpdatePassword(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|min:6',
+        ]);
+
+        $customer = Customer::with('user')->findOrFail($id);
+
+        $passview = $request->password;
+
+        if (!$customer->user) {
+            $user = new User();
+            $user->name = $customer->name;
+            $user->last_name = $customer->last_name;
+            $user->email = $customer->email;
+            $user->password = Hash::make($passview);
+            $user->locality_id = $customer->locality_id;
+            $user->save();
+
+            $user->assignRole('cliente');
+            $customer->user_id = $user->id;
+            $customer->save();
+
+            session(['passview_'.$user->id => $passview]);
+
+            $hash = md5($customer->id);
+            $pdfUrl = route('generate.user.access.pdf', $hash);
+
+            return redirect()
+            ->route('customers.index')
+            ->with('success', 'Usuario creado y contraseña asignada correctamente.')
+            ->with('pdf_url', route('generate.user.access.pdf', ['hash' => $hash]));
+        }
+
+        $customer->user->password = Hash::make($passview);
+        $customer->user->save();
+
+        session(['passview_'.$customer->user->id => $passview]);
+
+        $hash = md5($customer->id);
+        $pdfUrl = route('generate.user.access.pdf', $hash);
+
+        return redirect()
+        ->route('customers.index')
+        ->with('success', 'Contraseña actualizada correctamente.')
+        ->with('pdf_url', route('generate.user.access.pdf', ['hash' => $hash]));
     }
 
     public function show($id)
@@ -183,7 +275,7 @@ class CustomerController extends Controller
                 abort(404, 'Cliente no encontrado');
             }
 
-            $temporaryPassword = $customer->user->temporary_password ?? 'Contraseña temporal no disponible';
+            $temporaryPassword = session('passview_'.$customer->user->id) ?? 'Contraseña no disponible';
 
             $data = [
                 'customer' => $customer,
@@ -195,10 +287,6 @@ class CustomerController extends Controller
 
             $pdf = Pdf::loadView('reports.genneratepasswordforcustomer', $data)
                     ->setPaper('A4', 'portrait');
-
-            if ($customer->user->temporary_password) {
-                $customer->user->update(['temporary_password' => null]);
-            }
 
             return $pdf->stream('DatosUsuario_'.$customer->id.'.pdf');
 

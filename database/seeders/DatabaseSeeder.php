@@ -35,11 +35,7 @@ class DatabaseSeeder extends Seeder
         $this->call(FaultReportSeeder::class);
         $this->call(InventoryCategorySeeder::class);
         $this->call(InventoryTableSeeder::class);
-        $this->call(MigrateCustomersToUsersSeeder::class);
-        $this->call(AssignCustomerRoleSeeder::class);
         $this->call(MembershipsTableSeeder::class);
         $this->call(SectionsSeeder::class);
-        $this->call(MigrateCustomersToUsersSeeder::class);
-        $this->call(AssignCustomerRoleSeeder::class);
     }
 }
