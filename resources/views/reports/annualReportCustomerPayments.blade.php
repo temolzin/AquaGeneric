@@ -398,20 +398,17 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             </thead>
         </table>
     </div>
-
     <div id="page_pdf">
         @php
             $totalGeneral = 0;
             $connectionCounter = 0;
             $totalConnections = count($paymentsByWaterConnection);
         @endphp
-        
         @foreach($paymentsByWaterConnection as $waterConnectionId => $waterConnectionData)
             @php $connectionCounter++; @endphp
             @if($connectionCounter > 1)
                 <div style="page-break-before: auto;"></div>
             @endif
-            
             <div class="table_group">
                 <div class="water_connection_content">
                     <table id="client_report">
@@ -470,7 +467,6 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                             </td>
                         </tr>
                     </table>
-                    
                     <table id="report_detail" class="consecutive_table">
                         <thead>
                             <tr>
@@ -514,7 +510,6 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             </div>
         @endforeach
     </div>
-
     <div class="footer_last_page">
         <div class="info_bottom">
             <a class="text_info" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
