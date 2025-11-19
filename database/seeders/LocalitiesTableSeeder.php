@@ -69,7 +69,6 @@ class LocalitiesTableSeeder extends Seeder
             }
         });
 
-        // ✅ CÓDIGO INTEGRADO AQUÍ - Actualizar membership_assigned_at
         Locality::whereNotNull('membership_id')
                 ->whereNull('membership_assigned_at')
                 ->update(['membership_assigned_at' => now()]);
