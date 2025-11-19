@@ -15,11 +15,8 @@ class CostController extends Controller
                 $q->where('locality_id', $authUser->locality_id)
                     ->orWhereNull('locality_id');
             })
-            ->whereHas('creator', function ($query) use ($authUser) {
-                $query->where('locality_id', $authUser->locality_id);
-            
-            })
             ->with('creator')
+            ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
         
@@ -75,6 +72,7 @@ class CostController extends Controller
         $authUser = auth()->user();
         $costs = cost::where('locality_id', $authUser->locality_id)
                     ->orWhereNull('locality_id')
+                    ->orderByRaw('locality_id IS NULL DESC')
                     ->orderBy('created_at', 'desc')
                     ->get();
         

@@ -13,7 +13,8 @@ class ExpenseTypeController extends Controller
     {
     $expenseTypes = ExpenseType::byUserLocality()
         ->with(['creator', 'locality'])
-        ->orderBy('name')
+        ->orderByRaw('locality_id IS NULL DESC')
+        ->orderBy('created_at', 'desc')
         ->paginate(10); 
 
     return view('expenseTypes.index', compact('expenseTypes'));
