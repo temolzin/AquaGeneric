@@ -15,6 +15,7 @@ class IncidentStatusController extends Controller
 
         $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)
                     ->orWhereNull('locality_id')
+                    ->orderByRaw('locality_id IS NULL DESC')
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
 

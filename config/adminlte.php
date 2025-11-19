@@ -312,24 +312,6 @@ return [
         'icon' => 'fas fa-fw fa-home',
     ], 
     [
-        'text' => 'Usuarios',
-        'url' => '/users',
-        'icon' => 'fas fa-fw fa-user',
-        'can'  => 'viewUser'
-    ],
-    [
-        'text' => 'Roles',
-        'url' => '/roles',
-        'icon' => 'fas fa-fw fa-user-shield',
-        'can'  => 'viewRoles'
-    ],
-    [
-        'text' => 'Clientes',
-        'url' => '/customers',
-        'icon' => 'fas fa-fw fa-users',
-        'can'  => 'viewCustomers'
-    ],
-    [
         'text' => 'Gestión de Pagos',
         'icon' => 'fas fa-fw fa-dollar-sign',
         'submenu' => [
@@ -346,12 +328,6 @@ return [
                 'can'  => 'viewAdvancePayments',
             ],
         ],
-    ],
-    [
-        'text' => 'Deudas',
-        'url' => '/debts',
-        'icon' => 'fas fa-fw fa-credit-card',
-        'can'  => 'viewDebts'
     ],
     [
         'text' => 'Gestión de Tomas de Agua',
@@ -376,12 +352,6 @@ return [
                 'can'  => 'viewSections'
             ],   
         ],
-    ],
-    [
-        'text' => 'Localidades',
-        'url' => '/localities',
-        'icon' => 'fas fa-fw fa-map-marker-alt',
-        'can'  => 'viewLocality'
     ],
     [
         'text' => 'Gestión de Gastos',
@@ -426,23 +396,6 @@ return [
         ],
     ],
     [
-        'text' => 'Empleados',
-        'url' => '/employees',
-        'icon' => 'fas fa-fw fa-users',
-        'can' => 'viewEmployee'
-    ],
-    [
-        'text' => 'Membresías',
-        'url' => '/memberships',
-        'icon' => 'fas fa-fw fa-id-card',
-        'can' => 'viewMemberships'
-    ],
-    [
-        'text' => 'Falta de pago',
-        'url'  => '/expiredSubscriptions/expired',
-        'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
-    ],
-    [
         'text' => 'Gestion de Inventario',
         'icon' => 'fas fa-fw fa-warehouse',
         'submenu' => [
@@ -459,6 +412,53 @@ return [
                 'can'  => 'viewInventoryCategories',
             ],
         ],
+    ],
+    [
+        'text' => 'Usuarios',
+        'url' => '/users',
+        'icon' => 'fas fa-fw fa-user',
+        'can'  => 'viewUser'
+    ],
+    [
+        'text' => 'Roles',
+        'url' => '/roles',
+        'icon' => 'fas fa-fw fa-user-shield',
+        'can'  => 'viewRoles'
+    ],
+    [
+        'text' => 'Clientes',
+        'url' => '/customers',
+        'icon' => 'fas fa-fw fa-users',
+        'can'  => 'viewCustomers'
+    ],
+    [
+        'text' => 'Deudas',
+        'url' => '/debts',
+        'icon' => 'fas fa-fw fa-credit-card',
+        'can'  => 'viewDebts'
+    ],
+    [
+        'text' => 'Localidades',
+        'url' => '/localities',
+        'icon' => 'fas fa-fw fa-map-marker-alt',
+        'can'  => 'viewLocality'
+    ],
+    [
+        'text' => 'Empleados',
+        'url' => '/employees',
+        'icon' => 'fas fa-fw fa-users',
+        'can' => 'viewEmployee'
+    ],
+    [
+        'text' => 'Membresías',
+        'url' => '/memberships',
+        'icon' => 'fas fa-fw fa-id-card',
+        'can' => 'viewMemberships'
+    ],
+    [
+        'text' => 'Falta de pago',
+        'url'  => '/expiredSubscriptions/expired',
+        'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
     ],
     [
         'text' => 'Mis Pagos',
@@ -488,7 +488,7 @@ return [
         'text' => 'Avisos',
         'url' => '/localityNotices',
         'can' => 'viewNotice',
-        'icon' => 'fas fa-fw fa-bell text-white',
+        'icon' => 'fas fa-fw fa-bell',
     ],
     [
         'text' => 'Reporte de fallas',
