@@ -43,7 +43,8 @@ class ExpenseType extends Model
     {
         $user = auth()->user();
         if ($user && $user->locality_id) {
-            return $query->where('locality_id', $user->locality_id);
+            return $query->where('locality_id', $user->locality_id)
+                         ->orWhereNull('locality_id');
         }
         return $query;
     }

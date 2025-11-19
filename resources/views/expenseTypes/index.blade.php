@@ -51,6 +51,7 @@
                                                         <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewExpenseType{{ $expenseType->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
+                                                        @if (!is_null($expenseType->locality_id))
                                                         <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editExpenseType{{ $expenseType->id }}">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
@@ -58,6 +59,7 @@
                                                         data-toggle="modal" data-target="#deleteExpenseType{{ $expenseType->id }}">
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
