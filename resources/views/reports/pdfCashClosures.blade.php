@@ -157,7 +157,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
         <div class="fecha_hora">
             <strong>Fecha de cierre:</strong> {{ now()->format('d/m/Y') }} <br>
             <strong>Hora de cierre:</strong> {{ now()->format('h:i:s A') }} <br>
-            <strong>Generado por:</strong> {{ $authUser->name ?? '-' }}
+            <strong>Generado por:</strong> {{ $authUser->name . ' ' . $authUser->last_name }}
         </div>
 
         <div class="section">
