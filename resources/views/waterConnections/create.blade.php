@@ -42,7 +42,7 @@
                                             <select class="form-control select2" name="customer_id" id="customer_id" required>
                                                 <option value="">Selecciona un cliente</option>
                                                 @foreach($customers as $customer)
-                                                    @if($customerd)
+                                                    @if($customers)
                                                         <option value="{{ $customer->id }}">
                                                             {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
                                                         </option>
