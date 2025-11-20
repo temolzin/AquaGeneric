@@ -34,7 +34,7 @@
                                 <div class="col-lg-10">
                                     <div class="form-group">
                                         <label>Nombre</label>
-                                        <input type="text" disabled class="form-control" value="{{ $customer->user->name }} {{ $customer->user->last_name }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $customer->name }} {{ $customer->last_name }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -64,7 +64,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Correo electrónico</label>
-                                        <input type="email" disabled class="form-control" value="{{ $customer->user->email }}" />
+                                        <input type="email" disabled class="form-control" value="{{ $customer->email }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-4">

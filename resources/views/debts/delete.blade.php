@@ -15,7 +15,7 @@
                     ¿Estás seguro de eliminar la deuda del periodo <strong>{{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [de] YYYY') }} - {{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [de] YYYY') }} ?</strong>
                     Recuerda que si la deuda tiene pagos asociados se eliminaran.
                 </div>
-                <input type="hidden" name="modal_id" value="view{{ $debt->customer->user->id }}">
+                <input type="hidden" name="modal_id" value="view{{ $debt->customer->id }}">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeCurrentModal('#deleteDebt{{ $waterConnectionDebt->id }}')">Cancelar</button>
                     <button type="submit" class="btn btn-danger">Confirmar</button>

@@ -98,7 +98,7 @@
                                                 @foreach($payments as $payment)
                                                     <tr>
                                                         <td>{{ $payment->id }}</td>
-                                                        <td>{{ $payment->debt->customer->user->name ?? 'Desconocido' }} {{ $payment->debt->customer->user->last_name ?? 'Desconocido' }}</td>
+                                                        <td>{{ $payment->debt->customer->name ?? 'Desconocido' }} {{ $payment->debt->customer->last_name ?? 'Desconocido' }}</td>
                                                         <td>
                                                             {{ \Carbon\Carbon::parse($payment->debt->start_date)->locale('es')->isoFormat('MMMM [/] YYYY')}} -
                                                             {{ \Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('MMMM [/] YYYY') }}
