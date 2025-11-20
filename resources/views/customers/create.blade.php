@@ -241,11 +241,15 @@
             passwordInput.value = randomPassword;
         });
         
-        $('#generatePass{{ $customer->id }}').on('click', function () {
-            const randomPass = Math.random().toString(36).slice(-8);
-            $('#passwordInput{{ $customer->id }}').val(randomPass);
-            $('#passwordInput{{ $customer->id }}').password();
-        });
+        @if(isset($customer))
+        <script>
+            $('#generatePass{{ $customer->id }}').on('click', function () {
+                const randomPass = Math.random().toString(36).slice(-8);
+                $('#passwordInput{{ $customer->id }}').val(randomPass);
+                $('#passwordInput{{ $customer->id }}').password();
+            });
+        </script>
+        @endif
     });
 </script>
 
