@@ -11,6 +11,25 @@ class InventoryCategorySeeder extends Seeder
     {
         $existingCount = DB::table('inventory_categories')->count();
         
+        $globalExists = DB::table('inventory_categories')
+            ->whereNull('locality_id')
+            ->exists();
+
+        if (!$globalExists) {
+            $firstUser = DB::table('users')->value('id');
+            if ($firstUser) {
+                DB::table('inventory_categories')->insert([
+                    'name' => 'Recursos Generales',
+                    'description' => 'Agrupa los recursos de inventario utilizados de forma general en la organización.',
+                    'color' => '#ff00f2',
+                    'locality_id' => null,
+                    'created_by' => $firstUser,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
         if ($existingCount > 0) {
             return;
         }

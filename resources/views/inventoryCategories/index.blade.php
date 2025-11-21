@@ -62,6 +62,7 @@
                                                             <i class="fas fa-eye"></i>
                                                         </button>
                                                         @endcan
+                                                        @if (!is_null($category->locality_id))
                                                         @can('editInventoryCategories')
                                                         <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editInventoryCategory{{ $category->id }}">
                                                             <i class="fas fa-edit"></i>
@@ -73,6 +74,7 @@
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>
                                                         @endcan
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
@@ -127,8 +129,7 @@
             dom: 'Bfrtip',
             paging: false,
             info: false,
-            searching: false,
-            order: [[0, 'desc']]
+            searching: false
         });
 
         var successMessage = "{{ session('success') }}";
