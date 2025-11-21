@@ -68,7 +68,7 @@ class CustomerController extends Controller
 
         if ($request->has('showPassword')) {
 
-            $passview = $request->password ?? Str::random(8);
+            $passview = $request->password;
 
             $user = User::create([
                 'name' => $request->name,
@@ -93,27 +93,10 @@ class CustomerController extends Controller
                 $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
             }
 
-            try {
-                $hash = md5($customer->id);
-                $this->generateUserAccessPDF($hash);
-            } catch (\Exception $e) {
-                return redirect()->route('customers.index')
-                    ->with('warning', 'Usuario creado, pero hubo un error al generar el PDF: ' . $e->getMessage());
-            }
+            $hash = md5($customer->id);
+            $this->generateUserAccessPDF($hash);
 
-            try {
-                $hash = md5($customer->id);
-            } catch (\Exception $e) {
-                return redirect()->route('customers.index')
-                    ->with('warning', 'Usuario creado, pero hubo un error al generar el hash.');
-            }
-
-            return redirect()
-                ->route('customers.index')
-                ->with([
-                    'success' => 'Cliente registrado correctamente.',
-                    'pdf_hash' => $hash 
-                ]);
+            return redirect()->route('customers.index')->with(['success' => 'Cliente registrado correctamente.','pdf_hash' => $hash]);
         }
 
         $customer = Customer::create($customerData);

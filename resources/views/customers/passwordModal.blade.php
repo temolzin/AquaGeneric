@@ -50,11 +50,10 @@
 
 <script>
     document.addEventListener('click', function(e) {
-
         if (e.target && e.target.id.startsWith('generatePass')) {
             const customerId = e.target.id.replace('generatePass', '');
             const input = document.getElementById('passwordInput' + customerId);
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!";
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             let pw = "";
             for (let i = 0; i < 10; i++) {
                 pw += chars.charAt(Math.floor(Math.random() * chars.length));
