@@ -11,10 +11,15 @@ class CostController extends Controller
     public function index()
     {
         $authUser = auth()->user();
-        $costs = Cost::where('locality_id', $authUser->locality_id)
-            ->orWhereNull('locality_id')
+        $costs = Cost::where(function ($q) use ($authUser) {
+                $q->where('locality_id', $authUser->locality_id)
+                    ->orWhereNull('locality_id');
+            })
+            ->with('creator')
+            ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+        
         return view('costs.index', compact('costs'));
     }
 
@@ -67,6 +72,7 @@ class CostController extends Controller
         $authUser = auth()->user();
         $costs = cost::where('locality_id', $authUser->locality_id)
                     ->orWhereNull('locality_id')
+                    ->orderByRaw('locality_id IS NULL DESC')
                     ->orderBy('created_at', 'desc')
                     ->get();
         

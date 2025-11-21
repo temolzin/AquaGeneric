@@ -15,7 +15,9 @@
                         <div class="card mb-3">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Fondo Reporte Vertical</h3><br>
-                                <small class="text-light">Formato sugerido</small>
+                                <small class="text-light">Peso máximo: 2MB<br>
+                            Dimensiones máximas: No mayor a 1600 x 2000
+                                </small>
                             </div>
                             <div class="card-body text-center">
                                 <img id="preview-vertical-{{ $locality->id }}"
@@ -28,7 +30,9 @@
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Fondo Reporte Horizontal </h3><br>
-                                <small class="text-light">Formato sugerido</small>
+                                <small class="text-light">Peso máximo: 2MB<br>
+                            Dimensiones máximas: No mayor a 2000 x 1600
+                                </small>
                             </div>
                             <div class="card-body text-center">
                                 <img id="preview-horizontal-{{ $locality->id }}"
@@ -50,23 +54,73 @@
 </div>
 <script>
 function previewImageEdit(event, type, id) {
-    var input = event.target;
-    var file = input.files[0];
-    var reader = new FileReader();
+    const input = event.target;
+    const file = input.files[0];
+
+    if (!file) return;
+
+    const maxSize = 2 * 1024 * 1024;
+    const maxVertical = { width: 1600, height: 2000 };
+    const maxHorizontal = { width: 2000, height: 1600 };
 
     if (!file.type.startsWith('image/')) {
         Swal.fire({
             icon: 'error',
-            title: 'Error',
-            text: 'Por favor, sube un archivo de imagen',
+            title: 'Archivo no válido',
+            text: 'Por favor, sube un archivo de imagen (JPG, PNG, etc.)',
             confirmButtonText: 'Aceptar'
         });
         input.value = '';
         return;
     }
 
-    reader.onload = function() {
-        document.getElementById('preview-' + type + '-' + id).src = reader.result;
+    if (file.size > maxSize) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Tamaño excedido',
+            text: 'El archivo no debe superar los 2 MB.',
+            confirmButtonText: 'Aceptar'
+        });
+        input.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const width = img.width;
+            const height = img.height;
+
+            if (type === 'vertical') {
+                if (width > maxVertical.width || height > maxVertical.height) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Dimensiones inválidas',
+                        text: `El fondo vertical no debe exceder ${maxVertical.width}x${maxVertical.height}px. Imagen cargada: ${width}x${height}px.`,
+                        confirmButtonText: 'Aceptar'
+                    });
+                    input.value = '';
+                    return;
+                }
+            }
+
+            if (type === 'horizontal') {
+                if (width > maxHorizontal.width || height > maxHorizontal.height) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Dimensiones inválidas',
+                        text: `El fondo horizontal no debe exceder ${maxHorizontal.width}x${maxHorizontal.height}px. Imagen cargada: ${width}x${height}px.`,
+                        confirmButtonText: 'Aceptar'
+                    });
+                    input.value = '';
+                    return;
+                }
+            }
+
+            document.getElementById('preview-' + type + '-' + id).src = e.target.result;
+        };
+        img.src = e.target.result;
     };
     reader.readAsDataURL(file);
 }

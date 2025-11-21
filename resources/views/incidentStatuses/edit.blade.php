@@ -31,7 +31,7 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color" class="form-control @error('color') is-invalid @enderror" id="colorSelect{{ $status->id }}" required>
+                                            <select name="color" class="form-control select2" id="colorSelect{{ $status->id }}" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="#e74c3c" {{ old('color', $status->color) == '#e74c3c' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="#3498db" {{ old('color', $status->color) == '#3498db' ? 'selected' : '' }}>Azul</option>
@@ -72,38 +72,36 @@
     document.addEventListener('DOMContentLoaded', function() {
         const editModals = document.querySelectorAll('[id^="editIncidentStatus"]');
         
+        const updatePreview = (select, preview) => {
+            const hasValue = select.value;
+            preview.style.backgroundColor = hasValue ? select.value : '#f8f9fa';
+            preview.style.border = hasValue ? `1px solid ${select.value}` : '1px solid #ccc';
+        };
+
+        const initializeColorSelect = (modalId) => {
+            const colorSelect = document.getElementById('colorSelect' + modalId);
+            const colorPreview = document.getElementById('colorPreview' + modalId);
+            
+            if (!colorSelect || !colorPreview) return;
+
+            $('#colorSelect' + modalId).select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Seleccione un color',
+                allowClear: false,
+                dropdownParent: $('#editIncidentStatus' + modalId)
+            });
+            
+            $('#colorSelect' + modalId).on('change', function() {
+                updatePreview(this, colorPreview);
+            });
+            
+            updatePreview(colorSelect, colorPreview);
+        };
+
         editModals.forEach(modal => {
             const modalId = modal.id.replace('editIncidentStatus', '');
-            const colorSelect = document.getElementById('colorSelect' + modalId);
-            const colorPreview = document.getElementById('colorPreview' + modalId);
-            
-            if (colorSelect && colorPreview) {
-                colorSelect.addEventListener('change', function() {
-                    if (this.value) {
-                        colorPreview.style.backgroundColor = this.value;
-                        colorPreview.style.border = '1px solid ' + this.value;
-                    } else {
-                        colorPreview.style.backgroundColor = '#f8f9fa';
-                        colorPreview.style.border = '1px solid #ccc';
-                    }
-                });
-                
-                if (colorSelect.value) {
-                    colorPreview.style.backgroundColor = colorSelect.value;
-                    colorPreview.style.border = '1px solid ' + colorSelect.value;
-                }
-            }
-        });
-        
-        $('[id^="editIncidentStatus"]').on('shown.bs.modal', function () {
-            const modalId = this.id.replace('editIncidentStatus', '');
-            const colorSelect = document.getElementById('colorSelect' + modalId);
-            const colorPreview = document.getElementById('colorPreview' + modalId);
-            
-            if (colorSelect && colorPreview && colorSelect.value) {
-                colorPreview.style.backgroundColor = colorSelect.value;
-                colorPreview.style.border = '1px solid ' + colorSelect.value;
-            }
+            initializeColorSelect(modalId);
         });
     });
 </script>

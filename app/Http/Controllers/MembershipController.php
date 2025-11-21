@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Membership;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MembershipController extends Controller
 {
@@ -11,9 +12,11 @@ class MembershipController extends Controller
     {
         $search = $request->input('search');
         
-        $memberships = Membership::when($search, function($query, $search) {
-            return $query->where('name', 'like', '%'.$search.'%');
-        })->paginate(10);
+        $memberships = Membership::with('creator')
+            ->when($search, function($query, $search) {
+                return $query->where('name', 'like', '%'.$search.'%');
+            })
+            ->paginate(10);
 
         return view('memberships.index', compact('memberships'));
     }
@@ -34,6 +37,7 @@ class MembershipController extends Controller
         ]);
 
         Membership::create([
+            'created_by' => Auth::id(),
             'name' => $request->name,
             'price' => $request->price,
             'term_months' => $request->term_months,
@@ -46,6 +50,7 @@ class MembershipController extends Controller
 
     public function show(Membership $membership)
     {
+        $membership->load('creator');
         return view('memberships.show', compact('membership'));
     }
 
@@ -69,7 +74,7 @@ class MembershipController extends Controller
             'price' => $request->price,
             'term_months' => $request->term_months,
             'water_connections_number' => $request->water_connections_number, 
-            'users_number' => $request->users_number 
+            'users_number' => $request->users_number
         ]);
 
         return redirect()->route('memberships.index')->with('success', 'Membresía actualizada exitosamente.');

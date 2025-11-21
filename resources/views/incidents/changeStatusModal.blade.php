@@ -10,7 +10,7 @@
                         </button>
                     </div>
                 </div>
-                <form id="changeStatusForm" action="{{ route('incidents.updateStatus') }}" method="POST">
+                <form id="changeStatusForm" action="{{ route('incidents.updateStatus') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="card">
@@ -41,7 +41,7 @@
                                                         {{ $employee->name }} - {{ $employee->rol }}
                                                     </option>
                                                 @endforeach
-                                            </select>    
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -77,7 +77,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" id="save" class="btn btn-success">Guardar</button>
+                        <button type="button" id="saveStatus" class="btn btn-success">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -88,14 +88,14 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const input = document.querySelector('.imageInput');
-        const container = input.closest('.form-group').querySelector('.imageButtonsContainer');
+        const container = document.querySelector('.imageButtonsContainer');
         const modalImg = document.getElementById('multiModalImagePreview');
+        const saveBtn = document.getElementById('saveStatus');
+        const form = document.getElementById('changeStatusForm');
 
         input.addEventListener('change', function () {
             container.innerHTML = '';
-
-            const files = Array.from(this.files);
-            files.forEach(file => {
+            Array.from(this.files).forEach(file => {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
 
@@ -116,6 +116,49 @@
                     };
                     reader.readAsDataURL(file);
                 }
+            });
+        });
+
+        saveBtn.addEventListener('click', function () {
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const status = data.success ? 'success' : 'error';
+                const title = data.success ? 'Estatus actualizado' : 'Error';
+                const icon = status;
+                const message = data.message;
+
+                Swal.fire({
+                    icon: icon,
+                    title: title,
+                    text: message,
+                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (data.success && result.isConfirmed) {
+                        location.reload();
+                    }
+                });
+
+                if (data.success) {
+                    $('#createResponsible').modal('hide');
+                    form.reset();
+                    container.innerHTML = '';
+                }
+            })
+            .catch(() => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: 'No se pudo conectar con el servidor.'
+                });
             });
         });
     });

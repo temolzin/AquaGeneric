@@ -16,7 +16,8 @@ class DebtController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $localityId = auth()->user()->locality_id;
+        $authUser = auth()->user();
+        $localityId = $authUser->locality_id;
 
         $customers = Customer::where('customers.locality_id', $localityId)
             ->select('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')

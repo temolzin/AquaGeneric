@@ -22,7 +22,7 @@ class WaterConnectionController extends Controller
         $query = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
             ->where('water_connections.locality_id', $authUser->locality_id)
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
-            ->with(['customer'])
+            ->leftJoin('sections', 'water_connections.section_id', '=', 'sections.id')
             ->orderBy('water_connections.created_at', 'desc')
             ->select('water_connections.*');
 
@@ -31,12 +31,11 @@ class WaterConnectionController extends Controller
 
             $query->where(function ($q) use ($search) {
                 $q->where('water_connections.id', 'LIKE', "%{$search}%")
-                    ->orWhere('water_connections.name', 'LIKE', "%{$search}%")
-                    ->orWhere('water_connections.type', $search)
-                    ->orWhere('customers.name', 'LIKE', "%{$search}%")
-                    ->orWhere('customers.last_name', 'LIKE', "%{$search}%")
-                    ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"])
-                    ->orWhereRaw("CONCAT(customers.last_name, ' ', customers.name) LIKE ?", ["%{$search}%"]);
+                ->orWhere('water_connections.name', 'LIKE', "%{$search}%")
+                ->orWhere('water_connections.type', $search)
+                ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                ->orWhere('customers.last_name', 'LIKE', "%{$search}%")
+                ->orWhere('sections.name', 'LIKE', "%{$search}%");
             });
         }
 
@@ -44,11 +43,11 @@ class WaterConnectionController extends Controller
 
         $customers = Customer::where('locality_id', $authUser->locality_id)->get();
         $costs = Cost::where('locality_id', $authUser->locality_id)
-                        ->orWhereNull('locality_id')
-                        ->get();
+                    ->orWhereNull('locality_id')
+                    ->get();
         $sections = Section::where('locality_id', $authUser->locality_id)
-                        ->orWhereNull('locality_id')
-                        ->get();
+                    ->orWhereNull('locality_id')
+                    ->get();
 
         return view('waterConnections.index', compact('connections', 'customers', 'costs', 'sections'));
     }
@@ -89,19 +88,13 @@ class WaterConnectionController extends Controller
 
     public function show($id)
     {
-        $connection = WaterConnection::with('customer')->findOrFail($id);
-        return view('waterConnections.show', compact('connection'));
-    }
-
-    public function edit($id)
-    {
-        $authUser = auth()->user();
-
-        $connection = WaterConnection::with('customer')->findOrFail($id);
-        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
-        $costs = Cost::where('locality_id', $authUser->locality_id)->get();
-
-        return view('waterConnections.edit', compact('connection', 'customers', 'costs', 'sections'));
+        $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+            ->findOrFail($id);
+            
+        $sections = Section::where('locality_id', $connection->locality_id)
+                    ->orWhereNull('locality_id')
+                    ->get();
+        return view('waterConnections.show', compact('connection', 'sections'));
     }
 
     public function update(Request $request, $id)
@@ -201,8 +194,10 @@ class WaterConnectionController extends Controller
 
     private function getIdFromHash($hash)
     {
-        $connections = WaterConnection::select('id')->get();
-
+        $connections = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+            ->select('id')
+            ->get();
+        
         foreach ($connections as $connection) {
             if ($this->generateConnectionHash($connection->id) === $hash) {
                 return $connection->id;
@@ -214,14 +209,14 @@ class WaterConnectionController extends Controller
     public function showPublic($hash)
     {
         try {
-
             $id = $this->getIdFromHash($hash);
 
             if (!$id) {
                 abort(404, 'Toma de agua no encontrada');
             }
 
-            $connection = WaterConnection::with(['customer', 'locality'])
+            $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+                ->with(['customer', 'locality'])
                 ->find($id);
 
             if (!$connection) {
@@ -242,8 +237,9 @@ class WaterConnectionController extends Controller
     public function generateQrAjax($id)
     {
         try {
-
-            $connection = WaterConnection::findOrFail($id);
+            $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+                ->findOrFail($id);
+                
             $hash = $this->generateConnectionHash($id);
             $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 
@@ -276,8 +272,9 @@ class WaterConnectionController extends Controller
     public function downloadQr($id)
     {
         try {
-
-            $connection = WaterConnection::findOrFail($id);
+            $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
+                ->findOrFail($id);
+                
             $hash = $this->generateConnectionHash($id);
             $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 

@@ -67,14 +67,13 @@
                                             <th>FOTO</th>
                                             <th>NOMBRE</th>
                                             <th>DIRECCION</th>
-                                            <th>ESTADO</th>
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @if(count($customers) <= 0)
                                         <tr>
-                                            <td colspan="7">No hay resultados</td>
+                                            <td colspan="5">No hay resultados</td>
                                         </tr>
                                         @else
                                         @foreach($customers as $customer)
@@ -94,19 +93,6 @@
                                                 {{ $customer->last_name ?? '' }}
                                             </td>
                                             <td>{{$customer->state}}, {{$customer->locality}}</td>
-                                            <td>
-                                                @switch($customer->status)
-                                                    @case(0)
-                                                        Fallecido
-                                                        @break
-                                                    @case(1)
-                                                        Con Vida
-                                                        @break
-                                                    @default
-                                                        Desconocido
-                                                        @break
-                                                @endswitch
-                                            </td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
                                                     <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{$customer->id}}">

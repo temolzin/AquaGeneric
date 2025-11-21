@@ -310,31 +310,7 @@ return [
         'text' => 'Panel',
         'url' => '/dashboard',
         'icon' => 'fas fa-fw fa-home',
-    ],
-    [
-        'text' => 'Secciones',
-        'url' => '/sections',
-        'icon' => 'fas fa-fw fa-th-large',
-        'can'  => 'viewSections'
-    ],    
-    [
-        'text' => 'Usuarios',
-        'url' => '/users',
-        'icon' => 'fas fa-fw fa-user',
-        'can'  => 'viewUser'
-    ],
-    [
-        'text' => 'Roles',
-        'url' => '/roles',
-        'icon' => 'fas fa-fw fa-user-shield',
-        'can'  => 'viewRoles'
-    ],
-    [
-        'text' => 'Clientes',
-        'url' => '/customers',
-        'icon' => 'fas fa-fw fa-users',
-        'can'  => 'viewCustomers'
-    ],
+    ], 
     [
         'text' => 'Gestión de Pagos',
         'icon' => 'fas fa-fw fa-dollar-sign',
@@ -354,28 +330,28 @@ return [
         ],
     ],
     [
-        'text' => 'Deudas',
-        'url' => '/debts',
-        'icon' => 'fas fa-fw fa-credit-card',
-        'can'  => 'viewDebts'
-    ],
-    [
-        'text' => 'Costos',
-        'url' => '/costs',
-        'icon' => 'fas fa-fw fa-money-bill-wave',
-        'can'  => 'viewCost'
-    ],
-    [
-        'text' => 'Localidades',
-        'url' => '/localities',
-        'icon' => 'fas fa-fw fa-map-marker-alt',
-        'can'  => 'viewLocality'
-    ],
-    [
-        'text' => 'Tomas de Agua',
-        'url' => '/waterConnections',
-        'icon' => 'fas fa-fw fa-water',
-        'can'  => 'viewWaterConnection'
+        'text' => 'Gestión de Tomas de Agua',
+        'icon' => 'fas fa-fw fa-tint',
+        'submenu' => [
+            [
+                'text' => 'Tomas de Agua',
+                'url' => '/waterConnections',
+                'icon' => 'fas fa-fw fa-water',
+                'can'  => 'viewWaterConnection'
+            ],
+            [
+                'text' => 'Costos',
+                'url' => '/costs',
+                'icon' => 'fas fa-fw fa-money-bill-wave',
+                'can'  => 'viewCost'
+            ],
+            [
+                'text' => 'Secciones',
+                'url' => '/sections',
+                'icon' => 'fas fa-fw fa-th-large',
+                'can'  => 'viewSections'
+            ],   
+        ],
     ],
     [
         'text' => 'Gestión de Gastos',
@@ -420,23 +396,6 @@ return [
         ],
     ],
     [
-        'text' => 'Empleados',
-        'url' => '/employees',
-        'icon' => 'fas fa-fw fa-users',
-        'can' => 'viewEmployee'
-    ],
-    [
-        'text' => 'Membresías',
-        'url' => '/memberships',
-        'icon' => 'fas fa-fw fa-id-card',
-        'can' => 'viewMemberships'
-    ],
-    [
-        'text' => 'Falta de pago',
-        'url'  => '/expiredSubscriptions/expired',
-        'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
-    ],
-    [
         'text' => 'Gestion de Inventario',
         'icon' => 'fas fa-fw fa-warehouse',
         'submenu' => [
@@ -453,6 +412,53 @@ return [
                 'can'  => 'viewInventoryCategories',
             ],
         ],
+    ],
+    [
+        'text' => 'Usuarios',
+        'url' => '/users',
+        'icon' => 'fas fa-fw fa-user',
+        'can'  => 'viewUser'
+    ],
+    [
+        'text' => 'Roles',
+        'url' => '/roles',
+        'icon' => 'fas fa-fw fa-user-shield',
+        'can'  => 'viewRoles'
+    ],
+    [
+        'text' => 'Clientes',
+        'url' => '/customers',
+        'icon' => 'fas fa-fw fa-users',
+        'can'  => 'viewCustomers'
+    ],
+    [
+        'text' => 'Deudas',
+        'url' => '/debts',
+        'icon' => 'fas fa-fw fa-credit-card',
+        'can'  => 'viewDebts'
+    ],
+    [
+        'text' => 'Localidades',
+        'url' => '/localities',
+        'icon' => 'fas fa-fw fa-map-marker-alt',
+        'can'  => 'viewLocality'
+    ],
+    [
+        'text' => 'Empleados',
+        'url' => '/employees',
+        'icon' => 'fas fa-fw fa-users',
+        'can' => 'viewEmployee'
+    ],
+    [
+        'text' => 'Membresías',
+        'url' => '/memberships',
+        'icon' => 'fas fa-fw fa-id-card',
+        'can' => 'viewMemberships'
+    ],
+    [
+        'text' => 'Falta de pago',
+        'url'  => '/expiredSubscriptions/expired',
+        'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
     ],
     [
         'text' => 'Mis Pagos',
@@ -482,7 +488,7 @@ return [
         'text' => 'Avisos',
         'url' => '/localityNotices',
         'can' => 'viewNotice',
-        'icon' => 'fas fa-fw fa-bell text-white',
+        'icon' => 'fas fa-fw fa-bell',
     ],
     [
         'text' => 'Reporte de fallas',

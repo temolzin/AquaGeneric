@@ -58,6 +58,7 @@
                                                         <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewIncidentStatus{{ $status->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
+                                                        @if (!is_null($status->locality_id))
                                                         @can('editIncidentStatuses')
                                                         <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editIncidentStatus{{ $status->id }}">
                                                             <i class="fas fa-edit"></i>
@@ -69,6 +70,7 @@
                                                         <i class="fas fa-trash-alt"></i>
                                                         </button>
                                                         @endcan
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
@@ -130,13 +132,34 @@
         var errorMessage = "{{ session('error') }}";
 
         if (successMessage) {
-            Swal.fire({ icon: 'success', title: 'Éxito', text: successMessage, confirmButtonText: 'Aceptar' });
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: successMessage,
+                confirmButtonText: 'Aceptar'
+            });
         }
 
         if (errorMessage) {
-            Swal.fire({ icon: 'error', title: 'Error', text: errorMessage, confirmButtonText: 'Aceptar' });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonText: 'Aceptar'
+            });
         }
 
+        $('#createIncidentStatusModal').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $('#createIncidentStatusModal')
+            });
+        });
+
+        $('[id^="editIncidentStatus"]').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $(this)
+            });
+        });
     });
 </script>
 @endsection

@@ -14,6 +14,7 @@ class SectionController extends Controller
         $authUser = auth()->user();
         $query = Section::where('sections.locality_id', $authUser->locality_id)
             ->orWhereNull('locality_id')
+            ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('sections.created_at', 'desc')
             ->select('sections.*');
 

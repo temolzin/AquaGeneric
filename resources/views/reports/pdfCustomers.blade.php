@@ -13,6 +13,11 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
     <head>
         <title>Lista de Clientes</title>
         <style>
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
             html {
                 margin: 0;
                 padding: 15px;
@@ -22,7 +27,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 height: 100%;
                 margin: 0;
                 padding: 0;
-                background-image: url('file://{{ $horizontalBgPath }}');
+                background-image: url('file://{{ $verticalBgPath }}');
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
@@ -33,17 +38,16 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             }
 
             .info_empresa {
-                width: 85%;
+                width: 100%;
+                margin-top: 60px;
                 text-align: center;
                 align-content: stretch;
                 font-family: 'Montserrat', sans-serif;
             }
 
             .aqua_titulo {
-                padding-right: 80px;
-                padding-top: 60px;
                 font-family: 'Montserrat', sans-serif;
-                font-size: 18pt;
+                font-size: 20pt;
                 font-weight: bold;
                 margin-right: 5px;
                 display: inline-block;
@@ -128,14 +132,13 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
 
             #reporte_head .logo {
                 height: auto;
-                margin-left: 70px;
-                margin-top: 60px;
+                margin-left: 60px;
             }
 
             #reporte_head .logo img {
                 border-radius: 50%;
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
             }
 
             .title {
@@ -159,15 +162,13 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                             @endif
                         </div>
                     </td>
-                    <td class="info_empresa">
-                        <div>
-                            <p class="aqua_titulo">
-                                COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
-                            </p>
-                        </div>
-                    </td>
                 </tr>
             </table>
+            <div class="info_empresa">
+                <p class="aqua_titulo">
+                    COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
+                </p>
+            </div>
             <div class="title">
                 <h3>LISTA DE CLIENTES</h3>
             </div>
@@ -176,9 +177,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                     <tr>
                         <th class="textable">ID</th>
                         <th class="textable">NOMBRE</th>
-                        <th class="textable">NUM. EXTERIOR</th>
-                        <th class="textable">CALLE</th>
-                        <th class="textable">NUM. INTERIOR</th>
+                        <th class="textable">DIRECCIÓN</th>
                         <th class="textable">NUM. DE TOMAS</th>
                     </tr>
                 </thead>
@@ -187,9 +186,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         <tr>
                             <td class="textcenter">{{ $customer->id }}</td>
                             <td class="textcenter">{{ $customer->name }} {{ $customer->last_name }}</td>
-                            <td class="textcenter">{{ $customer->block }}</td>
-                            <td class="textcenter">{{ $customer->street }}</td>
-                            <td class="textcenter">{{ $customer->interior_number }}</td>
+                            <td class="textcenter"> {{ $customer->street }} No. Ext.{{ $customer->interior_number }} No. Int.{{ $customer->interior_number }}</td>
                             <td class="textcenter">{{ $customer->waterConnections->count() }}</td>
                         </tr>
                     @endforeach

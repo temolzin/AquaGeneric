@@ -32,7 +32,7 @@
                                     <div class="form-group">
                                         <label for="color" class="form-label">Color(*)</label>
                                         <div class="input-group">
-                                            <select name="color" class="form-control" id="colorSelect{{ $section->id }}" required>
+                                            <select name="color" class="form-control select2" id="colorSelect{{ $section->id }}" required>
                                                 <option value="">Selecciona un color</option>
                                                 <option value="#e74c3c" {{ $section->color == '#e74c3c' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="#3498db" {{ $section->color == '#3498db' ? 'selected' : '' }}>Azul</option>
@@ -61,6 +61,7 @@
         </div>
     </div>
 </div>
+
 <style>
     .form-group {
         margin-bottom: 0.5rem;
@@ -78,12 +79,21 @@
         align-items: center;
     }
 </style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const select = document.getElementById('colorSelect{{ $section->id }}');
         const preview = document.getElementById('colorPreview{{ $section->id }}');
 
         if (select && preview) {
+            $('#colorSelect{{ $section->id }}').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Selecciona un color',
+                allowClear: false,
+                dropdownParent: $('#edit{{ $section->id }}')
+            });
+
             const updatePreview = () => {
                 if (select.value) {
                     preview.style.backgroundColor = select.value;
@@ -94,7 +104,7 @@
                 }
             };
 
-            select.addEventListener('change', updatePreview);
+            $('#colorSelect{{ $section->id }}').on('change', updatePreview);
             updatePreview();
 
             $('#edit{{ $section->id }}').on('shown.bs.modal', function () {

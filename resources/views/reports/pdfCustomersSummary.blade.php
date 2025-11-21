@@ -97,33 +97,33 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 font-size: 12pt;
                 font-family: 'Montserrat', sans-serif;
                 vertical-align: middle;
-                line-height: 1.6;
+                line-height: 1.2;
             }
 
             .connection_separator {
-                margin: 8px 0;
+                margin: 4px 0;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                min-height: 50px;
-                font-size: 12pt;
+                min-height: 30px;
+                font-size: 10pt;
             }
 
             .address_cell .connection_separator {
-                margin: 8px 0;
+                margin: 4px 0;
                 padding: 0;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                min-height: 50px; 
-                font-size: 12pt;
+                min-height: 30px; 
+                font-size: 10pt;
             }
 
             #report_detail {
                 border-collapse: collapse;
                 width: 100%;
-                margin-bottom: 150px;
+                margin-bottom: 15px;
                 page-break-inside: auto;
             }
 
@@ -225,7 +225,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                             <td class="text_center">
                                 @foreach ($customer->waterConnections as $connection)
                                     <div class="connection_separator">
-                                        <strong>Toma: {{ $connection->name ?: '-' }}</strong><br>
+                                        <strong> {{ $connection->name ?: '-' }}</strong><br>
                                         @switch($connection->type)
                                             @case('commercial')
                                                 (Comercial)

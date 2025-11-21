@@ -1,3 +1,13 @@
+@php
+$locality = Auth::user()->locality ?? null;
+$verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
+    ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
+    : public_path('img/backgroundReport.png');
+
+$horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizontal')
+    ? $locality->getFirstMedia('pdfBackgroundHorizontal')->getPath()
+    : public_path('img/customersBackgroundHorizontal.png');
+@endphp
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,7 +22,7 @@
             }
 
             body{
-                background-image: url('img/backgroundReport.png');
+                background-image: url('file://{{ $verticalBgPath }}');
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
@@ -252,22 +262,26 @@
                 <tbody>
                     <tr>
                         <td style="padding: 8px; text-align: center; width: 50%;">
-                        <img src="{{ $chartImages[0]}}" style="max-width: 800px; height: 170px;">
+                            <p style="font-weight: bold; color: #000000ff; margin: 5px 0;">Gráfica de Barras</p>
+                            <img src="{{ $chartImages[0]}}" style="max-width: 800px; height: 170px;">
                         </td>
                     </tr>
                     <tr>
                         <td style="padding: 8px; text-align: center; width: 50%;">
-                        <img src="{{ $chartImages[1]}}" style="max-width: 800px; height: 170px; margin-top:50px;">
+                            <p style="font-weight: bold; color: #000000ff; margin: 10px 0; margin-top:10px;">Gráfica de Líneas</p>
+                            <img src="{{ $chartImages[1]}}" style="max-width: 800px; height: 170px;">
                         </td>
                     </tr>
                     <tr>
                         <td style="padding: 8px; text-align: center; width: 50%;">
-                            <img src="{{ $chartImages[2] }}" style="max-width: 800px; height: 170px; margin-top:250px;">
+                            <p style="font-weight: bold; color: #000000ff; margin: 5px 0; margin-top: 240px;">Gráfica de Pastel</p>
+                            <img src="{{ $chartImages[2] }}" style="max-width: 800px; height: 170px;">
                         </td>
                     </tr>
                     <tr>
-                            <td style="padding: 8px; text-align: center; width: 50%;">
-                            <img src="{{ $chartImages[3] }}" style="max-width: 800px; height: 170px; margin-top:50px;">
+                        <td style="padding: 8px; text-align: center; width: 50%;">
+                            <p style="font-weight: bold; color: #000000ff; margin: 10px 0; margin-top: 50px;">Gráfica de Dona</p>
+                            <img src="{{ $chartImages[3] }}" style="max-width: 800px; height: 170px;">
                        </td>
                     </tr>
                 </tbody>

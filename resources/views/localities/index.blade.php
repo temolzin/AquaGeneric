@@ -122,6 +122,10 @@
                                                             <i class="fas fa-key"></i>
                                                         </button>
                                                     </form>
+                                                    <button type="button" class="btn bg-maroon ml-2" title="Historial de Movimientos"
+                                                            data-toggle="modal" data-target="#historyModal{{ $locality->id }}">
+                                                            <i class="fas fa-history"></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                             @include('localities.edit')
@@ -131,6 +135,7 @@
                                             @include('localities.mailConfiguration')
                                             @include('localities.editPdfBackground')
                                             @include('localities.tokenModal')
+                                            @include('localities.historyModal')
                                         </tr>
                                         @endforeach
                                         @endif
@@ -155,7 +160,6 @@
     </div>
 </section>
 @endsection
-
 @section('js')
 <script>
     $(document).ready(function() {

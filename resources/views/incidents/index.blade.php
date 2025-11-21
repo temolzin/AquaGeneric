@@ -83,7 +83,9 @@
                                                         </td>
                                                         <td>{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}</td>
                                                         <td>
-                                                            {{$incident->incidentCategory->name}}
+                                                            <span class="badge" style="background-color: {{ $incident->incidentCategory->color ?? '#6c757d' }}; color: white;">
+                                                                {{ $incident->incidentCategory->name }}
+                                                            </span>
                                                         </td>
                                                         <td>
                                                             @php

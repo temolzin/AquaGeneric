@@ -15,7 +15,7 @@
                                 <form method="GET" action="{{ route('waterConnections.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control"
-                                            placeholder="Buscar por ID, Nombre, Propietario"
+                                            placeholder="Buscar por ID, Nombre, Propietario, Sección"
                                             value="{{ request('search') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary" title="Buscar Toma de Agua">

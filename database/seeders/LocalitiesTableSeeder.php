@@ -68,6 +68,10 @@ class LocalitiesTableSeeder extends Seeder
                 $locality->update($updateData);
             }
         });
+
+        Locality::whereNotNull('membership_id')
+                ->whereNull('membership_assigned_at')
+                ->update(['membership_assigned_at' => now()]);
     }
 
     private function generateTokenData(bool $isExpired = false): string
