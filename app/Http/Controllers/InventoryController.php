@@ -40,7 +40,11 @@ class InventoryController extends Controller
 
         $localities = Locality::select('id', 'name')->get();
         $users = User::select('id', 'name')->get();
-        $categories = InventoryCategory::where('locality_id', $userLocalityId)->get();
+        $categories = InventoryCategory::where('locality_id', $userLocalityId)
+                ->orWhereNull('locality_id')
+                ->orderByRaw('locality_id IS NULL DESC')
+                ->orderBy('created_at', 'desc')
+                ->get();
 
         return view('inventory.index', compact('components', 'localities', 'users', 'categories'));
     }
