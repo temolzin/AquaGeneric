@@ -19,7 +19,7 @@ class CreateMovementsHistoryTable extends Migration
             $table->timestamps();
             $table->string('module');
             $table->string('action');
-            $table->json('record_id');
+            $table->unsignedBigInteger('record_id');
             $table->json('before_data');
             $table->json('current_data')->nullable();
 

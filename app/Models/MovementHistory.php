@@ -14,7 +14,6 @@ class MovementHistory extends Model
         'module',
         'action',
         'record_id',
-        'created_by',
         'before_data',
         'current_data',
     ];
