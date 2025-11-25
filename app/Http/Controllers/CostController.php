@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cost;
+use App\Models\MovementHistory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -58,14 +60,35 @@ class CostController extends Controller
 
     public function update(Request $request, Cost $cost)
     {
+        $before = $cost->toArray();
         $cost->update($request->all());
+        $after = $cost->fresh()->toArray();
+
+        MovementHistory::create([
+        'alter_by'    => Auth::user()->id,
+        'module'      => 'costos',
+        'action'      => 'update',
+        'record_id'   => $cost->id,
+        'before_data' => $before,
+        'current_data'=> $after,
+    ]);
 
         return redirect()->route('costs.index')->with('success', 'Costo actualizado exitosamente.');
     }
 
     public function destroy(Cost $cost)
     {
+        $before = $cost->toArray();
         $cost->delete();
+
+        MovementHistory::create([
+        'alter_by'     => Auth::user()->id,
+        'module'       => 'costos',
+        'action'       => 'delete',
+        'record_id'    => $cost->id,
+        'before_data'  => $before,
+        'current_data' => null,
+    ]);
 
         return redirect()->route('costs.index')->with('success', 'Costo eliminado exitosamente.');
     }

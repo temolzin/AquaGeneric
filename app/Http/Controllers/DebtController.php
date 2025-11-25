@@ -7,6 +7,8 @@ use App\Models\Customer;
 use App\Models\Debt;
 use App\Models\Payment;
 use App\Models\WaterConnection;
+use App\Models\MovementHistory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DebtController extends Controller
@@ -186,7 +188,17 @@ class DebtController extends Controller
             return redirect()->back()->with('error', 'Deuda no encontrada.');
         }
 
+        $before = $debt->toArray();
         $debt->delete();
+
+        MovementHistory::create([
+        'alter_by'     => Auth::user()->id,
+        'module'       => 'deudas',
+        'action'       => 'delete',
+        'record_id'    => $debt->id,
+        'before_data'  => $before,
+        'current_data' => null,
+    ]);
 
         return redirect()->back()->with('success', 'Deuda eliminada con éxito.')
             ->with('modal_id', $request->input('modal_id'));
