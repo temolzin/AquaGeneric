@@ -9,6 +9,8 @@ class MovementHistory extends Model
 {
     use HasFactory;
 
+    protected $table = 'movements_history';
+
     protected $fillable = [
         'alter_by',
         'module',

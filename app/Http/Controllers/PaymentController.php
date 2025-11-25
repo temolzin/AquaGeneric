@@ -9,6 +9,8 @@ use App\Models\Customer;
 use App\Models\GeneralExpense;
 use App\Models\User;
 use App\Models\WaterConnection;
+use App\Models\MovementHistory;
+use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
@@ -169,6 +171,7 @@ class PaymentController extends Controller {
 
     public function update(Request $request, Payment $payment) {
         $debt = $payment->debt;
+        $before = $payment->toArray();
 
         $previousAmount = $payment->amount;
         $remainingAmount = $debt->amount - $debt->debt_current + $previousAmount;
@@ -195,6 +198,16 @@ class PaymentController extends Controller {
         }
 
         $debt->save();
+        $after = $payment->fresh()->toArray();
+
+        MovementHistory::create([
+        'alter_by'     => Auth::id(),
+        'module'       => 'pagos',
+        'action'       => 'update',
+        'record_id'    => $payment->id,
+        'before_data'  => $before,
+        'current_data' => $after,
+    ]);
 
         return redirect()->route('payments.index')->with('success', 'Pago actualizado exitosamnete.');
     }
@@ -206,6 +219,17 @@ class PaymentController extends Controller {
         if (!$payment) {
             return redirect()->back()->with('error', 'Pago no encontrado.');
         }
+
+        $before = $payment->toArray();
+
+        MovementHistory::create([
+        'alter_by'     => Auth::id(),
+        'module'       => 'pagos',
+        'action'       => 'delete',
+        'record_id'    => $id,
+        'before_data'  => $before,
+        'current_data' => null,
+    ]);
 
         return redirect()->route('payments.index')->with('success', 'Pago eliminado exitosamnete.');
     }
