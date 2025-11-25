@@ -361,7 +361,7 @@ class CustomerController extends Controller
                 if ($result['success']) {
                     $imported++;
                 } else {
-                    $errors[] = $result['error']; // ← ESTA LÍNEA ES CRÍTICA
+                    $errors[] = $result['error']; 
                 }
             }
             
