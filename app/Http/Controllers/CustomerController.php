@@ -12,6 +12,7 @@ use App\Models\Debt;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -321,5 +322,159 @@ class CustomerController extends Controller
             ->setPaper('A4', 'landscape');
 
         return $pdf->stream('customers_summary.pdf');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:csv|max:10240' 
+        ]);
+
+        try {
+            $file = $request->file('excel_file');
+            $processed = 0;
+            $imported = 0;
+            $errors = [];
+            $authUser = Auth::user();
+            
+            $handle = fopen($file->getPathname(), 'r');
+            
+            $headers = fgetcsv($handle);
+            $expectedHeaders = ['nombre', 'apellido', 'correo_electronico', 'calle', 'colonia', 'localidad', 'estado', 'codigo_postal', 'numero_exterior', 'numero_interior', 'estado_civil', 'estado_titular', 'nota'];
+            
+            if ($headers !== $expectedHeaders) {
+                fclose($handle);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Formato de archivo incorrecto. Por favor descarga la plantilla oficial.'
+                ], 400);
+            }
+            
+            while (($rowData = fgetcsv($handle)) !== FALSE) {
+                $processed++;
+                
+                if (empty(array_filter($rowData))) {
+                    continue;
+                }
+                
+                $result = $this->processRowData($rowData, $authUser, $processed);
+                if ($result['success']) {
+                    $imported++;
+                } else {
+                    $errors[] = $result['error']; // ← ESTA LÍNEA ES CRÍTICA
+                }
+            }
+            
+            fclose($handle);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Importación completada',
+                'processed' => $processed,
+                'imported' => $imported,
+                'failed' => count($errors),
+                'errors' => $errors
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar el archivo CSV: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    private function processRowData($rowData, $authUser, $rowNumber)
+    {
+        try {
+            $requiredFields = [
+                'nombre', 'apellido', 'correo_electronico', 'calle', 'colonia', 
+                'localidad', 'estado', 'codigo_postal', 'numero_exterior'
+            ];
+            
+            $missingFields = [];
+            foreach ($requiredFields as $index => $fieldName) {
+                if (empty(trim($rowData[$index] ?? ''))) {
+                    $missingFields[] = $fieldName;
+                }
+            }
+            
+            if (!empty($missingFields)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Campos requeridos faltantes: " . implode(', ', $missingFields)
+                ];
+            }
+            
+            $zipCode = trim($rowData[7] ?? '');
+            if (!is_numeric($zipCode)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Código postal '$zipCode' debe ser numérico"
+                ];
+            }
+            
+            $email = trim($rowData[2] ?? '');
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Email '$email' no tiene formato válido"
+                ];
+            }
+            
+            $maritalStatusInput = trim($rowData[10] ?? '');
+            $maritalStatusMap = ['Soltero' => 0, 'Casado' => 1];
+            
+            if (!isset($maritalStatusMap[$maritalStatusInput])) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Estado civil '$maritalStatusInput' inválido. Solo se permiten: Soltero, Casado"
+                ];
+            }
+            
+            $statusInput = trim($rowData[11] ?? 'Con vida');
+            $statusMap = ['Con vida' => 1, 'Fallecido' => 0];
+            
+            if (!isset($statusMap[$statusInput])) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Estado titular '$statusInput' inválido. Solo se permiten: Con vida, Fallecido"
+                ];
+            }
+            
+            $data = [
+                'name' => trim($rowData[0]),
+                'last_name' => trim($rowData[1]),
+                'email' => $email,
+                'street' => trim($rowData[3]),
+                'block' => trim($rowData[4]),
+                'locality' => trim($rowData[5]),
+                'state' => trim($rowData[6]),
+                'zip_code' => $zipCode,
+                'exterior_number' => trim($rowData[8]),
+                'interior_number' => trim($rowData[9] ?? ''),
+                'marital_status' => $maritalStatusMap[$maritalStatusInput],
+                'status' => $statusMap[$statusInput],
+                'note' => trim($rowData[12] ?? ''),
+                'locality_id' => $authUser->locality_id,
+                'created_by' => $authUser->id,
+            ];
+            
+            if (Customer::where('email', $data['email'])->exists()) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: El email '{$data['email']}' ya existe en el sistema"
+                ];
+            }
+            
+            Customer::create($data);
+            return ['success' => true];
+            
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => "Fila $rowNumber: Error - " . $e->getMessage()
+            ];
+        }
     }
 }
