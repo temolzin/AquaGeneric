@@ -9,6 +9,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Mpdf\Mpdf;
 use App\Models\Debt;
 use Illuminate\Support\Facades\Crypt;
+use PhpOffice\PhpSpreadsheet\IOFactory; 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -147,8 +151,8 @@ class CustomerController extends Controller
         $customer = $debt->customer;
 
         $payments = $debt->payments()
-                         ->orderBy('created_at', 'desc')
-                         ->get();
+                        ->orderBy('created_at', 'desc')
+                        ->get();
 
         $totalDebt = $debt->amount;
 
@@ -179,5 +183,170 @@ class CustomerController extends Controller
             ->setPaper('A4', 'landscape');
 
         return $pdf->stream('customers_summary.pdf');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:csv|max:10240' 
+        ]);
+
+        try {
+            $file = $request->file('excel_file');
+            $processed = 0;
+            $imported = 0;
+            $errors = [];
+            $authUser = Auth::user();
+            
+            $handle = fopen($file->getPathname(), 'r');
+            
+            $headers = fgetcsv($handle);
+            $expectedHeaders = ['nombre', 'apellido', 'correo_electronico', 'calle', 'colonia', 'localidad', 'estado', 'codigo_postal', 'numero_exterior', 'numero_interior', 'estado_civil', 'estado_titular', 'nota'];
+            
+            if ($headers !== $expectedHeaders) {
+                fclose($handle);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Formato de archivo incorrecto. Por favor descarga la plantilla oficial.'
+                ], 400);
+            }
+            
+            while (($rowData = fgetcsv($handle)) !== FALSE) {
+                $processed++;
+                
+                if (empty(array_filter($rowData))) {
+                    continue;
+                }
+                
+                $result = $this->processRowData($rowData, $authUser, $processed);
+                if ($result['success']) {
+                    $imported++;
+                }
+            }
+            
+            fclose($handle);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Importación completada',
+                'processed' => $processed,
+                'imported' => $imported,
+                'failed' => count($errors),
+                'errors' => $errors
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar el archivo CSV: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    private function processRowData($rowData, $authUser, $rowNumber)
+    {
+        try {
+            $requiredFields = [
+                'nombre' => $rowData[0] ?? '',
+                'apellido' => $rowData[1] ?? '',
+                'correo_electronico' => $rowData[2] ?? '',
+                'calle' => $rowData[3] ?? '',
+                'colonia' => $rowData[4] ?? '',
+                'localidad' => $rowData[5] ?? '',
+                'estado' => $rowData[6] ?? '',
+                'codigo_postal' => $rowData[7] ?? '',
+                'numero_exterior' => $rowData[8] ?? ''
+            ];
+            
+            $missingFields = [];
+            foreach ($requiredFields as $fieldName => $value) {
+                if (empty(trim($value ?? ''))) {
+                    $missingFields[] = $fieldName;
+                }
+            }
+            
+            if (!empty($missingFields)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Campos requeridos faltantes: " . implode(', ', $missingFields)
+                ];
+            }
+            
+            $email = trim($rowData[2] ?? '');
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Email '$email' no tiene formato válido"
+                ];
+            }
+            
+            $maritalStatusInput = strtolower(trim($rowData[10] ?? ''));
+            $validMaritalStatus = ['casado', 'soltero'];
+            
+            if (!in_array($maritalStatusInput, $validMaritalStatus)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Estado civil '$maritalStatusInput' inválido. Solo se permiten: " . implode(', ', $validMaritalStatus)
+                ];
+            }
+            
+            $statusInput = strtolower(trim($rowData[11] ?? 'con vida'));
+            $validStatus = ['con vida', 'fallecido'];
+            
+            if (!in_array($statusInput, $validStatus)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Estado titular '$statusInput' inválido. Solo se permiten: " . implode(', ', $validStatus)
+                ];
+            }
+            
+            $maritalStatus = 0; 
+            if ($maritalStatusInput === 'soltero') {
+                $maritalStatus = 0;
+            } elseif ($maritalStatusInput === 'casado') {
+                $maritalStatus = 1;
+            }
+            
+            $status = 0;
+            if ($statusInput === 'con vida') {
+                $status = 1;
+            } elseif ($statusInput === 'fallecido') {
+                $status = 0;
+            }
+            
+            $data = [
+                'name' => trim($rowData[0] ?? ''),
+                'last_name' => trim($rowData[1] ?? ''),
+                'email' => $email,
+                'street' => trim($rowData[3] ?? ''),
+                'block' => trim($rowData[4] ?? ''),
+                'locality' => trim($rowData[5] ?? ''),
+                'state' => trim($rowData[6] ?? ''),
+                'zip_code' => $zipCode,
+                'exterior_number' => trim($rowData[8] ?? ''),
+                'interior_number' => trim($rowData[9] ?? ''),
+                'marital_status' => $maritalStatus,
+                'status' => $status,
+                'note' => trim($rowData[12] ?? ''),
+                'locality_id' => $authUser->locality_id,
+                'created_by' => $authUser->id,
+            ];
+            
+            if (Customer::where('email', $data['email'])->exists()) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: El email '{$data['email']}' ya existe en el sistema"
+                ];
+            }
+            
+            Customer::create($data);
+            return ['success' => true];
+            
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => "Fila $rowNumber: Error - " . $e->getMessage()
+            ];
+        }
     }
 }

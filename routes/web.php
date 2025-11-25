@@ -84,6 +84,8 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/report/pdfCustomersSummary', [CustomerController::class, 'generateCustomerSummaryPdf'])->name('customers.pdfCustomersSummary');
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
         Route::get('/payment-history/{id}', [CustomerController::class, 'generatePaymentHistoryReport'])->name('reports.paymentHistoryReport');
+        Route::post('/customers/import', [CustomerController::class, 'import'])->name('customers.import');
+        Route::get('/customers/download-template', [CustomerController::class, 'downloadTemplate'])->name('customers.downloadTemplate');
     });
 
     Route::group(['middleware' => ['can:viewRoles']], function () {
