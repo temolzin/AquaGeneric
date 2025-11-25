@@ -81,7 +81,7 @@
                                                             @php
                                                                 $sectionColor = (preg_match('/^#[a-f0-9]{6}$/i', $connection->section->color)) ? $connection->section->color : '#6c757d';
                                                             @endphp
-                                                            <span class="badge" style="background-color: {{ $sectionColor }}; color: #fff; border-radius: 12px; font-weight: 600; font-size: 0.8em; padding: 4px 10px;">
+                                                            <span class="badge" style="background-color: {{ $sectionColor ?? '#6c757d' }}; color: #fff;">
                                                                 {{ $connection->section->name }}
                                                             </span>
                                                         @else
