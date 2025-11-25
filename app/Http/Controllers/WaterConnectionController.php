@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\WaterConnection;
-use App\Models\Customer;
+use App\Models\User;
 use App\Models\Cost;
 use App\Models\Section;
 use App\Models\Locality;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Hash;
@@ -39,6 +40,7 @@ class WaterConnectionController extends Controller
         }
 
         $connections = $query->paginate(10);
+
         $customers = Customer::where('locality_id', $authUser->locality_id)->get();
         $costs = Cost::where('locality_id', $authUser->locality_id)
                     ->orWhereNull('locality_id')
@@ -55,16 +57,16 @@ class WaterConnectionController extends Controller
         $authUser = auth()->user();
 
         $locality = Locality::with('membership')->find($authUser->locality_id);
-        
+
         if ($locality && $locality->membership) {
             $currentConnectionsCount = WaterConnection::where('locality_id', $authUser->locality_id)
                 ->where('is_canceled', false)
                 ->count();
 
             if ($currentConnectionsCount >= $locality->membership->water_connections_number) {
-                return redirect()->back()->with('error', 
-                    'No se pueden registrar más tomas de agua. Límite de ' . 
-                    $locality->membership->water_connections_number . 
+                return redirect()->back()->with('error',
+                    'No se pueden registrar más tomas de agua. Límite de ' .
+                    $locality->membership->water_connections_number .
                     ' tomas de agua alcanzado para la localidad '. $locality->name. '. Contacte al administrador para habilitar más tomas de agua.');
             }
         }
@@ -100,7 +102,7 @@ class WaterConnectionController extends Controller
         $connection = WaterConnection::find($id);
         $sections = Section::where('locality_id', $connection->locality_id)
                     ->orWhereNull('locality_id')
-                    ->get(); 
+                    ->get();
 
         if (!$connection) {
             return redirect()->back()->with('error', 'Toma de Agua no encontrada.');
@@ -159,16 +161,16 @@ class WaterConnectionController extends Controller
 
         $authUser = auth()->user();
         $locality = Locality::with('membership')->find($authUser->locality_id);
-        
+
         if ($locality && $locality->membership) {
             $currentConnectionsCount = WaterConnection::where('locality_id', $authUser->locality_id)
                 ->where('is_canceled', false)
                 ->count();
 
             if ($currentConnectionsCount >= $locality->membership->water_connections_number) {
-                return redirect()->back()->with('error', 
-                    'No se puede reactivar la toma de agua. Límite de ' . 
-                    $locality->membership->water_connections_number . 
+                return redirect()->back()->with('error',
+                    'No se puede reactivar la toma de agua. Límite de ' .
+                    $locality->membership->water_connections_number .
                     ' tomas de agua alcanzado para esta localidad.');
             }
         }
@@ -184,7 +186,7 @@ class WaterConnectionController extends Controller
 
         return redirect()->route('waterConnections.index')->with('success', 'Toma reactivada y asignada correctamente.');
     }
-    
+
     private function generateConnectionHash($id)
     {
         return hash('sha256', $id . env('APP_KEY', 'default-secret-key'));
@@ -208,7 +210,7 @@ class WaterConnectionController extends Controller
     {
         try {
             $id = $this->getIdFromHash($hash);
-            
+
             if (!$id) {
                 abort(404, 'Toma de agua no encontrada');
             }
@@ -256,7 +258,7 @@ class WaterConnectionController extends Controller
                 'image' => 'data:image/svg+xml;base64,' . $qrCode,
                 'download_url' => $downloadUrl,
                 'public_url' => $publicUrl,
-                'hash' => $hash 
+                'hash' => $hash
             ]);
 
         } catch (\Exception $e) {
@@ -291,5 +293,71 @@ class WaterConnectionController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Error al descargar el código QR');
         }
+    }
+
+    public function showCustomerWaterConnections()
+    {
+        $authUser = auth()->user();
+
+        $customer = $authUser->customer;
+
+        if (!$customer) {
+            $connections = collect();
+        } else {
+            $query = WaterConnection::with(['cost', 'locality'])
+                ->where('customer_id', $customer->id)
+                ->where('locality_id', $authUser->locality_id);
+            if (request()->has('search') && request('search') != '') {
+                $search = request('search');
+                $query->where(function($q) use ($search) {
+                    $q->where('id', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('type', 'like', "%{$search}%")
+                    ->orWhere('street', 'like', "%{$search}%")
+                    ->orWhere('block', 'like', "%{$search}%");
+                });
+            }
+            $connections = $query->paginate(10)->appends(request()->query());
+            $connections->getCollection()->transform(function ($connection) {
+                $connection->formatted_water_days = $this->getFormattedWaterDays($connection->water_days);
+                $connection->water_pressure_text = $connection->has_water_pressure ? 'Sí' : 'No';
+                $connection->cistern_text = $connection->has_cistern ? 'Sí' : 'No';
+                return $connection;
+            });
+        }
+
+        return view('viewCustomerWaterConnections.index', compact('connections'));
+    }
+
+    private function getFormattedWaterDays($waterDays)
+    {
+        if (empty($waterDays) || $waterDays === 'null' || $waterDays === '[]') {
+            return 'No hay días específicos asignados';
+        }
+        
+        if ($waterDays === '"all"' || $waterDays === 'all') {
+            return 'Todos los días';
+        }
+        
+        $daysArray = json_decode($waterDays, true) ?: [$waterDays];
+        
+        $daysMap = [
+            'monday' => 'Lunes', 'tuesday' => 'Martes', 'wednesday' => 'Miércoles',
+            'thursday' => 'Jueves', 'friday' => 'Viernes', 'saturday' => 'Sábado', 
+            'sunday' => 'Domingo'
+        ];
+        
+        $spanishDays = [];
+        foreach ($daysArray as $day) {
+            $dayLower = strtolower(trim($day));
+            
+            foreach ($daysMap as $en => $es) {
+                if ($dayLower === $en || $dayLower === strtolower($es) || $dayLower === 'all') {
+                    $spanishDays[] = $es;
+                }
+            }
+        }
+
+        return empty($spanishDays) ? 'No hay días activos' : implode(', ', array_unique($spanishDays));
     }
 }

@@ -13,7 +13,9 @@ class InventoryCategoryController extends Controller
     {
         $inventoryCategories = InventoryCategory::byUserLocality()
             ->with(['creator', 'locality'])
-            ->orderBy('name')
+            ->orWhereNull('locality_id')
+            ->orderByRaw('locality_id IS NULL DESC')
+            ->orderBy('created_at', 'desc')
             ->paginate(10); 
 
         return view('inventoryCategories.index', compact('inventoryCategories'));

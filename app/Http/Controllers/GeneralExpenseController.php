@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\GeneralExpense;
 use App\Models\ExpenseType;
 use App\Models\Payment;
+use App\Models\MovementHistory;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -80,6 +82,8 @@ class GeneralExpenseController extends Controller
             return redirect()->back()->with('error', 'Gasto no encontrado.');
         }
 
+        $beforeData = $expense->toArray();
+
         $expense->concept = $request->input('conceptUpdate');
         $expense->description = $request->input('descriptionUpdate');
         $expense->amount = $request->input('amountUpdate');
@@ -93,13 +97,35 @@ class GeneralExpenseController extends Controller
 
         $expense->save();
 
+        $afterData = $expense->fresh()->toArray();
+
+        MovementHistory::create([
+        'alter_by'    => auth()->id(),
+        'module'      => 'general_expenses',
+        'action'      => 'update',
+        'record_id'   => $expense->id,
+        'before_data' => $beforeData,
+        'current_data'=> $afterData,
+    ]);
+
         return redirect()->route('generalExpenses.index')->with('success', 'Gasto actualizado correctamente.');
     }
 
     public function destroy($id)
     {
         $expense = GeneralExpense::find($id);
+        $beforeData = $expense->toArray();
         $expense->delete();
+
+        MovementHistory::create([
+        'alter_by'    => auth()->id(),
+        'module'      => 'general_expenses',
+        'action'      => 'delete',
+        'record_id'   => $expense->id,
+        'before_data' => $beforeData,
+        'current_data'=> null,
+    ]);
+
         return redirect()->route('generalExpenses.index')->with('success', 'Gasto eliminado correctamente.');
     }
 

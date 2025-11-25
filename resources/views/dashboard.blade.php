@@ -58,7 +58,7 @@
                                                                 </div>
                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                     <small class="text-muted">
-                                                                        <i class="far fa-calendar-alt mr-1"></i>Este anuncio expira el {{ $notice->end_date->format('d/m/Y') }}
+                                                                        <i class="far fa-calendar-alt mr-1"></i>Este anuncio expira el {{ $notice->end_date->format('d/m/Y h:i A') }}
                                                                     </small>
                                                                 </div>
                                                             </div>
@@ -161,7 +161,7 @@
                                             data-target="#weeklyGains" title="Ganancias Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Ganancias Semanales
                                             </button>
-                                            <button type="button" class="btn bg-orange w-100 w-md-auto m-1" 
+                                            <button type="button" class="btn bg-orange w-100 w-md-auto m-1"
                                             style="color: white !important;" title="Corte de caja"
                                             onclick="window.open('{{ route('cash-closures.report') }}', '_blank')">
                                                 <i class="fa fa-dollar-sign"></i> Corte de caja
@@ -169,6 +169,34 @@
                                             </button>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endcan
+                    @can('viewCustomerCards')
+                        <div class="row mb-1">
+                            <div class="col-lg-6 col-xs-12">
+                                <div class="small-box bg-danger">
+                                    <div class="inner">
+                                        <h3>${{ number_format($totalOwed, 2) }}</h3>
+                                        <p>Total Adeudado</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <a href="{{ route('viewCustomerDebts.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-xs-12">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ $waterConnections->count() }}</h3>
+                                        <p>Tomas de agua</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-faucet"></i>
+                                    </div>
+                                    <a href="{{ route('viewCustomerWaterConnections.index') }}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -188,18 +216,20 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Ingresos Mensuales<span id="localityInfoMonthly"></h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <canvas id="earningsChart" width="400" height="200"></canvas>
-                                    </div>
+                    @endcan
+                    @can('viewGraficsEarningsAnnual')
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Ingresos Mensuales<span id="localityInfoMonthly"></h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="earningsChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
-                    <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">Ingresos Anuales por Mes<span id="localityInfoAnnual"></h3>
@@ -210,8 +240,8 @@
                             </div>
                             </div>
                         </div>
+                    </div>
                     @endcan
-                    
                     @can('viewDashboardCards')
                     <div class="card">
                         <div class="card-header">
@@ -318,10 +348,10 @@
                     $('#localityInfoMonthly').text(' de ' + localityName + ', ' + municipality);
                     $('#localityInfoAnnual').text(' de ' + localityName + ', ' + municipality);
                 } else {
-                    earningsChart.data.datasets[0].data = Array(12).fill(0); 
+                    earningsChart.data.datasets[0].data = Array(12).fill(0);
                     earningsChart.update();
 
-                    annualEarningsChart.data.datasets[0].data = Array(12).fill(0); 
+                    annualEarningsChart.data.datasets[0].data = Array(12).fill(0);
                     annualEarningsChart.update();
 
                     $('#localityInfoMonthly').text('');
@@ -354,7 +384,7 @@
                     text: warningMessage,
                     confirmButtonText: 'Aceptar'
                 });
-            }   
+            }
             $('#emails').DataTable({
                 responsive: true,
                 paging: false,
@@ -365,7 +395,7 @@
 
         var ctx = document.getElementById('earningsChart').getContext('2d');
         var earningsChart = new Chart(ctx, {
-            type: 'bar', 
+            type: 'bar',
             data: {
                 labels: @json($data['months']),
                 datasets: [{

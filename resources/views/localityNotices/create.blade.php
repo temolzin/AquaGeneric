@@ -32,14 +32,14 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="start_date" class="form-label">Fecha de Inicio (*)</label>
-                                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ old('start_date') }}" required>
+                                            <label for="start_date" class="form-label">Fecha y Hora de Inicio (*)</label>
+                                            <input type="datetime-local" class="form-control" id="start_date" name="start_date" value="{{ old('start_date') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="end_date" class="form-label">Fecha de Fin (*)</label>
-                                            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ old('end_date') }}" required>
+                                            <label for="end_date" class="form-label">Fecha y Hora de Fin (*)</label>
+                                            <input type="datetime-local" class="form-control" id="end_date" name="end_date" value="{{ old('end_date') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -132,26 +132,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('attachment');
     const fileLabel = document.querySelector('.custom-file-label');
 
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const endDateInput = document.getElementById('end_date');
-    if (endDateInput) {
-        endDateInput.min = tomorrow.toISOString().split('T')[0];
+    function formatDateTime(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
     }
 
     const startDateInput = document.getElementById('start_date');
     if (startDateInput) {
-        startDateInput.min = today.toISOString().split('T')[0];
+        const now = new Date();
+        startDateInput.min = formatDateTime(now);
         
+        startDateInput.value = formatDateTime(now);
+
         startDateInput.addEventListener('change', function() {
             const selectedStartDate = new Date(this.value);
             const minEndDate = new Date(selectedStartDate);
-            minEndDate.setDate(minEndDate.getDate() + 1);
+            minEndDate.setMinutes(minEndDate.getMinutes() + 30);
             
+            const endDateInput = document.getElementById('end_date');
             if (endDateInput) {
-                endDateInput.min = minEndDate.toISOString().split('T')[0];
+                endDateInput.min = formatDateTime(minEndDate);
                 
                 const currentEndDate = new Date(endDateInput.value);
                 if (endDateInput.value && currentEndDate <= selectedStartDate) {
@@ -159,6 +163,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    }
+
+    const endDateInput = document.getElementById('end_date');
+    if (endDateInput) {
+        const now = new Date();
+        const minEndDate = new Date(now);
+        minEndDate.setMinutes(minEndDate.getMinutes() + 30);
+        endDateInput.min = formatDateTime(minEndDate);
+        
+        const defaultEndDate = new Date(now);
+        defaultEndDate.setDate(defaultEndDate.getDate() + 1);
+        endDateInput.value = formatDateTime(defaultEndDate);
     }
 
     fileInput.addEventListener('change', function (event) {
@@ -207,6 +223,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('createNoticeForm').reset();
         fileLabel.textContent = 'Seleccionar archivo...';
         
+        const now = new Date();
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        
+        if (startDateInput) {
+            startDateInput.value = formatDateTime(now);
+        }
+        if (endDateInput) {
+            const defaultEndDate = new Date(now);
+            defaultEndDate.setDate(defaultEndDate.getDate() + 1);
+            endDateInput.value = formatDateTime(defaultEndDate);
+        }
+        
         var createBtn = document.getElementById('createBtn');
         if (createBtn) {
             createBtn.disabled = false;
@@ -225,26 +254,14 @@ function handleCreateSubmit(form) {
     var startDateValue = document.getElementById('start_date').value;
     var endDateValue = document.getElementById('end_date').value;
 
-    var startDateOnly = startDateValue.split('T')[0];
-    var endDateOnly = endDateValue.split('T')[0];
-    
-    var startDate = new Date(startDateOnly);
-    var endDate = new Date(endDateOnly);
+    var startDate = new Date(startDateValue);
+    var endDate = new Date(endDateValue);
 
-    if (endDate < startDate) {
+    if (endDate <= startDate) {
         Swal.fire({
             icon: 'error',
             title: 'Error en fechas',
-            text: 'La fecha de fin debe ser posterior a la fecha de inicio.'
-        });
-        return false;
-    }
-    
-    if (endDate.getTime() === startDate.getTime()) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error en fechas',
-            text: 'La fecha de fin debe ser diferente a la fecha de inicio.'
+            text: 'La fecha y hora de fin debe ser posterior a la fecha y hora de inicio.'
         });
         return false;
     }

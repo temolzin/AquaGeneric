@@ -22,7 +22,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="card-box table-responsive">
-                                <table id="users" class="table table-striped display responsive nowrap" style="width:100%">
+                                <table id="users_table" class="table table-striped" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -104,10 +104,14 @@
 @section('js')
 <script>
     $(document).ready(function() {
-        $('#users').DataTable({
+        $('#users_table').DataTable({
             responsive: true,
             buttons: ['excel', 'pdf', 'print'],
             dom: 'Bfrtip',
+            paging: true,
+            pageLength: 10,
+            lengthChange: false,
+            info: true,
         });
 
         var successMessage = "{{ session('success') }}";

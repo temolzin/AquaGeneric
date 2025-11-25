@@ -7,10 +7,14 @@ use App\Models\Payment;
 use App\Models\Debt;
 use App\Models\Customer;
 use App\Models\GeneralExpense;
+use App\Models\User;
 use App\Models\WaterConnection;
+use App\Models\MovementHistory;
+use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller {
     public function index(Request $request) {
@@ -24,7 +28,7 @@ class PaymentController extends Controller {
 
         if ($request->filled('name')) {
             $query->whereHas('debt.customer', function ($q) use ($request) {
-            $q->whereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ['%' . $request->name . '%'])
+                $q->whereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ['%' . $request->name . '%'])
                 ->orWhereRaw("CONCAT(customers.last_name, ' ', customers.name) LIKE ?", ['%' . $request->name . '%']);
             });
         }
@@ -64,12 +68,13 @@ class PaymentController extends Controller {
         }
 
         $payments = $query->paginate(10);
-        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
+        $customers = Customer::with('user')->where('locality_id', $authUser->locality_id)->get();
 
         return view('payments.index', compact('payments', 'customers'));
     }
 
-    public function getWaterConnectionsByCustomer(Request $request) {
+    public function getWaterConnectionsByCustomer(Request $request)
+    {
         $authUser = auth()->user();
         $customerId = $request->input('waterCustomerId');
         $waterConnections = WaterConnection::where('customer_id', $customerId)
@@ -166,6 +171,7 @@ class PaymentController extends Controller {
 
     public function update(Request $request, Payment $payment) {
         $debt = $payment->debt;
+        $before = $payment->toArray();
 
         $previousAmount = $payment->amount;
         $remainingAmount = $debt->amount - $debt->debt_current + $previousAmount;
@@ -192,6 +198,16 @@ class PaymentController extends Controller {
         }
 
         $debt->save();
+        $after = $payment->fresh()->toArray();
+
+        MovementHistory::create([
+        'alter_by'     => Auth::id(),
+        'module'       => 'pagos',
+        'action'       => 'update',
+        'record_id'    => $payment->id,
+        'before_data'  => $before,
+        'current_data' => $after,
+    ]);
 
         return redirect()->route('payments.index')->with('success', 'Pago actualizado exitosamnete.');
     }
@@ -204,10 +220,22 @@ class PaymentController extends Controller {
             return redirect()->back()->with('error', 'Pago no encontrado.');
         }
 
+        $before = $payment->toArray();
+
+        MovementHistory::create([
+        'alter_by'     => Auth::id(),
+        'module'       => 'pagos',
+        'action'       => 'delete',
+        'record_id'    => $id,
+        'before_data'  => $before,
+        'current_data' => null,
+    ]);
+
         return redirect()->route('payments.index')->with('success', 'Pago eliminado exitosamnete.');
     }
 
-    public function annualEarningsReport($year) {
+    public function annualEarningsReport($year)
+    {
         $authUser = auth()->user();
         $year = intval($year);
 
@@ -224,8 +252,13 @@ class PaymentController extends Controller {
             $totalEarnings += $earnings;
         }
 
-        $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser'))
-            ->setPaper('A4', 'portrait');
+        $payments = Payment::with(['debt.customer.user'])
+            ->whereYear('created_at', $year)
+            ->where('locality_id', $authUser->locality_id)
+            ->get();
+
+        $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser', 'payments'))
+        ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_earnings_' . $year . '.pdf');
     }
@@ -238,7 +271,7 @@ class PaymentController extends Controller {
         $weeks = [];
         $currentStart = $startDate->copy();
         $totalPeriodEarnings = 0;
-        
+
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
             if ($currentEnd->gt($endDate)) {
@@ -282,7 +315,7 @@ class PaymentController extends Controller {
         $decryptedId = Crypt::decrypt($paymentId);
         $payment = Payment::findOrFail($decryptedId);
         $debt = $payment->debt;
-        $client = $debt->client;
+        $client = $debt->customer;
 
         $startDate = Carbon::parse($debt->start_date);
         $endDate = Carbon::parse($debt->end_date);
@@ -311,10 +344,9 @@ class PaymentController extends Controller {
             $months[$monthName]['note'] = $payment->note;
         }
 
-      
         $note = $payment->note;
         $message = $numberOfMonths > 1
-            ? "Monto total del pago $" . number_format($payment->amount, 2) . 
+            ? "Monto total del pago $" . number_format($payment->amount, 2) .
             ". Nota: " . $note
             : null;
 
@@ -328,7 +360,7 @@ class PaymentController extends Controller {
         $customerId = $request->input('customerId');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
-        $customer = Customer::findOrFail($customerId);
+        $customer = Customer::with('user')->findOrFail($customerId);
         $authUser = auth()->user();
 
         $payments = Payment::whereHas('debt.waterConnection', function ($query) use ($customerId) {
@@ -351,7 +383,7 @@ class PaymentController extends Controller {
         $startDate = $request->input('waterStartDate');
         $endDate = $request->input('waterEndDate');
 
-        $customer = Customer::findOrFail($customerId);
+        $customer = Customer::with('user')->findOrFail($customerId);
         $authUser = auth()->user();
 
         $waterConnection = WaterConnection::where('id', $waterConnectionId)
@@ -377,8 +409,8 @@ class PaymentController extends Controller {
 
         return $pdf->stream('reporte_pagos_tomas.pdf');
     }
-    
-    public function cashClosurePaymentsReport() {    
+
+    public function cashClosurePaymentsReport() {
         $authUser = auth()->user();
         $today = now()->toDateString();
 
@@ -419,5 +451,217 @@ class PaymentController extends Controller {
         ])->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_corte_caja.pdf');
+    }
+
+    public function showCustomerPayments(Request $request)
+    {
+        $authUser = auth()->user();
+        $customer = Customer::where('user_id', $authUser->id)
+                        ->where('locality_id', $authUser->locality_id)
+                        ->first();
+
+        if (!$customer) {
+            $payments = Payment::where('id', 0)->paginate(10);
+            return view('viewCustomerPayments.index', compact('payments', 'customer'));
+        }
+
+        $query = Payment::with(['debt.waterConnection'])
+                    ->where('customer_id', $customer->id)
+                    ->where('locality_id', $authUser->locality_id)
+                    ->orderBy('created_at', 'desc');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'LIKE', "%{$search}%")
+                ->orWhere('method', 'LIKE', "%{$search}%")
+                ->orWhere(function($q) use ($search) {
+                    $methodMappings = [
+                        'efectivo' => 'cash',
+                        'transferencia' => 'transfer',
+                        'tarjeta' => 'card'
+                    ];
+
+                    foreach ($methodMappings as $spanish => $english) {
+                        if (stripos($search, $spanish) !== false) {
+                            $q->orWhere('method', $english);
+                        }
+                    }
+                })
+                ->orWhereHas('debt.waterConnection', function($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%");
+                });
+            });
+        }
+
+        $payments = $query->paginate(10);
+
+        return view('viewCustomerPayments.index', compact('payments', 'customer'));
+    }
+
+    public function showQuarterlyReport(Request $request)
+    {
+        try {
+            $customer = Customer::where('user_id', Auth::id())->first();
+
+            if (!$customer) {
+                return redirect()->back()->with('error', 'No se encontró información del cliente.');
+            }
+
+            $year = $request->input('year');
+            $quarter = $request->input('quarter');
+
+            if (!$year || !$quarter) {
+                return redirect()->back()->with('error', 'Debe seleccionar año y trimestre.');
+            }
+
+            $dateRange = $this->getQuarterDateRange($year, $quarter);
+            $startDate = $dateRange['start'];
+            $endDate = $dateRange['end'];
+
+            $waterConnections = WaterConnection::where('customer_id', $customer->id)
+                ->whereHas('debts.payments', function($query) use ($startDate, $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                })
+                ->get();
+
+            $paymentsByWaterConnection = [];
+            $totalGeneral = 0;
+
+            foreach ($waterConnections as $waterConnection) {
+                $payments = Payment::whereHas('debt', function($query) use ($waterConnection) {
+                        $query->where('water_connection_id', $waterConnection->id);
+                    })
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->with(['debt.waterConnection'])
+                    ->get()
+                    ->groupBy('debt_id');
+
+                $subtotalToma = $payments->flatten()->sum('amount');
+                $totalGeneral += $subtotalToma;
+
+                $paymentsByWaterConnection[$waterConnection->id] = [
+                    'water_connection' => $waterConnection,
+                    'payments' => $payments,
+                    'subtotal' => $subtotalToma
+                ];
+            }
+
+            $authUser = Auth::user();
+
+            $data = [
+                'paymentsByWaterConnection' => $paymentsByWaterConnection,
+                'customer' => $customer,
+                'authUser' => $authUser,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'year' => $year,
+                'quarter' => $quarter,
+                'totalGeneral' => $totalGeneral,
+                'quarterName' => $this->getQuarterName($quarter)
+            ];
+
+            $pdf = PDF::loadView('reports.customerPaymentsReport', $data)
+                    ->setPaper('a4', 'portrait');
+
+            return $pdf->stream("reporte-trimestral-{$year}-T{$quarter}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al generar el reporte: ' . $e->getMessage());
+        }
+    }
+
+    private function getQuarterDateRange($year, $quarter)
+    {
+        switch ($quarter) {
+            case 1:
+                $start = Carbon::create($year, 1, 1)->startOfDay();
+                $end = Carbon::create($year, 3, 31)->endOfDay();
+                break;
+            case 2:
+                $start = Carbon::create($year, 4, 1)->startOfDay();
+                $end = Carbon::create($year, 6, 30)->endOfDay();
+                break;
+            case 3:
+                $start = Carbon::create($year, 7, 1)->startOfDay();
+                $end = Carbon::create($year, 9, 30)->endOfDay();
+                break;
+            case 4:
+                $start = Carbon::create($year, 10, 1)->startOfDay();
+                $end = Carbon::create($year, 12, 31)->endOfDay();
+                break;
+            default:
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+        }
+
+        return [
+            'start' => $start,
+            'end' => $end
+        ];
+    }
+
+    private function getQuarterName($quarter)
+    {
+        $names = [
+            1 => 'Primer Trimestre (Enero - Marzo)',
+            2 => 'Segundo Trimestre (Abril - Junio)',
+            3 => 'Tercer Trimestre (Julio - Septiembre)',
+            4 => 'Cuarto Trimestre (Octubre - Diciembre)'
+        ];
+
+        return $names[$quarter] ?? 'Trimestre Desconocido';
+    }
+
+    public function showAnnualReport(Request $request)
+    {
+        try {
+            $year = $request->get('year', date('Y'));
+            $customer = Customer::where('user_id', Auth::id())->first();
+
+            if (!$customer) {
+                return redirect()->back()->with('error', 'No se encontró información del cliente.');
+            }
+
+            $authUser = Auth::user();
+            $payments = Payment::where('customer_id', $customer->id)
+                ->whereYear('created_at', $year)
+                ->with(['debt.waterConnection'])
+                ->get();
+
+            $paymentsByWaterConnection = [];
+            foreach ($payments as $payment) {
+                $waterConnectionId = $payment->debt->water_connection_id;
+
+                if (!isset($paymentsByWaterConnection[$waterConnectionId])) {
+                    $paymentsByWaterConnection[$waterConnectionId] = [
+                        'water_connection' => $payment->debt->waterConnection,
+                        'payments' => []
+                    ];
+                }
+
+                $debtId = $payment->debt_id;
+                if (!isset($paymentsByWaterConnection[$waterConnectionId]['payments'][$debtId])) {
+                    $paymentsByWaterConnection[$waterConnectionId]['payments'][$debtId] = [];
+                }
+
+                $paymentsByWaterConnection[$waterConnectionId]['payments'][$debtId][] = $payment;
+            }
+
+            $data = [
+                'paymentsByWaterConnection' => $paymentsByWaterConnection,
+                'customer' => $customer,
+                'authUser' => $authUser,
+                'year' => $year
+            ];
+
+            $pdf = PDF::loadView('reports.annualReportCustomerPayments', $data)
+                    ->setPaper('a4', 'portrait');
+
+            return $pdf->stream("reporte-anual-{$year}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al generar el reporte anual: ' . $e->getMessage());
+        }
     }
 }

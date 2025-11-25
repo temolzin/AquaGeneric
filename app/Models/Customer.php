@@ -8,6 +8,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Models\Cost;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; 
 
 class Customer extends Model implements HasMedia
 {
@@ -35,6 +36,7 @@ class Customer extends Model implements HasMedia
         'locality_id',
         'created_by',
         'note',
+        'user_id',
     ];
 
 
@@ -83,5 +85,25 @@ class Customer extends Model implements HasMedia
     public function waterConnectionsAll()
     {
         return $this->hasMany(WaterConnection::class)->withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function getNameAttribute($value)
+    {
+        return $this->user ? $this->user->name : $value;
+    }
+
+    public function getEmailAttribute($value)
+    {
+        return $this->user ? $this->user->email : $value;
+    }
+
+    public function getLastNameAttribute($value)
+    {
+        return $this->user ? $this->user->last_name : $value;
     }
 }

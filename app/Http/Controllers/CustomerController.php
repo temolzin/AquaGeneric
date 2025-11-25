@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Cost;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Mpdf\Mpdf;
@@ -13,27 +14,40 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = Customer::where('locality_id', $authUser->locality_id)->orderBy('created_at', 'desc');
+        $query = Customer::where('locality_id', $authUser->locality_id)
+            ->with('user') 
+            ->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
-                ->orWhere('id', 'LIKE', "%{$search}%");
+            $query->where(function($q) use ($search) {
+            $q->whereHas('customer', function($u) use ($search) {
+                $u->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->orWhere('id', 'LIKE', "%{$search}%");
+        });
         }
 
-        $customers = $query->paginate(10);
+        $customers = $query->with('user')->paginate(10);
         return view('customers.index', compact('customers'));
     }
 
     public function store(Request $request)
     {
         $authUser = auth()->user();
+
+        $emailRule = $request->has('showPassword')
+            ? 'required|email|unique:users,email'
+            : 'required|email|unique:customers,email';
 
         $validatedData = $request->validate([
             'name' => 'required|string',
@@ -45,28 +59,70 @@ class CustomerController extends Controller
             'zip_code' => 'required|string',
             'exterior_number' => 'nullable|string',
             'interior_number' => 'required|string',
+            'email' => $emailRule, 
+            'marital_status' => 'required|string',
+            'status' => 'required|string',
+            'responsible_name' => 'nullable|string',
+            'note' => 'nullable|string',
         ]);
 
         $customerData = $request->all();
         $customerData['locality_id'] = $authUser->locality_id;
         $customerData['created_by'] = $authUser->id;
 
+        if ($request->has('showPassword')) {
+
+            $passview = $request->password;
+
+            $user = User::create([
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => Hash::make($passview),
+                'locality_id' => $authUser->locality_id, 
+            ]);
+
+            session(['passview_'.$user->id => $passview]);
+
+            $user->assignRole('cliente');
+            
+            $customerData['user_id'] = $user->id;
+            $customerData['name'] = $user->name;
+            $customerData['last_name'] = $user->last_name;
+            $customerData['email'] = $user->email;
+
+            $customer = Customer::create($customerData);
+
+            if ($request->hasFile('photo')) {
+                $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
+            }
+
+            $hash = md5($customer->id);
+            $this->generateUserAccessPDF($hash);
+
+            return redirect()->route('customers.index')->with(['success' => 'Cliente registrado correctamente.','pdf_hash' => $hash]);
+        }
+
         $customer = Customer::create($customerData);
 
         if ($request->hasFile('photo')) {
-            $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
-        }
+        $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
+    }
 
         return redirect()->route('customers.index')->with('success', 'Cliente registrado correctamente.');
     }
 
     public function update(Request $request, $id)
     {
-
-        $customer = Customer::find($id);
+        $customer = Customer::with('user')->find($id);
         if ($customer) {
-            $customer->name = $request->input('nameUpdate');
-            $customer->last_name = $request->input('lastNameUpdate');
+            if ($customer->user) {
+                $customer->user->name = $request->input('nameUpdate');
+                $customer->user->last_name = $request->input('lastNameUpdate');
+                $customer->user->email = $request->input('emailUpdate');
+                $customer->user->save();
+            }
+
             $customer->locality = $request->input('localityUpdate');
             $customer->state = $request->input('stateUpdate');
             $customer->zip_code = $request->input('zipCodeUpdate');
@@ -78,7 +134,6 @@ class CustomerController extends Controller
             $customer->status = $request->input('statusUpdate');
             $customer->responsible_name = $request->input('responsibleNameUpdate');
             $customer->note = $request->input('noteUpdate');
-            $customer->email = $request->input('emailUpdate');
 
             $customer->save();
 
@@ -87,22 +142,72 @@ class CustomerController extends Controller
                 $customer->addMediaFromRequest('photo')->toMediaCollection('customerGallery');
             }
 
-
             return redirect()->route('customers.index')->with('success', 'Cliente actualizado correctamente.');
         }
 
         return redirect()->back()->with('error', 'Cliente no encontrado.');
     }
 
+    public function assignOrUpdatePassword(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|min:6',
+        ]);
+
+        $customer = Customer::with('user')->findOrFail($id);
+
+        $passview = $request->password;
+
+        if (!$customer->user) {
+            $user = new User();
+            $user->name = $customer->name;
+            $user->last_name = $customer->last_name;
+            $user->email = $customer->email;
+            $user->password = Hash::make($passview);
+            $user->locality_id = $customer->locality_id;
+            $user->save();
+
+            $user->assignRole('cliente');
+            $customer->user_id = $user->id;
+            $customer->save();
+
+            session(['passview_'.$user->id => $passview]);
+
+            $hash = md5($customer->id);
+            $pdfUrl = route('generate.user.access.pdf', $hash);
+
+            return redirect()
+            ->route('customers.index')
+            ->with('success', 'Usuario creado y contraseña asignada correctamente.')
+            ->with('pdf_url', route('generate.user.access.pdf', ['hash' => $hash]));
+        }
+
+        $customer->user->password = Hash::make($passview);
+        $customer->user->save();
+
+        session(['passview_'.$customer->user->id => $passview]);
+
+        $hash = md5($customer->id);
+        $pdfUrl = route('generate.user.access.pdf', $hash);
+
+        return redirect()
+        ->route('customers.index')
+        ->with('success', 'Contraseña actualizada correctamente.')
+        ->with('pdf_url', route('generate.user.access.pdf', ['hash' => $hash]));
+    }
+
     public function show($id)
     {
-        $customer = Customer::findOrFail($id);
+        $customer = Customer::with('user')->findOrFail($id);
         return view('customers.show', compact('customer'));
     }
 
-
     public function destroy(Customer $customer)
     {
+        if ($customer->user) {
+            $customer->user->delete();
+        }
+        
         $customer->delete();
         return redirect()->route('customers.index')->with('success', 'Cliente eliminado correctamente.');
     }
@@ -110,7 +215,9 @@ class CustomerController extends Controller
     public function pdfCustomers()
     {
         $authUser = auth()->user();
-        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
+        $customers = Customer::where('locality_id', $authUser->locality_id)
+            ->with('user')
+            ->get();
         $pdf = PDF::loadView('reports.pdfCustomers', compact('customers', 'authUser'))
             ->setPaper('A4', 'landscape');
 
@@ -121,9 +228,10 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)
+            ->with('user') 
             ->whereDoesntHave('waterConnections.debts', function ($query) {
-            $query->where('status', '!=', 'paid');
-        })->get();
+                $query->where('status', '!=', 'paid');
+            })->get();
     
         $pdf = Pdf::loadView('reports.reportCurrentCustomers', compact('customers', 'authUser'));
         return $pdf->stream('reporte_clientes_al_corriente.pdf');
@@ -133,13 +241,46 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)
+            ->with('user') 
             ->whereHas('waterConnections.debts', function ($query) {
-            $query->where('status', '!=', 'paid');
-        })->get();
+                $query->where('status', '!=', 'paid');
+            })->get();
 
         $pdf = Pdf::loadView('reports.customersWithDebts', compact('customers', 'authUser'))
-        ->setPaper('A4', 'portrait');
+            ->setPaper('A4', 'portrait');
         return $pdf->stream('reporte_clientes_con_deudas.pdf');
+    }
+
+    public function generateUserAccessPDF($hash)
+    {
+        try {
+            $customer = Customer::all()->first(function ($c) use ($hash) {
+                return md5($c->id) === $hash;
+            });
+
+            if (!$customer) {
+                abort(404, 'Cliente no encontrado');
+            }
+
+            $temporaryPassword = session('passview_'.$customer->user->id) ?? 'Contraseña no disponible';
+
+            $data = [
+                'customer' => $customer,
+                'user' => $customer->user,
+                'temporaryPassword' => $temporaryPassword,
+                'authUser' => auth()->user(),
+                'date' => now()->format('j \\d\\e F \\d\\e Y'),
+            ];
+
+            $pdf = Pdf::loadView('reports.genneratepasswordforcustomer', $data)
+                    ->setPaper('A4', 'portrait');
+
+            return $pdf->stream('DatosUsuario_'.$customer->id.'.pdf');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error al generar PDF: ' . $e->getMessage());
+        }
     }
 
     public function generatePaymentHistoryReport($debt_id)
@@ -147,7 +288,8 @@ class CustomerController extends Controller
         $authUser = auth()->user();
         $debtId = Crypt::decrypt($debt_id);
 
-        $debt = Debt::with(['waterConnection', 'customer'])->findOrFail($debtId);
+        $debt = Debt::with(['waterConnection', 'customer.user']) 
+            ->findOrFail($debtId);
         $customer = $debt->customer;
 
         $payments = $debt->payments()
@@ -155,9 +297,7 @@ class CustomerController extends Controller
                         ->get();
 
         $totalDebt = $debt->amount;
-
         $totalPayments = $payments->sum('amount');
-
         $pendingBalance = $totalDebt - $totalPayments;
 
         $pdf = Pdf::loadView('reports.paymentHistoryReport', compact('debt', 'customer', 'payments', 'totalDebt', 'authUser', 'totalPayments', 'pendingBalance'))
@@ -170,12 +310,14 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $query = Customer::where('locality_id', $authUser->locality_id)
-            ->with('waterConnections');
+            ->with(['waterConnections', 'user']); 
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
-                ->orWhere('id', 'LIKE', "%{$search}%");
+            $query->whereHas('user', function($q) use ($search) {
+                $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                ->orWhere('email', 'LIKE', "%{$search}%");
+            })->orWhere('id', 'LIKE', "%{$search}%");
         }   
 
         $customers = $query->get();

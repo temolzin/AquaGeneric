@@ -10,7 +10,7 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('localityNotices.update', $notice->id) }}" method="POST" enctype="multipart/form-data" id="edit-notice-form-{{$notice->id}}"onsubmit="return handleUpdateSubmit(this, {{$notice->id}})">
+                <form action="{{ route('localityNotices.update', $notice->id) }}" method="POST" enctype="multipart/form-data" id="edit-notice-form-{{$notice->id}}" onsubmit="return handleUpdateSubmit(this, {{$notice->id}})">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
@@ -31,14 +31,14 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="start_date_edit{{$notice->id}}" class="form-label">Fecha de Inicio (*)</label>
-                                            <input type="date" class="form-control" id="start_date_edit{{$notice->id}}" name="start_date" value="{{ $notice->start_date->format('Y-m-d') }}" required>
+                                            <label for="start_date_edit{{$notice->id}}" class="form-label">Fecha y Hora de Inicio (*)</label>
+                                            <input type="datetime-local" class="form-control" id="start_date_edit{{$notice->id}}" name="start_date" value="{{ $notice->start_date->format('Y-m-d\TH:i') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="end_date_edit{{$notice->id}}" class="form-label">Fecha de Fin (*)</label>
-                                            <input type="date" class="form-control" id="end_date_edit{{$notice->id}}" name="end_date" value="{{ $notice->end_date->format('Y-m-d') }}" required>
+                                            <label for="end_date_edit{{$notice->id}}" class="form-label">Fecha y Hora de Fin (*)</label>
+                                            <input type="datetime-local" class="form-control" id="end_date_edit{{$notice->id}}" name="end_date" value="{{ $notice->end_date->format('Y-m-d\TH:i') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -90,37 +90,43 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const editFileInput = document.getElementById('attachment_edit{{$notice->id}}');
-    const editFileLabel = document.querySelector('#edit{{$notice->id}} .custom-file-label');
-    
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    initializeEditModal({{$notice->id}});
+});
 
-    const startDateEdit = document.getElementById('start_date_edit{{$notice->id}}');
-    const endDateEdit = document.getElementById('end_date_edit{{$notice->id}}');
+function initializeEditModal(noticeId) {
+    const editFileInput = document.getElementById('attachment_edit' + noticeId);
+    const editFileLabel = document.querySelector('#edit' + noticeId + ' .custom-file-label');
+    
+    function formatDateTime(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    const startDateEdit = document.getElementById('start_date_edit' + noticeId);
+    const endDateEdit = document.getElementById('end_date_edit' + noticeId);
 
     if (startDateEdit && endDateEdit) {
-        startDateEdit.min = today.toISOString().split('T')[0];
+        const now = new Date();
+        startDateEdit.min = formatDateTime(now);
         
         const currentStartDate = new Date(startDateEdit.value);
         const minEndDate = new Date(currentStartDate);
-        minEndDate.setDate(minEndDate.getDate() + 1);
-        
-        if (minEndDate > today) {
-            endDateEdit.min = minEndDate.toISOString().split('T')[0];
-        } else {
-            endDateEdit.min = tomorrow.toISOString().split('T')[0];
-        }
+        minEndDate.setMinutes(minEndDate.getMinutes() + 30);
+        endDateEdit.min = formatDateTime(minEndDate);
 
         startDateEdit.addEventListener('change', function() {
             const selectedStartDate = new Date(this.value);
             const newMinEndDate = new Date(selectedStartDate);
-            newMinEndDate.setDate(newMinEndDate.getDate() + 1);
-            endDateEdit.min = newMinEndDate.toISOString().split('T')[0];
+            newMinEndDate.setMinutes(newMinEndDate.getMinutes() + 30);
+            
+            endDateEdit.min = formatDateTime(newMinEndDate);
             
             const currentEndDate = new Date(endDateEdit.value);
-            if (endDateEdit.value && currentEndDate <= selectedStartDate) {
+            if (endDateEdit.value && currentEndDate < newMinEndDate) {
                 endDateEdit.value = '';
             }
         });
@@ -128,16 +134,8 @@ document.addEventListener('DOMContentLoaded', function() {
         endDateEdit.addEventListener('change', function() {
             const startDate = new Date(startDateEdit.value);
             const endDate = new Date(this.value);
-            
-            if (endDate <= startDate) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error en fecha',
-                    text: 'La fecha de fin debe ser posterior a la fecha de inicio.',
-                    confirmButtonText: 'Aceptar'
-                });
-                this.value = '';
-            }
+            const minEndDate = new Date(startDate);
+            minEndDate.setMinutes(minEndDate.getMinutes() + 30);
         });
     }
 
@@ -179,51 +177,71 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 editFileLabel.textContent = file.name;
-                
             } else {
                 editFileLabel.textContent = 'Seleccionar archivo...';
             }
         });
     }
 
-    $('#edit{{$notice->id}}').on('hidden.bs.modal', function () {
-        document.getElementById('edit-notice-form-{{$notice->id}}').reset();
+    $('#edit' + noticeId).on('hidden.bs.modal', function () {
+        const form = document.getElementById('edit-notice-form-' + noticeId);
+        if (form) {
+            form.reset();
+        }
         
         if (editFileLabel) {
             const hasExistingFile = {{ $notice->getFirstMedia('notice_attachments') ? 'true' : 'false' }};
             editFileLabel.textContent = hasExistingFile ? 'Seleccionar nuevo archivo' : 'Seleccionar archivo';
         }
         
-        var updateBtn = document.getElementById('updateBtn{{$notice->id}}');
+        const startDateEdit = document.getElementById('start_date_edit' + noticeId);
+        const endDateEdit = document.getElementById('end_date_edit' + noticeId);
+        if (startDateEdit && endDateEdit) {
+            startDateEdit.value = '{{ $notice->start_date->format('Y-m-d\TH:i') }}';
+            endDateEdit.value = '{{ $notice->end_date->format('Y-m-d\TH:i') }}';
+            
+            const now = new Date();
+            startDateEdit.min = formatDateTime(now);
+            
+            const currentStartDate = new Date(startDateEdit.value);
+            const minEndDate = new Date(currentStartDate);
+            minEndDate.setMinutes(minEndDate.getMinutes() + 30);
+            endDateEdit.min = formatDateTime(minEndDate);
+        }
+        
+        const updateBtn = document.getElementById('updateBtn' + noticeId);
         if (updateBtn) {
             updateBtn.disabled = false;
             updateBtn.innerHTML = 'Actualizar Aviso';
         }
     });
-});
+}
 
 function handleUpdateSubmit(form, noticeId) {
-    var submitBtn = document.getElementById('updateBtn' + noticeId);
+    const submitBtn = document.getElementById('updateBtn' + noticeId);
     
     if (submitBtn.disabled) {
         return false;
     }
     
-    var startDateValue = document.getElementById('start_date_edit' + noticeId).value;
-    var endDateValue = document.getElementById('end_date_edit' + noticeId).value;
+    const startDateValue = document.getElementById('start_date_edit' + noticeId).value;
+    const endDateValue = document.getElementById('end_date_edit' + noticeId).value;
 
     if (!startDateValue || !endDateValue) {
         Swal.fire({
             icon: 'error',
             title: 'Fechas incompletas',
-            text: 'Por favor, complete ambas fechas.',
+            text: 'Por favor, complete ambas fechas y horas.',
             confirmButtonText: 'Aceptar'
         });
         return false;
     }
     
-    var startDate = new Date(startDateValue);
-    var endDate = new Date(endDateValue);
+    const startDate = new Date(startDateValue);
+    const endDate = new Date(endDateValue);
+    const minEndDate = new Date(startDate);
+    minEndDate.setMinutes(minEndDate.getMinutes() + 30);
+    
     
     submitBtn.disabled = true;
     submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Actualizando...`;
