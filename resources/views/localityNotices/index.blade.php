@@ -47,8 +47,8 @@
                                                 <th>ID</th>
                                                 <th>TÍTULO</th>
                                                 <th>LOCALIDAD</th>
-                                                <th>FECHA INICIO</th>
-                                                <th>FECHA FIN</th>
+                                                <th>FECHA Y HORA DE INICIO</th>
+                                                <th>FECHA Y HORA DE FIN</th>
                                                 <th>ESTATUS</th>
                                                 <th>OPCIONES</th>
                                             </tr>
@@ -66,8 +66,8 @@
                                                             {{ Str::limit($notice->title, 40) }}                                                       
                                                         </td>
                                                         <td>{{ $notice->locality->name }}</td>
-                                                        <td>{{ $notice->start_date->format('d/m/Y') }}</td>
-                                                        <td>{{ $notice->end_date->format('d/m/Y') }}</td>
+                                                        <td>{{ $notice->start_date->format('d/m/Y H:i') }}</td>
+                                                        <td>{{ $notice->end_date->format('d/m/Y H:i') }}</td>
                                                         <td>
                                                             @php
                                                                 $now = now();

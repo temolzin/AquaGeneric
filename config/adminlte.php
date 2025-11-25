@@ -462,19 +462,19 @@ return [
     ],
     [
         'text' => 'Mis Pagos',
-        'url' => '/viewMyPayments',
+        'url' => '/viewCustomerPayments',
         'can' => 'viewCustomerPayments',
         'icon' => 'fas fa-fw fa-dollar-sign text-white',
     ],
     [
         'text' => 'Mis Deudas',
-        'url' => '/viewMyDebts',
+        'url' => '/viewCustomerDebts',
         'can'  => 'viewCustomerDebts',
         'icon' => 'fas fa-fw fa-exclamation-circle text-white',
     ],
     [
         'text' => 'Mis Tomas de Agua',
-        'url' => '/viewMyWaterConnections',
+        'url' => '/viewCustomerWaterConnections',
         'can' => 'viewWaterConnections',
         'icon' => 'fas fa-fw fa-water text-white',
     ],

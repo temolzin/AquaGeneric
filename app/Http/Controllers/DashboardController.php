@@ -20,7 +20,6 @@ class DashboardController extends Controller
     public function index()
     {
         Carbon::setLocale('es');
-
         $authUser = Auth::user();
         $totalCustomers = Customer::count();
         $localities = Locality::all();
@@ -28,27 +27,28 @@ class DashboardController extends Controller
         $customersByLocality = Customer::where('locality_id', $authUser->locality_id)->count();
 
         $customersWithDebts = Customer::where('locality_id', $authUser->locality_id)
-        ->whereHas('waterConnections.debts', function ($query) {
-            $query->where('status', '!=', 'paid');
-        })
-        ->count();
+            ->whereHas('waterConnections.debts', function ($query) {
+                $query->where('status', '!=', 'paid');
+            })
+            ->count();
+
+        $customersWithoutDebts = Customer::where('locality_id', $authUser->locality_id)
+            ->whereDoesntHave('waterConnections.debts', function ($query) {
+                $query->where('status', '!=', 'paid');
+            })->count();
 
         $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(created_at) as month')
-        ->where('locality_id', $authUser->locality_id)
-        ->whereYear('created_at', Carbon::now()->year)
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get();
+            ->where('locality_id', $authUser->locality_id)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
         $earningsPerMonth = array_fill(1, 12, 0);
 
         foreach ($monthlyEarnings as $earning) {
             $earningsPerMonth[$earning->month] = $earning->total;
         }
-
-        $customersWithoutDebts = Customer::where('locality_id', $authUser->locality_id)->whereDoesntHave('waterConnections.debts', function ($query) {
-            $query->where('status', '!=', 'paid');
-        })->count();
 
         $currentMonth = Carbon::now();
         $debtsThisMonth = Debt::whereYear('start_date', $currentMonth->year)
@@ -63,6 +63,13 @@ class DashboardController extends Controller
 
         $mailConfig = $authUser->locality?->mailConfiguration;
         $hasMailConfig = $mailConfig && $mailConfig->isComplete();
+
+        $waterConnections = $authUser->customer?->waterConnections ?? collect();
+        $totalDebts = $waterConnections->flatMap->debts->count();
+        $pendingDebts = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->count();
+        $totalOwed = $waterConnections->flatMap->debts->where('status', '!=', 'paid')->sum(function ($debt) {
+        return $debt->amount - $debt->debt_current;
+        });
 
         $notices = \App\Models\LocalityNotice::with(['creator', 'locality'])
             ->where('locality_id', $authUser->locality_id)
@@ -82,7 +89,16 @@ class DashboardController extends Controller
             'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
         ];
 
-        return view('dashboard', compact('data', 'authUser', 'hasMailConfig', 'notices'));
+        return view('dashboard', compact(
+            'data',
+            'authUser',
+            'hasMailConfig',
+            'waterConnections',
+            'totalDebts',
+            'pendingDebts',
+            'totalOwed',
+            'notices'
+        ));
     }
 
     public function getEarningsByLocality(Request $request)
@@ -142,7 +158,7 @@ class DashboardController extends Controller
     public function sendEmailsForDebtsExpiringSoon()
     {
         $authUser = Auth::user();
-        $mailConfig = $authUser->locality->mailConfiguration; 
+        $mailConfig = $authUser->locality->mailConfiguration;
 
         Config::set('mail.mailers.smtp.host', $mailConfig->host);
         Config::set('mail.mailers.smtp.port', $mailConfig->port);
@@ -172,7 +188,7 @@ class DashboardController extends Controller
         $uniqueCustomers->chunk(50)->each(function ($chunk) use ($authUser) {
             dispatch(new SendUpcomingPaymentEmails($chunk, $authUser->id));
         });
-        
+
         return back()->with('success', 'Los correos están en proceso de envío y pronto llegarán a sus destinatarios.');
     }
 }

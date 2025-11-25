@@ -84,6 +84,9 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/report/pdfCustomersSummary', [CustomerController::class, 'generateCustomerSummaryPdf'])->name('customers.pdfCustomersSummary');
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
         Route::get('/payment-history/{id}', [CustomerController::class, 'generatePaymentHistoryReport'])->name('reports.paymentHistoryReport');
+        Route::get('/generate-user-access-pdf/{hash}', [CustomerController::class, 'generateUserAccessPDF'])->name('generate.user.access.pdf');
+        Route::post('/customers/{id}/update-password', [CustomerController::class, 'updatePassword'])->name('customers.updatePassword');
+        Route::post('/customers/{id}/assign-password', [CustomerController::class, 'assignOrUpdatePassword'])->name('customers.assignPassword');
     });
 
     Route::group(['middleware' => ['can:viewRoles']], function () {
@@ -205,10 +208,23 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('localityNotices/{id}/download', [LocalityNoticeController::class, 'downloadAttachment'])->name('localityNotices.download');
     });
 
+    Route::group(['middleware' => ['can:viewCustomerPayments']], function () {
+        Route::get('/viewCustomerPayments', [PaymentController::class, 'showCustomerPayments'])->name('viewCustomerPayments.index');
+        Route::get('/receipt/{paymentId}', [PaymentController::class, 'receiptPayment'])->name('viewCustomerPayments.receipt');
+    });
+
+    Route::group(['middleware' => ['can:viewWaterConnections']], function () {
+        Route::get('/viewCustomerWaterConnections', [WaterConnectionController::class, 'showCustomerWaterConnections'])->name('viewCustomerWaterConnections.index');
+    });
+
+    Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
+        Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
+    });
+
     Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
     Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
     });
-    
+
     Route::group(['middleware' => ['can:viewReportsLists']], function () {
         Route::get('/reportList', [ReportListController::class, 'index'])->name('reportList.index');
     });
@@ -221,12 +237,28 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/expenseTypes', [ExpenseTypeController::class, 'index'])->name('expenseTypes.index');
         Route::resource('expenseTypes', ExpenseTypeController::class);
     });
-    
+
     Route::group(['middleware' => ['can:viewSections']], function () {
         Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
         Route::resource('sections', SectionController::class);
         Route::get('/reports/pdfSections', [SectionController::class, 'pdfSections'])->name('reports.pdfSections');
     });
+
+    Route::group(['middleware' => ['can:viewCustomerPayments']], function () {
+        Route::get('/viewCustomerPayments', [PaymentController::class, 'showCustomerPayments'])->name('viewCustomerPayments.index');
+        Route::get('/receipt/{paymentId}', [PaymentController::class, 'receiptPayment'])->name('viewCustomerPayments.receipt');
+        Route::get('/viewCustomerPayments/quarterlyReport', [PaymentController::class, 'showQuarterlyReport'])->name('viewCustomerPayments.quarterlyReport');
+        Route::get('/viewCustomerPayments/annualReportCustomerPayments', [PaymentController::class, 'showAnnualReport'])->name('viewCustomerPayments.annualReportCustomerPayments');
+    });
+
+    Route::group(['middleware' => ['can:viewWaterConnections']], function () {
+        Route::get('/viewCustomerWaterConnections', [WaterConnectionController::class, 'showCustomerWaterConnections'])->name('viewCustomerWaterConnections.index');
+    });
+
+    Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
+        Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
+    });
 });
-    Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
-    Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');
+
+Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
+Route::post('/expiredSubscriptions/expired', [TokenController::class, 'validateNewToken'])->name('validatetoken');

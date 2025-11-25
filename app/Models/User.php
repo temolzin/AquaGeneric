@@ -12,6 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable implements HasMedia
 {
@@ -22,7 +23,7 @@ class User extends Authenticatable implements HasMedia
      *
      * @var array<int, string>
      */
-    protected $fillable=['locality_id','name','last_name','phone','email','password'];
+    protected $fillable=['locality_id','name','last_name','phone','email','password', 'temporary_password'];
     public $timestamps = false;
 
     /**
@@ -72,5 +73,10 @@ class User extends Authenticatable implements HasMedia
     public function payments()
     {
         return $this->hasMany(Payment::class, 'created_at');
+    }
+    
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class);
     }
 }

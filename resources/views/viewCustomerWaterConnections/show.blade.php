@@ -28,12 +28,6 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label>Sección</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->section ? $connection->section->name : 'Sin sección' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
                                         <label>Propietario</label>
                                         @if($connection->customer && $connection->customer->user)
                                             <input type="text" disabled class="form-control"
@@ -126,16 +120,10 @@
                                         <input type="text" disabled class="form-control" value="{{ $connection->has_cistern ? 'Sí' : 'No' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Costo</label>
                                         <input type="text" disabled class="form-control" value="{{ $connection->cost->category ?? 'NULL' }} - {{ $connection->cost->price ?? 'null'}}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Registrado por</label>
-                                        <input type="text" disabled class="form-control" value="{{ $connection->creator->name ?? 'Desconocido' }} {{ $connection->creator->last_name ?? '' }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-12">

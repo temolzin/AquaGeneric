@@ -72,7 +72,12 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="email" class="form-label">Correo electrónico(*)</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
+                                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
+                                            @error('email')
+                                                <span class="error invalid-feedback" style="display:block;">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -117,6 +122,25 @@
                                         <div class="form-group">
                                             <label for="responsible_name" class="form-label">Nombre de la persona que será responsable de la toma</label>
                                             <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" id="responsible_name" name="responsible_name" placeholder="Ingresa nombre de la persona responsable, si no hay dejalo vacio" value="{{ old('responsible_name') }}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="showPassword" name="showPassword">
+                                                <label class="form-check-label" for="showPassword">
+                                                    Habilitar Inicio de Sesión
+                                                </label>
+                                            </div>
+                                            <div class="password-field" id="passwordField" style="display: none;">
+                                                <label for="password" class="form-label required">Ingresa una Contraseña</label>
+                                                <div class="input-group">
+                                                    <input type="password" id="password" name="password" placeholder="Contraseña"  class="form-control">
+                                                    <button type="button" id="generatePasswordBtn" class="btn btn-default border">
+                                                        Generar Contraseña
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -189,5 +213,32 @@
                 });
             });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const showPasswordCheckbox = document.getElementById('showPassword');
+            const passwordField = document.getElementById('passwordField');
+            const passwordInput = document.getElementById('password');
+            const generatePasswordBtn = document.getElementById('generatePasswordBtn');
+
+            showPasswordCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    passwordField.style.display = 'block';
+                    passwordInput.required = true;
+                } else{
+                    passwordField.style.display = 'none';
+                    passwordInput.required = false;
+                    passwordInput.value = '';
+                }
+        });
+
+        generatePasswordBtn.addEventListener('click', function() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let randomPassword = "";
+            for (let i = 0; i < 10; i++) {
+                randomPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            passwordInput.value = randomPassword;
+        });
+    });
 </script>
 

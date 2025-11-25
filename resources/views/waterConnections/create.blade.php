@@ -68,9 +68,11 @@
                                                     @if(!$canCreateMore) disabled @endif required>
                                                 <option value="">Selecciona un cliente</option>
                                                 @foreach($customers as $customer)
-                                                    <option value="{{ $customer->id }}">
-                                                        {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
-                                                    </option>
+                                                    @if($customers)
+                                                        <option value="{{ $customer->id }}">
+                                                            {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
+                                                        </option>
+                                                    @endif
                                                 @endforeach
                                             </select>
                                         </div>
