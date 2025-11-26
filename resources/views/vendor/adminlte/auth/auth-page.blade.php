@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Laravel') }} - @yield('auth_header', 'Login')</title>
-    
+    <title>AquaControl | Login</title>
+    <link rel="icon" href="{{ asset('img/logo.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
     
@@ -361,6 +361,10 @@
                 padding: 25px 20px;
             }
         }
+        .logo{
+            width: 120px;
+            height: 120px;
+        }
     </style>
 
     @stack('css')
@@ -397,6 +401,9 @@
 
         <div class="login-section">
             <div class="login-header">
+                <div class="logo-container">
+                    <img src="{{ asset('img/logo.png') }}" alt="AquaControl" class="logo">
+                </div>
                 <div class="login-logo">AquaControl</div>
                 <p class="login-subtitle">Inicia sesión para acceder</p>
             </div>
