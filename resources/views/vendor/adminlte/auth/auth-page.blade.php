@@ -1,23 +1,30 @@
-@extends('adminlte::master')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name', 'Laravel') }} - @yield('auth_header', 'Login')</title>
+    
+    <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
+    
+    @php
+        $authType = $authType ?? 'login';
+        $dashboardUrl = View::getSection('dashboard_url') ?? config('adminlte.dashboard_url', 'home');
 
-@php
-    $authType = $authType ?? 'login';
-    $dashboardUrl = View::getSection('dashboard_url') ?? config('adminlte.dashboard_url', 'home');
+        if (config('adminlte.use_route_url', false)) {
+            $dashboardUrl = $dashboardUrl ? route($dashboardUrl) : '';
+        } else {
+            $dashboardUrl = $dashboardUrl ? url($dashboardUrl) : '';
+        }
 
-    if (config('adminlte.use_route_url', false)) {
-        $dashboardUrl = $dashboardUrl ? route($dashboardUrl) : '';
-    } else {
-        $dashboardUrl = $dashboardUrl ? url($dashboardUrl) : '';
-    }
+        $bodyClasses = "{$authType}-page";
 
-    $bodyClasses = "{$authType}-page";
+        if (! empty(config('adminlte.layout_dark_mode', null))) {
+            $bodyClasses .= ' dark-mode';
+        }
+    @endphp
 
-    if (! empty(config('adminlte.layout_dark_mode', null))) {
-        $bodyClasses .= ' dark-mode';
-    }
-@endphp
-
-@section('adminlte_css')
     <style>
         .login-page, .register-page, .verify-page {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
@@ -355,18 +362,17 @@
             }
         }
     </style>
+
     @stack('css')
     @yield('css')
-@stop
+</head>
+<body class="hold-transition {{ $bodyClasses }}">
 
-@section('classes_body'){{ $bodyClasses }}@stop
-
-@section('body')
     <div class="unified-login-container">
         
         <div class="info-section">
             <div class="info-content">
-                <h1 class="app-title">Aqua Control</h1>
+                <h1 class="app-title">AquaControl</h1>
                 <h2 class="welcome-title">Bienvenido de vuelta</h2>
                 <p class="app-description">
                     Gestiona tu sistema de agua de manera eficiente y moderna
@@ -400,9 +406,10 @@
             </div>
         </div>
     </div>
-@stop
 
-@section('adminlte_js')
+    <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
+
     @stack('js')
     @yield('js')
-@stop
+</body>
+</html>

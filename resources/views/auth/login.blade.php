@@ -1,4 +1,5 @@
-@extends('adminlte::auth.auth-page', ['auth_type' => 'login'])
+@extends('vendor.adminlte.auth.auth-page', ['auth_type' => 'login'])
+@section('auth_header', 'Iniciar Sesión')
 
 @section('auth_body')
     <form action="{{ route('login') }}" method="post">
