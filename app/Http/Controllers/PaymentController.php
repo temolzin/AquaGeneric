@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller {
     public function index(Request $request) {
