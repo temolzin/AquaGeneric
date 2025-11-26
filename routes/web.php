@@ -185,6 +185,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewEmployee']], function () {
         Route::resource('employees', EmployeeController::class);
         Route::get('/reports/generateEmployeeListReport', [EmployeeController::class, 'generateEmployeeListReport'])->name('report.generateEmployeeListReport');
+        Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
     });
 
     Route::group(['middleware' => ['can:viewIncidentStatuses']], function () {

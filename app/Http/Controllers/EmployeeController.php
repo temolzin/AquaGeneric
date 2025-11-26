@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Employee;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
@@ -139,4 +141,234 @@ class EmployeeController extends Controller
         return $pdf->stream('employees.pdf');
     }
 
+    public function import(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'excel_file' => [
+                'required',
+                'file',
+                'mimes:csv,txt'
+            ]
+        ], [
+            'excel_file.required' => 'El archivo CSV es requerido.',
+            'excel_file.file' => 'El archivo debe ser válido.',
+            'excel_file.mimes' => 'Solo se permiten archivos CSV.',
+            'excel_file.max' => 'El archivo no debe ser mayor a 10MB.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $validator->errors()->all()
+            ], 422);
+        }
+
+        try {
+            $file = $request->file('excel_file');
+            $processed = 0;
+            $imported = 0;
+            $errors = [];
+            $authUser = Auth::user();
+
+            $handle = fopen($file->getPathname(), 'r');
+
+            if ($handle === false) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se pudo abrir el archivo CSV.'
+                ], 400);
+            }
+
+            $headers = fgetcsv($handle);
+
+            $expectedHeaders = ['nombre', 'apellido', 'localidad', 'codigo_postal', 'estado', 'manzana', 'calle', 'numero_exterior', 'numero_interior', 'email', 'telefono', 'salario', 'rol'];
+
+            if ($headers === false || count($headers) !== count($expectedHeaders)) {
+                fclose($handle);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Formato de archivo incorrecto. El número de columnas no coincide con la plantilla.'
+                ], 400);
+            }
+
+            $headersMatch = true;
+            foreach ($expectedHeaders as $index => $expectedHeader) {
+                if (!isset($headers[$index]) || trim($headers[$index]) !== $expectedHeader) {
+                    $headersMatch = false;
+                    break;
+                }
+            }
+
+            if (!$headersMatch) {
+                fclose($handle);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Formato de archivo incorrecto. Los encabezados no coinciden con la plantilla oficial.',
+                    'expected_headers' => $expectedHeaders,
+                    'received_headers' => $headers
+                ], 400);
+            }
+
+            while (($rowData = fgetcsv($handle)) !== FALSE) {
+                $processed++;
+
+                if (empty(array_filter($rowData, function($value) {
+                    return $value !== null && $value !== '';
+                }))) {
+                    continue;
+                }
+
+                $result = $this->processEmployeeRowData($rowData, $authUser, $processed);
+                if ($result['success']) {
+                    $imported++;
+                } else {
+                    $errors[] = $result['error'];
+                }
+            }
+
+            fclose($handle);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Importación completada',
+                'processed' => $processed,
+                'imported' => $imported,
+                'failed' => count($errors),
+                'errors' => $errors
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar el archivo CSV: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    private function processEmployeeRowData($rowData, $authUser, $rowNumber)
+    {
+        try {
+            if (count($rowData) < 13) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Número insuficiente de columnas. Se esperaban 13, se encontraron " . count($rowData)
+                ];
+            }
+
+            $requiredFields = [
+                'nombre' => $rowData[0] ?? '',
+                'apellido' => $rowData[1] ?? '',
+                'localidad' => $rowData[2] ?? '',
+                'codigo_postal' => $rowData[3] ?? '',
+                'estado' => $rowData[4] ?? '',
+                'calle' => $rowData[6] ?? '',
+                'numero_exterior' => $rowData[7] ?? '',
+                'email' => $rowData[9] ?? '',
+                'telefono' => $rowData[10] ?? '',
+                'salario' => $rowData[11] ?? '',
+                'rol' => $rowData[12] ?? ''
+            ];
+
+            $missingFields = [];
+            foreach ($requiredFields as $fieldName => $value) {
+                $trimmedValue = trim($value ?? '');
+                if (empty($trimmedValue)) {
+                    $missingFields[] = $fieldName;
+                }
+            }
+
+            if (!empty($missingFields)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Campos requeridos faltantes: " . implode(', ', $missingFields)
+                ];
+            }
+
+            $email = trim($rowData[9] ?? '');
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Email '$email' no tiene formato válido"
+                ];
+            }
+
+            $phone = trim($rowData[10] ?? '');
+            $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+            if (strlen($cleanPhone) < 10 || strlen($cleanPhone) > 15) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Teléfono '$phone' no tiene formato válido (debe tener entre 10 y 15 dígitos)"
+                ];
+            }
+
+            $salary = $this->parseSalary($rowData[11] ?? '');
+            if ($salary <= 0) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Salario debe ser mayor a 0"
+                ];
+            }
+
+            $validRoles = ['Administrativo', 'Supervisor', 'Operativo', 'Gerente'];
+            $roleInput = trim($rowData[12] ?? '');
+            if (!in_array($roleInput, $validRoles)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Rol '$roleInput' inválido. Solo se permiten: " . implode(', ', $validRoles)
+                ];
+            }
+
+            $zipCode = trim($rowData[3] ?? '');
+            if (!preg_match('/^[0-9]{5}$/', $zipCode)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Código postal '$zipCode' inválido. Debe tener 5 dígitos"
+                ];
+            }
+
+            $data = [
+                'name' => trim($rowData[0] ?? ''),
+                'last_name' => trim($rowData[1] ?? ''),
+                'locality' => trim($rowData[2] ?? ''),
+                'zip_code' => $zipCode,
+                'state' => trim($rowData[4] ?? ''),
+                'block' => trim($rowData[5] ?? ''),
+                'street' => trim($rowData[6] ?? ''),
+                'exterior_number' => trim($rowData[7] ?? ''),
+                'interior_number' => trim($rowData[8] ?? ''),
+                'email' => $email,
+                'phone_number' => $cleanPhone,
+                'salary' => $salary,
+                'rol' => $roleInput,
+                'locality_id' => $authUser->locality_id,
+                'created_by' => $authUser->id,
+            ];
+
+            if (Employee::where('email', $data['email'])->exists()) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: El email '{$data['email']}' ya existe en el sistema"
+                ];
+            }
+
+            Employee::create($data);
+            return ['success' => true];
+
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => "Fila $rowNumber: Error - " . $e->getMessage()
+            ];
+        }
+    }
+
+    private function parseSalary($salary)
+    {
+        $salary = trim($salary);
+        $salary = str_replace(['$', ',', ' '], '', $salary);
+        return floatval($salary);
+    }
 }
