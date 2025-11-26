@@ -27,22 +27,23 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="color">Color de identificación(*)</label>
+                                        <label for="color" class="form-label">Color de identificación(*)</label>
                                         <div class="input-group">
-                                            <select name="color" class="form-control select2" id="colorSelect" required>
+                                            <select name="color_index" class="form-control select2" id="colorSelect" required>
                                                 <option value="">Seleccione un color</option>
-                                                <option value="#e74c3c" {{ old('color') == '#e74c3c' ? 'selected' : '' }}>Rojo</option>
-                                                <option value="#3498db" {{ old('color') == '#3498db' ? 'selected' : '' }}>Azul</option>
-                                                <option value="#2ecc71" {{ old('color') == '#2ecc71' ? 'selected' : '' }}>Verde</option>
-                                                <option value="#f39c12" {{ old('color') == '#f39c12' ? 'selected' : '' }}>Naranja</option>
-                                                <option value="#9b59b6" {{ old('color') == '#9b59b6' ? 'selected' : '' }}>Púrpura</option>
-                                                <option value="#1abc9c" {{ old('color') == '#1abc9c' ? 'selected' : '' }}>Turquesa</option>
-                                                <option value="#34495e" {{ old('color') == '#34495e' ? 'selected' : '' }}>Gris oscuro</option>
+                                                <option value="13" data-color="#e74c3c">Rojo</option>
+                                                <option value="0"  data-color="#3498db">Azul</option>
+                                                <option value="10" data-color="#2ecc71">Verde</option>
+                                                <option value="4"  data-color="#f39c12">Naranja</option>
+                                                <option value="1"  data-color="#9b59b6">Púrpura</option>
+                                                <option value="6"  data-color="#1abc9c">Turquesa</option>
+                                                <option value="14" data-color="#34495e">Gris oscuro</option>
                                             </select>
                                             <div class="input-group-append">
                                                 <span class="input-group-text" id="colorPreview" style="width: 40px; background-color: #f8f9fa;"></span>
                                             </div>
                                         </div>
+                                        @error('color_index') <small class="text-danger">{{ $message }}</small> @enderror
                                     </div>
                                 </div>
                             </div>
@@ -64,13 +65,10 @@
         const colorPreview = document.getElementById('colorPreview');
 
         const updatePreview = () => {
-            if (colorSelect.value) {
-                colorPreview.style.backgroundColor = colorSelect.value;
-                colorPreview.style.border = '1px solid ' + colorSelect.value;
-            } else {
-                colorPreview.style.backgroundColor = '#f8f9fa';
-                colorPreview.style.border = '1px solid #ccc';
-            }
+            const selected = colorSelect.options[colorSelect.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            colorPreview.style.backgroundColor = color;
+            colorPreview.style.border = '1px solid ' + color;
         };
 
         if (colorSelect && colorPreview) {

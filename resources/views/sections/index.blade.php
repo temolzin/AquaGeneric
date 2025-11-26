@@ -65,7 +65,11 @@
                                         @forelse($sections as $section)
                                             <tr>
                                                 <td>{{ $section->id }}</td>
-                                                <td>{{ $section->name }}</td>
+                                                <td>
+                                                    <span class="badge {{ $section->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                        {{ $section->name }}
+                                                    </span>
+                                                </td>
                                                 <td>{{ $section->zip_code }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Opciones">

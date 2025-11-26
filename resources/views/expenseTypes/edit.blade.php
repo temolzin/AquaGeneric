@@ -31,21 +31,21 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color" class="form-control select2" id="colorSelect{{ $expenseType->id }}" required>
+                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $expenseType->id }}" required>
                                                 <option value="">Seleccione un color</option>
-                                                <option value="#e74c3c" {{ old('color', $expenseType->color) == '#e74c3c' ? 'selected' : '' }}>Rojo</option>
-                                                <option value="#3498db" {{ old('color', $expenseType->color) == '#3498db' ? 'selected' : '' }}>Azul</option>
-                                                <option value="#2ecc71" {{ old('color', $expenseType->color) == '#2ecc71' ? 'selected' : '' }}>Verde</option>
-                                                <option value="#f39c12" {{ old('color', $expenseType->color) == '#f39c12' ? 'selected' : '' }}>Naranja</option>
-                                                <option value="#9b59b6" {{ old('color', $expenseType->color) == '#9b59b6' ? 'selected' : '' }}>Púrpura</option>
-                                                <option value="#1abc9c" {{ old('color', $expenseType->color) == '#1abc9c' ? 'selected' : '' }}>Turquesa</option>
-                                                <option value="#34495e" {{ old('color', $expenseType->color) == '#34495e' ? 'selected' : '' }}>Gris oscuro</option>
+                                                <option value="13" data-color="#e74c3c" {{ $expenseType->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
+                                                <option value="0"  data-color="#3498db" {{ $expenseType->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
+                                                <option value="10" data-color="#2ecc71" {{ $expenseType->color == 'bg-success' ? 'selected' : '' }}>Verde</option>
+                                                <option value="4"  data-color="#f39c12" {{ $expenseType->color == 'bg-orange' ? 'selected' : '' }}>Naranja</option>
+                                                <option value="1"  data-color="#9b59b6" {{ $expenseType->color == 'bg-purple' ? 'selected' : '' }}>Púrpura</option>
+                                                <option value="6"  data-color="#1abc9c" {{ $expenseType->color == 'bg-teal' ? 'selected' : '' }}>Turquesa</option>
+                                                <option value="14" data-color="#34495e" {{ $expenseType->color == 'bg-secondary' ? 'selected' : '' }}>Gris oscuro</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class="input-group-text color-preview" id="colorPreview{{ $expenseType->id }}" style="width: 40px; background-color: {{ $expenseType->color }}; border: 1px solid {{ $expenseType->color }};"></span>
+                                                <span class="input-group-text color-preview" id="colorPreview{{ $expenseType->id }}" style="width: 40px; background-color: {{ $expenseType->color ? pdf_color($expenseType->color) : '#6c757d' }};"></span>
                                             </div>
                                         </div>
-                                        @error('color') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                                        @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
@@ -73,9 +73,10 @@
         const editModals = document.querySelectorAll('[id^="editExpenseType"]');
         
         const updatePreview = (select, preview) => {
-            const hasValue = select.value;
-            preview.style.backgroundColor = hasValue ? select.value : '#f8f9fa';
-            preview.style.border = hasValue ? `1px solid ${select.value}` : '1px solid #ccc';
+            const selected = select.options[select.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            preview.style.backgroundColor = color;
+            preview.style.border = `1px solid ${color}`;
         };
 
         const initializeColorSelect = (modalId) => {

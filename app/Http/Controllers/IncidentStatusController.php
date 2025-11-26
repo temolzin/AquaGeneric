@@ -34,16 +34,16 @@ class IncidentStatusController extends Controller
         $request->validate([
             'status' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'color' => 'required|string',
+            'color_index' => 'required|integer|in:0,1,4,6,10,13,14',
         ]);
 
-        IncidentStatus::create(array_merge($request->only(['status', 'description', 'color']),
-                [
-                    'locality_id' => $authUser->locality_id,
-                    'created_by' => $authUser->id,
-                ]
-            )
-        );
+        IncidentStatus::create([
+            'status'       => $request->status,
+            'description'  => $request->description,
+            'color'        => color($request->color_index),
+            'locality_id' => $authUser->locality_id,
+            'created_by' => $authUser->id,
+        ]);
 
         return redirect()->route('incidentStatuses.index')->with('success', 'Estatus creado exitosamente.');
     }
@@ -58,10 +58,15 @@ class IncidentStatusController extends Controller
         $request->validate([
             'status' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'color' => 'required|string',
+            'color_index' => 'required|integer|in:0,1,4,6,10,13,14',
         ]);
 
-        $incidentStatus->update($request->only('status', 'description', 'color'));
+        $incidentStatus->update([
+            'status'      => $request->status,
+            'description' => $request->description,
+            'color'       => color($request->color_index),
+        ]);
+
         return redirect()->route('incidentStatuses.index')
             ->with('success', 'Estatus actualizado correctamente.');
     }
@@ -78,6 +83,7 @@ class IncidentStatusController extends Controller
         $authUser = auth()->user();
         $incidentStatus = IncidentStatus::where('locality_id', $authUser->locality_id)
                           ->orWhereNull('locality_id')
+                          ->orderByRaw('locality_id IS NULL DESC')
                           ->orderBy('created_at', 'desc')
                           ->get();
         $pdf = PDF::loadView('reports.generateIncidentStatusListReport', compact('incidentStatus', 'authUser'))

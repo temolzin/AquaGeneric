@@ -41,7 +41,7 @@ class SectionController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'zip_code' => 'required|string|max:5',
-            'color' => 'required|string|max:20',
+            'color_index' => 'required|integer|min:0|max:19',
         ]);
 
         Section::create([
@@ -49,7 +49,7 @@ class SectionController extends Controller
             'created_by' => $authUser->id,
             'name' => $request->name,
             'zip_code' => $request->zip_code,
-            'color' => $request->color,
+            'color' => color($request->color_index),
         ]);
 
         return redirect()->route('sections.index')->with('success', 'Sección creada correctamente.');
@@ -84,13 +84,13 @@ class SectionController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'zip_code' => 'required|string|max:5',
-            'color' => 'required|string|max:20',
+            'color_index' => 'required|integer|min:0|max:19',
         ]);
 
         $section->update([
             'name' => $request->name,
             'zip_code' => $request->zip_code,
-            'color' => $request->color,
+            'color' => color($request->color_index),
         ]);
 
         return redirect()->route('sections.index')->with('success', 'Sección actualizada correctamente.');

@@ -189,7 +189,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         <td class="textcenter">{{ $component->id }}</td>
                         <td class="textcenter">{{ $component->name }}</td>
                         <td class="textcenter">{{ $component->amount }}</td>
-                        <td class="textcenter">{{ $component->category }}</td>
+                        <td class="textcenter">{{ $component->category->name }}</td>
                         <td class="textcenter">{{ $component->material ?? 'N/A' }}</td>
                         <td class="textcenter">{{ $component->dimensions ?? 'N/A' }}</td>
                     </tr>

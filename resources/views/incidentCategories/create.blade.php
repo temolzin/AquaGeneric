@@ -30,24 +30,22 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color" class="form-control select2" id="colorSelectCategory" required>
+                                            <select name="color_index" class="form-control select2" id="colorSelectCategory" required>
                                                 <option value="">Seleccione un color</option>
-                                                <option value="#3498db" {{ old('color') == '#3498db' ? 'selected' : '' }}>Azul</option>
-                                                <option value="#e74c3c" {{ old('color') == '#e74c3c' ? 'selected' : '' }}>Rojo</option>
-                                                <option value="#2ecc71" {{ old('color') == '#2ecc71' ? 'selected' : '' }}>Verde</option>
-                                                <option value="#f39c12" {{ old('color') == '#f39c12' ? 'selected' : '' }}>Naranja</option>
-                                                <option value="#9b59b6" {{ old('color') == '#9b59b6' ? 'selected' : '' }}>Púrpura</option>
-                                                <option value="#1abc9c" {{ old('color') == '#1abc9c' ? 'selected' : '' }}>Turquesa</option>
-                                                <option value="#34495e" {{ old('color') == '#34495e' ? 'selected' : '' }}>Gris oscuro</option>
-                                                <option value="#f1c40f" {{ old('color') == '#f1c40f' ? 'selected' : '' }}>Amarillo</option>
-                                                <option value="#e67e22" {{ old('color') == '#e67e22' ? 'selected' : '' }}>Naranja oscuro</option>
-                                                <option value="#2980b9" {{ old('color') == '#2980b9' ? 'selected' : '' }}>Azul oscuro</option>
+                                                <option value="0"  data-color="#3498db">Azul</option>
+                                                <option value="13" data-color="#e74c3c">Rojo</option>
+                                                <option value="10" data-color="#2ecc71">Verde</option>
+                                                <option value="4"  data-color="#f39c12">Naranja</option>
+                                                <option value="1"  data-color="#9b59b6">Púrpura</option>
+                                                <option value="6"  data-color="#1abc9c">Turquesa</option>
+                                                <option value="14" data-color="#34495e">Gris oscuro</option>
+                                                <option value="3"  data-color="#f1c40f">Amarillo</option>
                                             </select>
                                             <div class="input-group-append">
                                                 <span class="input-group-text" id="colorPreviewCategory" style="width: 40px; background-color: #f8f9fa;"></span>
                                             </div>
                                         </div>
-                                        @error('color') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                                        @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
@@ -82,9 +80,10 @@
         const colorPreviewCategory = document.getElementById('colorPreviewCategory');
 
         const updatePreviewCategory = () => {
-            const hasValue = colorSelectCategory.value;
-            colorPreviewCategory.style.backgroundColor = hasValue ? colorSelectCategory.value : '#f8f9fa';
-            colorPreviewCategory.style.border = hasValue ? `1px solid ${colorSelectCategory.value}` : '1px solid #ccc';
+            const selectedOption = colorSelectCategory.options[colorSelectCategory.selectedIndex];
+            const color = selectedOption?.dataset.color || '#6c757d';
+            colorPreviewCategory.style.backgroundColor = color;
+            colorPreviewCategory.style.border = `1px solid ${color}`;
         };
 
         const initializeColorSelectCategory = () => {

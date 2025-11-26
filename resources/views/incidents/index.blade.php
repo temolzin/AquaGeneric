@@ -83,7 +83,7 @@
                                                         </td>
                                                         <td>{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}</td>
                                                         <td>
-                                                            <span class="badge" style="background-color: {{ $incident->incidentCategory->color ?? '#6c757d' }}; color: white;">
+                                                             <span class="badge {{ $incident->incidentCategory->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
                                                                 {{ $incident->incidentCategory->name }}
                                                             </span>
                                                         </td>
@@ -94,7 +94,7 @@
                                                                     if ($status) {
                                                                         $statusName = $status->status;
                                                                         $statusColor = (preg_match('/^#[a-f0-9]{6}$/i', $status->color)) ? $status->color : '#6c757d';
-                                                                        echo '<span class="badge" style="background-color: ' . $statusColor . '; color: white;">' . $statusName . '</span>';
+                                                                        echo '<span class="badge ' . $status->color . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
                                                                     } else {
                                                                         echo '<span class="badge badge-secondary">Estatus no encontrado</span>';
                                                                     }

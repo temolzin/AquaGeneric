@@ -41,7 +41,7 @@
                                             <tr>
                                                 <td>{{ $expenseType->id }}</td>
                                                 <td>
-                                                    <span class="badge color-badge" style="background-color: {{ $expenseType->color ?? '#6c757d' }}; color: white;">
+                                                    <span class="badge {{ $expenseType->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
                                                         {{ $expenseType->name }}
                                                     </span>
                                                 </td>

@@ -27,22 +27,22 @@ class ExpenseTypeController extends Controller
 
     public function store(Request $request)
     {
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'color' => 'required|string|max:7',
-    ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'color_index' => 'required|integer|min:0|max:19',
+        ]);
 
-    ExpenseType::create([
-        'name' => $request->name,
-        'description' => $request->description,
-        'color' => $request->color,
-        'locality_id' => Auth::user()->locality_id, 
-        'created_by' => Auth::id()
-    ]);
+        ExpenseType::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'color' => color($request->color_index),
+            'locality_id' => Auth::user()->locality_id,
+            'created_by' => Auth::id()
+        ]);
 
-    return redirect()->route('expenseTypes.index')
-        ->with('success', 'Tipo de gasto creado exitosamente.');
+        return redirect()->route('expenseTypes.index')
+            ->with('success', 'Tipo de gasto creado exitosamente.');
     }
 
     public function show(ExpenseType $expenseType)
@@ -62,20 +62,20 @@ class ExpenseTypeController extends Controller
     {
     $this->authorizeLocality($expenseType);
 
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'color' => 'required|string|max:7',
-    ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'color_index' => 'required|integer|min:0|max:19',
+        ]);
 
-    $expenseType->update([
-        'name' => $request->name,
-        'description' => $request->description,
-        'color' => $request->color,
-    ]);
+        $expenseType->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'color' => color($request->color_index),
+        ]);
 
-    return redirect()->route('expenseTypes.index')
-        ->with('success', 'Tipo de gasto actualizado exitosamente.');
+        return redirect()->route('expenseTypes.index')
+            ->with('success', 'Tipo de gasto actualizado exitosamente.');
     }
 
     public function destroy(ExpenseType $expenseType)

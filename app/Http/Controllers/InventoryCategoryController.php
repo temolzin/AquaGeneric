@@ -31,15 +31,15 @@ class InventoryCategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'color' => 'required|string|max:7',
+            'color_index' => 'required|integer|min:0|max:19',
         ]);
 
         InventoryCategory::create([
             'name' => $request->name,
             'description' => $request->description,
-            'color' => $request->color,
-            'locality_id' => Auth::user()->locality_id, 
-            'created_by' => Auth::id()
+            'color' => color($request->color_index),
+            'locality_id' => Auth::user()->locality_id,
+            'created_by' => Auth::id(),
         ]);
 
         return redirect()->route('inventoryCategories.index')
@@ -62,13 +62,13 @@ class InventoryCategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'color' => 'required|string|max:7',
+            'color_index' => 'required|integer|min:0|max:19',
         ]);
 
         $inventoryCategory->update([
             'name' => $request->name,
             'description' => $request->description,
-            'color' => $request->color,
+            'color' => color($request->color_index),
         ]);
 
         return redirect()->route('inventoryCategories.index')
