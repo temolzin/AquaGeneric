@@ -150,6 +150,11 @@
                                         'token' => session('createdToken'),
                                         'localityName' => session('localityName')
                                     ])
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            $('#generatedTokenModal').modal('show');
+                                        });
+                                    </script>
                                 @endif
                             </div>
                         </div>
