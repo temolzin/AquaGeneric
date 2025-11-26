@@ -10,8 +10,6 @@ class SectionsSeeder extends Seeder
 {
     public function run()
     {
-        $colors = ['purple', 'maroon', 'orange', 'lime', 'navy', 'olive', 'secondary'];
-
         Section::updateOrCreate(
             [
                 'locality_id' => null,
@@ -20,12 +18,12 @@ class SectionsSeeder extends Seeder
             [
                 'created_by' => 1,
                 'zip_code' => '00010',
-                'color' => $colors[0],
+                'color' => color(0),
                 'updated_at' => now(),
             ]
         );
 
-        $localities = Locality::all(); 
+        $localities = Locality::all();
 
         foreach ($localities as $locality) {
             for ($i = 1; $i <= 4; $i++) {
@@ -37,7 +35,7 @@ class SectionsSeeder extends Seeder
                     [
                         'created_by' => 1,
                         'zip_code' => str_pad(55000 + ($locality->id * 10) + $i, 5, '0', STR_PAD_LEFT),
-                        'color' => $colors[$i % count($colors)],
+                        'color' => color($i),
                         'updated_at' => now(),
                     ]
                 );
