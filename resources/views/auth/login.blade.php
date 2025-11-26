@@ -9,7 +9,7 @@
             <div class="input-group">
                 <i class="fas fa-envelope input-icon"></i>
                 <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                       value="{{ old('email') }}" placeholder="tui@email.com" autofocus>
+                        value="{{ old('email') }}" placeholder="tui@email.com" autofocus>
                 @error('email')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
@@ -23,7 +23,7 @@
             <div class="input-group">
                 <i class="fas fa-lock input-icon"></i>
                 <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                       placeholder="Ingresa tu contraseña">
+                        placeholder="Ingresa tu contraseña">
                 @error('password')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
