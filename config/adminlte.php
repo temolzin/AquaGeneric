@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Aqua</b>Control',
+    'logo' => 'AquaControl',
     'logo_img' => '/img/logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -121,7 +121,9 @@ return [
             'height' => 60,
         ],
     ],
-
+    'css' => [
+        'css/custom-auth.css',
+    ],
     /*
     |--------------------------------------------------------------------------
     | User Menu
@@ -524,7 +526,7 @@ return [
         JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
-        App\MenuFilters\TokenFilter::class, 
+        App\MenuFilters\TokenFilter::class,
     ],
 
     /*
