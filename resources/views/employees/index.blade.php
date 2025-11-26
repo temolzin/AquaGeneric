@@ -24,6 +24,11 @@
                                         </div>
                                     </form>
                                     <div class="d-flex flex-wrap justify-content-end gap-2 w-100 w-md-auto">
+                                        <button class="btn btn-info flex-grow-1 flex-md-grow-0 mr-1 mt-2" data-toggle="modal"
+                                                data-target="#importData" title="Importar Empleados">
+                                            <i class="fas fa-file-import"></i>
+                                            <span class="d-none d-md-inline">Importar Empleados</span>
+                                        </button>
                                         <button class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-2" data-toggle='modal'
                                                 data-target="#createEmployee" title="Registrar Empleado">
                                             <i class="fa fa-plus"></i>
@@ -124,7 +129,10 @@
     </section>
 @endsection
 
+@include('employees.import-modal')
+
 @section('js')
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         $(document).ready(function () 
         {
@@ -137,6 +145,81 @@
                 info: false,
                 searching: false
             });
+
+            $('#excel_file').on('change', function() {
+                var fileName = $(this).val().split('\\').pop();
+                $('#fileLabel').text(fileName || 'Ningún archivo seleccionado');
+                $('#importResults').addClass('d-none');
+                $('#importErrors').addClass('d-none');
+            });
+
+            $('#importForm').on('submit', function(e) {
+                e.preventDefault();
+
+                var formData = new FormData(this);
+                var importButton = $('#importButton');
+                var progressContainer = $('#progressContainer');
+                var progressBar = $('#progressBar');
+                var progressText = $('#progressText');
+
+                progressContainer.removeClass('d-none');
+                importButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Importando...');
+
+                axios.post('{{ route('employees.import') }}', formData, {
+                    headers: {'Content-Type': 'multipart/form-data'},
+                    onUploadProgress: function(progressEvent) {
+                        if (progressEvent.lengthComputable) {
+                            var percentComplete = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                            progressBar.css('width', percentComplete + '%');
+                            progressText.text(percentComplete + '%');
+                        }
+                    }
+                })
+                .then(function(response) {
+                    $('#importResults').removeClass('d-none');
+                    $('#resultsContent').html(`
+                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                    `);
+
+                    $('#importForm')[0].reset();
+                    $('#fileLabel').text('Ningún archivo seleccionado');
+                    progressContainer.addClass('d-none');
+                    progressBar.css('width', '0%');
+                    progressText.text('0%');
+                    importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar');
+
+                    if (response.data.failed > 0 && response.data.errors) {
+                        $('#importErrors').removeClass('d-none');
+                        let errorsHtml = '<ul>';
+                        response.data.errors.forEach(error => {
+                            errorsHtml += `<li>${error}</li>`;
+                        });
+                        errorsHtml += '</ul>';
+                        $('#errorsContent').html(errorsHtml);
+                    }
+
+                    if (response.data.imported > 0) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    }
+                })
+                .catch(function(error) {
+                    $('#importErrors').removeClass('d-none');
+                    let errorMessage = 'Error al importar el archivo. Verifica el formato.';
+                    
+                    if (error.response && error.response.data && error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    }
+
+                    $('#errorsContent').html('<p>' + errorMessage + '</p>');
+                    progressContainer.addClass('d-none');
+                    importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar');
+                });
+            });
+
             var successMessage = "{{ session('success') }}";
             var errorMessage = "{{ session('error') }}";
             if (successMessage) {
@@ -158,6 +241,10 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
+
+            @if(session('import_errors'))
+                $('#importData').modal('show');
+            @endif
         });
     </script>
 @endsection
