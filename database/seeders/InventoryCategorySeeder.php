@@ -4,38 +4,31 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\InventoryCategory;
+use App\Models\Locality;
+use App\Models\User;
 
 class InventoryCategorySeeder extends Seeder
 {
     public function run()
     {
-        $existingCount = DB::table('inventory_categories')->count();
-        
-        $globalExists = DB::table('inventory_categories')
-            ->whereNull('locality_id')
-            ->exists();
+        $firstUser = User::first()?->id ?? 1;
+        InventoryCategory::updateOrCreate(
+            [
+                'name' => 'Recursos Generales',
+                'locality_id' => null,
+            ],
+            [
+                'description' => 'Agrupa los recursos de inventario utilizados de forma general en la organización.',
+                'color' => color(2),
+                'created_by' => $firstUser,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
 
-        if (!$globalExists) {
-            $firstUser = DB::table('users')->value('id');
-            if ($firstUser) {
-                DB::table('inventory_categories')->insert([
-                    'name' => 'Recursos Generales',
-                    'description' => 'Agrupa los recursos de inventario utilizados de forma general en la organización.',
-                    'color' => '#ff00f2',
-                    'locality_id' => null,
-                    'created_by' => $firstUser,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-        }
-
-        if ($existingCount > 0) {
-            return;
-        }
-
-        $localities = DB::table('localities')->pluck('id')->toArray();
-        $users = DB::table('users')->pluck('id')->toArray();
+        $localities = Locality::pluck('id')->toArray();
+        $users = User::pluck('id')->toArray();
 
         if (empty($localities) || empty($users)) {
             $this->command->error('No localities or users found. Skipping inventory categories seeding.');
@@ -46,46 +39,46 @@ class InventoryCategorySeeder extends Seeder
             [
                 'name' => 'Medidores de Agua',
                 'description' => 'Medidores residenciales, comerciales e industriales para control de consumo',
-                'color' => '#3498db'
+                'color' => color(9)
             ],
             [
                 'name' => 'Tuberías y Conexiones', 
                 'description' => 'Tuberías PVC, cobre, conexiones, codos y uniones para red de distribución',
-                'color' => '#e74c3c'
+                'color' => color(13)
             ],
             [
                 'name' => 'Válvulas y Reguladores',
                 'description' => 'Válvulas de control, compuerta, globo y reguladores de presión',
-                'color' => '#2ecc71'
+                'color' => color(10)
             ],
             [
                 'name' => 'Bombas y Motores', 
                 'description' => 'Bombas de agua, motores eléctricos y sistemas de bombeo',
-                'color' => '#f39c12'
+                'color' => color(12)
             ],
             [
                 'name' => 'Filtros y Purificación',
                 'description' => 'Filtros de sedimentos, carbón activado y sistemas de purificación',
-                'color' => '#9b59b6'
+                'color' => color(1)
             ]
         ];
 
-        $inventoryCategoriesData = [];
-
         foreach ($localities as $localityId) {
             foreach ($baseCategories as $category) {
-                $inventoryCategoriesData[] = [
-                    'name' => $category['name'],
-                    'description' => $category['description'],
-                    'color' => $category['color'],
-                    'locality_id' => $localityId,
-                    'created_by' => $users[0],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
+                InventoryCategory::updateOrCreate(
+                    [
+                        'name' => $category['name'],
+                        'locality_id' => $localityId,
+                    ],
+                    [
+                        'description' => $category['description'],
+                        'color' => $category['color'],
+                        'created_by' => $users[0],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
             }
         }
-
-        DB::table('inventory_categories')->insert($inventoryCategoriesData);
     }
 }
