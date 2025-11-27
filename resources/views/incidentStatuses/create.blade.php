@@ -78,11 +78,17 @@
         const colorSelect = document.getElementById('colorSelect');
         const colorPreview = document.getElementById('colorPreview');
 
-        const updatePreview = (select, preview) => {
-            const selected = select.options[select.selectedIndex];
-            const color = selected?.dataset.color || '#6c757d';
-            preview.style.backgroundColor = color;
-            preview.style.border = `1px solid ${color}`;
+        const updatePreview = () => {
+            const selected = colorSelect.options[colorSelect.selectedIndex];
+            const color = selected?.dataset.color;
+
+            if (color) {
+                colorPreview.style.backgroundColor = color;
+                colorPreview.style.border = '1px solid ' + color;
+            } else {
+                colorPreview.style.backgroundColor = '#6c757d';
+                colorPreview.style.border = '1px solid #ccc';
+            }
         };
 
         const initializeColorSelect = () => {
@@ -96,11 +102,10 @@
             });
 
             $('#colorSelect').on('change', updatePreview);
+            $('#createIncidentStatusModal').on('shown.bs.modal', updatePreview);
             updatePreview();
         };
 
         initializeColorSelect();
-
-        $('#createIncidentStatusModal').on('shown.bs.modal', updatePreview);
     });
 </script>

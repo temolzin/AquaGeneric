@@ -55,7 +55,7 @@
                                                             $statusName = $incidentStatus->status;
                                                             $statusColor = $incidentStatus->color;
                                                             
-                                                            echo '<span class="badge" style="background-color: ' . $statusColor . '; color: white; padding: 6px 10px; font-size: 12px; border-radius: 4px;">' . $statusName . '</span>';
+                                                            echo '<span class="badge' . $statusColor . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
                                                         } else {
                                                             echo '<span class="badge" style="background-color: #6c757d; color: white; padding: 6px 10px; font-size: 12px; border-radius: 4px;">' . $statusName . '</span>';
                                                         }
