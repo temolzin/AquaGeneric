@@ -48,7 +48,7 @@
                                             <tr>
                                                 <td>{{ $status->id }}</td>
                                                 <td>
-                                                    <span class="badge" style="background-color: {{ $status->color ?? '#6c757d' }}; color: white;">
+                                                    <span class="badge {{ $status->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
                                                         {{ $status->status }}
                                                     </span>
                                                 </td>

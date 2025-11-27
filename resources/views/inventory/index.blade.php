@@ -69,7 +69,7 @@
                                                     <td>{{ $component->amount }}</td>
                                                     <td>
                                                         @if($component->category)
-                                                            <span class="badge color-badge" style="background-color: {{ $component->category->color }}; color: white;">
+                                                            <span class="badge {{ $component->category->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
                                                                 {{ $component->category->name }}
                                                             </span>
                                                         @else

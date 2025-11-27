@@ -31,24 +31,23 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color" class="form-control select2" id="colorSelectCategory{{ $category->id }}" required>
+                                            <select name="color_index" class="form-control select2" id="colorSelectCategory{{ $category->id }}" required>
                                                 <option value="">Seleccione un color</option>
-                                                <option value="#3498db" {{ old('color', $category->color) == '#3498db' ? 'selected' : '' }}>Azul</option>
-                                                <option value="#e74c3c" {{ old('color', $category->color) == '#e74c3c' ? 'selected' : '' }}>Rojo</option>
-                                                <option value="#2ecc71" {{ old('color', $category->color) == '#2ecc71' ? 'selected' : '' }}>Verde</option>
-                                                <option value="#f39c12" {{ old('color', $category->color) == '#f39c12' ? 'selected' : '' }}>Naranja</option>
-                                                <option value="#9b59b6" {{ old('color', $category->color) == '#9b59b6' ? 'selected' : '' }}>Púrpura</option>
-                                                <option value="#1abc9c" {{ old('color', $category->color) == '#1abc9c' ? 'selected' : '' }}>Turquesa</option>
-                                                <option value="#34495e" {{ old('color', $category->color) == '#34495e' ? 'selected' : '' }}>Gris oscuro</option>
-                                                <option value="#f1c40f" {{ old('color', $category->color) == '#f1c40f' ? 'selected' : '' }}>Amarillo</option>
-                                                <option value="#e67e22" {{ old('color', $category->color) == '#e67e22' ? 'selected' : '' }}>Naranja oscuro</option>
-                                                <option value="#2980b9" {{ old('color', $category->color) == '#2980b9' ? 'selected' : '' }}>Azul oscuro</option>
+                                                <option value="0"  data-color="#3498db" {{ $category->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
+                                                <option value="13" data-color="#e74c3c" {{ $category->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
+                                                <option value="10" data-color="#2ecc71" {{ $category->color == 'bg-success' ? 'selected' : '' }}>Verde</option>
+                                                <option value="4"  data-color="#f39c12" {{ $category->color == 'bg-orange' ? 'selected' : '' }}>Naranja</option>
+                                                <option value="1"  data-color="#9b59b6" {{ $category->color == 'bg-purple' ? 'selected' : '' }}>Púrpura</option>
+                                                <option value="6"  data-color="#1abc9c" {{ $category->color == 'bg-teal' ? 'selected' : '' }}>Turquesa</option>
+                                                <option value="14" data-color="#34495e" {{ $category->color == 'bg-secondary' ? 'selected' : '' }}>Gris oscuro</option>
+                                                <option value="3"  data-color="#f1c40f" {{ $category->color == 'bg-yellow' ? 'selected' : '' }}>Amarillo</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class="input-group-text color-preview" id="colorPreviewCategory{{ $category->id }}" style="width: 40px; background-color: {{ $category->color }}; border: 1px solid {{ $category->color }};"></span>
+                                                <span class="input-group-text color-preview" id="colorPreviewCategory{{ $category->id }}"
+                                                    style="width: 40px; background-color: {{ $category->color ? pdf_color($category->color) : '#6c757d' }};"></span>
                                             </div>
                                         </div>
-                                        @error('color') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                                        @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
@@ -76,9 +75,10 @@
         const editModals = document.querySelectorAll('[id^="edit"]');
         
         const updatePreview = (select, preview) => {
-            const hasValue = select.value;
-            preview.style.backgroundColor = hasValue ? select.value : '#f8f9fa';
-            preview.style.border = hasValue ? `1px solid ${select.value}` : '1px solid #ccc';
+            const selected = select.options[select.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            preview.style.backgroundColor = color;
+            preview.style.border = `1px solid ${color}`;
         };
 
         const initializeColorSelect = (modalId) => {

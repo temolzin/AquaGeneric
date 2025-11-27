@@ -34,13 +34,13 @@ class IncidentCategoriesController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'color' => 'required|string',
+            'color_index' => 'required|integer|min:0|max:19',
         ]);
 
         IncidentCategory::create([
             'name' => $validated['name'],
             'description' => $validated['description'],
-            'color' => $validated['color'],
+            'color' => color($validated['color_index']),
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
         ]);
@@ -63,10 +63,14 @@ class IncidentCategoriesController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'color' => 'required|string',
+            'color_index' => 'required|integer|min:0|max:19',
         ]);
 
-        $incidentCategory->update($validated);
+        $incidentCategory->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'color' => color($validated['color_index']),
+        ]);
 
         return redirect()->route('incidentCategories.index')->with('success', 'Categoría de incidencia actualizada exitosamente.');
     }
@@ -84,7 +88,10 @@ class IncidentCategoriesController extends Controller
         $incidentCategories = IncidentCategory::where(function ($query) use ($authUser) {
             $query->where('locality_id', $authUser->locality_id)
                 ->orWhereNull('locality_id');
-        })->get();
+        })
+                ->orderByRaw('locality_id IS NULL DESC')
+                ->orderBy('created_at', 'desc')
+                ->get();
 
         $pdf = PDF::loadView('reports.generateIncidentCategoyListReport', compact('incidentCategories', 'authUser'))
             ->setPaper('A4', 'portrait');

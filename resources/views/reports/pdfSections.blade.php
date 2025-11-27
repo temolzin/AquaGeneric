@@ -35,7 +35,7 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
         .section_info_header h4, .section_info_header p { margin: 0; }
         .oval_color {
             display: inline-block;
-            background-color: {{ $section->color }};
+            background-color: {{ pdf_color($section->color) }};
             color: #fff;
             font-weight: bold;
             font-size: 11pt;

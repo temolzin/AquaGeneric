@@ -60,7 +60,7 @@
                                                     <td>{{ $expense->concept }}</td>
                                                     <td>
                                                         @if($expense->expenseType)
-                                                            <span class="badge color-badge" style="background-color: {{ $expense->expenseType->color ?? '#6c757d' }}; color: white;">
+                                                            <span class="badge {{ $expense->expenseType->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
                                                                 {{ $expense->expenseType->name }}
                                                             </span>
                                                         @else

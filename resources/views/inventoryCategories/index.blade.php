@@ -50,7 +50,7 @@
                                             <tr>
                                                 <td>{{ $category->id }}</td>
                                                 <td>
-                                                    <span class="badge color-badge" style="background-color: {{ $category->color ?? '#6c757d' }}; color: white;">
+                                                    <span class="badge {{ $category->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
                                                         {{ $category->name }}
                                                     </span>
                                                 </td>

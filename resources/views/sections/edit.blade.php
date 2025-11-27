@@ -32,20 +32,22 @@
                                     <div class="form-group">
                                         <label for="color" class="form-label">Color(*)</label>
                                         <div class="input-group">
-                                            <select name="color" class="form-control select2" id="colorSelect{{ $section->id }}" required>
+                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $section->id }}" required>
                                                 <option value="">Selecciona un color</option>
-                                                <option value="#e74c3c" {{ $section->color == '#e74c3c' ? 'selected' : '' }}>Rojo</option>
-                                                <option value="#3498db" {{ $section->color == '#3498db' ? 'selected' : '' }}>Azul</option>
-                                                <option value="#2ecc71" {{ $section->color == '#2ecc71' ? 'selected' : '' }}>Verde</option>
-                                                <option value="#f39c12" {{ $section->color == '#f39c12' ? 'selected' : '' }}>Naranja</option>
-                                                <option value="#9b59b6" {{ $section->color == '#9b59b6' ? 'selected' : '' }}>Púrpura</option>
-                                                <option value="#1abc9c" {{ $section->color == '#1abc9c' ? 'selected' : '' }}>Turquesa</option>
-                                                <option value="#34495e" {{ $section->color == '#34495e' ? 'selected' : '' }}>Gris oscuro</option>
+                                                <option value="13" data-color="#e74c3c" {{ $section->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
+                                                <option value="0"  data-color="#3498db" {{ $section->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
+                                                <option value="10" data-color="#2ecc71" {{ $section->color == 'bg-success' ? 'selected' : '' }}>Verde</option>
+                                                <option value="4"  data-color="#f39c12" {{ $section->color == 'bg-orange' ? 'selected' : '' }}>Naranja</option>
+                                                <option value="1"  data-color="#9b59b6" {{ $section->color == 'bg-purple' ? 'selected' : '' }}>Púrpura</option>
+                                                <option value="6"  data-color="#1abc9c" {{ $section->color == 'bg-teal' ? 'selected' : '' }}>Turquesa</option>
+                                                <option value="14" data-color="#34495e" {{ $section->color == 'bg-secondary' ? 'selected' : '' }}>Gris oscuro</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class="input-group-text" id="colorPreview{{ $section->id }}" style="width: 40px; background-color: {{ $section->color ?? '#f8f9fa' }}"></span>
+                                                <span class="input-group-text" id="colorPreview{{ $section->id }}" style="width: 40px; background-color: {{ $section->color ? pdf_color($section->color) : '#f8f9fa' }}; border: 1px solid {{ $section->color ? pdf_color($section->color) : '#ccc' }};">
+                                                </span>
                                             </div>
                                         </div>
+                                        @error('color_index') <small class="text-danger">{{ $message }}</small> @enderror
                                     </div>
                                 </div>
                                 <input type="hidden" name="locality_id" value="{{ auth()->user()->locality_id }}">
@@ -95,9 +97,11 @@
             });
 
             const updatePreview = () => {
-                if (select.value) {
-                    preview.style.backgroundColor = select.value;
-                    preview.style.border = '1px solid ' + select.value;
+                const selected = select.options[select.selectedIndex];
+                const color = selected?.dataset.color;
+                if (color) {
+                    preview.style.backgroundColor = color;
+                    preview.style.border = '1px solid ' + color;
                 } else {
                     preview.style.backgroundColor = '#f8f9fa';
                     preview.style.border = '1px solid #ccc';

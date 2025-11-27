@@ -217,7 +217,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         <tr>
                             <td class="text_center">{{ $status->id }}</td>
                             <td class="text_center" style="vertical-align: middle;">
-                                <span class="oval_color" style="background-color: {{ $status->color ?? '#6c757d' }};">
+                                <span class="oval_color" style="background-color: {{ pdf_color($status->color) }} !important;">
                                     {{ strtoupper($status->status) }}
                                 </span>
                             </td>
