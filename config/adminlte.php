@@ -374,6 +374,18 @@ return [
         ],
     ],
     [
+        'text' => 'Gestión de Ingresos',
+        'icon' => 'fas fa-fw fa-landmark',
+        'submenu' => [
+            [
+                'text' => 'Tipos de Ingresos',
+                'url'  => '/incomeTypes',
+                'icon' => 'fas fa-fw fa-cash-register',
+                'can'  => 'viewIncomeTypes',
+            ],
+        ],
+    ],
+    [
         'text' => 'Gestión de Incidencias',
         'icon' => 'fas fa-fw fa-exclamation-triangle',
         'submenu' => [
