@@ -11,18 +11,18 @@ class IncomeTypeController extends Controller
 {
     public function index()
     {
-    $incomeTypes = IncomeType::byUserLocality()
-        ->with(['creator', 'locality'])
-        ->orderByRaw('locality_id IS NULL DESC')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10); 
+        $incomeTypes = IncomeType::byUserLocality()
+            ->with(['creator', 'locality'])
+            ->orderByRaw('locality_id IS NULL DESC')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-    return view('incomeTypes.index', compact('incomeTypes'));
+        return view('incomeTypes.index', compact('incomeTypes'));
     }
 
     public function create()
     {
-        
+        return view('incomeTypes.create');
     }
 
     public function store(Request $request)
@@ -48,7 +48,7 @@ class IncomeTypeController extends Controller
     public function show(IncomeType $incomeType)
     {
         $this->authorizeLocality($incomeType);
-        return view('ingresoTypes.show', compact('incomeType'));
+        return view('incomeTypes.show', compact('incomeType'));
     }
 
     public function edit(IncomeType $incomeType)
@@ -60,7 +60,7 @@ class IncomeTypeController extends Controller
 
     public function update(Request $request, IncomeType $incomeType)
     {
-    $this->authorizeLocality($incomeType);
+        $this->authorizeLocality($incomeType);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -75,16 +75,16 @@ class IncomeTypeController extends Controller
         ]);
 
         return redirect()->route('incomeTypes.index')
-            ->with('success', 'Tipo de gasto actualizado exitosamente.');
+            ->with('success', 'Tipo de ingreso actualizado exitosamente.');
     }
 
     public function destroy(IncomeType $incomeType)
     {
-    $this->authorizeLocality($incomeType);
-    $incomeType->delete();
+        $this->authorizeLocality($incomeType);
+        $incomeType->delete();
 
-    return redirect()->route('incomeTypes.index')
-        ->with('success', 'Tipo de gasto eliminado exitosamente.');
+        return redirect()->route('incomeTypes.index')
+            ->with('success', 'Tipo de ingreso eliminado exitosamente.');
     }
 
     private function authorizeLocality(IncomeType $incomeType)

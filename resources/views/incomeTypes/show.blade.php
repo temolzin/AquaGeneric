@@ -1,4 +1,4 @@
-<div class="modal fade" id="viewincomeType{{ $incomeType->id }}" tabindex="-1" role="dialog" aria-labelledby="viewincomeTypeLabel{{ $incomeType->id }}" aria-hidden="true">
+<div class="modal fade" id="viewIncomeType{{ $incomeType->id }}" tabindex="-1" role="dialog" aria-labelledby="viewincomeTypeLabel{{ $incomeType->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="card-info">
