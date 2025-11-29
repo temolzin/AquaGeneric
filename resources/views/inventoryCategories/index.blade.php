@@ -20,13 +20,6 @@
                                     <span class="d-inline d-md-none">Categoría</span>
                                 </button>
                                 @endcan
-                                <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1"
-                                target="_blank" title="Generar Lista"
-                                href="#">
-                                    <i class="fas fa-file-pdf"></i>
-                                    <span class="d-none d-md-inline">Generar Lista</span>
-                                    <span class="d-inline d-md-none">Lista PDF</span>
-                                </a>
                             </div>
                         </div>
                     </div>
