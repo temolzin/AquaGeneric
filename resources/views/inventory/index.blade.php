@@ -29,6 +29,12 @@
                                         <span class="d-none d-md-inline">Registrar Componente</span>
                                         <span class="d-inline d-md-none">Nuevo Componente</span>
                                     </button>
+                                    <button class="btn btn-warning flex-grow-1 flex-md-grow-0 ml-1 mt-2" 
+                                            data-toggle="modal" 
+                                            data-target="#importCsvModal"
+                                            title="Importar CSV">
+                                        <i class="fas fa-file-import"></i> Importar CSV
+                                    </button>
                                     <a class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank" 
                                     href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}" 
                                     title="Generar Lista">
@@ -187,4 +193,5 @@
         });
     });
 </script>
+@include('inventory.import-csv')
 @endsection

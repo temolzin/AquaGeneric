@@ -152,4 +152,150 @@ class InventoryController extends Controller
                     ->setPaper('A4', 'portrait');
         return $pdf->stream('inventario.pdf');
     }
+
+    public function downloadTemplate()
+    {
+        try {
+            $user = Auth::user();
+            $categories = InventoryCategory::where('locality_id', $user->locality_id)->get();
+            
+            // Crear contenido CSV
+            $csvContent = "Nombre,Cantidad,Categoría,Descripción,Material,Dimensiones\n";
+            
+            // Agregar ejemplos con categorías reales
+            $sampleData = [
+                ['Válvula de bola', '50', $categories->first()->name ?? 'Válvulas y Reguladores', 'Válvula para control de flujo', 'PVC', '1 pulgada'],
+                ['Tubería acero', '100', $categories->get(1)->name ?? 'Tuberías y Conexiones', 'Tubería para distribución', 'Acero inoxidable', '2 pulgadas'],
+                ['Medidor digital', '25', $categories->get(2)->name ?? 'Medidores de Agua', 'Medidor para monitoreo de consumo', 'Latón', '50 mm']
+            ];
+            
+            foreach ($sampleData as $row) {
+                $csvContent .= '"' . implode('","', $row) . "\"\n";
+            }
+            
+            // Agregar fila de instrucciones
+            $csvContent .= "\n# INSTRUCCIONES:\n";
+            $csvContent .= "# - Las columnas Nombre, Cantidad y Categoría son OBLIGATORIAS\n";
+            $csvContent .= "# - La Categoría debe coincidir exactamente con una de estas:\n";
+            
+            foreach ($categories as $category) {
+                $csvContent .= "#   * " . $category->name . "\n";
+            }
+            
+            $csvContent .= "# - Cantidad debe ser un número entero\n";
+            $csvContent .= "# - Elimine las filas de instrucciones antes de importar\n";
+            
+            // Configurar headers para descarga
+            $headers = [
+                'Content-Type' => 'text/csv; charset=utf-8',
+                'Content-Disposition' => 'attachment; filename="plantilla_inventario.csv"',
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0'
+            ];
+            
+            return response($csvContent, 200, $headers);
+            
+        } catch (\Exception $e) {
+            return redirect()->route('inventory.index')
+                ->with('error', 'Error al generar plantilla: ' . $e->getMessage());
+        }
+    }
+
+    public function importCsv(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:5120',
+        ]);
+
+        try {
+            $user = Auth::user();
+            $file = $request->file('csv_file');
+            
+            $imported = 0;
+            $errors = [];
+            $skipErrors = $request->has('skip_errors');
+            
+            if (($handle = fopen($file->getPathname(), 'r')) !== FALSE) {
+                // Leer encabezados y mapear a inglés
+                $header = fgetcsv($handle);
+                $headerMap = [
+                    'Nombre' => 'name',
+                    'Cantidad' => 'amount', 
+                    'Categoría' => 'category_name',
+                    'Descripción' => 'description',
+                    'Material' => 'material',
+                    'Dimensiones' => 'dimensions'
+                ];
+                
+                $englishHeader = [];
+                foreach ($header as $spanishCol) {
+                    $englishHeader[] = $headerMap[$spanishCol] ?? $spanishCol;
+                }
+                
+                $lineNumber = 1;
+                while (($row = fgetcsv($handle)) !== FALSE) {
+                    $lineNumber++;
+                    
+                    try {
+                        if (count($row) !== count($englishHeader)) {
+                            throw new \Exception("Número de columnas incorrecto");
+                        }
+                        
+                        $data = array_combine($englishHeader, $row);
+                        
+                        // Validar campos requeridos
+                        if (empty($data['name']) || empty($data['amount']) || empty($data['category_name'])) {
+                            throw new \Exception("Faltan campos requeridos");
+                        }
+                        
+                        // Buscar categoría por nombre
+                        $category = InventoryCategory::where('name', $data['category_name'])
+                            ->where('locality_id', $user->locality_id)
+                            ->first();
+                        
+                        if (!$category) {
+                            throw new \Exception("Categoría no encontrada: {$data['category_name']}");
+                        }
+                        
+                        // Crear el registro
+                        Inventory::create([
+                            'locality_id' => $user->locality_id,
+                            'created_by' => $user->id,
+                            'name' => $data['name'],
+                            'description' => $data['description'] ?? null,
+                            'amount' => intval($data['amount']),
+                            'inventory_category_id' => $category->id,
+                            'material' => $data['material'] ?? null,
+                            'dimensions' => $data['dimensions'] ?? null,
+                        ]);
+                        
+                        $imported++;
+                        
+                    } catch (\Exception $e) {
+                        $errors[] = "Línea {$lineNumber}: " . $e->getMessage();
+                        if (!$skipErrors) {
+                            throw new \Exception("Error en línea {$lineNumber}: " . $e->getMessage());
+                        }
+                    }
+                }
+                fclose($handle);
+            }
+            
+            $message = "Se importaron {$imported} registros correctamente";
+            if (!empty($errors)) {
+                $message .= ". Errores: " . implode('; ', array_slice($errors, 0, 5));
+                if (count($errors) > 5) {
+                    $message .= " y " . (count($errors) - 5) . " más...";
+                }
+            }
+            
+            return redirect()->route('inventory.index')
+                ->with('success', $message);
+                
+        } catch (\Exception $e) {
+            return redirect()->route('inventory.index')
+                ->with('error', 'Error al importar: ' . $e->getMessage());
+        }
+    }
 }

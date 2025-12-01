@@ -138,8 +138,10 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware' => ['can:viewInventory']], function () {
         Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
-        Route::resource('inventory', InventoryController::class);
         Route::get('/reports/pdfInventory', [InventoryController::class, 'generateInventoryPdf'])->name('inventory.pdfInventory');
+        Route::post('/inventory/import-csv', [InventoryController::class, 'importCsv'])->name('inventory.importCsv');
+        Route::get('/inventory/download-template', [InventoryController::class, 'downloadTemplate'])->name('inventory.downloadTemplate');
+        Route::resource('inventory', InventoryController::class);
     });
 
     Route::group(['middleware' => ['can:viewInventoryCategories']], function () {
