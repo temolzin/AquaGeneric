@@ -25,6 +25,10 @@ class ModifyNullableColumnsInCustomersTable extends Migration
      */
     public function down()
     {
+        DB::table('customers')->whereNull('name')->update(['name' => 'Sin nombre']);
+        DB::table('customers')->whereNull('last_name')->update(['last_name' => 'Sin apellido']);
+        DB::table('customers')->whereNull('email')->update(['email' => 'no-email@example.com']);
+
         DB::statement('ALTER TABLE customers MODIFY name VARCHAR(255) NOT NULL');
         DB::statement('ALTER TABLE customers MODIFY last_name VARCHAR(255) NOT NULL');
         DB::statement('ALTER TABLE customers MODIFY email VARCHAR(255) NOT NULL');
