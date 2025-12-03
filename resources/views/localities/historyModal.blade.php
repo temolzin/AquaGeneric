@@ -24,6 +24,17 @@
                         </select>
                     </div>
                     <div class="form-group"> 
+                        <label for="responsible_{{ $locality->id }}">Responsable</label>
+                        <select name="responsible_id" id="responsible_{{ $locality->id }}" class="form-control">
+                            <option value="">Todos los Responsables</option>
+                             @foreach($locality->users()->distinct()->get() as $user)
+                                @if($user->hasAnyRole(['Supervisor', 'Secretaria']))
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group"> 
                         <label for="start_date_{{ $locality->id }}">Fecha Inicio</label>
                         <input type="date" name="start_date" id="start_date_{{ $locality->id }}" class="form-control">
                     </div>
