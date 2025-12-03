@@ -15,7 +15,7 @@
                                 <form method="GET" action="{{ route('waterConnections.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control"
-                                            placeholder="Buscar por ID, Nombre, Propietario"
+                                            placeholder="Buscar por ID, Nombre, Propietario, Sección"
                                             value="{{ request('search') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary" title="Buscar Toma de Agua">
@@ -49,6 +49,7 @@
                                             <th>PROPIETARIO</th>
                                             <th>COSTO</th>
                                             <th>TIPO</th>
+                                            <th>SECCIÓN</th> 
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
@@ -63,7 +64,7 @@
                                                     <td scope="row">{{ $connection->id }}</td>
                                                     <td>{{ $connection->name }}</td>
                                                     <td>
-                                                        @if ($connection->customer)
+                                                        @if ($connection->customer && $connection->customer)
                                                             {{ $connection->customer->name }} {{ $connection->customer->last_name }}
                                                         @else
                                                             <span class="text-danger">Toma sin cliente asignado</span>
@@ -75,6 +76,15 @@
                                                     @elseif ($connection->type === 'commercial')
                                                         <td>Comercial</td>
                                                     @endif
+                                                    <td>
+                                                        @if ($connection->section)
+                                                            <span class="badge {{ $connection->section->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                                {{ $connection->section->name }}
+                                                            </span>
+                                                        @else
+                                                            <span class="badge badge-secondary" style="font-size: 0.8em; padding: 4px 10px;">Sin sección</span>
+                                                        @endif
+                                                    </td>
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                             @can('viewWaterConnection')
@@ -111,6 +121,9 @@
                                                                 <i class="fas fa-sync-alt"></i>
                                                                 </button>
                                                             @endif
+                                                                <button type="button" class="btn btn-success mr-2 btn-generate-qr" data-id="{{ $connection->id }}" data-toggle="modal" data-target="#qrModal" title="Generar QR">
+                                                                <i class="fas fa-qrcode"></i>
+                                                                </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -180,9 +193,11 @@
                                                                     <select class="form-control select2" name="customer_id" id="customer_id" required>
                                                                         <option value="">Selecciona un cliente</option>
                                                                         @foreach($customers as $customer)
-                                                                            <option value="{{ $customer->id }}">
-                                                                                {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
-                                                                            </option>
+                                                                            @if($customer->user)
+                                                                                <option value="{{ $customer->id }}">
+                                                                                    {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
+                                                                                </option>
+                                                                            @endif
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
@@ -238,6 +253,41 @@
 @section('js')
 <script>
     $(document).ready(function() {
+        $('#qrModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var modal = $(this);
+        var img = modal.find('#qrImage');
+        var downloadBtn = modal.find('#downloadQrBtn');
+        
+        img.attr('src', '').attr('alt', 'Cargando...');
+        downloadBtn.attr('href', '#').hide();
+        
+        $.ajax({
+            url: '/waterConnections/' + id + '/qr-generate',
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    img.attr('src', response.image).attr('alt', 'Código QR');
+                    downloadBtn.attr('href', response.download_url).show();
+                } else {
+                    img.attr('alt', 'Error: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error AJAX:', xhr.responseText);
+                var errorMsg = 'Error al cargar el código QR';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+                img.attr('alt', errorMsg);
+                modal.find('.modal-body').prepend('<div class="alert alert-danger">' + errorMsg + '</div>'
+                );
+            }
+        });
+    });
+
         $('#waterConnections').DataTable({
             responsive: true,
             buttons: ['csv', 'excel', 'print'],
@@ -291,4 +341,24 @@
         });
     });
 </script>
+
+<div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrModalLabel">Código QR</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="qrImage" src="" alt="Código QR" style="max-width: 100%; height: auto;">
+      </div>
+      <div class="modal-footer">
+        <a id="downloadQrBtn" href="#" class="btn btn-success" download>Descargar QR</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection

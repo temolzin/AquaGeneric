@@ -11,6 +11,13 @@ class CostsTableSeeder extends Seeder
     {
         $costs = [
             [
+                'locality_id' => null,
+                'created_by' => 1,
+                'category' => 'Precio Estándar',
+                'price' => 130.00,
+                'description' => 'Tarifa Estándar',
+            ],
+            [
                 'locality_id' => 1,
                 'created_by' => 2,
                 'category' => 'Publico en general',

@@ -28,10 +28,16 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
+                                        <label>Sección</label>
+                                        <input type="text" disabled class="form-control" value="{{ $connection->section ? $connection->section->name : 'Sin sección' }}" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
                                         <label>Propietario</label>
-                                        @if ($connection->customer)
+                                        @if($connection->customer && $connection->customer->user)
                                             <input type="text" disabled class="form-control"
-                                                value="{{ $connection->customer->name }} {{ $connection->customer->last_name }}" />
+                                                value="{{ $connection->customer->user->name }} {{ $connection->customer->user->last_name }}" />
                                         @else
                                             <div class="alert alert-warning p-2 mb-2 small">
                                                 Esta toma de agua no tiene un cliente asignado.

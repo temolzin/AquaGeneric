@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\WaterConnection;
+
+class Section extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'locality_id',
+        'created_by',
+        'name',
+        'zip_code',
+        'color',
+    ];
+
+    public function locality()
+    {
+        return $this->belongsTo(Locality::class);
+    }
+
+    public function hasDependencies()
+    {
+        return $this->waterConnections()->exists();
+    }
+
+    public function waterConnections()
+    {
+        return $this->hasMany(WaterConnection::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+}

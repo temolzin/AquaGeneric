@@ -1,0 +1,3 @@
+nombre,apellido,localidad,codigo_postal,estado,manzana,calle,numero_exterior,numero_interior,email,telefono,salario,rol
+Jorge,Peralta Gonzalez,México,12345,México,5,Avenida Principal,123,99,jorge.peralta@empresa.com,5551234567,15000.00,Administrativo
+María,López Hernández,Guadalajara,44100,Jalisco,2,Calle Secundaria,456,7,maria.lopez@empresa.com,3339876543,18000.00,Supervisor

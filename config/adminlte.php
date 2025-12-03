@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Aqua</b>Control',
+    'logo' => 'AquaControl',
     'logo_img' => '/img/logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -121,7 +121,9 @@ return [
             'height' => 60,
         ],
     ],
-
+    'css' => [
+        'css/custom-auth.css',
+    ],
     /*
     |--------------------------------------------------------------------------
     | User Menu
@@ -310,25 +312,7 @@ return [
         'text' => 'Panel',
         'url' => '/dashboard',
         'icon' => 'fas fa-fw fa-home',
-    ],
-    [
-        'text' => 'Usuarios',
-        'url' => '/users',
-        'icon' => 'fas fa-fw fa-user',
-        'can'  => 'viewUser'
-    ],
-    [
-        'text' => 'Roles',
-        'url' => '/roles',
-        'icon' => 'fas fa-fw fa-user-shield',
-        'can'  => 'viewRoles'
-    ],
-    [
-        'text' => 'Clientes',
-        'url' => '/customers',
-        'icon' => 'fas fa-fw fa-users',
-        'can'  => 'viewCustomers'
-    ],
+    ], 
     [
         'text' => 'Gestión de Pagos',
         'icon' => 'fas fa-fw fa-dollar-sign',
@@ -340,7 +324,7 @@ return [
                 'can'  => 'viewPayments',
             ],
             [
-                'text' => 'Pagos Adelantados',
+                'text' => 'Panel de Pagos Adelantados',
                 'url'  => '/advancePayments',
                 'icon' => 'fas fa-fw fa-calendar-plus',
                 'can'  => 'viewAdvancePayments',
@@ -348,34 +332,46 @@ return [
         ],
     ],
     [
-        'text' => 'Deudas',
-        'url' => '/debts',
-        'icon' => 'fas fa-fw fa-credit-card',
-        'can'  => 'viewDebts'
+        'text' => 'Gestión de Tomas de Agua',
+        'icon' => 'fas fa-fw fa-tint',
+        'submenu' => [
+            [
+                'text' => 'Tomas de Agua',
+                'url' => '/waterConnections',
+                'icon' => 'fas fa-fw fa-water',
+                'can'  => 'viewWaterConnection'
+            ],
+            [
+                'text' => 'Costos',
+                'url' => '/costs',
+                'icon' => 'fas fa-fw fa-money-bill-wave',
+                'can'  => 'viewCost'
+            ],
+            [
+                'text' => 'Secciones',
+                'url' => '/sections',
+                'icon' => 'fas fa-fw fa-th-large',
+                'can'  => 'viewSections'
+            ],   
+        ],
     ],
     [
-        'text' => 'Costos',
-        'url' => '/costs',
-        'icon' => 'fas fa-fw fa-money-bill-wave',
-        'can'  => 'viewCost'
-    ],
-    [
-        'text' => 'Localidades',
-        'url' => '/localities',
-        'icon' => 'fas fa-fw fa-map-marker-alt',
-        'can'  => 'viewLocality'
-    ],
-    [
-        'text' => 'Tomas de Agua',
-        'url' => '/waterConnections',
-        'icon' => 'fas fa-fw fa-water',
-        'can'  => 'viewWaterConnection'
-    ],
-    [
-        'text' => 'Gastos',
-        'url' => '/generalExpenses',
-        'icon' => 'fas fa-fw fa-coins',
-        'can'  => 'viewGeneralExpense'
+        'text' => 'Gestión de Gastos',
+        'icon' => 'fas fa-fw fa-cogs',
+        'submenu' => [
+            [
+                'text' => 'Gastos',
+                'url' => '/generalExpenses',
+                'icon' => 'fas fa-fw fa-coins',
+                'can'  => 'viewGeneralExpense'
+            ],
+            [
+                'text' => 'Tipos de Gastos',
+                'url'  => '/expenseTypes',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewExpenseTypes',
+            ],
+        ],
     ],
     [
         'text' => 'Gestión de Incidencias',
@@ -402,15 +398,111 @@ return [
         ],
     ],
     [
+        'text' => 'Gestion de Inventario',
+        'icon' => 'fas fa-fw fa-warehouse',
+        'submenu' => [
+            [
+                'text' => 'Inventario',
+                'url' => '/inventory',
+                'icon' => 'fas fa-fw fa-boxes',
+                'can'  => 'viewInventory'
+            ],
+            [
+                'text' => 'Categorías de Inventario',
+                'url'  => '/inventoryCategories',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewInventoryCategories',
+            ],
+        ],
+    ],
+    [
+        'text' => 'Usuarios',
+        'url' => '/users',
+        'icon' => 'fas fa-fw fa-user',
+        'can'  => 'viewUser'
+    ],
+    [
+        'text' => 'Roles',
+        'url' => '/roles',
+        'icon' => 'fas fa-fw fa-user-shield',
+        'can'  => 'viewRoles'
+    ],
+    [
+        'text' => 'Clientes',
+        'url' => '/customers',
+        'icon' => 'fas fa-fw fa-users',
+        'can'  => 'viewCustomers'
+    ],
+    [
+        'text' => 'Deudas',
+        'url' => '/debts',
+        'icon' => 'fas fa-fw fa-credit-card',
+        'can'  => 'viewDebts'
+    ],
+    [
+        'text' => 'Localidades',
+        'url' => '/localities',
+        'icon' => 'fas fa-fw fa-map-marker-alt',
+        'can'  => 'viewLocality'
+    ],
+    [
         'text' => 'Empleados',
         'url' => '/employees',
         'icon' => 'fas fa-fw fa-users',
         'can' => 'viewEmployee'
     ],
     [
+        'text' => 'Membresías',
+        'url' => '/memberships',
+        'icon' => 'fas fa-fw fa-id-card',
+        'can' => 'viewMemberships'
+    ],
+    [
         'text' => 'Falta de pago',
         'url'  => '/expiredSubscriptions/expired',
         'icon' => 'fas fa-fw fa-exclamation-circle text-warning',
+    ],
+    [
+        'text' => 'Mis Pagos',
+        'url' => '/viewCustomerPayments',
+        'can' => 'viewCustomerPayments',
+        'icon' => 'fas fa-fw fa-dollar-sign text-white',
+    ],
+    [
+        'text' => 'Mis Deudas',
+        'url' => '/viewCustomerDebts',
+        'can'  => 'viewCustomerDebts',
+        'icon' => 'fas fa-fw fa-exclamation-circle text-white',
+    ],
+    [
+        'text' => 'Mis Tomas de Agua',
+        'url' => '/viewCustomerWaterConnections',
+        'can' => 'viewWaterConnections',
+        'icon' => 'fas fa-fw fa-water text-white',
+    ],
+    [
+        'text' => 'Mis Reportes de Fallas',
+        'url' => '/viewMyFaultReports',
+        'can' => 'viewCustomerFaultReports',
+        'icon' => 'fa fa-clipboard-list',
+    ],
+    [
+        'text' => 'Avisos',
+        'url' => '/localityNotices',
+        'can' => 'viewNotice',
+        'icon' => 'fas fa-fw fa-bell',
+    ],
+    [
+        'text' => 'Reporte de fallas',
+        'url' => '/faultReport',
+        'icon' => 'fa fa-clipboard-list',
+        'can'  => 'viewFaultReport'
+    ],
+    [
+        'text' => 'Lista de Reportes',
+        'url' => '/reportList',
+        'icon' => 'fas fa-fw fa-file-alt',
+        'can' => 'viewReportsLists',
     ],
 ],
 
@@ -434,7 +526,7 @@ return [
         JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
-        App\MenuFilters\TokenFilter::class, 
+        App\MenuFilters\TokenFilter::class,
     ],
 
     /*

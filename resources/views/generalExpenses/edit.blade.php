@@ -41,14 +41,16 @@
                                     </div> 
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="typeUpdate" class="form-label">Tipo(*)</label>
-                                            <select id="typeUpdate" class="form-control select2" name="typeUpdate" required>
+                                            <label for="expense_type_id_update" class="form-label">Tipo(*)</label>
+                                            <select id="expense_type_id_update" class="form-control select2" name="expense_type_id_update" required>
                                                 <option value="">Selecciona el tipo de gasto</option>
-                                                <option value="mainteinence" {{ $expense->type === 'mainteinence' ? 'selected' : '' }}>Mantenimiento</option>
-                                                <option value="services" {{ $expense->type === 'services' ? 'selected' : '' }}>Servicios</option>
-                                                <option value="supplies" {{ $expense->type === 'supplies' ? 'selected' : '' }}>Insumos</option>
-                                                <option value="taxes" {{ $expense->type === 'taxes' ? 'selected' : '' }}>Impuestos</option>
-                                                <option value="staff" {{ $expense->type === 'staff' ? 'selected' : '' }}>Personal</option>
+                                                @foreach($expenseTypes as $expenseType)
+                                                    <option value="{{ $expenseType->id }}" 
+                                                        style="color: {{ $expenseType->color }};"
+                                                        {{ $expense->expense_type_id == $expenseType->id ? 'selected' : '' }}>
+                                                        {{ $expenseType->name }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>

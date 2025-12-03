@@ -42,14 +42,14 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="type" class="form-label">Tipo(*)</label>
-                                            <select id="type" class="form-control select2" name="type" required>
-                                                <option value="">Selecciona el gasto</option>
-                                                <option value="mainteinence">Mantenimiento</option>
-                                                <option value="services">Servicios</option>
-                                                <option value="supplies">Insumos</option>
-                                                <option value="taxes">Impuestos</option>
-                                                <option value="staff">Personal</option>
+                                            <label for="expense_type_id" class="form-label">Tipo(*)</label>
+                                            <select id="expense_type_id" class="form-control select2" name="expense_type_id" required>
+                                                <option value="">Selecciona el tipo de gasto</option>
+                                                @foreach($expenseTypes as $expenseType)
+                                                    <option value="{{ $expenseType->id }}" style="color: {{ $expenseType->color }};">
+                                                        {{ $expenseType->name }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>

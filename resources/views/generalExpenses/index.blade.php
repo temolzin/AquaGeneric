@@ -58,23 +58,17 @@
                                                 <tr>
                                                     <td scope="row">{{ $expense->id }}</td>
                                                     <td>{{ $expense->concept }}</td>
-                                                    @switch($expense->type)
-                                                        @case('mainteinence')
-                                                        <td>Mantenimiento</td>
-                                                            @break
-                                                        @case('services')
-                                                        <td>Servicios</td>
-                                                            @break
-                                                        @case('supplies')
-                                                        <td>Insumos</td>
-                                                            @break
-                                                        @case('taxes')
-                                                        <td>Impuestos</td>
-                                                            @break
-                                                        @case('staff')
-                                                        <td>Personal</td>
-                                                            @break
-                                                    @endswitch
+                                                    <td>
+                                                        @if($expense->expenseType)
+                                                            <span class="badge {{ $expense->expenseType->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                                {{ $expense->expenseType->name }}
+                                                            </span>
+                                                        @else
+                                                            <span class="badge color-badge" style="background-color: #6c757d; color: white;">
+                                                                Sin tipo
+                                                            </span>
+                                                        @endif
+                                                    </td>
                                                     <td>${{ $expense->amount }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
@@ -115,6 +109,24 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('css')
+<style>
+    .color-badge {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .color-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .table-dark .color-badge {
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+</style>
 @endsection
 
 @section('js')

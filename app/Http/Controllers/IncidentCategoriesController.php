@@ -11,7 +11,11 @@ class IncidentCategoriesController extends Controller
     public function index()
     {
         $authUser = auth()->user();
-        $categories = IncidentCategory::where('locality_id', $authUser->locality_id)
+        $categories = IncidentCategory::where(function ($query) use ($authUser) {
+            $query->where('locality_id', $authUser->locality_id)
+                ->orWhereNull('locality_id');
+        })
+            ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -27,13 +31,19 @@ class IncidentCategoriesController extends Controller
     {
         $authUser = auth()->user();
 
-        IncidentCategory::create(array_merge(
-            $request->only(['name', 'description']),
-            [
-                'locality_id' => $authUser->locality_id,
-                'created_by' => $authUser->id
-            ]
-        ));
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'color_index' => 'required|integer|min:0|max:19',
+        ]);
+
+        IncidentCategory::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'color' => color($validated['color_index']),
+            'locality_id' => $authUser->locality_id,
+            'created_by' => $authUser->id,
+        ]);
 
         return redirect()->route('incidentCategories.index')->with('success', 'Categoría de incidencia creada exitosamente.');
     }
@@ -50,7 +60,17 @@ class IncidentCategoriesController extends Controller
 
     public function update(Request $request, IncidentCategory $incidentCategory)
     {
-        $incidentCategory->update($request->only(['name', 'description']));
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'color_index' => 'required|integer|min:0|max:19',
+        ]);
+
+        $incidentCategory->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'color' => color($validated['color_index']),
+        ]);
 
         return redirect()->route('incidentCategories.index')->with('success', 'Categoría de incidencia actualizada exitosamente.');
     }
@@ -65,7 +85,14 @@ class IncidentCategoriesController extends Controller
     public function generateIncidentCategoyListReport()
     {
         $authUser = auth()->user();
-        $incidentCategories = IncidentCategory::all();
+        $incidentCategories = IncidentCategory::where(function ($query) use ($authUser) {
+            $query->where('locality_id', $authUser->locality_id)
+                ->orWhereNull('locality_id');
+        })
+                ->orderByRaw('locality_id IS NULL DESC')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
         $pdf = PDF::loadView('reports.generateIncidentCategoyListReport', compact('incidentCategories', 'authUser'))
             ->setPaper('A4', 'portrait');
 

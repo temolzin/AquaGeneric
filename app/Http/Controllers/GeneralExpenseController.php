@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\GeneralExpense;
+use App\Models\ExpenseType;
 use App\Models\Payment;
+use App\Models\MovementHistory;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -14,12 +17,14 @@ class GeneralExpenseController extends Controller
     {
         $authUser = auth()->user();
         $query = GeneralExpense::where('general_expenses.locality_id', $authUser->locality_id)
+            ->whereHas('creator', function ($q) use ($authUser) {
+                $q->where('locality_id', $authUser->locality_id);
+            })
+            ->with(['expenseType', 'creator'])
             ->orderBy('general_expenses.created_at', 'desc')
-            ->select('general_expenses.*');
-
+            ->select('general_expenses.*');            
         if ($request->has('search')) {
             $search = $request->input('search');
-
             $query->where(function ($q) use ($search) {
                 $q->where('general_expenses.concept', 'LIKE', "%{$search}%")
                 ->orWhere('general_expenses.id', 'LIKE', "%{$search}%");
@@ -27,7 +32,13 @@ class GeneralExpenseController extends Controller
         }
 
         $expenses = $query->paginate(10);
-        return view('generalExpenses.index', compact('expenses'));
+        
+        $expenseTypes = ExpenseType::where('locality_id', $authUser->locality_id)
+            ->orderBy('name')
+            ->orWhereNull('locality_id')
+            ->get();
+
+        return view('generalExpenses.index', compact('expenses', 'expenseTypes'));
     }
 
     public function store(Request $request)
@@ -52,22 +63,31 @@ class GeneralExpenseController extends Controller
 
     public function show($id)
     {
-        $expenses = GeneralExpense::findOrFail($id);
-        return view('generalExpenses.show', compact('expenses'));
+        $authUser = auth()->user();
+
+        $expenses = GeneralExpense::with(['expenseType', 'creator'])
+            ->where('locality_id', $authUser->locality_id)
+            ->findOrFail($id);
+        return view('generalExpenses.show', compact('expense'));
     }
 
     public function update(Request $request, $id)
     {
-        $expense = GeneralExpense::find($id);
+        $authUser = auth()->user();
+
+        $expense = GeneralExpense::where('locality_id', $authUser->locality_id)
+            ->find($id);
 
         if (!$expense) {
             return redirect()->back()->with('error', 'Gasto no encontrado.');
         }
 
+        $beforeData = $expense->toArray();
+
         $expense->concept = $request->input('conceptUpdate');
         $expense->description = $request->input('descriptionUpdate');
         $expense->amount = $request->input('amountUpdate');
-        $expense->type = $request->input('typeUpdate');
+        $expense->expense_type_id = $request->input('expense_type_id_update');
         $expense->expense_date = $request->input('expenseDateUpdate');
 
         if ($request->hasFile('receiptUpdate')) {
@@ -77,13 +97,35 @@ class GeneralExpenseController extends Controller
 
         $expense->save();
 
+        $afterData = $expense->fresh()->toArray();
+
+        MovementHistory::create([
+        'alter_by'    => auth()->id(),
+        'module'      => 'general_expenses',
+        'action'      => 'update',
+        'record_id'   => $expense->id,
+        'before_data' => $beforeData,
+        'current_data'=> $afterData,
+    ]);
+
         return redirect()->route('generalExpenses.index')->with('success', 'Gasto actualizado correctamente.');
     }
 
     public function destroy($id)
     {
         $expense = GeneralExpense::find($id);
+        $beforeData = $expense->toArray();
         $expense->delete();
+
+        MovementHistory::create([
+        'alter_by'    => auth()->id(),
+        'module'      => 'general_expenses',
+        'action'      => 'delete',
+        'record_id'   => $expense->id,
+        'before_data' => $beforeData,
+        'current_data'=> null,
+    ]);
+
         return redirect()->route('generalExpenses.index')->with('success', 'Gasto eliminado correctamente.');
     }
 

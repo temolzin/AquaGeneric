@@ -64,7 +64,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Correo electrónico</label>
-                                        <input type="email" disabled class="form-control" value="{{ $customer->email}}" />
+                                        <input type="email" disabled class="form-control" value="{{ $customer->email }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-4">

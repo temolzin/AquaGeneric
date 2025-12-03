@@ -13,7 +13,11 @@ class IncidentStatusController extends Controller
     {
         $authUser = auth()->user();
 
-        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)->paginate(10);
+        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)
+                    ->orWhereNull('locality_id')
+                    ->orderByRaw('locality_id IS NULL DESC')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
 
         return view('incidentStatuses.index', compact('statuses'));
     }
@@ -30,20 +34,18 @@ class IncidentStatusController extends Controller
         $request->validate([
             'status' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'color_index' => 'required|integer|in:0,1,4,6,10,13,14',
         ]);
 
-        IncidentStatus::create(
-            array_merge(
-                $request->only(['status', 'description']), 
-                [
-                    'locality_id' => $authUser->locality_id,
-                    'created_by' => $authUser->id,
-                ]
-            )
-        );
+        IncidentStatus::create([
+            'status'       => $request->status,
+            'description'  => $request->description,
+            'color'        => color($request->color_index),
+            'locality_id' => $authUser->locality_id,
+            'created_by' => $authUser->id,
+        ]);
 
-        return redirect()->route('incidentStatuses.index')
-                        ->with('success', 'Estatus creado exitosamente.');
+        return redirect()->route('incidentStatuses.index')->with('success', 'Estatus creado exitosamente.');
     }
 
     public function edit(IncidentStatus $incidentStatus)
@@ -56,9 +58,15 @@ class IncidentStatusController extends Controller
         $request->validate([
             'status' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'color_index' => 'required|integer|in:0,1,4,6,10,13,14',
         ]);
 
-        $incidentStatus->update($request->only('status', 'description'));
+        $incidentStatus->update([
+            'status'      => $request->status,
+            'description' => $request->description,
+            'color'       => color($request->color_index),
+        ]);
+
         return redirect()->route('incidentStatuses.index')
             ->with('success', 'Estatus actualizado correctamente.');
     }
@@ -70,10 +78,14 @@ class IncidentStatusController extends Controller
             ->with('success', 'Estatus eliminado correctamente.');
     }
 
-        public function generateIncidentStatusListReport()
+    public function generateIncidentStatusListReport()
     {
         $authUser = auth()->user();
-        $incidentStatus = IncidentStatus::all();
+        $incidentStatus = IncidentStatus::where('locality_id', $authUser->locality_id)
+                          ->orWhereNull('locality_id')
+                          ->orderByRaw('locality_id IS NULL DESC')
+                          ->orderBy('created_at', 'desc')
+                          ->get();
         $pdf = PDF::loadView('reports.generateIncidentStatusListReport', compact('incidentStatus', 'authUser'))
             ->setPaper('A4', 'portrait');
 

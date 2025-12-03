@@ -12,6 +12,7 @@ class IncidentStatus extends Model
     protected $fillable = [
         'status',
         'description',
+        'color',
         'created_by',
         'locality_id',
     ];
@@ -28,12 +29,12 @@ class IncidentStatus extends Model
 
     public function incidents()
     {
-        return $this->hasMany(Incident::class, 'status', 'status');
+        return $this->hasMany(Incident::class, 'status_id', 'id');
     }
 
     public function hasDependencies()
     {
-       return $this->incidents()->exists();
+        return $this->incidents()->exists();
     }
 
 }

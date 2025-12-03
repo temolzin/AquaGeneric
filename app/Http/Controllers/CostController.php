@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cost;
+use App\Models\MovementHistory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -11,9 +13,15 @@ class CostController extends Controller
     public function index()
     {
         $authUser = auth()->user();
-        $costs = Cost::where('locality_id', $authUser->locality_id)
+        $costs = Cost::where(function ($q) use ($authUser) {
+                $q->where('locality_id', $authUser->locality_id)
+                    ->orWhereNull('locality_id');
+            })
+            ->with('creator')
+            ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+        
         return view('costs.index', compact('costs'));
     }
 
@@ -49,14 +57,35 @@ class CostController extends Controller
 
     public function update(Request $request, Cost $cost)
     {
+        $before = $cost->toArray();
         $cost->update($request->all());
+        $after = $cost->fresh()->toArray();
+
+        MovementHistory::create([
+        'alter_by'    => Auth::user()->id,
+        'module'      => 'costos',
+        'action'      => 'update',
+        'record_id'   => $cost->id,
+        'before_data' => $before,
+        'current_data'=> $after,
+    ]);
 
         return redirect()->route('costs.index')->with('success', 'Costo actualizado exitosamente.');
     }
 
     public function destroy(Cost $cost)
     {
+        $before = $cost->toArray();
         $cost->delete();
+
+        MovementHistory::create([
+        'alter_by'     => Auth::user()->id,
+        'module'       => 'costos',
+        'action'       => 'delete',
+        'record_id'    => $cost->id,
+        'before_data'  => $before,
+        'current_data' => null,
+    ]);
 
         return redirect()->route('costs.index')->with('success', 'Costo eliminado exitosamente.');
     }
@@ -65,6 +94,8 @@ class CostController extends Controller
     {
         $authUser = auth()->user();
         $costs = cost::where('locality_id', $authUser->locality_id)
+                    ->orWhereNull('locality_id')
+                    ->orderByRaw('locality_id IS NULL DESC')
                     ->orderBy('created_at', 'desc')
                     ->get();
         

@@ -30,6 +30,7 @@ class WaterConnection extends Model
         'created_by',
         'customer_id',
         'cost_id',
+        'section_id',
         'name',
         'block',
         'street',
@@ -58,6 +59,11 @@ class WaterConnection extends Model
         return $this->belongsTo(Cost::class);
     }
 
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -71,22 +77,29 @@ class WaterConnection extends Model
     public function getStatusCalculatedAttribute()
     {
         $today = Carbon::today();
-        $debts = $this->debts;
+        
+        $debts = $this->debts()->withSum('payments', 'amount')->get();
 
-        $unpaidDebts = $debts->where('status', '!=', Debt::STATUS_PAID);
-        $hasDebt = $unpaidDebts->isNotEmpty();
+        $hasUnpaidDebt = false;
+        $hasFuturePaid = false;
 
-        $futurePaidDebts = $debts->filter(function ($debt) use ($today) {
-            return $debt->status === Debt::STATUS_PAID &&
-                Carbon::parse($debt->start_date)->gt($today);
-        });
-
-        $hasAdvance = $futurePaidDebts->isNotEmpty();
+        foreach ($debts as $debt) {
+            $pendingAmount = $debt->amount - $debt->payments_sum_amount;
+            
+            if ($pendingAmount > 0) {
+                $hasUnpaidDebt = true;
+            }
+            
+            if ($debt->status === Debt::STATUS_PAID && 
+                Carbon::parse($debt->start_date)->gt($today)) {
+                $hasFuturePaid = true;
+            }
+        }
 
         $statusChecks = [
             self::VIEW_STATUS_CANCELED => $this->is_canceled,
-            self::VIEW_STATUS_DEBT => $hasDebt,
-            self::VIEW_STATUS_ADVANCED => $hasAdvance,
+            self::VIEW_STATUS_DEBT => $hasUnpaidDebt,
+            self::VIEW_STATUS_ADVANCED => $hasFuturePaid,
         ];
 
         foreach ($statusChecks as $status => $condition) {
@@ -110,7 +123,40 @@ class WaterConnection extends Model
     
     public function hasDebt()
     {
-        return $this->debts()->where('status', '!=', Debt::STATUS_PAID)->exists();
+        $debts = $this->debts()->withSum('payments', 'amount')->get();
+        
+        foreach ($debts as $debt) {
+            $pendingAmount = $debt->amount - $debt->payments_sum_amount;
+            if ($pendingAmount > 0) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    public function getPendingBalance()
+    {
+        $totalPending = 0;
+        
+        $unpaidDebts = $this->debts()
+            ->withSum('payments', 'amount')
+            ->get();
+        
+        foreach ($unpaidDebts as $debt) {
+            $pendingAmount = $debt->amount - $debt->payments_sum_amount;
+            
+            if ($pendingAmount > 0) {
+                $totalPending += $pendingAmount;
+            }
+        }
+        
+        return $totalPending;
+    }
+
+    public function getDebtAmount()
+    {
+        return $this->getPendingBalance();
     }
 
     public function getCancelDescriptionAttribute()

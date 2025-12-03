@@ -100,6 +100,9 @@
                                                     <button type="button" class="btn bg-purple mr-2" data-toggle="modal"  title="Configurar correo" data-target="#mailConfigModal{{$locality->id}}">
                                                         <i class="fas fa-envelope"></i>
                                                     </button>
+                                                    <button type="button" class="btn bg-navy mr-2" data-toggle="modal" title="Fondo de reporte" data-target="#editPdfBackground{{$locality->id}}">
+                                                            <i class="fas fa-fill-drip"></i>
+                                                    </button>
                                                     @can('deleteLocality')
                                                         @if($locality->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
@@ -119,6 +122,10 @@
                                                             <i class="fas fa-key"></i>
                                                         </button>
                                                     </form>
+                                                    <button type="button" class="btn bg-maroon ml-2" title="Historial de Movimientos"
+                                                            data-toggle="modal" data-target="#historyModal{{ $locality->id }}">
+                                                            <i class="fas fa-history"></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                             @include('localities.edit')
@@ -126,7 +133,9 @@
                                             @include('localities.show')
                                             @include('localities.editLogo')
                                             @include('localities.mailConfiguration')
+                                            @include('localities.editPdfBackground')
                                             @include('localities.tokenModal')
+                                            @include('localities.historyModal')
                                         </tr>
                                         @endforeach
                                         @endif
@@ -141,6 +150,11 @@
                                         'token' => session('createdToken'),
                                         'localityName' => session('localityName')
                                     ])
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            $('#generatedTokenModal').modal('show');
+                                        });
+                                    </script>
                                 @endif
                             </div>
                         </div>
@@ -151,7 +165,6 @@
     </div>
 </section>
 @endsection
-
 @section('js')
 <script>
     $(document).ready(function() {

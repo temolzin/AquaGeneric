@@ -59,14 +59,18 @@
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
                                                             @can('editCost')
-                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $cost->id }}">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
+                                                            @if (!is_null($cost->locality_id))
+                                                                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $cost->id }}">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                            @endif
                                                             @endcan
                                                             @can('deleteCost')
-                                                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $cost->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
+                                                            @if (!is_null($cost->locality_id))
+                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $cost->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
                                                             @endcan
                                                         </div>
                                                     </td>

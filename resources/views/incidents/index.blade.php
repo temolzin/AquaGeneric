@@ -83,10 +83,25 @@
                                                         </td>
                                                         <td>{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}</td>
                                                         <td>
-                                                            {{$incident->incidentCategory->name}}
+                                                             <span class="badge {{ $incident->incidentCategory->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                                {{ $incident->incidentCategory->name }}
+                                                            </span>
                                                         </td>
                                                         <td>
-                                                            {{ $incident->getLatestStatus() }}
+                                                            @php
+                                                                if ($incident->status_id) {
+                                                                    $status = \App\Models\IncidentStatus::find($incident->status_id);
+                                                                    if ($status) {
+                                                                        $statusName = $status->status;
+                                                                        $statusColor = (preg_match('/^#[a-f0-9]{6}$/i', $status->color)) ? $status->color : '#6c757d';
+                                                                        echo '<span class="badge ' . $status->color . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
+                                                                    } else {
+                                                                        echo '<span class="badge badge-secondary">Estatus no encontrado</span>';
+                                                                    }
+                                                                } else {
+                                                                    echo '<span class="badge badge-secondary">Pendiente</span>';
+                                                                }
+                                                            @endphp
                                                         </td>
                                                         <td>
                                                             <button type="button" class="btn btn-info btn-sm mr-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $incident->id }}">
@@ -138,12 +153,12 @@
 <script>
     $(document).ready(function() {
         $('#incident').DataTable({
-                responsive: true,
-                buttons: ['csv', 'excel', 'print'],
-                dom: 'Bfrtip',
-                paging: false,
-                info: false,
-                searching: false
+            responsive: true,
+            buttons: ['csv', 'excel', 'print'],
+            dom: 'Bfrtip',
+            paging: false,
+            info: false,
+            searching: false
         });
 
         var successMessage = "{{ session('success') }}";
@@ -169,19 +184,53 @@
     });
 
     $(document).on('shown.bs.modal', '.modal', function () {
-    $(this).find('.select2').select2({
-        dropdownParent: $(this)
+        $(this).find('.select2').select2({
+            dropdownParent: $(this)
+        });
     });
-});
 
-$('#createResponsible').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var incidentId = button.data('incident-id');
-    var incidentName = button.data('incident-name');
+    $('#createResponsible').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var incidentId = button.data('incident-id');
+        var incidentName = button.data('incident-name');
 
-    var modal = $(this);
-    modal.find('#incidentId').val(incidentId);
-    modal.find('#incidentNameDisplay').text(incidentName);
-});
+        var modal = $(this);
+        modal.find('#incidentId').val(incidentId);
+        modal.find('#incidentNameDisplay').text(incidentName);
+        modal.find('#status_id').val('').trigger('change');
+    });
+
+    $('#changeStatusForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var form = $(this);
+        var formData = form.serialize();
+        
+        $.ajax({
+            url: "{{ route('incidents.updateStatus') }}", 
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: response.message,
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => {
+                        location.reload();
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al actualizar el estatus',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    });
 </script>
 @endsection

@@ -13,6 +13,15 @@
 @stop
 
 @section('content')
+    @php
+        $usersPercentage = 0;
+        $waterPercentage = 0;
+        
+        if($authUser->locality && $authUser->locality->membership) {
+            $usersPercentage = $membershipStats['users_limit'] > 0 ? ($membershipStats['users_count'] / $membershipStats['users_limit']) * 100 : 0;
+            $waterPercentage = $membershipStats['water_connections_limit'] > 0 ? ($membershipStats['water_connections_count'] / $membershipStats['water_connections_limit']) * 100 : 0;
+        }
+    @endphp
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -113,7 +122,7 @@
                                     Telefono
                                 </label>
                                 <div class="col-sm-10">
-                                    <p class="form-control-plaintext">{{ $authUser->phone }}</p>
+                                    <p class="form-control-plaintext">{{ $authUser->phone ?? 'Sin número de teléfono' }}</p>
                                 </div>
                                 <label for="email" class="col-sm-2 col-form-label">
                                     Correo
@@ -134,6 +143,123 @@
                             </div>
                         </div>
                     </div>
+                    @can('viewDashboardCards')
+                    <div class="col-md-12">
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Información de Membresía</h3>
+                            </div>
+                            <div class="card-body">
+                                @if($authUser->locality && $authUser->locality->membership)
+                                    @php
+                                        $usersProgressColor = $usersPercentage >= 80 ? 'bg-danger' : ($usersPercentage >= 60 ? 'bg-warning' : 'bg-info');
+                                        $waterProgressColor = $waterPercentage >= 80 ? 'bg-danger' : ($waterPercentage >= 60 ? 'bg-warning' : 'bg-success');
+                                    @endphp
+
+                                    @if($usersPercentage >= 80 || $waterPercentage >= 80)
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <h4><i class="icon fas fa-exclamation-triangle"></i> ¡Capacidad Casi Llena!</h4>
+                                            @if($usersPercentage >= 80)
+                                                <p><strong>Usuarios:</strong> Has alcanzado el {{ number_format($usersPercentage, 0) }}% de la capacidad. Contacta a un administrador para expandir tu membresía.</p>
+                                            @endif
+                                            @if($waterPercentage >= 80)
+                                                <p><strong>Tomas de agua:</strong> Has alcanzado el {{ number_format($waterPercentage, 0) }}% de la capacidad. Contacta a un administrador para expandir tu membresía.</p>
+                                            @endif
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    @endif
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="info-box bg-light">
+                                                <span class="info-box-icon bg-info"><i class="fas fa-users"></i></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text">Usuarios</span>
+                                                    <span class="info-box-number">
+                                                        {{ $membershipStats['users_count'] }} / {{ $membershipStats['users_limit'] }}
+                                                        @if($usersPercentage >= 80)
+                                                            <span class="badge badge-danger ml-2">¡ALTO!</span>
+                                                        @elseif($usersPercentage >= 60)
+                                                            <span class="badge badge-warning ml-2">MEDIO</span>
+                                                        @endif
+                                                    </span>
+                                                    <div class="progress">
+                                                        <div class="progress-bar {{ $usersProgressColor }}" style="width: {{ $usersPercentage }}%"></div>
+                                                    </div>
+                                                    <span class="progress-description">
+                                                        {{ $membershipStats['users_count'] }} de {{ $membershipStats['users_limit'] }} usuarios utilizados
+                                                        @if($usersPercentage >= 80)
+                                                            <span class="text-danger font-weight-bold"> - Capacidad crítica</span>
+                                                        @elseif($usersPercentage >= 60)
+                                                            <span class="text-warning font-weight-bold"> - Capacidad media</span>
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="info-box bg-light">
+                                                <span class="info-box-icon bg-success"><i class="fas fa-faucet"></i></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text">Tomas de Agua</span>
+                                                    <span class="info-box-number">
+                                                        {{ $membershipStats['water_connections_count'] }} / {{ $membershipStats['water_connections_limit'] }}
+                                                        @if($waterPercentage >= 80)
+                                                            <span class="badge badge-danger ml-2">¡ALTO!</span>
+                                                        @elseif($waterPercentage >= 60)
+                                                            <span class="badge badge-warning ml-2">MEDIO</span>
+                                                        @endif
+                                                    </span>
+                                                    <div class="progress">
+                                                        <div class="progress-bar {{ $waterProgressColor }}" style="width: {{ $waterPercentage }}%"></div>
+                                                    </div>
+                                                    <span class="progress-description">
+                                                        {{ $membershipStats['water_connections_count'] }} de {{ $membershipStats['water_connections_limit'] }} tomas utilizadas
+                                                        @if($waterPercentage >= 80)
+                                                            <span class="text-danger font-weight-bold"> - Capacidad crítica</span>
+                                                        @elseif($waterPercentage >= 60)
+                                                            <span class="text-warning font-weight-bold"> - Capacidad media</span>
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <strong>Plan de Membresía:</strong>
+                                            <p class="text-muted">{{ $membershipStats['membership_name'] }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Estado de Suscripción:</strong>
+                                            <p class="text-muted">
+                                                @if($membershipStats['subscription_status'] == 'Activa')
+                                                    <span class="badge badge-success">Activa</span>
+                                                @elseif($membershipStats['subscription_status'] == 'Caducada')
+                                                    <span class="badge badge-danger">Caducada</span>
+                                                @else
+                                                    <span class="badge badge-warning">Sin token</span>
+                                                @endif
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-12">
+                                            <strong>Localidad:</strong>
+                                            <p class="text-muted">{{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}</p>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="alert alert-warning">
+                                        <h5><i class="icon fas fa-exclamation-triangle"></i> Sin membresía asignada</h5>
+                                        No tienes una membresía asignada a tu localidad. Contacta al administrador del sistema.
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -177,6 +303,19 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
+            @if($usersPercentage >= 80 || $waterPercentage >= 80)
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '¡Capacidad Casi Llena!',
+                        html: `@if($usersPercentage >= 80)<p><strong>Usuarios:</strong> Has alcanzado el {{ number_format($usersPercentage, 0) }}% de la capacidad.</p>@endif
+                            @if($waterPercentage >= 80)<p><strong>Tomas de agua:</strong> Has alcanzado el {{ number_format($waterPercentage, 0) }}% de la capacidad.</p>@endif
+                            <p class="text-danger"><strong>Contacta a un administrador para expandir tu membresía.</strong></p>`,
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#d33'
+                    });
+                }, 1000);
+            @endif
         });
     </script>
 @endsection

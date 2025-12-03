@@ -27,7 +27,7 @@
                                         <div class="form-group text-center">
                                             <label for="photo-{{ $customer->id }}" class="form-label"></label>
                                             <div class="image-preview-container" style="display: flex; justify-content: center; margin-bottom: 10px;">
-                                                <img id="photo-preview-edit-{{ $customer->id }}" src="{{ $customer->getFirstMediaUrl('customerGallery') ? $customer->getFirstMediaUrl('customerGallery') : asset('img/userDefault.png') }}" 
+                                                <img id="photo-preview-edit-{{ $customer->id }}" src="{{ $customer->getFirstMediaUrl('customerGallery') ? $customer->getFirstMediaUrl('customerGallery') : asset('img/userDefault.png') }}"
                                                     alt="Foto Actual" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
                                             </div>
                                             <input type="file" accept="image/*" class="form-control" name="photo" id="photo-{{ $customer->id }}" onchange="previewImageEdit(event, {{ $customer->id }})">
@@ -36,13 +36,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="nameUpdate" class="form-label">Nombre(*)</label>
-                                            <input type="text" class="form-control" name="nameUpdate" id="nameUpdate" value="{{ $customer->name }}" required>
+                                            <input type="text" class="form-control" name="nameUpdate" id="nameUpdate" value="{{ $customer->user->name ?? '' }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="lastNameUpdate" class="form-label">Apellido(*)</label>
-                                            <input type="text" class="form-control" name="lastNameUpdate" id="lastNameUpdate" value="{{ $customer->last_name }}" required>
+                                            <input type="text" class="form-control" name="lastNameUpdate" id="lastNameUpdate" value="{{ $customer->user->last_name ?? '' }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -72,7 +72,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="emailUpdate" class="form-label">Correo electrónico</label>
-                                            <input type="email" class="form-control" id="emailUpdate" name="emailUpdate"  value="{{ $customer->email }}">
+                                            <input type="email" class="form-control" name="emailUpdate" id="emailUpdate" value="{{ $customer->user->email ?? '' }}" />
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="exteriorNumberUpdate" class="form-label">Manzana</label>
+                                            <label for="exteriorNumberUpdate" class="form-label">Número Exterior(*)</label>
                                             <input type="text" class="form-control" name="exteriorNumberUpdate" id="exteriorNumberUpdate" value="{{ $customer->exterior_number }}" >
                                         </div>
                                     </div>

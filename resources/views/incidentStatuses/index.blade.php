@@ -47,13 +47,18 @@
                                         @forelse ($statuses as $status)
                                             <tr>
                                                 <td>{{ $status->id }}</td>
-                                                <td>{{ $status->status }}</td>
+                                                <td>
+                                                    <span class="badge {{ $status->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                        {{ $status->status }}
+                                                    </span>
+                                                </td>
                                                 <td>{{ $status->description }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Opciones">
                                                         <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewIncidentStatus{{ $status->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
+                                                        @if (!is_null($status->locality_id))
                                                         @can('editIncidentStatuses')
                                                         <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editIncidentStatus{{ $status->id }}">
                                                             <i class="fas fa-edit"></i>
@@ -65,6 +70,7 @@
                                                         <i class="fas fa-trash-alt"></i>
                                                         </button>
                                                         @endcan
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
@@ -92,6 +98,24 @@
 </section>
 @endsection
 
+@section('css')
+<style>
+    .status-badge {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .status-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .table-dark .status-badge {
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+</style>
+@endsection
+
 @section('js')
 <script>
     $(document).ready(function() {
@@ -108,13 +132,34 @@
         var errorMessage = "{{ session('error') }}";
 
         if (successMessage) {
-            Swal.fire({ icon: 'success', title: 'Éxito', text: successMessage, confirmButtonText: 'Aceptar' });
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: successMessage,
+                confirmButtonText: 'Aceptar'
+            });
         }
 
         if (errorMessage) {
-            Swal.fire({ icon: 'error', title: 'Error', text: errorMessage, confirmButtonText: 'Aceptar' });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonText: 'Aceptar'
+            });
         }
 
+        $('#createIncidentStatusModal').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $('#createIncidentStatusModal')
+            });
+        });
+
+        $('[id^="editIncidentStatus"]').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                dropdownParent: $(this)
+            });
+        });
     });
 </script>
 @endsection
