@@ -17,6 +17,7 @@ class MovementHistoryController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $showModuleColumn = $request->boolean('show_module_column');
+        $responsibleId = $request->input('responsible_id');
         $locality = Locality::find($localityId);
         $includeAllModules = $module === 'todos';
 
@@ -26,6 +27,7 @@ class MovementHistoryController extends Controller
             'module' => $module,
             'showModuleColumn' => $showModuleColumn,
             'authUserLocality' => $locality,
+            'responsibleId' => $responsibleId,
         ];
 
         if (!$locality) {
@@ -39,7 +41,7 @@ class MovementHistoryController extends Controller
                 return $this->returnErrorPDF('Selecciona un módulo o elige "todos".', $baseData);
         }
 
-        $data = $this->getFilteredMovements($localityId, $module, $startDate, $endDate, $includeAllModules);
+        $data = $this->getFilteredMovements($localityId, $module, $startDate, $endDate, $includeAllModules, $responsibleId);
         
         if (!$data) {
             return $this->returnErrorPDF('No se encontraron movimientos para los filtros seleccionados.', $baseData);
@@ -131,7 +133,7 @@ class MovementHistoryController extends Controller
                   ->stream('error.pdf');
     }
 
-    private function getFilteredMovements($localityId, $module, $startDate, $endDate, $includeAllModules = false)
+    private function getFilteredMovements($localityId, $module, $startDate, $endDate, $includeAllModules = false, $responsibleId = null)
     {
         $start = $startDate ? Carbon::parse($startDate)->startOfDay() : null;
         $end = $endDate ? Carbon::parse($endDate)->endOfDay() : null;
@@ -139,6 +141,7 @@ class MovementHistoryController extends Controller
         $query = MovementHistory::query()
             ->with(['user.locality'])
             ->whereHas('user', fn($q) => $q->where('locality_id', $localityId))
+            ->when($responsibleId, fn($q) => $q->where('alter_by', $responsibleId))
             ->when($start && $end, fn($q) => $q->whereBetween('created_at', [$start, $end]))
             ->when($start && !$end, fn($q) => $q->where('created_at', '>=', $start))
             ->when(!$start && $end, fn($q) => $q->where('created_at', '<=', $end))
