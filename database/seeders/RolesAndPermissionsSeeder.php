@@ -312,7 +312,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite ver gráficos de ingresos mensuales y anuales.'
         ])->assignRole([$roleSupervisor, $roleSecretariat, $roleAdmin]);
         Permission::firstOrCreate([
-            'name' => 'viewIncomeTypes',
+            'name' => 'viewEarningTypes',
             'description' => 'Permite ver los tipos de ingresos.'
         ])->assignRole($roleSupervisor, $roleSecretariat);
     }

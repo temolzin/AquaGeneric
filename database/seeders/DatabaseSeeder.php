@@ -38,6 +38,6 @@ class DatabaseSeeder extends Seeder
         $this->call(MembershipsTableSeeder::class);
         $this->call(SectionsSeeder::class);
         $this->call(AssignCreatedByToMembershipsSeeder::class);
-        $this->call(IncomeTypeSeeder::class);
+        $this->call(EarningTypeSeeder::class);
     }
 }

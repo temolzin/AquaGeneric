@@ -3,11 +3,11 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\IncomeType;
+use App\Models\EarningType;
 use App\Models\Locality;
 use App\Models\User;
 
-class IncomeTypeSeeder extends Seeder
+class EarningTypeSeeder extends Seeder
 {
     public function run()
     {
@@ -15,13 +15,13 @@ class IncomeTypeSeeder extends Seeder
         $users = User::pluck('id')->toArray();
 
         if (empty($localities) || empty($users)) {
-            $this->command->error('No localities or users found. Skipping income types seeding.');
+            $this->command->error('No localities or users found. Skipping earning types seeding.');
             return;
         }
 
         $userId = $users[0];
 
-        IncomeType::updateOrCreate(
+        EarningType::updateOrCreate(
             [
                 'name' => 'Operación Administrativa',
                 'locality_id' => null,
@@ -80,7 +80,7 @@ class IncomeTypeSeeder extends Seeder
 
         foreach ($localities as $localityId) {
             foreach ($baseTypes as $type) {
-                IncomeType::updateOrCreate(
+                EarningType::updateOrCreate(
                     [
                         'name' => $type['name'],
                         'locality_id' => $localityId

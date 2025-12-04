@@ -13,7 +13,7 @@
                         <div class="col-lg-12">
                             <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
                                 <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
-                                        data-toggle="modal" data-target="#createIncomeTypeModal" title="Registrar Tipo de Ingreso">
+                                        data-toggle="modal" data-target="#createEarningTypeModal" title="Registrar Tipo de Ingreso">
                                     <i class="fa fa-plus"></i>
                                     <span class="d-none d-md-inline">Registrar Tipo</span>
                                     <span class="d-inline d-md-none">Tipo</span>
@@ -27,7 +27,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="card-box table-responsive">
-                                <table id="incomeTypes" class="table table-striped display responsive nowrap" style="width:100%">
+                                <table id="earningTypes" class="table table-striped display responsive nowrap" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -37,26 +37,26 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($incomeTypes as $incomeType)
+                                        @forelse ($earningTypes as $earningType)
                                             <tr>
-                                                <td>{{ $incomeType->id }}</td>
+                                                <td>{{ $earningType->id }}</td>
                                                 <td>
-                                                    <span class="badge {{ $incomeType->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
-                                                        {{ $incomeType->name }}
+                                                    <span class="badge {{ $earningType->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                        {{ $earningType->name }}
                                                     </span>
                                                 </td>
-                                                <td>{{ $incomeType->description }}</td>
+                                                <td>{{ $earningType->description }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Opciones">
-                                                        <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewIncomeType{{ $incomeType->id }}">
+                                                        <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewEarningType{{ $earningType->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        @if (!is_null($incomeType->locality_id))
-                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editIncomeType{{ $incomeType->id }}">
+                                                        @if (!is_null($earningType->locality_id))
+                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editEarningType{{ $earningType->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
                                                             <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" 
-                                                            data-toggle="modal" data-target="#deleteIncomeType{{ $incomeType->id }}">
+                                                            data-toggle="modal" data-target="#deleteEarningType{{ $earningType->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         @endif
@@ -64,9 +64,9 @@
                                                 </td>
                                             </tr>
 
-                                            @include('incomeTypes.show')
-                                            @include('incomeTypes.edit')
-                                            @include('incomeTypes.delete')
+                                            @include('earningTypes.show')
+                                            @include('earningTypes.edit')
+                                            @include('earningTypes.delete')
                                         @empty
                                             <tr>
                                                 <td colspan="4" class="text-center text-muted">No hay tipos de ingreso registrados.</td>
@@ -74,9 +74,9 @@
                                         @endforelse
                                     </tbody>
                                 </table>
-                                @include('incomeTypes.create')
+                                @include('earningTypes.create')
                                 <div class="d-flex justify-content-center">
-                                    {!! $incomeTypes->links('pagination::bootstrap-4') !!}
+                                    {!! $earningTypes->links('pagination::bootstrap-4') !!}
                                 </div>
                         </div>
                     </div>
@@ -108,7 +108,7 @@
 @section('js')
 <script>
     $(document).ready(function() {
-        $('#incomeTypes').DataTable({
+        $('#earningTypes').DataTable({
             responsive: true,
             buttons: ['csv', 'excel', 'print'],
             dom: 'Bfrtip',
@@ -138,13 +138,13 @@
             });
         }
 
-        $('#createIncomeTypeModal').on('shown.bs.modal', function() {
+        $('#createEarningTypeModal').on('shown.bs.modal', function() {
             $('.select2').select2({
-                dropdownParent: $('#createIncomeTypeModal')
+                dropdownParent: $('#createEarningTypeModal')
             });
         });
 
-        $('[id^="editIncomeType"]').on('shown.bs.modal', function() {
+        $('[id^="editEarningType"]').on('shown.bs.modal', function() {
             $('.select2').select2({
                 dropdownParent: $(this)
             });

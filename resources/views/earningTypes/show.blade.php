@@ -1,4 +1,4 @@
-<div class="modal fade" id="viewIncomeType{{ $incomeType->id }}" tabindex="-1" role="dialog" aria-labelledby="viewincomeTypeLabel{{ $incomeType->id }}" aria-hidden="true">
+<div class="modal fade" id="viewEarningType{{ $earningType->id }}" tabindex="-1" role="dialog" aria-labelledby="viewearningTypeLabel{{ $earningType->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="card-info">
@@ -17,25 +17,25 @@
                                 <div class="col-lg-2">
                                     <div class="form-group">
                                         <label>ID</label>
-                                        <input type="text" disabled class="form-control" value="{{ $incomeType->id }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $earningType->id }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Nombre</label>
-                                        <input type="text" disabled class="form-control" value="{{ $incomeType->name }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $earningType->name }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Descripción</label>
-                                        <textarea disabled class="form-control" rows="3">{{ $incomeType->description ?? 'N/A' }}</textarea>
+                                        <textarea disabled class="form-control" rows="3">{{ $earningType->description ?? 'N/A' }}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Registrado por</label>
-                                        <input type="text" disabled class="form-control" value="{{ $incomeType->creator->name ?? 'Desconocido' }} {{ $incomeType->creator->last_name ?? '' }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $earningType->creator->name ?? 'Desconocido' }} {{ $earningType->creator->last_name ?? '' }}" />
                                     </div>
                                 </div>
                             </div>

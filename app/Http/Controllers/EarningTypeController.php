@@ -2,27 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\IncomeType;
+use App\Models\EarningType;
 use App\Models\Locality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class IncomeTypeController extends Controller
+class EarningTypeController extends Controller
 {
     public function index()
     {
-        $incomeTypes = IncomeType::byUserLocality()
+        $earningTypes = EarningType::byUserLocality()
             ->with(['creator', 'locality'])
             ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('incomeTypes.index', compact('incomeTypes'));
+        return view('earningTypes.index', compact('earningTypes'));
     }
 
     public function create()
     {
-        return view('incomeTypes.create');
+        return view('earningTypes.create');
     }
 
     public function store(Request $request)
@@ -33,7 +33,7 @@ class IncomeTypeController extends Controller
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 
-        IncomeType::create([
+        EarningType::create([
             'name' => $request->name,
             'description' => $request->description,
             'color' => color($request->color_index),
@@ -41,26 +41,26 @@ class IncomeTypeController extends Controller
             'created_by' => Auth::id()
         ]);
 
-        return redirect()->route('incomeTypes.index')
+        return redirect()->route('earningTypes.index')
             ->with('success', 'Tipo de Ingreso creado exitosamente.');
     }
 
-    public function show(IncomeType $incomeType)
+    public function show(EarningType $earningType)
     {
-        $this->authorizeLocality($incomeType);
-        return view('incomeTypes.show', compact('incomeType'));
+        $this->authorizeLocality($earningType);
+        return view('earningTypes.show', compact('earningType'));
     }
 
-    public function edit(IncomeType $incomeType)
+    public function edit(EarningType $earningType)
     {
-        $this->authorizeLocality($incomeType);
+        $this->authorizeLocality($earningType);
         $localities = Locality::all();
-        return view('incomeTypes.edit', compact('incomeType', 'localities'));
+        return view('earningTypes.edit', compact('earningType', 'localities'));
     }
 
-    public function update(Request $request, IncomeType $incomeType)
+    public function update(Request $request, EarningType $earningType)
     {
-        $this->authorizeLocality($incomeType);
+        $this->authorizeLocality($earningType);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -68,29 +68,29 @@ class IncomeTypeController extends Controller
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 
-        $incomeType->update([
+        $earningType->update([
             'name' => $request->name,
             'description' => $request->description,
             'color' => color($request->color_index),
         ]);
 
-        return redirect()->route('incomeTypes.index')
+        return redirect()->route('earningTypes.index')
             ->with('success', 'Tipo de ingreso actualizado exitosamente.');
     }
 
-    public function destroy(IncomeType $incomeType)
+    public function destroy(EarningType $earningType)
     {
-        $this->authorizeLocality($incomeType);
-        $incomeType->delete();
+        $this->authorizeLocality($earningType);
+        $earningType->delete();
 
-        return redirect()->route('incomeTypes.index')
+        return redirect()->route('earningTypes.index')
             ->with('success', 'Tipo de ingreso eliminado exitosamente.');
     }
 
-    private function authorizeLocality(IncomeType $incomeType)
+    private function authorizeLocality(EarningType $earningType)
     {
         $user = Auth::user();
-        if ($user->locality_id && $incomeType->locality_id !== $user->locality_id) {
+        if ($user->locality_id && $earningType->locality_id !== $user->locality_id) {
             abort(403, 'No tienes permisos para acceder a este recurso.');
         }
     }

@@ -379,9 +379,9 @@ return [
         'submenu' => [
             [
                 'text' => 'Tipos de Ingresos',
-                'url'  => '/incomeTypes',
+                'url'  => '/earningTypes',
                 'icon' => 'fas fa-fw fa-cash-register',
-                'can'  => 'viewIncomeTypes',
+                'can'  => 'viewEarningTypes',
             ],
         ],
     ],

@@ -1,4 +1,4 @@
-<div class="modal fade" id="createIncomeTypeModal" tabindex="-1" role="dialog" aria-labelledby="createIncomeTypeLabel" aria-hidden="true">
+<div class="modal fade" id="createEarningTypeModal" tabindex="-1" role="dialog" aria-labelledby="createEarningTypeLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content card-success">
             <div class="modal-header bg-success text-white">
@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('incomeTypes.store') }}" method="POST">
+            <form action="{{ route('earningTypes.store') }}" method="POST">
                 @csrf
                 <div class="card-body">
                     <div class="card border-0">
@@ -101,6 +101,6 @@
 
         initializeColorSelect();
 
-        $('#createIncomeTypeModal').on('shown.bs.modal', updatePreview);
+        $('#createEarningTypeModal').on('shown.bs.modal', updatePreview);
     });
 </script>
