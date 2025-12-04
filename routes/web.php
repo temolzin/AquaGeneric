@@ -33,7 +33,7 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\MovementHistoryController;
 use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\CustomerFaultReportController;
-
+use App\Http\Controllers\EarningTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -260,6 +260,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
         Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
+    });
+
+    Route::group(['middleware' => ['can:viewEarningTypes']], function () {
+        Route::get('/earningTypes', [EarningTypeController::class, 'index'])->name('earningTypes.index');
+        Route::resource('earningTypes', EarningTypeController::class);
     });
 });
 
