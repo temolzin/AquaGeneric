@@ -261,6 +261,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
         Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
     });
+
     Route::group(['middleware' => ['can:viewEarningTypes']], function () {
         Route::get('/earningTypes', [EarningTypeController::class, 'index'])->name('earningTypes.index');
         Route::resource('earningTypes', EarningTypeController::class);

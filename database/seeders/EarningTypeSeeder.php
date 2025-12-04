@@ -90,7 +90,6 @@ class EarningTypeSeeder extends Seeder
                         'color' => $type['color'],
                         'created_by' => $userId,
                         'created_at' => now(),
-                        'updated_at' => now(),
                     ]
                 );
             }
