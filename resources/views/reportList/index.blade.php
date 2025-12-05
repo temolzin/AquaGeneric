@@ -183,9 +183,9 @@
 
     .button-group-uniform {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-        gap: 12px;
-        padding: 10px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        padding: 8px;
         justify-items: center;
     }
 
