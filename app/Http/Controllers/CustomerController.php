@@ -20,21 +20,19 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $query = Customer::where('locality_id', $authUser->locality_id)
-            ->with('user') 
+            ->with('user')
             ->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function($q) use ($search) {
-            $q->whereHas('customer', function($u) use ($search) {
-                $u->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
-                ->orWhere('email', 'LIKE', "%{$search}%");
-            })
-            ->orWhere('id', 'LIKE', "%{$search}%");
-        });
+                $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                ->orWhere('email', 'LIKE', "%{$search}%")
+                ->orWhere('id', 'LIKE', "%{$search}%");
+            });
         }
 
-        $customers = $query->with('user')->paginate(10);
+        $customers = $query->paginate(10);
         return view('customers.index', compact('customers'));
     }
 
