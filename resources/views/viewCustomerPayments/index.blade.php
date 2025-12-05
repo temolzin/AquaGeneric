@@ -121,9 +121,9 @@
         </div>
     </div>
 </section>
-@endsection
 @include('viewCustomerPayments.quarterly-report')
 @include('viewCustomerPayments.annualReportTemplate')
+@endsection
 
 @section('js')
 <script>
