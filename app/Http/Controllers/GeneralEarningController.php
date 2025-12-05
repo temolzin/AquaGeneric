@@ -12,23 +12,21 @@ class GeneralEarningController extends Controller
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = GeneralEarning::where('general_earnings.locality_id', $authUser->locality_id)
-            ->whereHas('creator', function ($q) use ($authUser) {
-                $q->where('locality_id', $authUser->locality_id);
-            })
+
+        $query = GeneralEarning::where('locality_id', $authUser->locality_id)
             ->with(['earningType', 'creator'])
-            ->orderBy('general_earnings.created_at', 'desc')
-            ->select('general_earnings.*');            
+            ->orderBy('created_at', 'desc');
+
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('general_earnings.concept', 'LIKE', "%{$search}%")
-                ->orWhere('general_earnings.id', 'LIKE', "%{$search}%");
+                $q->where('concept', 'LIKE', "%{$search}%")
+                    ->orWhere('id', 'LIKE', "%{$search}%");
             });
         }
 
         $earnings = $query->paginate(10);
-        
+
         $earningTypes = EarningType::where('locality_id', $authUser->locality_id)
             ->orderBy('name')
             ->orWhereNull('locality_id')
@@ -61,7 +59,7 @@ class GeneralEarningController extends Controller
     {
         $authUser = auth()->user();
 
-        $earnings = GeneralEarning::with(['earningType', 'creator'])
+        $earning = GeneralEarning::with(['earningType', 'creator'])
             ->where('locality_id', $authUser->locality_id)
             ->findOrFail($id);
         return view('generalEarnings.show', compact('earning'));
@@ -96,31 +94,37 @@ class GeneralEarningController extends Controller
         $afterData = $earning->fresh()->toArray();
 
         MovementHistory::create([
-        'alter_by'    => auth()->id(),
-        'module'      => 'general_earnings',
-        'action'      => 'update',
-        'record_id'   => $earning->id,
-        'before_data' => $beforeData,
-        'current_data'=> $afterData,
-    ]);
+            'alter_by' => auth()->id(),
+            'module' => 'general_earnings',
+            'action' => 'update',
+            'record_id' => $earning->id,
+            'before_data' => $beforeData,
+            'current_data' => $afterData,
+        ]);
 
         return redirect()->route('generalEarnings.index')->with('success', 'Ingreso actualizado correctamente.');
     }
 
     public function destroy($id)
     {
-        $earning = GeneralEarning::find($id);
+        $authUser = auth()->user();
+        $earning = GeneralEarning::where('locality_id', $authUser->locality_id)->find($id);
+
+        if (!$earning) {
+            return redirect()->back()->with('error', 'Ingreso no encontrado.');
+        }
+
         $beforeData = $earning->toArray();
         $earning->delete();
 
         MovementHistory::create([
-        'alter_by'    => auth()->id(),
-        'module'      => 'general_earnings',
-        'action'      => 'delete',
-        'record_id'   => $earning->id,
-        'before_data' => $beforeData,
-        'current_data'=> null,
-    ]);
+            'alter_by' => auth()->id(),
+            'module' => 'general_earnings',
+            'action' => 'delete',
+            'record_id' => $earning->id,
+            'before_data' => $beforeData,
+            'current_data' => null,
+        ]);
 
         return redirect()->route('generalEarnings.index')->with('success', 'Ingreso eliminado correctamente.');
     }

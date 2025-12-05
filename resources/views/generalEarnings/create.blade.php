@@ -26,7 +26,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="description" class="form-label">Descripción(*)</label>
-                                            <textarea class="form-control" name="description" placeholder="Ingresa una descripción del ingreso" value="{{ old('description') }}" required></textarea>
+                                            <textarea class="form-control" name="description" placeholder="Ingresa una descripción del ingreso" required>{{ old('description') }}</textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

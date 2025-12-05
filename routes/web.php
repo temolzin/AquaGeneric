@@ -269,7 +269,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     });
 
     Route::group(['middleware' => ['can:viewGeneralEarning']], function () {
-        Route::get('/generalEarnings', [GeneralEarningController::class, 'index'])->name('earnings.index');
+        Route::get('/generalEarnings', [GeneralEarningController::class, 'index'])->name('generalEarnings.index');
         Route::resource('generalEarnings', GeneralEarningController::class);
     });
 });
