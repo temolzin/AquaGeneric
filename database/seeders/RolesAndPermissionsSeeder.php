@@ -312,13 +312,21 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite ver gráficos de ingresos mensuales y anuales.'
         ])->assignRole([$roleSupervisor, $roleSecretariat, $roleAdmin]);
         Permission::firstOrCreate([
+            'name' => 'deleteEarningTypes',
+            'description' => 'Permite eliminar los tipos de ingresos.'
+        ])->assignRole($roleSupervisor, $roleSecretariat);
+        Permission::firstOrCreate([
+            'name' => 'editEarningTypes',
+            'description' => 'Permite editar los tipos de ingresos.'
+        ])->assignRole($roleSupervisor, $roleSecretariat);
+        Permission::firstOrCreate([
             'name' => 'viewEarningTypes',
             'description' => 'Permite ver los tipos de ingresos.'
         ])->assignRole($roleSupervisor, $roleSecretariat);
         Permission::firstOrCreate([
             'name' => 'viewGeneralEarning',
             'description' => 'Permite ver los Ingresos.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
         Permission::firstOrCreate([
             'name' => 'deleteGeneralEarning',
             'description' => 'Permite eliminar los Ingresos.'
