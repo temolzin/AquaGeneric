@@ -34,6 +34,7 @@ use App\Http\Controllers\MovementHistoryController;
 use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\CustomerFaultReportController;
 use App\Http\Controllers\EarningTypeController;
+use App\Http\Controllers\GeneralEarningController;
 
 /*
 |--------------------------------------------------------------------------
@@ -265,6 +266,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewEarningTypes']], function () {
         Route::get('/earningTypes', [EarningTypeController::class, 'index'])->name('earningTypes.index');
         Route::resource('earningTypes', EarningTypeController::class);
+    });
+
+    Route::group(['middleware' => ['can:viewGeneralEarning']], function () {
+        Route::get('/generalEarnings', [GeneralEarningController::class, 'index'])->name('earnings.index');
+        Route::resource('generalEarnings', GeneralEarningController::class);
     });
 });
 
