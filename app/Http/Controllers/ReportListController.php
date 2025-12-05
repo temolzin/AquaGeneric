@@ -33,7 +33,7 @@ class ReportListController extends Controller
         $sectionsCollection = new Collection($sections);
 
         $sectionsCollection = $sectionsCollection->filter(function ($section) {
-            return !empty($section['reports']);
+            return $section['text'] === 'Panel' || !empty($section['reports']);
         });
 
         $search = $request->input('search');
@@ -47,12 +47,22 @@ class ReportListController extends Controller
             });
         }
 
+        $perPage = 6;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 15;
-        $currentItems = $sectionsCollection->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $sections = new LengthAwarePaginator($currentItems, $sectionsCollection->count(), $perPage, $currentPage, [
-            'path' => LengthAwarePaginator::resolveCurrentPath(),
-        ]);
+        $currentItems = $sectionsCollection->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $sections = new LengthAwarePaginator(
+            $currentItems,
+            $sectionsCollection->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        $sections->withPath($request->url());
 
         $customers = Customer::where('locality_id', auth()->user()->locality_id)->get();
 
@@ -116,18 +126,14 @@ class ReportListController extends Controller
                 ];
                 break;
 
-            case 'Costos':
-                $reports = [
-                    ['text' => 'Lista de Costos', 'url' => '/reports/generateCostListReport', 'type' => 'pdf'],
-                ];
-                break;
-
             case 'Localidades':
                 $reports = [];
                 break;
 
-            case 'Tomas de Agua':
-                $reports = [];
+            case 'Gestión de Tomas de Agua':
+                $reports = [
+                    ['text' => 'Lista de Costos', 'url' => '/reports/generateCostListReport', 'type' => 'pdf'],
+                ];
                 break;
 
             case 'Gestión de Gastos':
@@ -148,7 +154,7 @@ class ReportListController extends Controller
                 ];
                 break;
 
-            case 'Inventario':
+            case 'Gestion de Inventario':
                 $reports = [
                     ['text' => 'Inventario de Componentes', 'url' => '/reports/pdfInventory', 'type' => 'pdf'],
                 ];
@@ -221,13 +227,13 @@ class ReportListController extends Controller
                     ],
                     [
                         'text' => 'Corte de caja',
-                        'type' => 'button',
+                        'type' => 'link',
                         'button_class' => 'btn report-btn btn-orange',
                         'icon' => '<i class="fa fa-dollar-sign"></i>',
                         'url' => route('cash-closures.report'),
                         'target' => '_blank',
                         'title' => 'Corte de caja',
-                        'label' => ['d-none d-md-inline' => 'Corte de caja', 'd-inline d-md-none' => ' ']
+                        'label' => 'Corte de caja'
                     ],
                 ];
                 break;
