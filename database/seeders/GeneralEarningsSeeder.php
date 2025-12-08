@@ -14,7 +14,6 @@ class GeneralEarningsSeeder extends Seeder
 {
     public function run()
     {
-        // Configurar Faker en español de México
         $faker = Faker::create('es_MX');
         
         $this->fixExistingEarningsWithoutType();
