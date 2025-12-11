@@ -39,5 +39,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SectionsSeeder::class);
         $this->call(AssignCreatedByToMembershipsSeeder::class);
         $this->call(EarningTypeSeeder::class);
+        $this->call(GeneralEarningsSeeder::class);
     }
 }

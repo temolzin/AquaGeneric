@@ -14,9 +14,12 @@ use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
+use App\Models\GeneralEarning;
 
-class PaymentController extends Controller {
-    public function index(Request $request) {
+class PaymentController extends Controller
+{
+    public function index(Request $request)
+    {
         $authUser = auth()->user();
         $query = Payment::with(['debt.customer', 'creator'])
             ->where('locality_id', $authUser->locality_id)
@@ -28,7 +31,7 @@ class PaymentController extends Controller {
         if ($request->filled('name')) {
             $query->whereHas('debt.customer', function ($q) use ($request) {
                 $q->whereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ['%' . $request->name . '%'])
-                ->orWhereRaw("CONCAT(customers.last_name, ' ', customers.name) LIKE ?", ['%' . $request->name . '%']);
+                    ->orWhereRaw("CONCAT(customers.last_name, ' ', customers.name) LIKE ?", ['%' . $request->name . '%']);
             });
         }
 
@@ -77,39 +80,41 @@ class PaymentController extends Controller {
         $authUser = auth()->user();
         $customerId = $request->input('waterCustomerId');
         $waterConnections = WaterConnection::where('customer_id', $customerId)
-                                            ->where('locality_id', $authUser->locality_id)
-                                            ->get()
-                                            ->map(function ($waterConnection) {
-                                                return [
-                                                    'id' => $waterConnection->id,
-                                                    'name' => $waterConnection->name,
-                                                ];
-                                            });
+            ->where('locality_id', $authUser->locality_id)
+            ->get()
+            ->map(function ($waterConnection) {
+                return [
+                    'id' => $waterConnection->id,
+                    'name' => $waterConnection->name,
+                ];
+            });
 
         return response()->json(['waterConnections' => $waterConnections]);
     }
 
-    public function getDebtsByWaterConnection(Request $request) {
+    public function getDebtsByWaterConnection(Request $request)
+    {
         $waterConnectionId = $request->input('water_connection_id');
         $debts = Debt::where('water_connection_id', $waterConnectionId)
-                 ->where('status', '!=', 'paid')
-                 ->orderBy('start_date', 'asc')
-                 ->get()
-                 ->map(function ($debt) {
-                     $remainingAmount = $debt->amount - $debt->debt_current;
-                     return [
-                         'id' => $debt->id,
-                         'start_date' => $debt->start_date,
-                         'end_date' => $debt->end_date,
-                         'amount' => $debt->amount,
-                         'remaining_amount' => $remainingAmount,
-                     ];
-                 });
+            ->where('status', '!=', 'paid')
+            ->orderBy('start_date', 'asc')
+            ->get()
+            ->map(function ($debt) {
+                $remainingAmount = $debt->amount - $debt->debt_current;
+                return [
+                    'id' => $debt->id,
+                    'start_date' => $debt->start_date,
+                    'end_date' => $debt->end_date,
+                    'amount' => $debt->amount,
+                    'remaining_amount' => $remainingAmount,
+                ];
+            });
 
         return response()->json(['debts' => $debts]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         \Log::info('Request data:', $request->all());
 
         $authUser = auth()->user();
@@ -168,7 +173,8 @@ class PaymentController extends Controller {
         return redirect()->route('payments.index')->with('success', 'Pago creado exitosamente.');
     }
 
-    public function update(Request $request, Payment $payment) {
+    public function update(Request $request, Payment $payment)
+    {
         $debt = $payment->debt;
         $before = $payment->toArray();
 
@@ -200,18 +206,19 @@ class PaymentController extends Controller {
         $after = $payment->fresh()->toArray();
 
         MovementHistory::create([
-        'alter_by'     => Auth::id(),
-        'module'       => 'pagos',
-        'action'       => 'update',
-        'record_id'    => $payment->id,
-        'before_data'  => $before,
-        'current_data' => $after,
-    ]);
+            'alter_by' => Auth::id(),
+            'module' => 'pagos',
+            'action' => 'update',
+            'record_id' => $payment->id,
+            'before_data' => $before,
+            'current_data' => $after,
+        ]);
 
         return redirect()->route('payments.index')->with('success', 'Pago actualizado exitosamnete.');
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $payment = Payment::findOrFail($id);
         $payment->delete();
 
@@ -222,13 +229,13 @@ class PaymentController extends Controller {
         $before = $payment->toArray();
 
         MovementHistory::create([
-        'alter_by'     => Auth::id(),
-        'module'       => 'pagos',
-        'action'       => 'delete',
-        'record_id'    => $id,
-        'before_data'  => $before,
-        'current_data' => null,
-    ]);
+            'alter_by' => Auth::id(),
+            'module' => 'pagos',
+            'action' => 'delete',
+            'record_id' => $id,
+            'before_data' => $before,
+            'current_data' => null,
+        ]);
 
         return redirect()->route('payments.index')->with('success', 'Pago eliminado exitosamnete.');
     }
@@ -243,9 +250,9 @@ class PaymentController extends Controller {
 
         for ($month = 1; $month <= 12; $month++) {
             $earnings = Payment::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->where('locality_id', $authUser->locality_id)
-            ->sum('amount');
+                ->whereMonth('created_at', $month)
+                ->where('locality_id', $authUser->locality_id)
+                ->sum('amount');
 
             $monthlyEarnings[$month] = $earnings;
             $totalEarnings += $earnings;
@@ -257,12 +264,13 @@ class PaymentController extends Controller {
             ->get();
 
         $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser', 'payments'))
-        ->setPaper('A4', 'portrait');
+            ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_earnings_' . $year . '.pdf');
     }
 
-    public function weeklyEarningsReport(Request $request) {
+    public function weeklyEarningsReport(Request $request)
+    {
         $authUser = auth()->user();
         $startDate = Carbon::parse($request->input('weekStartDate'));
         $endDate = Carbon::parse($request->input('weekEndDate'));
@@ -282,9 +290,19 @@ class PaymentController extends Controller {
             $day = $currentStart->copy();
             while ($day->lte($currentEnd)) {
                 if ($day->between($startDate, $endDate)) {
-                    $earnings = Payment::where('locality_id', $authUser->locality_id)
+                    $payments = Payment::where('locality_id', $authUser->locality_id)
                         ->whereDate('created_at', $day->toDateString())
                         ->sum('amount');
+
+                    $generalEarnings = GeneralEarning::where('locality_id', $authUser->locality_id)
+                        ->whereDate('earning_date', $day->toDateString())
+                        ->sum('amount');
+
+                    $earnings = $payments + $generalEarnings;
+
+                    if ($earnings == 0) {
+                        $earnings = 'N/A';
+                    }
                 } else {
                     $earnings = 'N/A';
                 }
@@ -293,7 +311,8 @@ class PaymentController extends Controller {
                 $day->addDay();
             }
 
-            $totalPeriodEarnings += array_sum($dailyEarnings);
+            $weekTotal = array_sum(array_filter($dailyEarnings, 'is_numeric'));
+            $totalPeriodEarnings += $weekTotal;
 
             $weeks[] = [
                 'start' => $currentStart->toDateString(),
@@ -309,8 +328,8 @@ class PaymentController extends Controller {
 
         return $pdf->stream('weekly_earnings_' . now()->format('Ymd') . '.pdf');
     }
-
-    public function receiptPayment($paymentId) {
+    public function receiptPayment($paymentId)
+    {
         $decryptedId = Crypt::decrypt($paymentId);
         $payment = Payment::findOrFail($decryptedId);
         $debt = $payment->debt;
@@ -355,7 +374,8 @@ class PaymentController extends Controller {
         return $pdf->stream('comprobante_de_pago.pdf');
     }
 
-    public function clientPaymentReport(Request $request) {
+    public function clientPaymentReport(Request $request)
+    {
         $customerId = $request->input('customerId');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
@@ -365,18 +385,19 @@ class PaymentController extends Controller {
         $payments = Payment::whereHas('debt.waterConnection', function ($query) use ($customerId) {
             $query->where('customer_id', $customerId);
         })
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get();
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->get();
 
         $totalPayments = $payments->sum('amount');
 
         $pdf = PDF::loadView('reports.clientPayments', compact('customer', 'startDate', 'endDate', 'payments', 'authUser', 'totalPayments'))
-        ->setPaper('A4', 'portrait');
+            ->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_pagos_cliente.pdf');
     }
 
-    public function waterConnectionPaymentsReport(Request $request) {
+    public function waterConnectionPaymentsReport(Request $request)
+    {
         $customerId = $request->input('waterCustomerId');
         $waterConnectionId = $request->input('waterConnectionId');
         $startDate = $request->input('waterStartDate');
@@ -386,8 +407,8 @@ class PaymentController extends Controller {
         $authUser = auth()->user();
 
         $waterConnection = WaterConnection::where('id', $waterConnectionId)
-                                        ->where('customer_id', $customerId)
-                                        ->firstOrFail();
+            ->where('customer_id', $customerId)
+            ->firstOrFail();
 
         $payments = Payment::select('id', 'debt_id', 'amount', 'created_at')
             ->where('locality_id', $authUser->locality_id)
@@ -404,12 +425,13 @@ class PaymentController extends Controller {
         })->sum('amount');
 
         $pdf = PDF::loadView('reports.waterConnectionPayments', compact('customer', 'waterConnection', 'startDate', 'endDate', 'payments', 'authUser', 'totalPayments'))
-                ->setPaper('A4', 'portrait');
+            ->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_pagos_tomas.pdf');
     }
 
-    public function cashClosurePaymentsReport() {
+    public function cashClosurePaymentsReport()
+    {
         $authUser = auth()->user();
         $today = now()->toDateString();
 
@@ -428,25 +450,25 @@ class PaymentController extends Controller {
         $totalTransfer = $payments->where('method', 'transfer')->sum('amount');
         $finalAmount = $totalPayments - $totalExpenses;
 
-        $latestClosure = (object)[
-            'opened_at'      => now()->startOfDay(),
-            'closed_at'      => now()->endOfDay(),
+        $latestClosure = (object) [
+            'opened_at' => now()->startOfDay(),
+            'closed_at' => now()->endOfDay(),
             'initial_amount' => 0,
-            'final_amount'   => $finalAmount,
-            'total_sales'    => $totalPayments,
+            'final_amount' => $finalAmount,
+            'total_sales' => $totalPayments,
             'total_expenses' => $totalExpenses,
         ];
 
         $pdf = PDF::loadView('reports.pdfCashClosures', [
-            'closures'       => collect([$latestClosure]),
-            'payments'       => $payments,
-            'expenses'       => $expenses,
-            'authUser'       => $authUser,
-            'totalPayments'  => $totalPayments,
-            'totalExpenses'  => $totalExpenses,
-            'totalCash'      => $totalCash,
-            'totalCard'      => $totalCard,
-            'totalTransfer'  => $totalTransfer,
+            'closures' => collect([$latestClosure]),
+            'payments' => $payments,
+            'expenses' => $expenses,
+            'authUser' => $authUser,
+            'totalPayments' => $totalPayments,
+            'totalExpenses' => $totalExpenses,
+            'totalCash' => $totalCash,
+            'totalCard' => $totalCard,
+            'totalTransfer' => $totalTransfer,
         ])->setPaper('A4', 'portrait');
 
         return $pdf->stream('reporte_corte_caja.pdf');
@@ -456,8 +478,8 @@ class PaymentController extends Controller {
     {
         $authUser = auth()->user();
         $customer = Customer::where('user_id', $authUser->id)
-                        ->where('locality_id', $authUser->locality_id)
-                        ->first();
+            ->where('locality_id', $authUser->locality_id)
+            ->first();
 
         if (!$customer) {
             $payments = Payment::where('id', 0)->paginate(10);
@@ -465,31 +487,31 @@ class PaymentController extends Controller {
         }
 
         $query = Payment::with(['debt.waterConnection'])
-                    ->where('customer_id', $customer->id)
-                    ->where('locality_id', $authUser->locality_id)
-                    ->orderBy('created_at', 'desc');
+            ->where('customer_id', $customer->id)
+            ->where('locality_id', $authUser->locality_id)
+            ->orderBy('created_at', 'desc');
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('id', 'LIKE', "%{$search}%")
-                ->orWhere('method', 'LIKE', "%{$search}%")
-                ->orWhere(function($q) use ($search) {
-                    $methodMappings = [
-                        'efectivo' => 'cash',
-                        'transferencia' => 'transfer',
-                        'tarjeta' => 'card'
-                    ];
+                    ->orWhere('method', 'LIKE', "%{$search}%")
+                    ->orWhere(function ($q) use ($search) {
+                        $methodMappings = [
+                            'efectivo' => 'cash',
+                            'transferencia' => 'transfer',
+                            'tarjeta' => 'card'
+                        ];
 
-                    foreach ($methodMappings as $spanish => $english) {
-                        if (stripos($search, $spanish) !== false) {
-                            $q->orWhere('method', $english);
+                        foreach ($methodMappings as $spanish => $english) {
+                            if (stripos($search, $spanish) !== false) {
+                                $q->orWhere('method', $english);
+                            }
                         }
-                    }
-                })
-                ->orWhereHas('debt.waterConnection', function($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%");
-                });
+                    })
+                    ->orWhereHas('debt.waterConnection', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%");
+                    });
             });
         }
 
@@ -519,7 +541,7 @@ class PaymentController extends Controller {
             $endDate = $dateRange['end'];
 
             $waterConnections = WaterConnection::where('customer_id', $customer->id)
-                ->whereHas('debts.payments', function($query) use ($startDate, $endDate) {
+                ->whereHas('debts.payments', function ($query) use ($startDate, $endDate) {
                     $query->whereBetween('created_at', [$startDate, $endDate]);
                 })
                 ->get();
@@ -528,9 +550,9 @@ class PaymentController extends Controller {
             $totalGeneral = 0;
 
             foreach ($waterConnections as $waterConnection) {
-                $payments = Payment::whereHas('debt', function($query) use ($waterConnection) {
-                        $query->where('water_connection_id', $waterConnection->id);
-                    })
+                $payments = Payment::whereHas('debt', function ($query) use ($waterConnection) {
+                    $query->where('water_connection_id', $waterConnection->id);
+                })
                     ->whereBetween('created_at', [$startDate, $endDate])
                     ->with(['debt.waterConnection'])
                     ->get()
@@ -561,7 +583,7 @@ class PaymentController extends Controller {
             ];
 
             $pdf = PDF::loadView('reports.customerPaymentsReport', $data)
-                    ->setPaper('a4', 'portrait');
+                ->setPaper('a4', 'portrait');
 
             return $pdf->stream("reporte-trimestral-{$year}-T{$quarter}.pdf");
 
@@ -655,7 +677,7 @@ class PaymentController extends Controller {
             ];
 
             $pdf = PDF::loadView('reports.annualReportCustomerPayments', $data)
-                    ->setPaper('a4', 'portrait');
+                ->setPaper('a4', 'portrait');
 
             return $pdf->stream("reporte-anual-{$year}.pdf");
 
