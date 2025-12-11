@@ -48,7 +48,7 @@ class GeneralEarningsSeeder extends Seeder
                     $generalType = EarningType::create([
                         'name' => 'Operación Administrativa',
                         'description' => 'Ingreso operativos y administrativos generales sin asignación a una localidad específica.',
-                        'color' => '#3498db',
+                        'color' => color(0),
                         'locality_id' => null,
                         'created_by' => $userId,
                     ]);
@@ -57,8 +57,7 @@ class GeneralEarningsSeeder extends Seeder
                 DB::table('general_earnings')
                     ->where('id', $earning->id)
                     ->update([
-                        'earning_type_id' => $generalType->id,
-                        'updated_at' => now()
+                        'earning_type_id' => $generalType->id
                     ]);
             }
         }
@@ -94,7 +93,6 @@ class GeneralEarningsSeeder extends Seeder
                 }
             }
 
-            // Crear entre 5 y 10 ingresos por localidad
             $numberOfEarnings = rand(5, 10);
             
             for ($i = 0; $i < $numberOfEarnings; $i++) {
@@ -115,7 +113,6 @@ class GeneralEarningsSeeder extends Seeder
             }
         }
 
-        $this->command->info('General earnings created successfully.');
     }
 
     private function getRandomEarningConcept($faker)
@@ -167,7 +164,7 @@ class GeneralEarningsSeeder extends Seeder
     private function getAmountByConcept($concept)
     {
         $amounts = [
-            'Pago de servicio de agua' => rand(150, 450), // MXN
+            'Pago de servicio de agua' => rand(150, 450),
             'Conexión nueva de agua' => rand(800, 2000),
             'Reconexión de servicio' => rand(200, 500),
             'Depósito de garantía' => rand(500, 1000),
