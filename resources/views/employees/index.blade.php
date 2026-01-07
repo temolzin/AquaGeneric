@@ -119,12 +119,12 @@
                                                         @include('employees.delete')
                                                         @include('employees.show')
                                                         @include('employees.import-modal')
+                                                        @include('employees.create') 
                                                     </tr>
                                                 @endforeach
                                             @endif
                                         </tbody>
                                     </table>
-                                    @include('employees.create')  
                                     <div class="d-flex justify-content-center">
                                         {!! $employees->links('pagination::bootstrap-4') !!}
                                     </div>
@@ -253,4 +253,4 @@
             @endif
         });
     </script>
-@endsection 
+@endsection
