@@ -12,7 +12,7 @@ class Membership extends Model
 
     protected $fillable = [
         'created_by',
-        'name', 
+        'name',
         'price',
         'term_months',
         'water_connections_number',
@@ -22,5 +22,15 @@ class Membership extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+    
+    public function localities()
+    {
+        return $this->hasMany(Locality::class, 'membership_id');
+    }
+
+    public function hasDependencies()
+    {
+        return $this->localities()->exists();
     }
 }
