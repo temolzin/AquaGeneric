@@ -26,6 +26,10 @@ class RemoveCustomerIdFromFaultReportTable extends Migration
      */
     public function down()
     {
-      //
+        Schema::table('fault_report', function (Blueprint $table) {
+            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->foreign('customer_id')->references('id')->on('users')->onDelete('set null');
+        });
+      
     }
 }
