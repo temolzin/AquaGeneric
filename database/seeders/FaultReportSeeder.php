@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use App\Models\User;
 
 class FaultReportSeeder extends Seeder
 {
@@ -13,12 +14,17 @@ class FaultReportSeeder extends Seeder
         $faker = Faker::create('es_MX');
 
         $localityIds = DB::table('localities')->pluck('id')->toArray();
-        $userIds = DB::table('users')->pluck('id')->toArray();
+        $userIds = DB::table('users')
+        ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->where('roles.name', User::ROLE_CUSTOMER)
+            ->distinct()
+            ->pluck('users.id')
+            ->toArray();
         $statuses = ['Earring', 'In process', 'Resolved', 'Closed'];
 
         foreach (range(1, 20) as $i) {
-            DB::table('fault_report')->insert([
-                'customer_id'   => $faker->numberBetween(1, 10), 
+            DB::table('fault_report')->insert([ 
                 'created_by'    => $faker->randomElement($userIds),  
                 'locality_id'   => $faker->randomElement($localityIds),
                 'title'         => $faker->randomElement([

@@ -18,6 +18,11 @@ class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia, SoftDeletes, HasRoles;
 
+    const ROLE_ADMIN = 'Admin';
+    const ROLE_SECRETARY = 'Secretaria';
+    const ROLE_SUPERVISOR = 'Supervisor';
+    const ROLE_CUSTOMER = 'Cliente';
+
     /**
      * The attributes that are mass assignable.
      *

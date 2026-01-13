@@ -15,7 +15,6 @@ class FaultReport extends Model implements HasMedia
     protected $table = 'fault_report';
 
     protected $fillable = [
-        'customer_id',
         'created_by',
         'locality_id',
         'title',
@@ -38,8 +37,4 @@ class FaultReport extends Model implements HasMedia
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function customer()
-    {
-        return $this->belongsTo(User::class, 'customer_id');
-    }
 }

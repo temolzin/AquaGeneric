@@ -12,7 +12,7 @@ class CustomerFaultReportController extends Controller
     {
         $authUser = Auth::user();
 
-        $query = FaultReport::where('customer_id', $authUser->id)
+        $query = FaultReport::where('created_by', $authUser->id)
             ->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
@@ -48,7 +48,7 @@ class CustomerFaultReportController extends Controller
         $report->description = $request->description;
         $report->status = 'Earring';
         $report->date_report = now();
-        $report->customer_id = Auth::id();
+        $report->locality_id = Auth::user()->locality_id;
         $report->created_by = Auth::id();
         $report->save();
 
@@ -58,24 +58,25 @@ class CustomerFaultReportController extends Controller
 
     public function show($id)
     {
-        $report = FaultReport::where('customer_id', Auth::id())->findOrFail($id);
+        $report = FaultReport::where('created_by', Auth::id())->findOrFail($id);
         return view('customerFaultReports.show', compact('report'));
     }
 
     public function edit($id)
     {
-        $report = FaultReport::where('customer_id', Auth::id())->findOrFail($id);
+        $report = FaultReport::where('created_by', Auth::id())->findOrFail($id);
         return view('customerFaultReports.edit', compact('report'));
     }
 
     public function update(Request $request, $id)
     {
-        $report = FaultReport::where('customer_id', Auth::id())->findOrFail($id);
+        $report = FaultReport::where('created_by', Auth::id())->findOrFail($id);
 
         $report->update([
             'title' => $request->input('titleUpdate'),
             'description' => $request->input('descriptionUpdate'),
             'date_report' => $request->input('dateReportUpdate'),
+            'updated_at' => now(),
         ]);
 
         return redirect()->route('customerFaultReports.index')
@@ -84,9 +85,10 @@ class CustomerFaultReportController extends Controller
 
     public function destroy($id)
     {
-        $report = FaultReport::where('customer_id', Auth::id())->findOrFail($id);
-        $report->delete();
-
+        $report = FaultReport::where('created_by', Auth::id())->findOrFail($id);
+        $report->delete([
+            'deleted_at' => now(),
+        ]);
         return redirect()->route('customerFaultReports.index')
             ->with('success', 'Reporte de falla eliminado correctamente.');
     }
