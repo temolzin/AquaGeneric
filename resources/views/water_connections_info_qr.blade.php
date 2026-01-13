@@ -71,7 +71,7 @@
                 transform: translateY(0);
             }
         }
-        .header {
+        #reporte_head {
             background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
             color: white;
             padding: 35px 25px 25px 25px;
@@ -79,7 +79,7 @@
             position: relative;
             overflow: hidden;
         }
-        .header::before {
+        #reporte_head::before {
             content: '';
             position: absolute;
             top: -50%;
@@ -90,67 +90,40 @@
             background-size: 25px 25px;
             animation: float 20s infinite linear;
         }
-        @keyframes float {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .logo-container {
-            margin-bottom: 25px;
+        #reporte_head .logo {
+            margin-bottom: 20px;
             position: relative;
             z-index: 2;
             display: inline-block;
         }
-        .logo-background {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            border: 2px solid rgba(255, 255, 255, 1);
-            box-shadow: 
-                0 4px 15px rgba(0, 0, 0, 0.25),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
-        }
-        .company-logo {
+        #reporte_head .logo img {
             height: 100px;
             width: auto;
-            filter: 
-                drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3))
-                brightness(1.05)
-                contrast(1.1);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px;
+            border: 2px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3)) brightness(1.05) contrast(1.1);
             transition: all 0.3s ease;
-            display: block;
         }
-        .logo-container:hover .company-logo {
+        #reporte_head .logo:hover img {
             transform: scale(1.05);
-            filter: 
-                drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4))
-                brightness(1.08)
-                contrast(1.15);
-        }
-        .logo-container:hover .logo-background {
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4)) brightness(1.08) contrast(1.15);
             background: rgba(255, 255, 255, 1);
-            box-shadow: 
-                0 6px 20px rgba(0, 0, 0, 0.35),
-                inset 0 0 0 1px rgba(255, 255, 255, 1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 1);
         }
-        .header h1 {
-            font-size: 1.8rem;
-            margin: 15px 0 8px 0;
+        .titulo {
+            position: relative;
+            z-index: 2;
+        }
+        .aqua_titulo {
+            font-size: 1.2rem;
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 2;
-        }
-        .header .subtitle {
-            font-size: 1rem;
-            opacity: 0.95;
-            margin-bottom: 20px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 2;
-            font-weight: 500;
-        }
+            margin: 0;
+            line-height: 1.4;
+        }       
         .id-badge {
             background: rgba(255,255,255,0.3);
             backdrop-filter: blur(10px);
@@ -326,19 +299,14 @@
         }
 
         @media (max-width: 576px) {
-            .header h1 {
-                font-size: 1.5rem;
+            .aqua_titulo {
+                font-size: 1rem;
             }
-            .header .subtitle {
-                font-size: 0.9rem;
-            }
-            .company-logo {
+            #reporte_head .logo img {
                 height: 80px;
-            }
-            .logo-background {
                 padding: 6px;
             }
-            .header {
+            #reporte_head {
                 padding: 30px 20px 20px 20px;
             }
             .info-item {
@@ -361,22 +329,21 @@
 <body>
     <div class="container" style="max-width: 600px;">
         <div class="main-card">
-            <div class="header">
-                <div class="logo-container">
-                    <div class="logo-background">
-                        <img src="{{ asset('img/logo.png') }}" alt="AquaGeneric" class="company-logo">
-                    </div>
+            <div id="reporte_head">
+                <div class="logo">
+                    @if ($connection->locality && $connection->locality->hasMedia('localityGallery'))
+                        <img src="{{ $connection->locality->getFirstMediaUrl('localityGallery') }}" alt="Logo">
+                    @else
+                        <img src="{{ asset('img/localityDefault.png') }}" alt="Default Photo">
+                    @endif
                 </div>
-                
-                <h1>Información de Toma de Agua</h1>
-                <div class="subtitle">Sistema de Gestión de Agua Potable</div>
-                
-                <div class="id-badge">
-                    <i class="fas fa-hashtag"></i> ID: {{ $connection->id }}
+                <div class="titulo">
+                    <p class="aqua_titulo">
+                        COMITÉ DEL SISTEMA DE AGUA POTABLE DE <br> 
+                        {{ $connection->locality->name ?? '-' }}, {{ $connection->locality->municipality ?? '-' }}, {{ $connection->locality->state ?? '-' }}
+                    </p>
                 </div>
-                <div class="water-wave"></div>
             </div>
-
             <div class="info-list">
                 <div class="info-item">
                     <i class="fas fa-droplet info-icon"></i>
