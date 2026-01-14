@@ -18,7 +18,7 @@ class Inventory extends Model
         'name',
         'description',
         'amount',
-        'inventory_category_id', 
+        'inventory_category_id',
         'material',
         'dimensions',
     ];
@@ -38,8 +38,8 @@ class Inventory extends Model
         return $this->belongsTo(InventoryCategory::class, 'inventory_category_id');
     }
 
-    public function setAmountAttribute($value)
+    public function logs()
     {
-        $this->attributes['amount'] = max(0, $value);
+        return $this->hasMany(LogInventory::class);
     }
 }

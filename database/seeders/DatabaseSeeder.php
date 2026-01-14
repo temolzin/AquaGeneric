@@ -36,9 +36,9 @@ class DatabaseSeeder extends Seeder
         $this->call(InventoryCategorySeeder::class);
         $this->call(InventoryTableSeeder::class);
         $this->call(MembershipsTableSeeder::class);
-        $this->call(SectionsSeeder::class);
         $this->call(AssignCreatedByToMembershipsSeeder::class);
         $this->call(EarningTypeSeeder::class);
         $this->call(GeneralEarningsSeeder::class);
+        $this->call(LogInventorySeeder::class);
     }
 }
