@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\LogInventory;
 use App\Models\Inventory;
 use Carbon\Carbon;
-
+use App\Models\User;
 class LogInventorySeeder extends Seeder
 {
     public function run()
@@ -48,7 +48,7 @@ class LogInventorySeeder extends Seeder
                 $logsForThisInventory[] = [
                     'inventory_id' => $inventory->id,
                     'locality_id' => $inventory->locality_id,
-                    'created_by' => \App\Models\User::inRandomOrder()->first()->id ?? 1,
+                    'created_by' => User::inRandomOrder()->first()->id ?? 1,
                     'previous_amount' => $previousAmount,
                     'amount' => $currentAmount,
                     'description' => $description . " (" . ($change >= 0 ? "+" : "") . $change . ")",
@@ -64,10 +64,8 @@ class LogInventorySeeder extends Seeder
                 LogInventory::insert($logsForThisInventory);
                 $totalLogs += count($logsForThisInventory);
                 
-                $this->command->info("Inventario ID {$inventory->id}: {$numLogs} logs creados. Cantidad actual: {$originalAmount}");
             }
         }
 
-        $this->command->info('Total logs de inventario creados: ' . $totalLogs);
     }
 }

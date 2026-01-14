@@ -162,6 +162,7 @@ class InventoryController extends Controller
             ->setPaper('A4', 'portrait');
         return $pdf->stream('inventario.pdf');
     }
+    
     public function updateAmount(Request $request)
     {
         $request->validate([

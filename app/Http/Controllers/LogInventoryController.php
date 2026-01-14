@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LogInventory;
 use Illuminate\Http\Request;
-use App\Models\LogIncident;
 
-class LogIncidentController extends Controller
+class LogInventoryController extends Controller
 {
-    public function index()
-    {
-
-    }
 
     public function store(Request $request)
     {
@@ -24,9 +20,9 @@ class LogIncidentController extends Controller
             'inventory_id' => $request->inventoryId,
         ];
 
-        $logincident = LogIncident::create($logInventoryData);
+        $logInventory = LogInventory::create($logInventoryData);
 
-        return redirect()->route('incidents.index')->with('success', 'Cambio de Estatus de Incidencia Exitoso');
+        return redirect()->route('inventory.index')->with('success', 'Cantidad actualizada correctamente');
     }
-    
+
 }
