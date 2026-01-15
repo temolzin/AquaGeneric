@@ -7,6 +7,8 @@ use App\Models\LogInventory;
 use App\Models\Inventory;
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
 class LogInventorySeeder extends Seeder
 {
     public function run()
@@ -15,6 +17,24 @@ class LogInventorySeeder extends Seeder
 
         if ($inventories->isEmpty()) {
             $this->command->error('No hay inventarios registrados. Ejecuta primero InventoryTableSeeder.');
+            return;
+        }
+
+        $allowedUserIds = DB::table('users')
+            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->where('roles.name', '!=', User::ROLE_CUSTOMER)
+            ->pluck('users.id')
+            ->toArray();
+
+        if (empty($allowedUserIds)) {
+            $allowedUserIds = DB::table('users')
+                ->pluck('id')
+                ->toArray();
+        }
+
+        if (empty($allowedUserIds)) {
+            $this->command->error('No hay usuarios disponibles en la base de datos.');
             return;
         }
 
@@ -44,11 +64,12 @@ class LogInventorySeeder extends Seeder
                 $description = $descriptions[array_rand($descriptions)];
                 $daysAgo = ($i + 1) * rand(3, 10);
                 $createdAt = Carbon::now()->subDays($daysAgo);
+                $randomUserId = $allowedUserIds[array_rand($allowedUserIds)];
                 
                 $logsForThisInventory[] = [
                     'inventory_id' => $inventory->id,
                     'locality_id' => $inventory->locality_id,
-                    'created_by' => User::inRandomOrder()->first()->id ?? 1,
+                    'created_by' => $randomUserId,
                     'previous_amount' => $previousAmount,
                     'amount' => $currentAmount,
                     'description' => $description . " (" . ($change >= 0 ? "+" : "") . $change . ")",
