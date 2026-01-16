@@ -93,12 +93,20 @@
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             @endcan
+                                                            <button type="button" class="btn bg-purple mr-2" data-toggle="modal" title="Cambiar Cantidad" data-target="#changeAmountModal{{ $component->id }}">
+                                                                <i class="fas fa-sort-amount-up"></i>
+                                                            </button>
+                                                            <button type="button" class="btn bg-primary" data-toggle="modal" title="Ver Historial" data-target="#historyModal{{ $component->id }}">
+                                                                <i class="fas fa-history"></i>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 @include('inventory.show', ['component' => $component])
                                                 @include('inventory.edit', ['component' => $component, 'localities' => $localities, 'users' => $users, 'categories' => $categories])
                                                 @include('inventory.delete', ['component' => $component])
+                                                @include('inventory.changeAmountModal', ['component' => $component])
+                                                @include('inventory.historyModal', ['component' => $component])
                                             @endforeach
                                         @endif
                                     </tbody>

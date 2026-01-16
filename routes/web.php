@@ -146,6 +146,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::resource('inventory', InventoryController::class);
         Route::get('/reports/pdfInventory', [InventoryController::class, 'generateInventoryPdf'])->name('inventory.pdfInventory');
+        Route::post('/inventory/update-amount', [InventoryController::class, 'updateAmount'])->name('inventory.updateAmount');
     });
 
     Route::group(['middleware' => ['can:viewInventoryCategories']], function () {
