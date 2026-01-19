@@ -5,6 +5,7 @@ use App\Models\GeneralExpense;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use App\Models\User;
 
 class GeneralExpensesSeeder extends Seeder
 {
@@ -60,8 +61,12 @@ class GeneralExpensesSeeder extends Seeder
             }
             
             $users = DB::table('users')
-                ->where('locality_id', $locality->id)
-                ->pluck('id')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
+                ->where('users.locality_id', $locality->id)
+                ->distinct()
+                ->pluck('users.id')
                 ->toArray();
 
             if (empty($users)) {

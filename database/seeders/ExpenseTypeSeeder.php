@@ -65,6 +65,18 @@ class ExpenseTypeSeeder extends Seeder
         ];
 
         foreach ($localities as $localityId) {
+            
+            $validUsers = User::where('locality_id', $localityId)
+                ->whereHas('roles', function ($q) {
+                    $q->whereIn('name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY]);
+                })
+                ->pluck('id')
+                ->toArray();
+
+            if (empty($validUsers)) {
+                continue;
+            }
+
             foreach ($baseTypes as $type) {
                 ExpenseType::updateOrCreate(
                     [
@@ -74,7 +86,7 @@ class ExpenseTypeSeeder extends Seeder
                     [
                         'description' => $type['description'],
                         'color' => $type['color'],
-                        'created_by' => $userId,
+                        'created_by' => collect($validUsers)->random(),
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]
