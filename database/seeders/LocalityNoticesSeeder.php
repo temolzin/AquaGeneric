@@ -19,7 +19,7 @@ class LocalityNoticesSeeder extends Seeder
 
         $localityIds = DB::table('localities')->pluck('id')->toArray();
 
-        foreach (range(1, 150) as $index) {
+        foreach (range(1, 2) as $index) {
             $locality_id = $faker->randomElement($localityIds);
 
             $userIds = DB::table('users')
