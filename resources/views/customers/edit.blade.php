@@ -31,7 +31,6 @@
                                         </div>
                                     </div>
                                     @endif
-                                    
                                     <div class="col-lg-8 offset-lg-2">
                                         <div class="form-group text-center">
                                             <label for="photo-{{ $customer->id }}" class="form-label"></label>
@@ -163,7 +162,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm({{ $customer->id }})">Cancelar</button>
-                        <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> Actualizar</button>
+                        <button type="submit" class="btn btn-warning"></i> Actualizar</button>
                     </div>
                 </form>
             </div>
@@ -255,22 +254,6 @@
                     });
                     return false;
                 }
-
-                e.preventDefault();
-                Swal.fire({
-                    title: '¿Actualizar cliente y usuario?',
-                    html: 'Este cliente tiene acceso al sistema.<br>¿Deseas actualizar también los datos de su cuenta de usuario?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, actualizar ambos',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form[0].submit();
-                    }
-                });
             }
         });
     });
