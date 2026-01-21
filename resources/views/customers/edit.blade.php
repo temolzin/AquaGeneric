@@ -23,6 +23,14 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    @if($customer->user)
+                                    <div class="col-lg-12">
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i> Este cliente tiene acceso al sistema como usuario. 
+                                            Los cambios en nombre, apellido y email también se actualizarán en su cuenta de usuario.
+                                        </div>
+                                    </div>
+                                    @endif
                                     <div class="col-lg-8 offset-lg-2">
                                         <div class="form-group text-center">
                                             <label for="photo-{{ $customer->id }}" class="form-label"></label>
@@ -36,13 +44,19 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="nameUpdate" class="form-label">Nombre(*)</label>
-                                            <input type="text" class="form-control" name="nameUpdate" id="nameUpdate" value="{{ $customer->user->name ?? '' }}" required>
+                                            <input type="text" class="form-control" name="nameUpdate" id="nameUpdate" value="{{ $customer->getRawOriginal('name') ?? ($customer->user->name ?? '') }}" required @if($customer->user) data-has-user="true" @endif>
+                                            @if($customer->user)
+                                                <small class="text-muted">Se actualizará en la cuenta de usuario</small>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="lastNameUpdate" class="form-label">Apellido(*)</label>
-                                            <input type="text" class="form-control" name="lastNameUpdate" id="lastNameUpdate" value="{{ $customer->user->last_name ?? '' }}" required>
+                                            <input type="text" class="form-control" name="lastNameUpdate" id="lastNameUpdate" value="{{ $customer->getRawOriginal('last_name') ?? ($customer->user->last_name ?? '') }}" required @if($customer->user) data-has-user="true" @endif>
+                                            @if($customer->user)
+                                                <small class="text-muted">Se actualizará en la cuenta de usuario</small>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -72,7 +86,18 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="emailUpdate" class="form-label">Correo electrónico</label>
-                                            <input type="email" class="form-control" name="emailUpdate" id="emailUpdate" value="{{ $customer->user->email ?? '' }}" />
+                                            <input type="email" class="form-control" name="emailUpdate" id="emailUpdate" value="{{ $customer->getRawOriginal('email') ?? ($customer->user->email ?? '') }}" @if($customer->user) data-has-user="true" @endif>
+                                            @if($customer->user)
+                                                <small class="text-muted">Se actualizará en la cuenta de usuario</small>
+                                            @endif
+                                            @if($customer->user && $customer->user->email)
+                                                <div class="mt-1">
+                                                    <small class="text-warning">
+                                                        <i class="fas fa-exclamation-triangle"></i> 
+                                                        Cambiar el email requerirá que el usuario use el nuevo email para iniciar sesión.
+                                                    </small>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -137,7 +162,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm({{ $customer->id }})">Cancelar</button>
-                        <button type="submit" class="btn btn-warning">Actualizar</button>
+                        <button type="submit" class="btn btn-warning"></i> Actualizar</button>
                     </div>
                 </form>
             </div>
@@ -177,13 +202,17 @@
         var photoPreview = document.getElementById('photo-preview-edit-' + id);
         var customerGalleryUrl = "{{ $customer->getFirstMediaUrl('customerGallery') ? $customer->getFirstMediaUrl('customerGallery') : asset('img/userDefault.png') }}";
         photoPreview.src = customerGalleryUrl;
+        
+        toggleResponsibleFieldUpdate(id);
     }
 
     function toggleResponsibleFieldUpdate(id) {
         const statusSelect = document.getElementById('statusUpdate-' + id);
         const responsibleField = document.getElementById('responsibleNameUpdate-' + id);
 
-        responsibleField.style.display = statusSelect.value === '0' ? 'block' : 'none';
+        if (statusSelect && responsibleField) {
+            responsibleField.style.display = statusSelect.value === '0' ? 'block' : 'none';
+        }
     }
 
     function initializeModal(id) {
@@ -194,9 +223,38 @@
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
             modal.addEventListener('show.bs.modal', function () {
-                const customerId = modal.id.replace('edit', '');
-                initializeModal(customerId);
+                const modalId = modal.id;
+                if (modalId.startsWith('edit')) {
+                    const customerId = modalId.replace('edit', '');
+                    initializeModal(customerId);
+                }
             });
+        });
+    });
+
+    $(document).ready(function() {
+        $('form[id^="edit-customer-form-"]').on('submit', function(e) {
+            const form = $(this);
+            const customerId = form.attr('id').replace('edit-customer-form-', '');
+
+            const hasUser = form.find('[data-has-user="true"]').length > 0;
+            
+            if (hasUser) {
+                const name = form.find('#nameUpdate').val();
+                const lastName = form.find('#lastNameUpdate').val();
+                const email = form.find('#emailUpdate').val();
+
+                if (!name || !lastName || !email) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Campos requeridos',
+                        text: 'Para clientes con usuario, los campos de nombre, apellido y email son obligatorios',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return false;
+                }
+            }
         });
     });
 </script>
