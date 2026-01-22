@@ -126,12 +126,20 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="showPassword" name="showPassword">
-                                                <label class="form-check-label" for="showPassword">
-                                                    Habilitar Inicio de Sesión
-                                                </label>
-                                            </div>
+                               <div class="custom-control custom-checkbox custom-checkbox-lg mb-2">
+                                 <input
+                                 type="checkbox"
+                                 id="showPassword"
+                                 name="showPassword"
+                                 class="custom-control-input"
+                                  >
+                                    <label
+                                      class="custom-control-label"
+                                      for="showPassword"
+                                    >
+                                      Habilitar Inicio de Sesión
+                                    </label>
+                                </div>
                                             <div class="password-field" id="passwordField" style="display: none;">
                                                 <label for="password" class="form-label required">Ingresa una Contraseña</label>
                                                 <div class="input-group">

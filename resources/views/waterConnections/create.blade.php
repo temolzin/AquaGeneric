@@ -131,57 +131,73 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="water_days" class="form-label">Días de Agua(*)</label>
-                                            <div class="input-group">
-                                                <div class="form-check col-lg-4">
-                                                    <input class="form-check-input @if(!$canCreateMore) disabled-input @endif" 
-                                                        type="checkbox" id="monday" name="days[]" value="monday"
-                                                        @if(!$canCreateMore) disabled @endif>
-                                                    <label class="form-check-label" for="monday">Lunes</label>
-                                                </div>
-                                                <div class="form-check col-lg-4">
-                                                    <input class="form-check-input @if(!$canCreateMore) disabled-input @endif" 
-                                                        type="checkbox" id="tuesday" name="days[]" value="tuesday"
-                                                        @if(!$canCreateMore) disabled @endif>
-                                                    <label class="form-check-label" for="tuesday">Martes</label>
-                                                </div>
-                                                <div class="form-check col-lg-4">
-                                                    <input class="form-check-input @if(!$canCreateMore) disabled-input @endif" 
-                                                        type="checkbox" id="wednesday" name="days[]" value="wednesday"
-                                                        @if(!$canCreateMore) disabled @endif>
-                                                    <label class="form-check-label" for="wednesday">Miércoles</label>
-                                                </div>
-                                                <div class="form-check col-lg-4">
-                                                    <input class="form-check-input @if(!$canCreateMore) disabled-input @endif" 
-                                                        type="checkbox" id="thursday" name="days[]" value="thursday"
-                                                        @if(!$canCreateMore) disabled @endif>
-                                                    <label class="form-check-label" for="thursday">Jueves</label>
-                                                </div>
-                                                <div class="form-check col-lg-4">
-                                                    <input class="form-check-input @if(!$canCreateMore) disabled-input @endif" 
-                                                        type="checkbox" id="friday" name="days[]" value="friday"
-                                                        @if(!$canCreateMore) disabled @endif>
-                                                    <label class="form-check-label" for="friday">Viernes</label>
-                                                </div>
-                                                <div class="form-check col-lg-4">
-                                                    <input class="form-check-input @if(!$canCreateMore) disabled-input @endif" 
-                                                        type="checkbox" id="saturday" name="days[]" value="saturday"
-                                                        @if(!$canCreateMore) disabled @endif>
-                                                    <label class="form-check-label" for="saturday">Sábado</label>
-                                                </div>
-                                                <div class="form-check col-lg-4">
-                                                    <input class="form-check-input @if(!$canCreateMore) disabled-input @endif" 
-                                                        type="checkbox" id="sunday" name="days[]" value="sunday"
-                                                        @if(!$canCreateMore) disabled @endif>
-                                                    <label class="form-check-label" for="sunday">Domingo</label>
-                                                </div>
-                                                <div class="form-check col-lg-5">
-                                                    <input class="form-check-input @if(!$canCreateMore) disabled-input @endif" 
-                                                        type="checkbox" id="all_days" name="all_days"
-                                                        @if(!$canCreateMore) disabled @endif>
-                                                    <label class="form-check-label" for="all_days">Todos los días</label>
-                                                </div>
+                                         <label for="water_days" class="form-label">Días de Agua(*)</label>
+                                          <div class="row">
+                                           <div class="col-lg-4">
+                                            <div class="custom-control custom-checkbox custom-checkbox-lg">
+                                             <input type="checkbox" id="monday" name="days[]" value="monday"
+                                               class="custom-control-input @if(!$canCreateMore) disabled-input @endif"
+                                               @if(!$canCreateMore) disabled @endif>
+                                                <label class="custom-control-label" for="monday">Lunes</label>
+                                                 </div>
+                                                  </div>
+                                    <div class="col-lg-4">
+                                      <div class="custom-control custom-checkbox custom-checkbox-lg">
+                                       <input type="checkbox" id="tuesday" name="days[]" value="tuesday"
+                                         class="custom-control-input @if(!$canCreateMore) disabled-input @endif"
+                                         @if(!$canCreateMore) disabled @endif>
+                                          <label class="custom-control-label" for="tuesday">Martes</label>
+                                           </div>
                                             </div>
+                                    <div class="col-lg-4">
+                                     <div class="custom-control custom-checkbox custom-checkbox-lg">
+                                       <input type="checkbox" id="wednesday" name="days[]" value="wednesday"
+                                         class="custom-control-input @if(!$canCreateMore) disabled-input @endif"
+                                         @if(!$canCreateMore) disabled @endif>
+                                          <label class="custom-control-label" for="wednesday">Miércoles</label>
+                                           </div>
+                                           </div>
+                                    <div class="col-lg-4">
+                                     <div class="custom-control custom-checkbox custom-checkbox-lg">
+                                      <input type="checkbox" id="thursday" name="days[]" value="thursday"
+                                         class="custom-control-input @if(!$canCreateMore) disabled-input @endif"
+                                         @if(!$canCreateMore) disabled @endif>
+                                          <label class="custom-control-label" for="thursday">Jueves</label>
+                                           </div>
+                                            </div>
+                                    <div class="col-lg-4">
+                                     <div class="custom-control custom-checkbox custom-checkbox-lg">
+                                       <input type="checkbox" id="friday" name="days[]" value="friday"
+                                          class="custom-control-input @if(!$canCreateMore) disabled-input @endif"
+                                          @if(!$canCreateMore) disabled @endif>
+                                           <label class="custom-control-label" for="friday">Viernes</label>
+                                             </div>
+                                               </div>
+                                    <div class="col-lg-4">
+                                     <div class="custom-control custom-checkbox custom-checkbox-lg">
+                                      <input type="checkbox" id="saturday" name="days[]" value="saturday"
+                                        class="custom-control-input @if(!$canCreateMore) disabled-input @endif"
+                                        @if(!$canCreateMore) disabled @endif>
+                                         <label class="custom-control-label" for="saturday">Sábado</label>
+                                          </div>
+                                           </div>
+                                    <div class="col-lg-4">
+                                     <div class="custom-control custom-checkbox custom-checkbox-lg">
+                                      <input type="checkbox" id="sunday" name="days[]" value="sunday"
+                                        class="custom-control-input @if(!$canCreateMore) disabled-input @endif"
+                                        @if(!$canCreateMore) disabled @endif>
+                                         <label class="custom-control-label" for="sunday">Domingo</label>
+                                           </div>
+                                             </div>
+                                    <div class="col-lg-4">
+                                     <div class="custom-control custom-checkbox custom-checkbox-lg">
+                                       <input type="checkbox" id="all_days" name="all_days"
+                                          class="custom-control-input @if(!$canCreateMore) disabled-input @endif"
+                                          @if(!$canCreateMore) disabled @endif>
+                                           <label class="custom-control-label" for="all_days"> Todos los días </label>                                                                               
+                                             </div>
+                                               </div>
+                                                </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
