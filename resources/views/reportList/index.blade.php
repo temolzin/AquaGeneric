@@ -60,6 +60,14 @@
                                                                         <span class="{{ $report['label']['d-none d-md-inline'] ?? '' }}"> {{ $report['label']['d-none d-md-inline'] ?? $report['text'] }}</span>
                                                                         <span class="{{ $report['label']['d-inline d-md-none'] ?? '' }}"> {{ $report['label']['d-inline d-md-none'] ?? $report['text'] }}</span>
                                                                     </button>
+                                                                @elseif (isset($report['type']) && $report['type'] === 'link')
+                                                                    <a href="{{ $report['url'] }}" 
+                                                                    target="{{ $report['target'] ?? '_blank' }}"
+                                                                    class="{{ $report['button_class'] ?? 'btn btn-secondary' }} report-btn"
+                                                                    title="{{ $report['title'] ?? $report['text'] }}">
+                                                                        {!! $report['icon'] ?? '' !!}
+                                                                        <span>{{ $report['label'] ?? $report['text'] }}</span>
+                                                                    </a>
                                                                 @endif
                                                             @endforeach
                                                         </div>
@@ -68,6 +76,9 @@
                                             </div>
                                         @endforeach
                                     @endif
+                                </div>
+                                <div class="d-flex justify-content-center mt-5">
+                                    {!! $sections->links('pagination::bootstrap-4') !!}
                                 </div>
                             </div>
                         </div>
@@ -91,7 +102,6 @@
 @endsection
 
 @section('css')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
     :root {
         --color-blue: #007bff;
@@ -120,152 +130,125 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 15px;
-        max-width: 100%;
-        margin-left: auto;
-        margin-right: auto;
         margin-top: 30px;
     }
+
     .expandable-card {
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         overflow: hidden;
         background: white;
         border: 1px solid #e0e0e0;
-        transition: transform 0.5s ease, opacity 0.5s ease, box-shadow 0.5s ease;
     }
-    .expandable-card[data-color] .expandable-header {
-        background-color: var(--color-blue);
-    }
-    .expandable-card[data-color="blue"] .expandable-header { background-color: var(--color-blue); }
-    .expandable-card[data-color="green"] .expandable-header { background-color: var(--color-green); }
-    .expandable-card[data-color="red"] .expandable-header { background-color: var(--color-red); }
-    .expandable-card[data-color="yellow"] .expandable-header { background-color: var(--color-yellow); }
-    .expandable-card[data-color="cyan"] .expandable-header { background-color: var(--color-cyan); }
-    .expandable-card[data-color="purple"] .expandable-header { background-color: var(--color-purple); }
-    .expandable-card[data-color="teal"] .expandable-header { background-color: var(--color-teal); }
-    .expandable-card[data-color="orange"] .expandable-header { background-color: var(--color-orange); }
-    .expandable-card[data-color="indigo"] .expandable-header { background-color: var(--color-indigo); }
-    .expandable-card[data-color="pink"] .expandable-header { background-color: var(--color-pink); }
-    .expandable-card[data-color="gray"] .expandable-header { background-color: var(--color-gray); }
-    .expandable-card[data-color="dark-gray"] .expandable-header { background-color: var(--color-dark-gray); }
-    .expandable-card[data-color="dark-green"] .expandable-header { background-color: var(--color-dark-green); }
-    .expandable-card[data-color="deep-pink"] .expandable-header { background-color: var(--color-deep-pink); }
-    .expandable-card[data-color="light-gray"] .expandable-header { background-color: var(--color-light-gray); }
-    .expandable-card[data-color="orange-red"] .expandable-header { background-color: var(--color-orange-red); }
-    .expandable-card[data-color="sea-green"] .expandable-header { background-color: var(--color-sea-green); }
-    .expandable-card[data-color="steel-blue"] .expandable-header { background-color: var(--color-steel-blue); }
-    .expandable-card[data-color="amethyst"] .expandable-header { background-color: var(--color-amethyst); }
-    .expandable-card[data-color="coral"] .expandable-header { background-color: var(--color-coral); }
+
+    .expandable-card[data-color="blue"] .expandable-header        { background-color: var(--color-blue); }
+    .expandable-card[data-color="green"] .expandable-header       { background-color: var(--color-green); }
+    .expandable-card[data-color="red"] .expandable-header          { background-color: var(--color-red); }
+    .expandable-card[data-color="yellow"] .expandable-header      { background-color: var(--color-yellow); }
+    .expandable-card[data-color="cyan"] .expandable-header         { background-color: var(--color-cyan); }
+    .expandable-card[data-color="purple"] .expandable-header      { background-color: var(--color-purple); }
+    .expandable-card[data-color="teal"] .expandable-header         { background-color: var(--color-teal); }
+    .expandable-card[data-color="orange"] .expandable-header       { background-color: var(--color-orange); }
+    .expandable-card[data-color="indigo"] .expandable-header      { background-color: var(--color-indigo); }
+    .expandable-card[data-color="pink"] .expandable-header         { background-color: var(--color-pink); }
+    .expandable-card[data-color="gray"] .expandable-header         { background-color: var(--color-gray); }
+    .expandable-card[data-color="dark-gray"] .expandable-header    { background-color: var(--color-dark-gray); }
+    .expandable-card[data-color="dark-green"] .expandable-header   { background-color: var(--color-dark-green); }
+    .expandable-card[data-color="deep-pink"] .expandable-header    { background-color: var(--color-deep-pink); }
+    .expandable-card[data-color="light-gray"] .expandable-header   { background-color: var(--color-light-gray); }
+    .expandable-card[data-color="orange-red"] .expandable-header   { background-color: var(--color-orange-red); }
+    .expandable-card[data-color="sea-green"] .expandable-header    { background-color: var(--color-sea-green); }
+    .expandable-card[data-color="steel-blue"] .expandable-header   { background-color: var(--color-steel-blue); }
+    .expandable-card[data-color="amethyst"] .expandable-header    { background-color: var(--color-amethyst); }
+    .expandable-card[data-color="coral"] .expandable-header       { background-color: var(--color-coral); }
+
     .expandable-header {
         color: white;
         padding: 12px 20px;
-        cursor: default;
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-weight: 500;
-        transition: background-color 0.3s ease, opacity 0.3s ease;
     }
+
     .expandable-header:hover {
         opacity: 0.9;
     }
+
     .card-body {
         background: white;
         padding: 15px;
         border-top: 1px solid #e0e0e0;
-        transition: all 0.5s ease-in-out;
-        overflow: hidden;
     }
-    .collapse {
-        display: none;
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    .collapse.show {
-        display: block;
-        height: auto;
-        opacity: 1;
-        transform: translateY(0);
-        transition: opacity 0.5s ease-in-out, height 0.5s ease-in-out, transform 0.5s ease-in-out;
-    }
-    .icon-toggle {
-        cursor: pointer;
-        transition: transform 0.5s ease-in-out, color 0.3s ease;
-        transform-origin: center;
-        color: white;
-        font-size: 1.2em;
-    }
-    @keyframes collapseFromCross {
-        0% { transform: rotate(45deg); opacity: 0.6; }
-        50% { opacity: 0.8; }
-        100% { transform: rotate(0deg); opacity: 1; }
-    }
-    @keyframes expandToCross {
-        0% { transform: rotate(0deg); opacity: 0.6; }
-        50% { opacity: 0.8; }
-        100% { transform: rotate(45deg); opacity: 1; }
-    }
-    .collapse:not(.show) + .expandable-header .icon-toggle {
-        animation: collapseFromCross 0.5s ease-in-out;
-    }
-    .collapse.show + .expandable-header .icon-toggle {
-        animation: expandToCross 0.5s ease-in-out;
-    }
+
     .button-group-uniform {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        max-width: 100%;
-        padding: 0 10px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        padding: 8px;
+        justify-items: center;
     }
-    .button-group-uniform .report-btn {
-        min-width: 0;
+
+    .report-btn {
         width: 100%;
-        height: 40px;
+        min-height: 58px;
+        padding: 8px 6px;
+        border-radius: 8px;
+        background-color: #6c757d !important;
+        color: white !important;
+        font-size: 0.82rem;
+        font-weight: 500;
+        text-align: center;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        text-align: center;
-        padding: 0 12px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        box-sizing: border-box;
-        margin: 0 auto;
-        background-color: #6c757d !important;
-        color: #fff !important;
-        border-color: #6c757d !important;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        font-size: 0.9em;
+        gap: 6px;
+        transition: all 0.25 0.25s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        white-space: normal !important;
+        line-height: 1.3;
     }
-    .button-group-uniform .report-btn:hover {
-        background-color: #5a6268 !important;
-        transform: translateY(-2px);
+
+    .report-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.22) !important;
     }
-    .button-group-uniform .report-btn i {
-        margin-right: 6px;
+
+    .report-btn i {
+        font-size: 1.4em;
+        margin: 0 !important;
     }
+
+    .report-btn span {
+        font-size: 0.78rem;
+        word-wrap: break-word;
+    }
+
+    @media (max-width: 992px) {
+        .button-group-uniform {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
     @media (max-width: 768px) {
         .expandable-list {
             grid-template-columns: 1fr;
         }
+
         .button-group-uniform {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            padding: 0 5px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
         }
-        .button-group-uniform .report-btn {
-            min-width: 0;
-            height: 36px;
-            font-size: 0.8em;
-            padding: 0 8px;
+
+        .report-btn {
+            min-height: 62px;
         }
-        .expandable-header {
-            padding: 10px 15px;
-        }
-        .card-body {
-            padding: 10px;
+    }
+
+    @media (max-width: 480px) {
+        .button-group-uniform {
+            grid-template-columns: 1fr;
         }
     }
 </style>

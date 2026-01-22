@@ -20,21 +20,19 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $query = Customer::where('locality_id', $authUser->locality_id)
-            ->with('user') 
+            ->with('user')
             ->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function($q) use ($search) {
-            $q->whereHas('customer', function($u) use ($search) {
-                $u->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
-                ->orWhere('email', 'LIKE', "%{$search}%");
-            })
-            ->orWhere('id', 'LIKE', "%{$search}%");
-        });
+                $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                ->orWhere('email', 'LIKE', "%{$search}%")
+                ->orWhere('id', 'LIKE', "%{$search}%");
+            });
         }
 
-        $customers = $query->with('user')->paginate(10);
+        $customers = $query->paginate(10);
         return view('customers.index', compact('customers'));
     }
 
@@ -113,11 +111,46 @@ class CustomerController extends Controller
     {
         $customer = Customer::with('user')->find($id);
         if ($customer) {
-            if ($customer->user) {
-                $customer->user->name = $request->input('nameUpdate');
-                $customer->user->last_name = $request->input('lastNameUpdate');
-                $customer->user->email = $request->input('emailUpdate');
-                $customer->user->save();
+            $name = $request->input('nameUpdate');
+            $lastName = $request->input('lastNameUpdate');
+            $email = $request->input('emailUpdate');
+
+            $existingCustomer = Customer::where('email', $email)
+                ->where('id', '!=', $id)
+                ->first();
+
+            if ($existingCustomer) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'El email ya está en uso por otro cliente.');
+            }
+
+            if ($customer->user && $email !== $customer->user->email) {
+                $existingUser = User::where('email', $email)
+                    ->where('id', '!=', $customer->user->id)
+                    ->first();
+                    
+                if ($existingUser) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('error', 'El email ya está en uso por otro usuario.');
+                }
+            }
+
+            if (!$customer->user && $email) {
+                $existingUserWithEmail = User::where('email', $email)->first();
+                
+                if ($existingUserWithEmail) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('error', 'El email ya está registrado como usuario. Asigne este cliente al usuario existente.');
+                }
+            }
+
+            if ($customer->user && empty($email)) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'El email es requerido para clientes con cuenta de usuario.');
             }
 
             $customer->locality = $request->input('localityUpdate');
@@ -132,7 +165,23 @@ class CustomerController extends Controller
             $customer->responsible_name = $request->input('responsibleNameUpdate');
             $customer->note = $request->input('noteUpdate');
 
+            $customer->name = $name;
+            $customer->last_name = $lastName;
+            $customer->email = $email;
             $customer->save();
+
+            if ($customer->user) {
+                $customer->user->update([
+                    'name' => $name,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                ]);
+
+                if ($customer->locality_id && $customer->locality_id != $customer->user->locality_id) {
+                    $customer->user->locality_id = $customer->locality_id;
+                    $customer->user->save();
+                }
+            }
 
             if ($request->hasFile('photo')) {
                 $customer->clearMediaCollection('customerGallery');
@@ -336,6 +385,14 @@ class CustomerController extends Controller
             $imported = 0;
             $errors = [];
             $authUser = Auth::user();
+            
+            $content = file_get_contents($file->getPathname());
+            $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
+
+            if ($encoding !== 'UTF-8') {
+                $convertedContent = mb_convert_encoding($content, 'UTF-8', $encoding);
+                file_put_contents($file->getPathname(), $convertedContent);
+            }
             
             $handle = fopen($file->getPathname(), 'r');
             

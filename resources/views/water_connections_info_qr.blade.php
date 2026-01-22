@@ -367,16 +367,10 @@
                         <img src="{{ asset('img/logo.png') }}" alt="AquaGeneric" class="company-logo">
                     </div>
                 </div>
-                
-                <h1>Información de Toma de Agua</h1>
-                <div class="subtitle">Sistema de Gestión de Agua Potable</div>
-                
-                <div class="id-badge">
-                    <i class="fas fa-hashtag"></i> ID: {{ $connection->id }}
-                </div>
-                <div class="water-wave"></div>
+                <h1>COMITÉ DEL SISTEMA DE AGUA POTABLE DE <br>  
+                    {{ $connection->locality->name ?? '-' }}, {{ $connection->locality->municipality ?? '-' }}, {{ $connection->locality->state ?? '-' }}
+                </h1>
             </div>
-
             <div class="info-list">
                 <div class="info-item">
                     <i class="fas fa-droplet info-icon"></i>
