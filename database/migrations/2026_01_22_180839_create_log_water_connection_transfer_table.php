@@ -20,10 +20,10 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
 
-            $table->foreign('water_connection_id') ->references('id')->on('water_connections');
-            $table->foreign('old_customer_id') ->references('id')->on('customers');
-            $table->foreign('new_customer_id') ->references('id')->on('customers');
-            $table->foreign('created_by') ->references('id')->on('users');
+            $table->foreign('water_connection_id')->references('id')->on('water_connections');
+            $table->foreign('old_customer_id')->references('id')->on('customers');
+            $table->foreign('new_customer_id')->references('id')->on('customers');
+            $table->foreign('created_by')->references('id')->on('users');
         });
     }
 
