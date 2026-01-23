@@ -17,7 +17,6 @@ class LogWaterConnectionTransferSeeder extends Seeder
         $newCustomer = DB::table('customers')->where('status', 1)->first();
         $user = DB::table('users')->first();
 
-
         if (!$waterConnection || !$oldCustomer || !$newCustomer || !$user) {
             return;
         }
