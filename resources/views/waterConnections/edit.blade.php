@@ -91,111 +91,46 @@
                                         <div class="form-group">
                                             <label for="waterDaysUpdate" class="form-label">Días de Agua(*)</label>
                                             <div class="input-group">
-                                                <div class="row">
-                                    <div class="col-lg-4">
-                                        <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                         <input
-                                         type="checkbox"
-                                         id="monday_update"
-                                         name="days_update[]"
-                                         value="monday"
-                                         class="custom-control-input"
-                                         {{ is_array(json_decode($connection->water_days)) && in_array('monday', json_decode($connection->water_days)) ? 'checked' : '' }}
-                                         >
-                                          <label class="custom-control-label" for="monday_update">Lunes</label>
-                                            </div>
-                                             </div>
-                                    <div class="col-lg-4">
-                                      <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                         <input
-                                          type="checkbox"
-                                          id="tuesday_update"
-                                          name="days_update[]"
-                                          value="tuesday"
-                                          class="custom-control-input"
-                                          {{ is_array(json_decode($connection->water_days)) && in_array('tuesday', json_decode($connection->water_days)) ? 'checked' : '' }}
-                                          >
-                                           <label class="custom-control-label" for="tuesday_update">Martes</label>
-                                             </div>
-                                               </div>
-                                    <div class="col-lg-4">
-                                        <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                         <input
-                                         type="checkbox"
-                                         id="wednesday_update"
-                                         name="days_update[]"
-                                         value="wednesday"
-                                         class="custom-control-input"
-                                         {{ is_array(json_decode($connection->water_days)) && in_array('wednesday', json_decode($connection->water_days)) ? 'checked' : '' }}
-                                         >
-                                          <label class="custom-control-label" for="wednesday_update">Miércoles</label>
-                                            </div>
-                                              </div>
-                                    <div class="col-lg-4">
-                                        <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                          <input
-                                          type="checkbox"
-                                          id="thursday_update"
-                                          name="days_update[]"
-                                          value="thursday"
-                                          class="custom-control-input"
-                                          {{ is_array(json_decode($connection->water_days)) && in_array('thursday', json_decode($connection->water_days)) ? 'checked' : '' }}
-                                          >
-                                           <label class="custom-control-label" for="thursday_update">Jueves</label>
-                                             </div>
-                                              </div>
-                                    <div class="col-lg-4">
-                                        <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                          <input
-                                          type="checkbox"
-                                          id="friday_update"
-                                          name="days_update[]"
-                                          value="friday"
-                                          class="custom-control-input"
-                                          {{ is_array(json_decode($connection->water_days)) && in_array('friday', json_decode($connection->water_days)) ? 'checked' : '' }}
-                                          >
-                                           <label class="custom-control-label" for="friday_update">Viernes</label>
-                                             </div>
-                                              </div>
-                                    <div class="col-lg-4">
-                                        <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                          <input
-                                          type="checkbox"
-                                          id="saturday_update"
-                                          name="days_update[]"
-                                          value="saturday"
-                                          class="custom-control-input"
-                                          {{ is_array(json_decode($connection->water_days)) && in_array('saturday', json_decode($connection->water_days)) ? 'checked' : '' }}
-                                          >
-                                           <label class="custom-control-label" for="saturday_update">Sábado</label>
-                                            </div>
-                                              </div>
-                                    <div class="col-lg-4">
-                                        <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                          <input
-                                          type="checkbox"
-                                          id="sunday_update"
-                                          name="days_update[]"
-                                          value="sunday"
-                                          class="custom-control-input"
-                                          {{ is_array(json_decode($connection->water_days)) && in_array('sunday', json_decode($connection->water_days)) ? 'checked' : '' }}
-                                           >
-                                            <label class="custom-control-label" for="sunday_update">Domingo</label>
-                                              </div>
-                                                </div> 
-                                    <div class="col-lg-5">
-                                        <div class="custom-control custom-checkbox custom-checkbox-lg">
-                                          <input
-                                          type="checkbox"
-                                          id="all_days_update"
-                                          name="all_days_update"
-                                          class="custom-control-input"
-                                          {{ $connection->water_days == json_encode('all') ? 'checked' : '' }}
-                                          >
-                                           <label class="custom-control-label" for="all_days_update">Todos los días </label>
-                                            </div>
-                                             </div>
-                                              </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="monday_update" name="days_update[]" value="monday"
+                                                        {{ is_array(json_decode($connection->water_days)) && in_array('monday', json_decode($connection->water_days)) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="monday_update">Lunes</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="tuesday_update" name="days_update[]" value="tuesday"
+                                                        {{ is_array(json_decode($connection->water_days)) && in_array('tuesday', json_decode($connection->water_days)) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="tuesday_update">Martes</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="wednesday_update" name="days_update[]" value="wednesday"
+                                                        {{ is_array(json_decode($connection->water_days)) && in_array('wednesday', json_decode($connection->water_days)) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="wednesday_update">Miércoles</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="thursday_update" name="days_update[]" value="thursday"
+                                                        {{ is_array(json_decode($connection->water_days)) && in_array('thursday', json_decode($connection->water_days)) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="thursday_update">Jueves</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="friday_update" name="days_update[]" value="friday"
+                                                        {{ is_array(json_decode($connection->water_days)) && in_array('friday', json_decode($connection->water_days)) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="friday_update">Viernes</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="saturday_update" name="days_update[]" value="saturday"
+                                                        {{ is_array(json_decode($connection->water_days)) && in_array('saturday', json_decode($connection->water_days)) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="saturday_update">Sábado</label>
+                                                </div>
+                                                <div class="form-check col-lg-4">
+                                                    <input class="form-check-input" type="checkbox" id="sunday_update" name="days_update[]" value="sunday"
+                                                        {{ is_array(json_decode($connection->water_days)) && in_array('sunday', json_decode($connection->water_days)) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="sunday_update">Domingo</label>
+                                                </div>
+                                                <div class="form-check col-lg-5">
+                                                    <input class="form-check-input" type="checkbox" id="all_days_update" name="all_days_update"
+                                                        {{ $connection->water_days == json_encode('all') ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="all_days_update">Todos los días</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

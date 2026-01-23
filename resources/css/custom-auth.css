@@ -12,3 +12,8 @@
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}

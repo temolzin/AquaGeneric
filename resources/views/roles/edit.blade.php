@@ -57,16 +57,11 @@
                                             @foreach ($perms as $permission)
                                                 <tr>
                                                     <td class="text-center">
-                                                        <div
-                                                          class="custom-control custom-checkbox custom-checkbox-lg">
-                                                         <input type="checkbox"
+                                                        <input type="checkbox"
+                                                            class="perm-checkbox module-{{ $module }}"
                                                             name="permissions[]"
                                                             value="{{ $permission->id }}"
-                                                            class="custom-control-input"
-                                                            id="permission{{ $permission->id }}">
-                                                        <label class="custom-control-label"
-                                                            for="permission{{ $permission->id }}"></label>
-                                                        </div>
+                                                            {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
                                                     </td>
                                                     <td>{{ $permission->description }}</td>
                                                 </tr>
