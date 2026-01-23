@@ -8,7 +8,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Models\Cost;
-use Illuminate\Database\Eloquent\Relations\BelongsTo; 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Customer extends Model implements HasMedia
 {
@@ -79,6 +79,21 @@ class Customer extends Model implements HasMedia
                 $waterConnection->debts()->delete();
             });
             $customer->waterConnections()->delete();
+
+            if ($customer->user) {
+                $customer->user->delete();
+            }
+        });
+
+        static::updated(function ($customer) {
+            if ($customer->user) {
+                $customer->user->update([
+                    'name' => $customer->name,
+                    'last_name' => $customer->last_name,
+                    'email' => $customer->email,
+                    'locality_id' => $customer->user->locality_id,
+                ]);
+            }
         });
     }
     
@@ -94,16 +109,16 @@ class Customer extends Model implements HasMedia
 
     public function getNameAttribute($value)
     {
-        return $this->user ? $this->user->name : $value;
+        return $value ?: ($this->user ? $this->user->name : '');
     }
 
     public function getEmailAttribute($value)
     {
-        return $this->user ? $this->user->email : $value;
+        return $value ?: ($this->user ? $this->user->email : '');
     }
 
     public function getLastNameAttribute($value)
     {
-        return $this->user ? $this->user->last_name : $value;
+        return $value ?: ($this->user ? $this->user->last_name : '');
     }
 }
