@@ -374,6 +374,24 @@ return [
         ],
     ],
     [
+        'text' => 'Gestión de Ingresos',
+        'icon' => 'fas fa-fw fa-landmark',
+        'submenu' => [
+            [
+                'text' => 'Ingresos',
+                'url' => '/generalEarnings',
+                'icon' => 'fas fa-fw fa-cash-register',
+                'can'  => 'viewGeneralEarning',
+            ],
+            [
+                'text' => 'Tipos de Ingresos',
+                'url'  => '/earningTypes',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewEarningTypes',
+            ],
+        ],
+    ],
+    [
         'text' => 'Gestión de Incidencias',
         'icon' => 'fas fa-fw fa-exclamation-triangle',
         'submenu' => [

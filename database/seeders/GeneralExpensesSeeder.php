@@ -5,64 +5,17 @@ use App\Models\GeneralExpense;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use App\Models\User;
 
 class GeneralExpensesSeeder extends Seeder
 {
     public function run()
     {
-        $faker = Faker::create();
+        $faker = Faker::create('es_MX');
         
-        $this->fixExistingExpensesWithoutType();
+        DB::table('general_expenses')->truncate();
         
         $this->createNewExpensesWithType($faker);
-    }
-
-    private function fixExistingExpensesWithoutType()
-    {
-        $expensesWithoutType = DB::table('general_expenses')
-            ->whereNull('expense_type_id')
-            ->get();
-
-        foreach ($expensesWithoutType as $expense) {
-            $expenseType = DB::table('expense_types')
-                ->where('locality_id', $expense->locality_id)
-                ->first();
-
-            if ($expenseType) {
-                DB::table('general_expenses')
-                    ->where('id', $expense->id)
-                    ->update([
-                        'expense_type_id' => $expenseType->id,
-                        'updated_at' => now()
-                    ]);
-            } else {
-                $existingGeneralType = DB::table('expense_types')
-                    ->where('locality_id', $expense->locality_id)
-                    ->where('name', 'Gastos Generales')
-                    ->first();
-
-                if ($existingGeneralType) {
-                    $expenseTypeId = $existingGeneralType->id;
-                } else {
-                    $expenseTypeId = DB::table('expense_types')->insertGetId([
-                        'name' => 'Gastos Generales',
-                        'description' => 'Gastos varios de operación',
-                        'color' => '#95a5a6',
-                        'locality_id' => $expense->locality_id,
-                        'created_by' => $expense->created_by ?? 1,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-
-                DB::table('general_expenses')
-                    ->where('id', $expense->id)
-                    ->update([
-                        'expense_type_id' => $expenseTypeId,
-                        'updated_at' => now()
-                    ]);
-            }
-        }
     }
 
     private function createNewExpensesWithType($faker)
@@ -73,10 +26,47 @@ class GeneralExpensesSeeder extends Seeder
             return;
         }
 
+        $concepts = [
+            'Mantenimiento de Equipos',
+            'Material de Oficina',
+            'Pago de Luz',
+            'Servicio de Internet',
+            'Combustible',
+            'Limpieza',
+            'Papelería',
+            'Herramientas',
+            'Transporte',
+            'Agua'
+        ];
+
+        $descriptions = [
+            'Pago del servicio mensual',
+            'Compra de materiales necesarios',
+            'Mantenimiento preventivo realizado',
+            'Factura del periodo correspondiente',
+            'Adquisición de herramientas',
+            'Servicio contratado para el mes',
+            'Insumos para operaciones diarias',
+            'Reparación de equipo dañado',
+            'Pago correspondiente al mes actual',
+            'Material administrativo'
+        ];
+
+        $recordsToCreate = 5;
+        $recordsCreated = 0;
+        
         foreach ($localities as $locality) {
+            if ($recordsCreated >= $recordsToCreate) {
+                break;
+            }
+            
             $users = DB::table('users')
-                ->where('locality_id', $locality->id)
-                ->pluck('id')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
+                ->where('users.locality_id', $locality->id)
+                ->distinct()
+                ->pluck('users.id')
                 ->toArray();
 
             if (empty($users)) {
@@ -91,22 +81,26 @@ class GeneralExpensesSeeder extends Seeder
                 continue;
             }
 
-            $numberOfExpenses = rand(3, 5);
+            $expenseTypesArray = $expenseTypes->toArray();
+            $remaining = $recordsToCreate - $recordsCreated;
+            $createForThis = min(2, $remaining);
             
-            for ($i = 0; $i < $numberOfExpenses; $i++) {
-                $expenseType = $faker->randomElement($expenseTypes->toArray());
+            for ($i = 0; $i < $createForThis; $i++) {
+                $expenseType = $faker->randomElement($expenseTypesArray);
                 
                 DB::table('general_expenses')->insert([
                     'locality_id' => $locality->id,
                     'created_by' => $faker->randomElement($users),
-                    'expense_type_id' => $expenseType->id, 
-                    'concept' => $faker->word(),
-                    'description' => $faker->sentence(),
+                    'expense_type_id' => $expenseType->id,
+                    'concept' => $concepts[array_rand($concepts)],
+                    'description' => $descriptions[array_rand($descriptions)],
                     'amount' => mt_rand(10, 50) * 100,
                     'expense_date' => $faker->dateTimeBetween('-60 days', 'now'),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+                
+                $recordsCreated++;
             }
         }
     }

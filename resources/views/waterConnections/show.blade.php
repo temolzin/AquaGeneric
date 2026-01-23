@@ -35,9 +35,9 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Propietario</label>
-                                        @if($connection->customer && $connection->customer->user)
+                                        @if($connection->customer)
                                             <input type="text" disabled class="form-control"
-                                                value="{{ $connection->customer->user->name }} {{ $connection->customer->user->last_name }}" />
+                                                value="{{ $connection->customer->name }} {{ $connection->customer->last_name }}" />
                                         @else
                                             <div class="alert alert-warning p-2 mb-2 small">
                                                 Esta toma de agua no tiene un cliente asignado.
@@ -67,19 +67,19 @@
                                         <input type="text" disabled class="form-control" value="{{ $connection->block }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Código Postal</label>
                                         <input type="text" disabled class="form-control" value="{{ $connection->locality->zip_code ?? 'Desconocido' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Número Exterior</label>
                                         <input type="text" disabled class="form-control" value="{{ $connection->exterior_number ?? 'Desconocido' }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Número Interior</label>
                                         <input type="text" disabled class="form-control" value="{{ $connection->interior_number ?? 'Desconocido' }}" />

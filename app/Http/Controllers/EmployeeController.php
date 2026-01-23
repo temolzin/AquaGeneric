@@ -172,6 +172,14 @@ class EmployeeController extends Controller
             $errors = [];
             $authUser = Auth::user();
 
+            $content = file_get_contents($file->getPathname());
+            $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
+
+            if ($encoding !== 'UTF-8') {
+                $convertedContent = mb_convert_encoding($content, 'UTF-8', $encoding);
+                file_put_contents($file->getPathname(), $convertedContent);
+            }
+
             $handle = fopen($file->getPathname(), 'r');
 
             if ($handle === false) {

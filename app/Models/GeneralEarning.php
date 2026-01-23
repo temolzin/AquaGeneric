@@ -4,23 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Inventory extends Model
+class GeneralEarning extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes;
-
-    protected $table = 'inventory';
+    use HasFactory, SoftDeletes, InteractsWithMedia;
 
     protected $fillable = [
         'locality_id',
         'created_by',
-        'name',
+        'concept',
         'description',
         'amount',
-        'inventory_category_id',
-        'material',
-        'dimensions',
+        'earning_type_id', 
+        'earning_date'
     ];
 
     public function locality()
@@ -33,13 +32,8 @@ class Inventory extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function category()
+    public function earningType()
     {
-        return $this->belongsTo(InventoryCategory::class, 'inventory_category_id');
-    }
-
-    public function logs()
-    {
-        return $this->hasMany(LogInventory::class);
+        return $this->belongsTo(EarningType::class, 'earning_type_id');
     }
 }

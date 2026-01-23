@@ -8,6 +8,7 @@ use App\Models\Locality;
 use App\Models\WaterConnection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -16,13 +17,22 @@ class ProfileController extends Controller
         $authUser = Auth::user()->load([
             'locality.membership',
             'locality.users',
-            'locality.waterConnections' => function($query) {
+            'locality.waterConnections' => function ($query) {
                 $query->where('is_canceled', false);
             }
         ]);
 
         $membershipStats = [
-            'users_count' => $authUser->locality ? $authUser->locality->users->count() : 0,
+            'users_count' => $authUser->locality && $authUser->locality->membership ?
+                DB::table('memberships as m')
+                    ->join('localities as l', 'l.membership_id', '=', 'm.id')
+                    ->join('users as u', 'u.locality_id', '=', 'l.id')
+                    ->join('model_has_roles as mhr', 'mhr.model_id', '=', 'u.id')
+                    ->join('roles as r', 'r.id', '=', 'mhr.role_id')
+                    ->where('m.id', $authUser->locality->membership->id)
+                    ->whereIn('r.name', ['Secretaria', 'Supervisor'])
+                    ->distinct('u.id')
+                    ->count('u.id') : 0,
             'users_limit' => $authUser->locality && $authUser->locality->membership ? $authUser->locality->membership->users_number : 0,
             'water_connections_count' => $authUser->locality ? $authUser->locality->waterConnections->count() : 0,
             'water_connections_limit' => $authUser->locality && $authUser->locality->membership ? $authUser->locality->membership->water_connections_number : 0,

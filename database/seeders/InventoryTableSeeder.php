@@ -20,6 +20,11 @@ class InventoryTableSeeder extends Seeder
             throw new \Exception('No hay IDs disponibles en las tablas localities o users.');
         }
 
+        DB::table('inventory')->delete();
+
+        DB::statement('ALTER TABLE inventory AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE log_inventory AUTO_INCREMENT = 1');
+
         $categories = DB::table('inventory_categories')
             ->select('id', 'name', 'locality_id')
             ->get();
@@ -33,7 +38,7 @@ class InventoryTableSeeder extends Seeder
 
         foreach ($localityIds as $localityId) {
             $localCategories = $categoryMap[$localityId] ?? [];
-            
+
             if (empty($localCategories)) {
                 $this->command->warn("No hay categorías para la localidad ID: {$localityId}");
                 continue;
@@ -84,7 +89,7 @@ class InventoryTableSeeder extends Seeder
 
             foreach ($items as $item) {
                 $categoryId = $localCategories[$item['target_category']] ?? null;
-                
+
                 if (!$categoryId) {
                     $this->command->error("Categoría no encontrada: {$item['target_category']} para localidad {$localityId}");
                     continue;
@@ -104,8 +109,6 @@ class InventoryTableSeeder extends Seeder
                 ];
             }
         }
-
-        DB::table('inventory')->truncate();
 
         foreach (array_chunk($inventoryData, 50) as $chunk) {
             DB::table('inventory')->insert($chunk);
