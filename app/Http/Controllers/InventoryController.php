@@ -196,4 +196,156 @@ class InventoryController extends Controller
 
         return redirect()->back()->with('success', 'Cantidad actualizada correctamente');
     }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:csv|max:10240' 
+        ]);
+
+        try {
+            $file = $request->file('excel_file');
+            $processed = 0;
+            $imported = 0;
+            $errors = [];
+            $authUser = Auth::user();
+    
+            $content = file_get_contents($file->getPathname());
+            $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
+
+            if ($encoding !== 'UTF-8') {
+                $convertedContent = mb_convert_encoding($content, 'UTF-8', $encoding);
+                file_put_contents($file->getPathname(), $convertedContent);
+            }
+    
+            $handle = fopen($file->getPathname(), 'r');
+    
+            $headers = fgetcsv($handle);
+            $expectedHeaders = ['nombre', 'descripcion_inventario', 'cantidad', 'categoria_inventario', 'descripcion_categoria', 'material', 'dimensiones'];
+    
+            if ($headers !== $expectedHeaders) {
+                fclose($handle);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Formato de archivo incorrecto. Por favor descarga la plantilla oficial.'
+                ], 400);
+            }
+    
+            while (($rowData = fgetcsv($handle)) !== FALSE) {
+                $processed++;
+        
+                if (empty(array_filter($rowData))) {
+                    continue;
+                }
+        
+                $result = $this->processRowData($rowData, $authUser, $processed);
+                if ($result['success']) {
+                    $imported++;
+                } else {
+                    $errors[] = $result['error']; 
+                }
+            }
+    
+            fclose($handle);
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Importación completada',
+                'processed' => $processed,
+                'imported' => $imported,
+                'failed' => count($errors),
+                'errors' => $errors
+            ]);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar el archivo CSV: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    private function processRowData($rowData, $authUser, $rowNumber)
+    {
+        try {
+            $requiredFields = [
+                0 => 'nombre',
+                1 => 'descripcion_inventario',
+                2 => 'cantidad',
+                3 => 'categoria_inventario',
+                4 => 'descripcion_categoria',
+                5 => 'material',
+                6 => 'dimensiones'
+            ];
+
+            $missingFields = [];
+            foreach ($requiredFields as $index => $fieldName) {
+                if (!isset($rowData[$index]) || trim($rowData[$index]) === '') {
+                    $missingFields[] = $fieldName;
+                }
+            }
+
+            if (!empty($missingFields)) {
+                return [
+                    'success' => false,
+                    'error' => "Fila $rowNumber: Campos requeridos faltantes: " . implode(', ', $missingFields)
+                ];
+            }
+
+            $nombre = trim($rowData[0]);
+            $descripcionInventario = trim($rowData[1]);
+            $cantidad = trim($rowData[2]);
+            $categoriaNombre = trim($rowData[3]);
+            $descripcionCategoria = trim($rowData[4]);
+            $material = trim($rowData[5]);
+            $dimensiones = trim($rowData[6]);
+
+            if (!is_numeric($cantidad) || $cantidad < 0 || floor($cantidad) != $cantidad) {
+                return ['success' => false, 'error' => "Fila $rowNumber: Cantidad '$cantidad' debe ser un número entero positivo o cero"];
+            }
+
+            $categoria = InventoryCategory::where(function($query) use ($authUser, $categoriaNombre) {
+                    $query->where('locality_id', $authUser->locality_id)
+                        ->orWhereNull('locality_id');
+                })
+                ->whereRaw('LOWER(name) = ?', [strtolower($categoriaNombre)])
+                ->first();
+
+            if (!$categoria) {
+                $categoriaColor = color(rand(1, 15));
+                $categoria = InventoryCategory::create([
+                    'name' => $categoriaNombre,
+                    'description' => $descripcionCategoria ?: 'Sin descripción',
+                    'locality_id' => $authUser->locality_id,
+                    'created_by' => $authUser->id,
+                    'color' => color('random')
+                ]);
+            } else {
+                if (empty($categoria->description) && $descripcionCategoria !== '') {
+                    $categoria->description = $descripcionCategoria;
+                    $categoria->save();
+                }
+            }
+
+            $data = [
+                'name' => $nombre,
+                'description' => $descripcionInventario,
+                'amount' => (int) $cantidad,
+                'inventory_category_id' => $categoria->id,
+                'material' => $material,
+                'dimensions' => $dimensiones,
+                'locality_id' => $authUser->locality_id,
+                'created_by' => $authUser->id,
+            ];
+
+            Inventory::create($data);
+            return ['success' => true];
+
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => "Fila $rowNumber: Error - " . $e->getMessage()
+            ];
+        }
+    }
 }

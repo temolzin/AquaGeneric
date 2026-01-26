@@ -152,6 +152,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewInventoryCategories']], function () {
         Route::get('/inventoryCategories', [InventoryCategoryController::class, 'index'])->name('inventoryCategories.index');
         Route::resource('inventoryCategories', InventoryCategoryController::class);
+        Route::post('/inventory/import', [InventoryController::class, 'import'])->name('inventory.import');
     });
 
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
