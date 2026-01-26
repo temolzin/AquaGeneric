@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+    @extends('adminlte::page')
 
 @section('title', config('adminlte.title') . ' | Tomas')
 
@@ -49,7 +49,7 @@
                                             <th>PROPIETARIO</th>
                                             <th>COSTO</th>
                                             <th>TIPO</th>
-                                            <th>SECCIÓN</th> 
+                                            <th>SECCIÓN</th>
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
@@ -98,6 +98,14 @@
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
                                                             @endcan
+
+                                                            @if(isset($connection->customer_status) && (int)$connection->customer_status === 0)
+                                                                <a href="{{ route('waterConnections.transfer.create', $connection->id) }}"
+                                                                    class="btn btn-dark mr-2"
+                                                                    title="Cambiar propietario (titular fallecido)">
+                                                                    <i class="fas fa-exchange-alt"></i>
+                                                                </a>
+                                                            @endif
 
                                                             {{--
                                                             @can('deleteWaterConnection')
@@ -259,10 +267,10 @@
         var modal = $(this);
         var img = modal.find('#qrImage');
         var downloadBtn = modal.find('#downloadQrBtn');
-        
+
         img.attr('src', '').attr('alt', 'Cargando...');
         downloadBtn.attr('href', '#').hide();
-        
+
         $.ajax({
             url: '/waterConnections/' + id + '/qr-generate',
             method: 'GET',
@@ -334,7 +342,7 @@
     @if(session('debtError'))
         $('#debtErrorModal').modal('show');
     @endif
-    
+
     $(document).on('shown.bs.modal', '.modal', function () {
         $(this).find('.select2').select2({
             dropdownParent: $(this)

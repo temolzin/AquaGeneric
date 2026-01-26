@@ -14,6 +14,7 @@ use App\Http\Controllers\FaultReportController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
+use App\Http\Controllers\WaterConnectionTransferController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\AdvancePaymentController;
 use App\Http\Controllers\IncidentCategoriesController;
@@ -140,6 +141,8 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::patch('/waterConnections/{id}/reactivate', [WaterConnectionController::class, 'reactivate'])->name('waterConnections.reactivate');
         Route::get('/waterConnections/{id}/qr-generate', [WaterConnectionController::class, 'generateQrAjax'])->name('waterConnections.qr-generate');
         Route::get('/waterConnections/{id}/qr-download', [WaterConnectionController::class, 'downloadQr'])->name('waterConnections.qr-download');
+        Route::get('/waterConnections/{id}/transfer', [WaterConnectionTransferController::class, 'create'])->name('waterConnections.transfer.create');
+        Route::post('/waterConnections/{id}/transfer', [WaterConnectionTransferController::class, 'store'])->name('waterConnections.transfer.store');
     });
 
     Route::group(['middleware' => ['can:viewInventory']], function () {
