@@ -20,12 +20,10 @@
                             <i class="fas fa-download mr-2"></i>Descargar Plantilla
                         </a>
                     </div>
-                    
                     <div class="bg-light-purple p-3 rounded mb-3 text-center">
                         <h6 class="text-purple mb-3">
                             <i class="fas fa-info-circle mr-2"></i>Información Importante
                         </h6>
-
                         <div class="row justify-content-center mt-3">
                             <div class="col-md-6 mb-2">
                                 <strong class="text-dark small">Formato de Cantidad:</strong>
@@ -39,7 +37,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label class="font-weight-bold text-dark">Seleccionar archivo CSV:</label>
                         <div class="custom-file">
