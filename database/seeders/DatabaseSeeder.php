@@ -40,5 +40,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EarningTypeSeeder::class);
         $this->call(GeneralEarningsSeeder::class);
         $this->call(LogInventorySeeder::class);
+        $this->call(LogWaterConnectionTransferSeeder::class);
     }
 }
