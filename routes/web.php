@@ -47,9 +47,8 @@ use App\Http\Controllers\GeneralEarningController;
 |
 */
 
-Route::get('/', function () {
-    return view('login');
-});
+Route::view('/', 'home')->name('home');
+Route::view('/login', 'login')->name('login');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
