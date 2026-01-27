@@ -322,6 +322,23 @@ class CustomerController extends Controller
         return $pdf->stream('customers_summary.pdf');
     }
 
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="plantilla_clientes.csv"',
+    ];
+
+        $content = "\xEF\xBB\xBF";
+        
+        $content .= "nombre,apellido,correo_electronico,calle,colonia,localidad,estado,codigo_postal,numero_exterior,numero_interior,estado_civil,estado_titular,nota\n";
+
+        $content .= "Andrea,Estrada,andy@gmail.com,retorno Acolman,Acolman,Acolman,Estado de Mexico,55870,1,2,Casado,Con vida,test\n";
+        $content .= "Andres,Rueda,andres@gmail.com,palma,Valle,Valle de Bravo,Valle de Bravo,55879,3,6,Soltero,Fallecido,test\n";
+
+        return response($content, 200, $headers);
+    }
+
     public function import(Request $request)
     {
         $request->validate([

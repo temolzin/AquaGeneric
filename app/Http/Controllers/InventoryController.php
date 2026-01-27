@@ -197,6 +197,26 @@ class InventoryController extends Controller
         return redirect()->back()->with('success', 'Cantidad actualizada correctamente');
     }
 
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="plantilla_inventario.csv"',
+    ];
+
+        $content = "\xEF\xBB\xBF";
+
+        $content .= "nombre,descripcion_inventario,cantidad,categoria_inventario,descripcion_categoria,material,dimensiones\n";
+
+        $content .= "Tubería PVC 2\",Tubería para agua potable de 2 pulgadas,50,Tuberías y Conexiones,Tuberías y accesorios para conducción de agua,Plástico,2 pulgadas\n";
+        $content .= "Válvula de bola,Válvula de paso completo de latón,20,Válvulas y Reguladores,Válvulas para control de flujo,Latón,1/2 pulgada\n";
+        $content .= "Cloro granulado,Producto para tratamiento de agua,100,Productos Químicos,Productos químicos para potabilización,Cloro,25 kg por bolsa\n";
+        $content .= "Bomba de agua,Bomba centrífuga de acero inoxidable,5,Bombas y Motores,Bombas y motores para sistemas hidráulicos,Acero inoxidable,2 HP de potencia\n";
+        $content .= "Filtro de arena,Filtro para tratamiento de agua,8,Filtros y Purificación,Filtros para purificación de agua,Arena sílica,12 pulgadas de diámetro\n";
+
+        return response($content, 200, $headers);
+    }
+
     public function import(Request $request)
     {
         $request->validate([

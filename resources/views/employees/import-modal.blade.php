@@ -16,7 +16,7 @@
                         <i class="fas fa-file-csv text-info fa-3x mb-3"></i>
                         <h5 class="text-dark">Subir Archivo CSV</h5>
                         <p class="text-muted small">Formato aceptado: .csv</p>
-                        <a href="{{ asset('layout/plantilla_empleados.csv') }}" class="btn btn-outline-info btn-sm mt-2" download>Descargar Plantilla CSV</a>
+                        <a href="{{ route('employees.downloadTemplate') }}" class="btn btn-outline-info btn-sm mt-2" download>Descargar Plantilla CSV</a>
                     </div>
                     <div class="bg-light-info p-3 rounded mb-3 text-center">
                         <h6 class="text-info mb-3">
