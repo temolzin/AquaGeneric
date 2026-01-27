@@ -24,7 +24,7 @@ class WaterConnectionController extends Controller
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
             ->leftJoin('sections', 'water_connections.section_id', '=', 'sections.id')
             ->orderBy('water_connections.created_at', 'desc')
-            ->select('water_connections.*');
+            ->select('water_connections.*', 'customers.status as customer_status', 'customers.name as customer_name', 'customers.last_name as customer_last_name');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -90,7 +90,7 @@ class WaterConnectionController extends Controller
     {
         $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
             ->findOrFail($id);
-            
+
         $sections = Section::where('locality_id', $connection->locality_id)
                     ->orWhereNull('locality_id')
                     ->get();
@@ -197,7 +197,7 @@ class WaterConnectionController extends Controller
         $connections = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
             ->select('id')
             ->get();
-        
+
         foreach ($connections as $connection) {
             if ($this->generateConnectionHash($connection->id) === $hash) {
                 return $connection->id;
@@ -239,7 +239,7 @@ class WaterConnectionController extends Controller
         try {
             $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
                 ->findOrFail($id);
-                
+
             $hash = $this->generateConnectionHash($id);
             $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 
@@ -274,7 +274,7 @@ class WaterConnectionController extends Controller
         try {
             $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
                 ->findOrFail($id);
-                
+
             $hash = $this->generateConnectionHash($id);
             $publicUrl = route('waterConnections.public', ['hash' => $hash]);
 
@@ -317,13 +317,14 @@ class WaterConnectionController extends Controller
                     ->orWhere('block', 'like', "%{$search}%");
                 });
             }
+
             $connections = $query->paginate(10)->appends(request()->query());
-            $connections->getCollection()->transform(function ($connection) {
+
+            foreach ($connections as $connection) {
                 $connection->formatted_water_days = $this->getFormattedWaterDays($connection->water_days);
                 $connection->water_pressure_text = $connection->has_water_pressure ? 'Sí' : 'No';
                 $connection->cistern_text = $connection->has_cistern ? 'Sí' : 'No';
-                return $connection;
-            });
+            };
         }
 
         return view('viewCustomerWaterConnections.index', compact('connections'));
@@ -334,23 +335,23 @@ class WaterConnectionController extends Controller
         if (empty($waterDays) || $waterDays === 'null' || $waterDays === '[]') {
             return 'No hay días específicos asignados';
         }
-        
+
         if ($waterDays === '"all"' || $waterDays === 'all') {
             return 'Todos los días';
         }
-        
+
         $daysArray = json_decode($waterDays, true) ?: [$waterDays];
-        
+
         $daysMap = [
             'monday' => 'Lunes', 'tuesday' => 'Martes', 'wednesday' => 'Miércoles',
-            'thursday' => 'Jueves', 'friday' => 'Viernes', 'saturday' => 'Sábado', 
+            'thursday' => 'Jueves', 'friday' => 'Viernes', 'saturday' => 'Sábado',
             'sunday' => 'Domingo'
         ];
-        
+
         $spanishDays = [];
         foreach ($daysArray as $day) {
             $dayLower = strtolower(trim($day));
-            
+
             foreach ($daysMap as $en => $es) {
                 if ($dayLower === $en || $dayLower === strtolower($es) || $dayLower === 'all') {
                     $spanishDays[] = $es;
