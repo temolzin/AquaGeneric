@@ -1,4 +1,4 @@
-    @extends('adminlte::page')
+@extends('adminlte::page')
 
 @section('title', config('adminlte.title') . ' | Tomas')
 
@@ -100,11 +100,13 @@
                                                             @endcan
 
                                                             @if(isset($connection->customer_status) && (int)$connection->customer_status === 0)
-                                                                <a href="{{ route('waterConnections.transfer.create', $connection->id) }}"
-                                                                    class="btn btn-dark mr-2"
-                                                                    title="Cambiar propietario (titular fallecido)">
+                                                                <button type="button"
+                                                                        class="btn btn-dark mr-2"
+                                                                        title="Cambiar propietario (titular fallecido)"
+                                                                        data-toggle="modal"
+                                                                        data-target="#transferOwner{{ $connection->id }}">
                                                                     <i class="fas fa-exchange-alt"></i>
-                                                                </a>
+                                                                </button>
                                                             @endif
 
                                                             {{--
@@ -139,6 +141,7 @@
                                                 @include('waterConnections.show')
                                                 @include('waterConnections.edit')
                                                 @include('waterConnections.delete')
+                                                @include('waterConnections.transfer', ['connection' => $connection, 'customers' => $customers])
 
                                                 <div class="modal fade" id="cancel{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="cancelLabel{{ $connection->id }}" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">

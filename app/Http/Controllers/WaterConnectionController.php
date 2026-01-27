@@ -24,7 +24,7 @@ class WaterConnectionController extends Controller
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
             ->leftJoin('sections', 'water_connections.section_id', '=', 'sections.id')
             ->orderBy('water_connections.created_at', 'desc')
-            ->select('water_connections.*', 'customers.status as customer_status');
+            ->select('water_connections.*', 'customers.status as customer_status', 'customers.name as customer_name', 'customers.last_name as customer_last_name');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -317,15 +317,14 @@ class WaterConnectionController extends Controller
                     ->orWhere('block', 'like', "%{$search}%");
                 });
             }
-            /** @var \Illuminate\Pagination\LengthAwarePaginator $connections */
+
             $connections = $query->paginate(10)->appends(request()->query());
 
-            $connections->getCollection()->transform(function ($connection) {
+            foreach ($connections as $connection) {
                 $connection->formatted_water_days = $this->getFormattedWaterDays($connection->water_days);
                 $connection->water_pressure_text = $connection->has_water_pressure ? 'Sí' : 'No';
                 $connection->cistern_text = $connection->has_cistern ? 'Sí' : 'No';
-                return $connection;
-            });
+            };
         }
 
         return view('viewCustomerWaterConnections.index', compact('connections'));

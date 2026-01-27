@@ -11,26 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class WaterConnectionTransferController extends Controller
 {
-    public function create($id)
-    {
-        $authUser = auth()->user();
-
-        $waterConnection = WaterConnection::with('customer')->findOrFail($id);
-
-        if (!$waterConnection->customer || (int)$waterConnection->customer->status !== 0) {
-            return redirect()
-                ->route('waterConnections.index')
-                ->with('error', 'Solo se puede transferir una toma cuando el titular actual está fallecido.');
-        }
-        $customers = Customer::where('status', 1)
-            ->where('locality_id', $authUser->locality_id)
-            ->orderBy('name')
-            ->get();
-
-        return view('waterConnections.transfer', compact('waterConnection', 'customers'));
-    }
-
-
     public function store(Request $request, $id)
     {
         $waterConnection = WaterConnection::with('customer')->findOrFail($id);

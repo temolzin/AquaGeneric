@@ -1,65 +1,76 @@
-@extends('adminlte::page')
+<div class="modal fade" id="transferOwner{{ $connection->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="card-success">
+                <div class="card-header">
+                    <div class="d-sm-flex align-items-center justify-content-between">
+                        <h4 class="card-title">
+                            Cambio de Propietario (Fallecimiento)
+                            <small>&nbsp;(*) Campos requeridos</small>
+                        </h4>
 
-@section('content')
-<div class="container">
-    <h3>Cambio de Propietario (Fallecimiento)</h3>
-
-    <div class="card mt-3">
-        <div class="card-body">
-
-            <h5>Información de la toma</h5>
-            <p><strong>Toma:</strong> {{ $waterConnection->name }}</p>
-            <p><strong>Dirección:</strong> {{ $waterConnection->street }} {{ $waterConnection->exterior_number }} {{ $waterConnection->interior_number }}</p>
-
-            <hr>
-
-            <h5>Titular actual (Fallecido)</h5>
-            <p><strong>Nombre:</strong> {{ $waterConnection->customer->name }} {{ $waterConnection->customer->last_name }}</p>
-
-            <hr>
-
-            @if(session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
-
-            <form method="POST" action="{{ route('waterConnections.transfer.store', $waterConnection->id) }}">
-                @csrf
-
-                <div class="form-group">
-                    <label for="new_customer_id">Nuevo titular</label>
-                    <select name="new_customer_id" id="new_customer_id" class="form-control" required>
-                        <option value="">Selecciona una opción</option>
-                        @foreach($customers as $customer)
-                            <option value="{{ $customer->id }}">
-                                {{ $customer->name }} {{ $customer->last_name }} (ID: {{ $customer->id }})
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('new_customer_id')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
+                        <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="form-group mt-3">
-                    <label for="note">Nota (opcional)</label>
-                    <textarea name="note" id="note" class="form-control" rows="3">{{ old('note') }}</textarea>
-                    @error('note')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
+                <form method="POST" action="{{ route('waterConnections.transfer.store', $connection->id) }}">
+                    @csrf
 
-                <div class="mt-4">
-                    <a href="{{ route('waterConnections.index') }}" class="btn btn-secondary">
-                        Cancelar
-                    </a>
+                    <div class="modal-body">
 
-                    <button type="submit" class="btn btn-primary">
-                        Transferir Toma
-                    </button>
-                </div>
+                        @if(session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
 
-            </form>
+                        <h5>Información de la toma</h5>
+                        <p class="mb-1"><strong>Toma:</strong> {{ $connection->name }}</p>
+                        <p class="mb-1"><strong>Dirección:</strong> {{ $connection->street }} {{ $connection->exterior_number }} {{ $connection->interior_number }}</p>
+
+                        <hr>
+
+                        <h5>Titular actual (Fallecido)</h5>
+                        <p class="mb-1"><strong>Titular actual (Fallecido):</strong> {{ $connection->customer_name }} {{ $connection->customer_last_name }}</p>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="new_customer_id_{{ $connection->id }}">Nuevo titular *</label>
+                            <select name="new_customer_id" id="new_customer_id_{{ $connection->id }}" class="form-control" required>
+                                <option value="">Selecciona una opción</option>
+
+                                @foreach($customers as $customer)
+                                    @if((int)$customer->id !== (int)$connection->customer_id)
+                                        <option value="{{ $customer->id }}">
+                                            {{ $customer->name }} {{ $customer->last_name }} (ID: {{ $customer->id }})
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </select>
+
+                            @error('new_customer_id')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="note_{{ $connection->id }}">Nota (opcional)</label>
+                            <textarea name="note" id="note_{{ $connection->id }}" class="form-control" rows="3">{{ old('note') }}</textarea>
+
+                            @error('note')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-success">Transferir Toma</button>
+                    </div>
+
+                </form>
+            </div>
         </div>
     </div>
 </div>
-@endsection
