@@ -16,7 +16,7 @@
                         <i class="fas fa-file-csv text-purple fa-3x mb-3"></i>
                         <h5 class="text-dark">Subir Archivo CSV</h5>
                         <p class="text-muted small">Formato aceptado: .csv</p>
-                        <a href="{{ asset('layout/plantilla_clientes.csv') }}" class="btn btn-outline-purple btn-sm mt-2" download>
+                        <a href="{{ route('customers.downloadTemplate') }}" class="btn btn-outline-purple btn-sm mt-2" download>
                             <i class="fas fa-download mr-2"></i>Descargar Plantilla
                         </a>
                     </div>

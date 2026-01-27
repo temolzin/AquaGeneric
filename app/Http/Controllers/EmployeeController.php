@@ -141,6 +141,23 @@ class EmployeeController extends Controller
         return $pdf->stream('employees.pdf');
     }
 
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="plantilla_empleados.csv"',
+    ];
+
+        $content = "\xEF\xBB\xBF";
+
+        $content .= "nombre,apellido,localidad,codigo_postal,estado,manzana,calle,numero_exterior,numero_interior,email,telefono,salario,rol\n";
+
+        $content .= "Jorge,Peralta Gonzalez,México,12345,México,5,Avenida Principal,123,99,jorge.peralta@empresa.com,5551234567,15000.00,Administrativo\n";
+        $content .= "María,López Hernández,Guadalajara,44100,Jalisco,2,Calle Secundaria,456,7,maria.lopez@empresa.com,3339876543,18000.00,Supervisor\n";
+
+        return response($content, 200, $headers);
+    }
+
     public function import(Request $request)
     {
 

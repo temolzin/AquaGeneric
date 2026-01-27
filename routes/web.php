@@ -90,7 +90,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::post('/customers/{id}/update-password', [CustomerController::class, 'updatePassword'])->name('customers.updatePassword');
         Route::post('/customers/{id}/assign-password', [CustomerController::class, 'assignOrUpdatePassword'])->name('customers.assignPassword');
         Route::post('/customers/import', [CustomerController::class, 'import'])->name('customers.import');
-        Route::get('/customers/download-template', [CustomerController::class, 'downloadTemplate'])->name('customers.downloadTemplate');
+        Route::get('/customers-download-template', [CustomerController::class, 'downloadTemplate'])->name('customers.downloadTemplate');
     });
 
     Route::group(['middleware' => ['can:viewRoles']], function () {
@@ -155,6 +155,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/inventoryCategories', [InventoryCategoryController::class, 'index'])->name('inventoryCategories.index');
         Route::resource('inventoryCategories', InventoryCategoryController::class);
         Route::post('/inventory/import', [InventoryController::class, 'import'])->name('inventory.import');
+        Route::get('/inventory-download-template', [InventoryController::class, 'downloadTemplate'])->name('inventory.downloadTemplate');
     });
 
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
@@ -191,6 +192,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('employees', EmployeeController::class);
         Route::get('/reports/generateEmployeeListReport', [EmployeeController::class, 'generateEmployeeListReport'])->name('report.generateEmployeeListReport');
         Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
+        Route::get('/employees-download-template', [EmployeeController::class, 'downloadTemplate'])->name('employees.downloadTemplate');
     });
 
     Route::group(['middleware' => ['can:viewIncidentStatuses']], function () {
