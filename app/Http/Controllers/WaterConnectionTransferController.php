@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\WaterConnection;
 use App\Models\LogWaterConnectionTransfer;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -22,8 +23,14 @@ class WaterConnectionTransferController extends Controller
         }
 
         $request->validate([
-            'new_customer_id' => 'required|exists:customers,id',
+            'new_customer_id' => [
+                'required',
+                'integer',
+                Rule::exists('customers', 'id')->where('status', 1)->where('locality_id', $waterConnection->locality_id),
+            ],
             'note' => 'nullable|string',
+        ], [
+            'new_customer_id.exists' => 'Solo puedes seleccionar clientes activos (con vida).',
         ]);
 
         $newCustomerId = (int) $request->new_customer_id;
