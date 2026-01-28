@@ -38,7 +38,7 @@
                     <div class="row d_flex align-items-center">
                         <div class="col-md-6">
                             <div class="text-bg">
-                                <img src="{{ asset('assets/index/images/logo_b.png') }}" alt="AquaControl Logo"
+                                <img src="{{ asset('img/logo_b.png') }}" alt="AquaControl Logo"
                                     class="hero-logo">
                                 <h1>AquaControl</h1>
                                 <p>
@@ -53,7 +53,7 @@
                         <div class="col-md-6">
                             <div class="text-img">
                                 <figure>
-                                    <img src="{{ asset('assets/index/images/box_img.png') }}" alt="Vista del sistema">
+                                    <img src="{{ asset('img/box_img.png') }}" alt="Vista del sistema">
                                 </figure>
                             </div>
                         </div>
@@ -79,7 +79,7 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <figure>
-                        <img src="{{ asset('assets/index/images/panel_aquacontrol.jpeg') }}" alt="Gestión comunitaria">
+                        <img src="{{ asset('img/panel_aquacontrol.jpeg') }}" alt="Gestión comunitaria">
                     </figure>
                 </div>
                 <div class="col-md-6">
@@ -159,7 +159,7 @@
                                 <div class="Testimonial_box">
                                     <i>
                                         {{-- Icono o imagen representativa --}}
-                                        <img src="{{ asset('assets/index/images/clientes_aquacontrol.jpeg') }}"
+                                        <img src="{{ asset('img/clientes_aquacontrol.jpeg') }}"
                                             alt="">
                                     </i>
                                 </div>
