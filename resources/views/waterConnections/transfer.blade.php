@@ -47,6 +47,7 @@
                                     @endif
                                 @endforeach
                             </select>
+                            <small class="text-muted">Solo se muestran clientes activos (con vida).</small>
 
                             @error('new_customer_id')
                                 <small class="text-danger">{{ $message }}</small>

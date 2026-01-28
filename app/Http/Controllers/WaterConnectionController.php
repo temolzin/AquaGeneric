@@ -41,7 +41,12 @@ class WaterConnectionController extends Controller
 
         $connections = $query->paginate(10);
 
-        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
+        $customers = Customer::query()
+            ->where('locality_id', $authUser->locality_id)
+            ->where('status', 1)
+            ->orderBy('name')
+            ->orderBy('last_name')
+            ->get();
         $costs = Cost::where('locality_id', $authUser->locality_id)
                     ->orWhereNull('locality_id')
                     ->get();
