@@ -157,8 +157,7 @@
                                             data-target="#annualGains" title="Ganancias Anuales">
                                                 <i class="fa fa-dollar-sign"></i> Ganancias Anuales
                                             </button>
-                                            <button type="button" class="btn bg-olive w-100 w-md-auto m-1" data-toggle="modal"
-                                            data-target="#weeklyGains" title="Ganancias Semanales">
+                                            <button type="button" class="btn bg-olive w-100 w-md-auto m-1" data-toggle="#weeklyGains" title="Ganancias Semanales">
                                                 <i class="fa fa-dollar-sign"></i> Ganancias Semanales
                                             </button>
                                             <button type="button" class="btn bg-orange w-100 w-md-auto m-1"
