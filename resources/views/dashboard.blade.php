@@ -241,6 +241,18 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Distribución de Ingresos Mensuales<span id="localityInfoDonut"></h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="earningsDonutChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     @endcan
                     @can('viewDashboardCards')
                     <div class="card">
@@ -340,6 +352,9 @@
 
                             annualEarningsChart.data.datasets[0].data = response.earningsPerMonth;
                             annualEarningsChart.update();
+
+                            earningsDonutChart.data.datasets[0].data = response.earningsPerMonth;
+                            earningsDonutChart.update();
                         },
                         error: function(xhr) {
                             console.log('Error al obtener los datos de la localidad');
@@ -347,6 +362,7 @@
                     });
                     $('#localityInfoMonthly').text(' de ' + localityName + ', ' + municipality);
                     $('#localityInfoAnnual').text(' de ' + localityName + ', ' + municipality);
+                    $('#localityInfoDonut').text(' de ' + localityName + ', ' + municipality);
                 } else {
                     earningsChart.data.datasets[0].data = Array(12).fill(0);
                     earningsChart.update();
@@ -354,8 +370,12 @@
                     annualEarningsChart.data.datasets[0].data = Array(12).fill(0);
                     annualEarningsChart.update();
 
+                    earningsDonutChart.data.datasets[0].data = Array(12).fill(0);
+                    earningsDonutChart.update();
+
                     $('#localityInfoMonthly').text('');
                     $('#localityInfoAnnual').text('');
+                    $('#localityInfoDonut').text('');
                 }
             });
             var successMessage = "{{ session('success') }}";
@@ -432,6 +452,69 @@
                 scales: {
                     y: {
                         beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var ctxDonut = document.getElementById('earningsDonutChart').getContext('2d');
+        var earningsDonutChart = new Chart(ctxDonut, {
+            type: 'doughnut',
+            data: {
+                labels: @json($data['months']),
+                datasets: [{
+                    label: 'Ingresos en $',
+                    data: @json($data['earningsPerMonth']),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 159, 64, 0.8)',
+                        'rgba(199, 199, 199, 0.8)',
+                        'rgba(83, 102, 255, 0.8)',
+                        'rgba(255, 99, 255, 0.8)',
+                        'rgba(99, 255, 132, 0.8)',
+                        'rgba(255, 178, 102, 0.8)',
+                        'rgba(102, 255, 178, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(199, 199, 199, 1)',
+                        'rgba(83, 102, 255, 1)',
+                        'rgba(255, 99, 255, 1)',
+                        'rgba(99, 255, 132, 1)',
+                        'rgba(255, 178, 102, 1)',
+                        'rgba(102, 255, 178, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += '$' + context.parsed.toLocaleString('es-MX', {minimumFractionDigits: 2});
+                                }
+                                return label;
+                            }
+                        }
                     }
                 }
             }
