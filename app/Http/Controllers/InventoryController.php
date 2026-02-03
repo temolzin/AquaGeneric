@@ -233,21 +233,65 @@ class InventoryController extends Controller
             $content = file_get_contents($file->getPathname());
             $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
 
-            if ($encoding !== 'UTF-8') {
+            if ($encoding && $encoding !== 'UTF-8') {
                 $convertedContent = mb_convert_encoding($content, 'UTF-8', $encoding);
                 file_put_contents($file->getPathname(), $convertedContent);
+                $content = $convertedContent;
             }
     
             $handle = fopen($file->getPathname(), 'r');
     
             $headers = fgetcsv($handle);
-            $expectedHeaders = ['nombre', 'descripcion_inventario', 'cantidad', 'categoria_inventario', 'descripcion_categoria', 'material', 'dimensiones'];
-    
-            if ($headers !== $expectedHeaders) {
+
+            if ($headers === false || empty($headers)) {
                 fclose($handle);
                 return response()->json([
                     'success' => false,
-                    'message' => 'Formato de archivo incorrecto. Por favor descarga la plantilla oficial.'
+                    'message' => 'El archivo CSV está vacío o no se pudo leer.'
+                ], 400);
+            }
+
+            if (isset($headers[0])) {
+                $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headers[0]);
+                $headers[0] = preg_replace('/^ï»¿/', '', $headers[0]);
+                $headers[0] = ltrim($headers[0], "\0\x0B\xEF\xBB\xBF");
+            }
+
+            foreach ($headers as &$header) {
+                $header = trim($header);
+                $header = preg_replace('/^ï»¿/', '', $header);
+            }
+            unset($header);
+
+            $expectedHeaders = ['nombre', 'descripcion_inventario', 'cantidad', 'categoria_inventario', 'descripcion_categoria', 'material', 'dimensiones'];
+    
+            if (count($headers) !== count($expectedHeaders)) {
+                fclose($handle);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Número de columnas incorrecto. Se esperaban ' . count($expectedHeaders) . ' columnas, se encontraron ' . count($headers),
+                    'expected_headers' => $expectedHeaders,
+                    'received_headers' => $headers
+                ], 400);
+            }
+
+            $headersMatch = true;
+            $headerMismatches = [];
+            foreach ($expectedHeaders as $index => $expectedHeader) {
+                if (strtolower(trim($headers[$index] ?? '')) !== strtolower($expectedHeader)) {
+                    $headersMatch = false;
+                    $headerMismatches[] = "Columna " . ($index + 1) . ": esperado '{$expectedHeader}', recibido '" . ($headers[$index] ?? 'vacío') . "'";
+                }
+            }
+
+            if (!$headersMatch) {
+                fclose($handle);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Los encabezados no coinciden con la plantilla oficial.',
+                    'expected_headers' => $expectedHeaders,
+                    'received_headers' => $headers,
+                    'mismatches' => $headerMismatches
                 ], 400);
             }
     
@@ -288,6 +332,18 @@ class InventoryController extends Controller
     private function processRowData($rowData, $authUser, $rowNumber)
     {
         try {
+            foreach ($rowData as &$field) {
+                if (is_string($field)) {
+                    if (preg_match('/(Ã.)/u', $field)) {
+                        $field = utf8_decode($field);
+                    }
+
+                    $field = mb_convert_encoding($field, 'UTF-8', 'UTF-8');
+                    $field = @iconv('UTF-8', 'UTF-8//TRANSLIT', $field);
+                }
+            }
+            unset($field);
+
             $requiredFields = [
                 0 => 'nombre',
                 1 => 'descripcion_inventario',
