@@ -99,6 +99,10 @@
                                                             </button>
                                                             @endcan
 
+                                                            <button type="button" class="btn btn-primary mr-2" data-toggle="modal" title="Detalles / Historial"  data-target="#details{{ $connection->id }}">
+                                                                <i class="fas fa-history"></i>
+                                                            </button>
+
                                                             @if(isset($connection->customer_status) && (int)$connection->customer_status === 0)
                                                                 <button type="button"
                                                                         class="btn btn-dark mr-2"
@@ -141,6 +145,7 @@
                                                 @include('waterConnections.show')
                                                 @include('waterConnections.edit')
                                                 @include('waterConnections.delete')
+                                                @include('waterConnections.details', ['connection' => $connection])
                                                 @include('waterConnections.transfer', ['connection' => $connection, 'customers' => $customers])
 
                                                 <div class="modal fade" id="cancel{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="cancelLabel{{ $connection->id }}" aria-hidden="true">
@@ -328,6 +333,27 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+
+        const loadedHistory = {};
+
+        $('div.modal[id^="details"]').on('shown.bs.modal', function () {
+            const $modal = $(this);
+            const connectionId = $modal.data('connection-id');
+
+            if (loadedHistory[connectionId]) return;
+
+            const $container = $('#historyContent' + connectionId);
+            $container.html('<div class="text-muted">Cargando historial...</div>');
+
+            $.get('/waterConnections/' + connectionId + '/history')
+                .done(function (html) {
+                    $container.html(html);
+                    loadedHistory[connectionId] = true;
+                })
+                .fail(function () {
+                    $container.html('<div class="alert alert-danger mb-0">No se pudo cargar el historial.</div>');
+                });
+        });
     });
 
     $('#createWaterConnections').on('shown.bs.modal', function() {
