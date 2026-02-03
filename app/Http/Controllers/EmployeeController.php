@@ -227,9 +227,7 @@ class EmployeeController extends Controller
                 fclose($handle);
                 return response()->json([
                     'success' => false,
-                    'message' => 'Número de columnas incorrecto. Se esperaban ' . count($expectedHeaders) . ' columnas, se encontraron ' . count($headers),
-                    'expected_headers' => $expectedHeaders,
-                    'received_headers' => $headers
+                    'message' => 'Formato de archivo incorrecto. El número de columnas no coincide con la plantilla.'
                 ], 400);
             }
 

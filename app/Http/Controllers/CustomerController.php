@@ -407,14 +407,9 @@ class CustomerController extends Controller
             $content = file_get_contents($filePath);
             $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
             
-            if ($encoding && $encoding !== 'UTF-8') {
-                $convertedContent = mb_convert_encoding($content, 'UTF-8', $encoding);
-                file_put_contents($filePath, $convertedContent);
-                $content = $convertedContent;
-            } else {
-                $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8');
-                file_put_contents($filePath, $content);
-            }
+            $sourceEncoding = ($encoding && $encoding !== 'UTF-8') ? $encoding : 'UTF-8';
+            $content = mb_convert_encoding($content, 'UTF-8', $sourceEncoding);
+            file_put_contents($filePath, $content);
             
             $handle = fopen($filePath, 'r');
             
