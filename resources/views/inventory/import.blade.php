@@ -3,48 +3,39 @@
         <div class="modal-content">
             <div class="modal-header bg-purple text-white">
                 <h5 class="modal-title" id="importDataLabel">
-                    <i class="fas fa-file-import mr-2"></i>Importar Clientes
+                    <i class="fas fa-file-import mr-2"></i>Importar Inventario
                 </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="importForm" action="{{ route('customers.import') }}" method="POST" enctype="multipart/form-data">
+            <form id="importForm" action="{{ route('inventory.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="text-center mb-4">
                         <i class="fas fa-file-csv text-purple fa-3x mb-3"></i>
                         <h5 class="text-dark">Subir Archivo CSV</h5>
                         <p class="text-muted small">Formato aceptado: .csv</p>
-                        <a href="{{ route('customers.downloadTemplate') }}" class="btn btn-outline-purple btn-sm mt-2" download>
-                            <i class="fas fa-download mr-2"></i>Descargar Plantilla
+                        <a href="{{ route('inventory.downloadTemplate') }}" class="btn btn-outline-purple btn-sm mt-2">
+                            <i class="fas fa-download mr-2"></i> Descargar Plantilla
                         </a>
                     </div>
                     <div class="bg-light-purple p-3 rounded mb-3 text-center">
                         <h6 class="text-purple mb-3">
                             <i class="fas fa-info-circle mr-2"></i>Información Importante
                         </h6>
-                        <p class="small text-dark mb-3">Estas columnas deben ser llenadas de esta forma:</p>
-                        <div class="row justify-content-center">
-                            <div class="col-md-5 mb-2">
-                                <strong class="text-dark small">Estado Civil:</strong>
+                        <div class="row justify-content-center mt-3">
+                            <div class="col-md-6 mb-2">
+                                <strong class="text-dark small">Formato de Cantidad:</strong>
                                 <div class="mt-1">
-                                    <span class="badge badge-purple mr-1">Casado</span>
-                                    <span class="badge badge-purple">Soltero</span>
-                                </div>
-                            </div>
-                            <div class="col-md-5 mb-2">
-                                <strong class="text-dark small">Estado Titular:</strong>
-                                <div class="mt-1">
-                                    <span class="badge badge-purple mr-1">Con vida</span>
-                                    <span class="badge badge-purple">Fallecido</span>
+                                    <span class="badge bg-purple">Número Entero</span>
+                                    <p class="small text-muted mb-0 mt-1">Ejemplo: 10, 25, 100</p>
+                                    <p class="small text-purple mt-2 mb-0">
+                                        <i class="fas fa-exclamation-circle mr-1"></i>Todos los campos son obligatorios.
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                        <p class="small text-purple mt-2 mb-0">
-                            <i class="fas fa-exclamation-circle mr-1"></i>
-                            Solo se aceptan estos valores. Cualquier otro valor será rechazado.
-                        </p>
                     </div>
                     <div class="form-group">
                         <label class="font-weight-bold text-dark">Seleccionar archivo CSV:</label>

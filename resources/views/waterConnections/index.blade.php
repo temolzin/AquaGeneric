@@ -49,7 +49,7 @@
                                             <th>PROPIETARIO</th>
                                             <th>COSTO</th>
                                             <th>TIPO</th>
-                                            <th>SECCIÓN</th> 
+                                            <th>SECCIÓN</th>
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
@@ -99,6 +99,16 @@
                                                             </button>
                                                             @endcan
 
+                                                            @if(isset($connection->customer_status) && (int)$connection->customer_status === 0)
+                                                                <button type="button"
+                                                                        class="btn btn-dark mr-2"
+                                                                        title="Cambiar propietario (titular fallecido)"
+                                                                        data-toggle="modal"
+                                                                        data-target="#transferOwner{{ $connection->id }}">
+                                                                    <i class="fas fa-exchange-alt"></i>
+                                                                </button>
+                                                            @endif
+
                                                             {{--
                                                             @can('deleteWaterConnection')
                                                             <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $connection->id }}">
@@ -131,6 +141,7 @@
                                                 @include('waterConnections.show')
                                                 @include('waterConnections.edit')
                                                 @include('waterConnections.delete')
+                                                @include('waterConnections.transfer', ['connection' => $connection, 'customers' => $customers])
 
                                                 <div class="modal fade" id="cancel{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="cancelLabel{{ $connection->id }}" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
@@ -259,10 +270,10 @@
         var modal = $(this);
         var img = modal.find('#qrImage');
         var downloadBtn = modal.find('#downloadQrBtn');
-        
+
         img.attr('src', '').attr('alt', 'Cargando...');
         downloadBtn.attr('href', '#').hide();
-        
+
         $.ajax({
             url: '/waterConnections/' + id + '/qr-generate',
             method: 'GET',
@@ -334,7 +345,7 @@
     @if(session('debtError'))
         $('#debtErrorModal').modal('show');
     @endif
-    
+
     $(document).on('shown.bs.modal', '.modal', function () {
         $(this).find('.select2').select2({
             dropdownParent: $(this)
