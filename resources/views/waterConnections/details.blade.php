@@ -7,7 +7,6 @@
 
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-
             <div class="card-info mb-0">
                 <div class="card-header">
                     <div class="d-sm-flex align-items-center justify-content-between">
@@ -25,8 +24,6 @@
                 </div>
 
                 <div class="modal-body">
-
-                    {{-- Tabs --}}
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active"
@@ -50,7 +47,6 @@
                     </ul>
 
                     <div class="tab-content pt-3">
-                        {{-- Historial --}}
                         <div class="tab-pane fade show active"
                              id="history-{{ $connection->id }}"
                              role="tabpanel">
@@ -61,7 +57,6 @@
                             </div>
                         </div>
 
-                        {{-- Deudas (placeholder para PR futuro) --}}
                         <div class="tab-pane fade"
                              id="debts-{{ $connection->id }}"
                              role="tabpanel">

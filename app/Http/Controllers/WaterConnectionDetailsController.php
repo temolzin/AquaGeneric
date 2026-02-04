@@ -12,12 +12,10 @@ class WaterConnectionDetailsController extends Controller
     {
         $authUser = auth()->user();
 
-        // 1) Seguridad / multitenancy: asegurar que la toma pertenece a la localidad del usuario
         $connection = WaterConnection::withoutGlobalScope(WaterConnection::SCOPE_NOT_CANCELED)
             ->where('locality_id', $authUser->locality_id)
             ->findOrFail($id);
 
-        // 2) Traer historial con relaciones para evitar N+1
         $transfers = LogWaterConnectionTransfer::query()
             ->where('water_connection_id', $connection->id)
             ->with([
@@ -29,7 +27,6 @@ class WaterConnectionDetailsController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        // 3) Devolvemos un partial HTML que el tab insertará
         return view('waterConnections.tabs.history', compact('connection', 'transfers'));
     }
 }
