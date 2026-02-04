@@ -145,13 +145,15 @@
 <script>
     $('#excel_file').on('change', function() {
         var fileName = $(this).val().split('\\').pop();
-        if (fileName) {
-            $('#fileLabel').html('<i class="fas fa-file-csv mr-2 text-success"></i>' + fileName);
-            $('#fileName').removeClass('d-none');
-            $('#selectedFileName').text(fileName);
-        } else {
-            $('#fileLabel').html('<i class="fas fa-file-csv mr-2"></i>Buscar archivo CSV...');
-            $('#fileName').addClass('d-none');
-        }
+        var hasFile = fileName ? true : false;
+        
+        $('#fileLabel').html(
+            hasFile 
+                ? '<i class="fas fa-file-csv mr-2 text-success"></i>' + fileName
+                : '<i class="fas fa-file-csv mr-2"></i>Buscar archivo CSV...'
+        );
+        
+        $('#fileName').toggleClass('d-none', !hasFile);
+        $('#selectedFileName').text(fileName);
     });
 </script>
