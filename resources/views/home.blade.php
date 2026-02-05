@@ -1,0 +1,266 @@
+@extends('layouts.landing')
+
+@section('title', 'Inicio')
+
+@section('content')
+
+    <header>
+        <div class="head_top">
+            <div class="header">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <nav class="navigation navbar navbar-expand-md navbar-dark">
+                                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                                    data-target="#navbarsExample04">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse" id="navbarsExample04">
+                                    <ul class="navbar-nav mr-auto">
+                                        <li class="nav-item active">
+                                            <a class="nav-link" href="{{ url('/') }}">Inicio</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#about">Sobre el sistema</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('login') }}">Acceder</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="banner_main">
+                <div class="container-fluid">
+                    <div class="row d_flex align-items-center">
+                        <div class="col-md-6">
+                            <div class="text-bg">
+                                <img src="{{ asset('img/logo_b.png') }}" alt="AquaControl Logo"
+                                    class="hero-logo">
+                                <h1>AquaControl</h1>
+                                <p>
+                                    Plataforma digital para la gestión eficiente del servicio de agua en comunidades,
+                                    juntas y comités locales.
+                                    Centraliza pagos, usuarios, reportes y cargos en un solo lugar, mejorando la
+                                    transparencia y reduciendo errores administrativos.
+                                </p>
+                                <a href="#features" class="read_more">Conoce más</a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-img">
+                                <figure>
+                                    <img src="{{ asset('img/box_img.png') }}" alt="Vista del sistema">
+                                </figure>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </header>
+    <div id="about" class="business">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="titlepage">
+                        <span>¿Qué es AquaControl?</span>
+                        <h2>Gestión moderna del servicio de agua</h2>
+                        <p>
+                            AquaControl nace para facilitar la administración del agua en comunidades que
+                            aún dependen de procesos manuales, hojas de cálculo o registros dispersos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <figure>
+                        <img src="{{ asset('img/panel_aquacontrol.jpeg') }}" alt="Gestión comunitaria">
+                    </figure>
+                </div>
+                <div class="col-md-6">
+                    <div class="business_box">
+                        <p>
+                            El sistema permite llevar un control claro de usuarios, pagos mensuales,
+                            adeudos, reportes y movimientos financieros, todo desde una interfaz sencilla
+                            y accesible.
+                        </p>
+                        <p>
+                            Está diseñado pensando en comités, juntas de agua y administradores locales,
+                            sin necesidad de conocimientos técnicos avanzados.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="features" class="projects">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="titlepage">
+                        <span>Funcionalidades principales</span>
+                        <h2>Todo lo que necesitas en un solo sistema</h2>
+                        <p>
+                            AquaControl reúne las herramientas esenciales para una administración clara,
+                            ordenada y transparente.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="projects_box feature-box">
+                        <i class="fa fa-users feature-icon"></i>
+                        <h4>Control de usuarios</h4>
+                        <p>
+                            Registro y gestión de usuarios, tomas de agua y datos de contacto,
+                            todo centralizado en un solo sistema.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="projects_box feature-box">
+                        <i class="fa fa-credit-card feature-icon"></i>
+                        <h4>Pagos y adeudos</h4>
+                        <p>
+                            Seguimiento detallado de pagos, historial de movimientos y control
+                            claro de adeudos pendientes.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="projects_box feature-box">
+                        <i class="fa fa-bar-chart feature-icon"></i>
+                        <h4>Reportes</h4>
+                        <p>
+                            Generación de reportes financieros y operativos para facilitar
+                            la toma de decisiones.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="container">
+                    <div class="Testimonial">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="titlepage">
+                                    <h2>Enfoque comunitario</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <div class="Testimonial_box">
+                                    <i>
+                                        {{-- Icono o imagen representativa --}}
+                                        <img src="{{ asset('img/clientes_aquacontrol.jpeg') }}"
+                                            alt="">
+                                    </i>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="Testimonial_box">
+                                    <h4>Transparencia y confianza</h4>
+                                    <p>
+                                        El objetivo principal es fortalecer la confianza entre administradores y
+                                        usuarios mediante información clara, accesible y actualizada.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="contact" class="contact">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="titlepage">
+                                <h2>Contacto</h2>
+                                <span>
+                                    ¿Te interesa implementar AquaControl en tu comunidad?
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form class="main_form">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input class="form_contril" placeholder="Nombre" type="text">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input class="form_contril" placeholder="Correo electrónico" type="email">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <textarea class="textarea" placeholder="Mensaje"></textarea>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <button class="send_btn">Enviar mensaje</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer>
+                <div class="footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="cont">
+                                    <h3>
+                                        <strong class="multi">AquaControl</strong><br>
+                                        Gestión inteligente del agua
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <ul class="social_icon">
+                                    <ul class="social_icon">
+                                        <li>
+                                            <a href="https://www.facebook.com/rootheimcompany/" target="_blank"
+                                                rel="noopener">
+                                                <i class="fa fa-facebook"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.instagram.com/rootheimcompany/" target="_blank" rel="noopener">
+                                                <i class="fa fa-instagram"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://mx.linkedin.com/company/rootheim" target="_blank"
+                                                rel="noopener">
+                                                <i class="fa fa-linkedin"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="copyright">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>
+                                        © {{ date('Y') }} AquaControl. Todos los derechos reservados.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        @endsection
