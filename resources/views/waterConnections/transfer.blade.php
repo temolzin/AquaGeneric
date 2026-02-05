@@ -24,25 +24,26 @@
                             <div class="alert alert-danger">{{ session('error') }}</div>
                         @endif
 
-                        <h5>Información de la toma</h5>
-                        <p class="mb-1"><strong>Toma:</strong> {{ $connection->name }}</p>
-                        <p class="mb-1"><strong>Dirección:</strong> {{ $connection->street }} {{ $connection->exterior_number }} {{ $connection->interior_number }}</p>
+                        <div class="p-3 mb-3 rounded border border-success" style="background:#e9f7ef;">
+                            <h5 class="mb-2">Información de la toma</h5>
+                            <p class="mb-1"><strong>Toma:</strong> {{ $connection->name }}</p>
+                            <p class="mb-0"><strong>Dirección:</strong> {{ $connection->street }} {{ $connection->exterior_number }} {{ $connection->interior_number }}</p>
+                        </div>
 
-                        <hr>
-
-                        <h5>Titular actual (Fallecido)</h5>
-                        <p class="mb-1"><strong>Titular actual (Fallecido):</strong> {{ $connection->customer_name }} {{ $connection->customer_last_name }}</p>
-                        <hr>
+                        <div class="p-3 mb-3 rounded border border-success" style="background:#e9f7ef;">
+                            <h5 class="mb-2">Titular actual (Fallecido)</h5>
+                            <p class="mb-0"><strong>Titular actual (Fallecido):</strong> {{ $connection->customer_name }} {{ $connection->customer_last_name }}</p>
+                        </div>
 
                         <div class="form-group">
                             <label for="new_customer_id_{{ $connection->id }}">Nuevo titular *</label>
-                            <select name="new_customer_id" id="new_customer_id_{{ $connection->id }}" class="form-control" required>
+                            <select name="new_customer_id" id="new_customer_id_{{ $connection->id }}" class="form-control select2" required>
                                 <option value="">Selecciona una opción</option>
 
                                 @foreach($customers as $customer)
                                     @if((int)$customer->id !== (int)$connection->customer_id)
                                         <option value="{{ $customer->id }}">
-                                            {{ $customer->name }} {{ $customer->last_name }} (ID: {{ $customer->id }})
+                                            {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
                                         </option>
                                     @endif
                                 @endforeach
