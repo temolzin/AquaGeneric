@@ -60,5 +60,4 @@ class WaterConnectionTransferController extends Controller
             ->route('waterConnections.index')
             ->with('success', 'La toma se transfirió correctamente al nuevo titular.');
     }
-
 }
