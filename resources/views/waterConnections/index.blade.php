@@ -354,6 +354,26 @@
                     $container.html('<div class="alert alert-danger mb-0">No se pudo cargar el historial.</div>');
                 });
         });
+
+        const loadedDebts = {};
+
+        $(document).on('click', 'a[id^="debts-tab-"]', function () {
+            const connectionId = $(this).attr('id').replace('debts-tab-', '');
+
+            if (loadedDebts[connectionId]) return;
+
+            const $container = $('#debtsContent' + connectionId);
+            $container.html('<div class="text-muted">Cargando deudas...</div>');
+
+            $.get('/waterConnections/' + connectionId + '/debts')
+                .done(function (html) {
+                    $container.html(html);
+                    loadedDebts[connectionId] = true;
+                })
+                .fail(function () {
+                    $container.html('<div class="alert alert-danger mb-0">No se pudieron cargar las deudas.</div>');
+                });
+        });
     });
 
     $('#createWaterConnections').on('shown.bs.modal', function() {

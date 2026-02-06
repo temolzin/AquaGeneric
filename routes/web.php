@@ -144,6 +144,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/waterConnections/{id}/qr-download', [WaterConnectionController::class, 'downloadQr'])->name('waterConnections.qr-download');
         Route::post('/waterConnections/{id}/transfer', [WaterConnectionTransferController::class, 'store'])->name('waterConnections.transfer.store');
         Route::get('/waterConnections/{id}/history', [WaterConnectionDetailsController::class, 'history'])->name('waterConnections.history');
+        Route::get('/waterConnections/{id}/debts', [WaterConnectionDetailsController::class, 'debts'])->name('waterConnections.debts');
     });
 
     Route::group(['middleware' => ['can:viewInventory']], function () {

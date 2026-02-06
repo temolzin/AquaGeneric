@@ -41,8 +41,10 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="debts-{{ $connection->id }}" role="tabpanel">
-                            <div class="alert alert-secondary mb-0">
-                                Próximamente: aquí se mostrará el tab de deudas.
+                            <div id="debtsContent{{ $connection->id }}">
+                                <div class="text-muted">
+                                    Cargando deudas...
+                                </div>
                             </div>
                         </div>
                     </div>
