@@ -685,4 +685,8 @@ class PaymentController extends Controller
             return redirect()->back()->with('error', 'Error al generar el reporte anual: ' . $e->getMessage());
         }
     }
+    public function payWithOpenPay($debtId)
+    {
+        return redirect()->route('openpay.form', ['debtId' => $debtId]);
+    }
 }

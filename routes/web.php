@@ -35,6 +35,7 @@ use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\CustomerFaultReportController;
 use App\Http\Controllers\EarningTypeController;
 use App\Http\Controllers\GeneralEarningController;
+use App\Http\Controllers\OpenPayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,6 +121,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/water-connection-payments', [PaymentController::class, 'waterConnectionPaymentsReport'])->name('report.waterConnectionPayments');
         Route::get('/annual-earnings-report/{year}', [PaymentController::class, 'annualEarningsReport']);
         Route::get('/cash-closures-report', [PaymentController::class, 'cashClosurePaymentsReport'])->name('cash-closures.report');
+        Route::post('/receipt-payment/{id}', [PaymentController::class, 'receiptPayment'])->name('reports.receiptPayment');
     });
 
     Route::group(['middleware' => ['can:viewLocality']], function () {
@@ -127,7 +129,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('localities', LocalityController::class);
         Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
-        Route::put('/localities/{locality}/mailConfiguration',[MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
+        Route::put('/localities/{locality}/mailConfiguration', [MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
         Route::post('/localities/generateTeoken', [LocalityController::class, 'generateToken'])->name('localities.generateToken');
         Route::post('/localities/{locality}/update-pdf-background', [LocalityController::class, 'updatePdfBackground'])->name('localities.updatePdfBackground');
         Route::get('/reports/movements/generate', [MovementHistoryController::class, 'generatePDF'])->name('reports.generatePdfMovementsHistory');
@@ -222,12 +224,12 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/viewCustomerWaterConnections', [WaterConnectionController::class, 'showCustomerWaterConnections'])->name('viewCustomerWaterConnections.index');
     });
 
-    Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
+    Route::group(['middleware' => ['can:viewCustomerDebts']], function () {
         Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
     });
 
-    Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
-    Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
+    Route::group(['middleware' => ['can:viewCustomerNotices']], function () {
+        Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
     });
 
     Route::group(['middleware' => ['can:viewReportsLists']], function () {
@@ -260,7 +262,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/viewCustomerWaterConnections', [WaterConnectionController::class, 'showCustomerWaterConnections'])->name('viewCustomerWaterConnections.index');
     });
 
-    Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
+    Route::group(['middleware' => ['can:viewCustomerDebts']], function () {
         Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
     });
 
@@ -272,6 +274,25 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewGeneralEarning']], function () {
         Route::get('/generalEarnings', [GeneralEarningController::class, 'index'])->name('generalEarnings.index');
         Route::resource('generalEarnings', GeneralEarningController::class);
+    });
+    Route::middleware(['auth'])->group(function () {
+        Route::prefix('openpay')->name('openpay.')->group(function () {
+            Route::get('/pay/{debtId}', [OpenPayController::class, 'showPaymentForm'])
+                ->name('form');
+            Route::post('/process', [OpenPayController::class, 'processPayment'])
+                ->name('process');
+            Route::post('/refund/{paymentId}', [OpenPayController::class, 'refund'])
+                ->name('refund');
+        });
+    });
+    Route::prefix('openpay')->name('openpay.')->group(function () {
+        // Endpoint de VERIFICACIÓN
+        Route::match(['get', 'post'], '/webhook/verify', [OpenPayController::class, 'verifyWebhook'])
+            ->name('webhook.verify');
+
+        // Endpoint de PROCESAMIENTO
+        Route::post('/webhook', [OpenPayController::class, 'webhook'])
+            ->name('webhook');
     });
 });
 

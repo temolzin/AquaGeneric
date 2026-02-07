@@ -98,6 +98,7 @@
                                                                             <th>Monto</th>
                                                                             <th>Pendiente</th>
                                                                             <th>Estatus</th>
+                                                                            <th>Pago en línea</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -133,6 +134,14 @@
                                                                                     <span class="badge badge-{{ $badgeClass }}">
                                                                                         {{ $statusLabels[$debt->status] ?? $debt->status }}
                                                                                     </span>
+                                                                                </td>
+                                                                                <td>
+                                                                                    @if($debt->status !== 'paid')
+                                                                                        <a href="{{ route('openpay.form', $debt->id) }}" 
+                                                                                        class="btn btn-sm btn-success">
+                                                                                            <i class="fas fa-credit-card"></i> Pagar con Tarjeta
+                                                                                        </a>
+                                                                                    @endif
                                                                                 </td>
                                                                             </tr>
                                                                             @endforeach
