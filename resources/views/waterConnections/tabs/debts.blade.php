@@ -20,7 +20,6 @@
         </div>
         <hr class="my-3">
     </div>
-
     <div class="table-responsive">
         <table class="table table-sm table-bordered mb-0">
             <thead class="thead-light">
@@ -36,6 +35,7 @@
             </thead>
             <tbody>
                 @foreach($debts as $d)
+
                     @php
                         $paid = (float)($d->payments_sum_amount ?? 0);
                         $pending = (float)$d->amount - $paid;
