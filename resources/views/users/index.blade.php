@@ -17,7 +17,7 @@
                                 </button>
                             </div>
                         </div>
-                    </div>                    
+                    </div>   
                     <div class="clearfix"></div>
                 </div>
                 <div class="col-lg-4">
