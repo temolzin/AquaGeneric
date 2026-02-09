@@ -26,16 +26,21 @@ class OpenPayController extends Controller
     public function showPaymentForm($debtId)
     {
         try {
-            $debt = Debt::with(['customer', 'waterConnection'])->findOrFail($debtId);
+            $debt = Debt::with(['customer', 'waterConnection', 'payments'])->findOrFail($debtId);
+            
+            // Calcular el monto pendiente real basado en los pagos existentes
+            $remainingAmount = $debt->remaining_amount;
             
             // Verificar que la deuda no esté pagada
-            if ($debt->status === 'paid') {
+            if ($debt->isPaid() || $remainingAmount <= 0) {
                 return redirect()->back()->with('error', 'Esta deuda ya está pagada');
             }
 
             return view('payments.openpay-form', [
                 'debt' => $debt,
                 'customer' => $debt->customer,
+                'remainingAmount' => $remainingAmount,
+                'totalPaid' => $debt->total_paid,
                 'merchantId' => config('openpay.merchant_id'),
                 'publicKey' => config('openpay.public_key'),
                 'sandbox' => config('openpay.sandbox'),
@@ -70,14 +75,17 @@ class OpenPayController extends Controller
 
         DB::beginTransaction();
         try {
-            $debt = Debt::with('customer')->findOrFail($request->debt_id);
+            $debt = Debt::with(['customer', 'payments', 'waterConnection'])->findOrFail($request->debt_id);
             
-            // Verificar que el monto no exceda la deuda
-            if ($request->amount > $debt->debt_current) {
+            // Calcular el monto pendiente real basado en los pagos existentes
+            $remainingAmount = $debt->remaining_amount;
+            
+            // Verificar que el monto no exceda la deuda pendiente real
+            if ($request->amount > $remainingAmount) {
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
-                    'error' => 'El monto excede la deuda pendiente',
+                    'error' => "El monto excede la deuda pendiente. Monto máximo: $" . number_format($remainingAmount, 2),
                 ], 400);
             }
 
@@ -86,13 +94,21 @@ class OpenPayController extends Controller
 
             Log::info('Llamando a OpenPayService->chargeWithToken');
 
+            // Preparar datos del cliente para OpenPay
+            $customerData = [
+                'name' => $debt->customer->name ?? 'Cliente',
+                'last_name' => $debt->customer->last_name ?? '',
+                'email' => $debt->customer->email ?? 'cliente@aquacontrol.com',
+                'phone_number' => $debt->customer->phone ?? null,
+            ];
+
             // Procesar cargo
             $result = $this->openPayService->chargeWithToken(
                 $request->token_id,
                 $request->amount,
                 "Pago de deuda #{$debt->id} - {$debt->customer->name} {$debt->customer->last_name}",
                 $orderId,
-                null,
+                $customerData,
                 $request->device_session_id
             );
 
@@ -106,9 +122,21 @@ class OpenPayController extends Controller
                 ], 400);
             }
 
+            // Obtener el customer_id desde la toma de agua
+            $customerId = $debt->waterConnection->customer_id ?? $debt->customer->id ?? null;
+            
+            if (!$customerId) {
+                DB::rollBack();
+                Log::error('No se pudo obtener customer_id para el pago', ['debt_id' => $debt->id]);
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No se pudo identificar al cliente para registrar el pago',
+                ], 400);
+            }
+
             // Crear registro de pago
             $payment = Payment::create([
-                'customer_id' => $debt->customer_id,
+                'customer_id' => $customerId,
                 'debt_id' => $debt->id,
                 'locality_id' => $debt->locality_id,
                 'created_by' => auth()->id() ?? $debt->created_by,
@@ -123,12 +151,18 @@ class OpenPayController extends Controller
                 'note' => $request->note ?? "Pago procesado con OpenPay",
             ]);
 
-            // Actualizar deuda
-            $debt->debt_current -= $request->amount;
-            if ($debt->debt_current <= 0) {
+            // Recalcular el monto pendiente después de registrar el pago
+            $debt->refresh();
+            $newRemainingAmount = $debt->remaining_amount;
+            
+            // Sincronizar debt_current con el monto real pendiente
+            $debt->debt_current = $newRemainingAmount;
+            
+            // Actualizar estado de la deuda
+            if ($newRemainingAmount <= 0) {
                 $debt->status = 'paid';
-                $debt->debt_current = 0; // Asegurar que no quede negativo
-            } elseif ($debt->debt_current < $debt->amount) {
+                $debt->debt_current = 0;
+            } elseif ($newRemainingAmount < $debt->amount) {
                 $debt->status = 'partial';
             }
             $debt->save();

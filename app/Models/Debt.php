@@ -48,6 +48,33 @@ class Debt extends Model
         return $this->hasMany(Payment::class, 'debt_id');
     }
 
+    /**
+     * Obtener el monto total pagado para esta deuda
+     */
+    public function getTotalPaidAttribute()
+    {
+        return $this->payments()->sum('amount') ?? 0;
+    }
+
+    /**
+     * Obtener el monto pendiente real (calculado dinámicamente)
+     * Este es el monto correcto que falta por pagar
+     */
+    public function getRemainingAmountAttribute()
+    {
+        $totalPaid = $this->total_paid;
+        $remaining = $this->amount - $totalPaid;
+        return max(0, $remaining); // Nunca retornar negativo
+    }
+
+    /**
+     * Verificar si la deuda está completamente pagada
+     */
+    public function isPaid()
+    {
+        return $this->remaining_amount <= 0;
+    }
+
     protected static function boot()
     {
         parent::boot();

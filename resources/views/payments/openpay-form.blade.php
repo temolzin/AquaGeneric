@@ -42,13 +42,18 @@
                                 {{ \Carbon\Carbon::parse($debt->end_date)->format('d/m/Y') }}
                             </p>
                             <p class="mb-1">
-                                <strong><i class="fas fa-money-bill-wave"></i> Monto Total:</strong>
-                                <span class="badge badge-danger badge-lg">${{ number_format($debt->amount, 2) }}</span>
+                                <strong><i class="fas fa-money-bill-wave"></i> Monto Total de la Deuda:</strong>
+                                <span class="badge badge-info badge-lg">${{ number_format($debt->amount, 2) }}</span>
                             </p>
+                            @if($totalPaid > 0)
+                            <p class="mb-1">
+                                <strong><i class="fas fa-check-circle text-success"></i> Ya Pagado:</strong>
+                                <span class="badge badge-success badge-lg">${{ number_format($totalPaid, 2) }}</span>
+                            </p>
+                            @endif
                             <p class="mb-0">
-                                <strong><i class="fas fa-exclamation-triangle"></i> Monto Adeudado:</strong>
-                                <span
-                                    class="badge badge-warning badge-lg">${{ number_format($debt->debt_current, 2) }}</span>
+                                <strong><i class="fas fa-exclamation-triangle"></i> Pendiente por Pagar:</strong>
+                                <span class="badge badge-warning badge-lg">${{ number_format($remainingAmount, 2) }}</span>
                             </p>
                         </div>
                     </div>
@@ -82,7 +87,7 @@
                         @csrf
                         <input type="hidden" name="debt_id" value="{{ $debt->id }}">
                         <input type="hidden" id="token_id" name="token_id">
-                        <input type="hidden" id="deviceIdHiddenFieldName" name="device_session_id">
+                        <input type="hidden" id="device_session_id" name="device_session_id">
 
                         <div class="row">
                             <!-- Nombre del titular -->
@@ -147,11 +152,11 @@
                                             <span class="input-group-text">$</span>
                                         </div>
                                         <input type="number" class="form-control" id="amount" name="amount" step="0.01"
-                                            min="0.01" max="{{ $debt->debt_current }}" value="{{ $debt->debt_current }}"
+                                            min="0.01" max="{{ $remainingAmount }}" value="{{ $remainingAmount }}"
                                             required>
                                     </div>
-                                    <small class="text-muted">Máximo:
-                                        ${{ number_format($debt->debt_current, 2) }}</small>
+                                    <small class="text-muted">Máximo pendiente:
+                                        ${{ number_format($remainingAmount, 2) }}</small>
                                 </div>
                             </div>
                         </div>
@@ -205,7 +210,7 @@
                                     <span id="button-text">
                                         <i class="fas fa-lock"></i>
                                         Pagar $<span
-                                            id="amount-display">{{ number_format($debt->debt_current, 2) }}</span>
+                                            id="amount-display">{{ number_format($remainingAmount, 2) }}</span>
                                     </span>
                                     <span id="button-loading" style="display: none;">
                                         <span class="spinner-border spinner-border-sm"></span>
@@ -396,6 +401,11 @@
                     // Token creado exitosamente
                     console.log('Token creado:', response.data.id);
                     $('#token_id').val(response.data.id);
+                    
+                    // Asegurar que el device_session_id esté correctamente asignado
+                    var currentDeviceSessionId = deviceSessionId || $('input[name="deviceIdHiddenFieldName"]').val();
+                    $('#device_session_id').val(currentDeviceSessionId);
+                    console.log('Device Session ID asignado:', currentDeviceSessionId);
 
                     // Enviar formulario al servidor
                     var formData = new FormData($('#payment-form')[0]);

@@ -275,25 +275,27 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/generalEarnings', [GeneralEarningController::class, 'index'])->name('generalEarnings.index');
         Route::resource('generalEarnings', GeneralEarningController::class);
     });
-    Route::middleware(['auth'])->group(function () {
-        Route::prefix('openpay')->name('openpay.')->group(function () {
-            Route::get('/pay/{debtId}', [OpenPayController::class, 'showPaymentForm'])
-                ->name('form');
-            Route::post('/process', [OpenPayController::class, 'processPayment'])
-                ->name('process');
-            Route::post('/refund/{paymentId}', [OpenPayController::class, 'refund'])
-                ->name('refund');
-        });
-    });
-    Route::prefix('openpay')->name('openpay.')->group(function () {
-        // Endpoint de VERIFICACIÓN
-        Route::match(['get', 'post'], '/webhook/verify', [OpenPayController::class, 'verifyWebhook'])
-            ->name('webhook.verify');
 
-        // Endpoint de PROCESAMIENTO
-        Route::post('/webhook', [OpenPayController::class, 'webhook'])
-            ->name('webhook');
+    // Rutas de OpenPay que SÍ requieren autenticación (formulario, proceso, reembolso)
+    Route::prefix('openpay')->name('openpay.')->group(function () {
+        Route::get('/pay/{debtId}', [OpenPayController::class, 'showPaymentForm'])
+            ->name('form');
+        Route::post('/process', [OpenPayController::class, 'processPayment'])
+            ->name('process');
+        Route::post('/refund/{paymentId}', [OpenPayController::class, 'refund'])
+            ->name('refund');
     });
+});
+
+// ✅ Rutas de webhook de OpenPay SIN autenticación (OpenPay necesita acceder a estas)
+Route::prefix('openpay')->name('openpay.')->group(function () {
+    // Endpoint de VERIFICACIÓN
+    Route::match(['get', 'post'], '/webhook/verify', [OpenPayController::class, 'verifyWebhook'])
+        ->name('webhook.verify');
+
+    // Endpoint de PROCESAMIENTO
+    Route::post('/webhook', [OpenPayController::class, 'webhook'])
+        ->name('webhook');
 });
 
 Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');
