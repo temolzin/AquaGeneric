@@ -40,7 +40,7 @@
                                             </div>
                                             <div class="col-6 ps-1">
                                                 <button class="btn btn-info w-100 py-2" data-toggle="modal" data-target="#importData" title="Importar Empleados">
-                                                    <i class="fas fa-file-import"></i> Importar
+                                                    <i class="fas fa-file-import"></i> Importar Empleados
                                                 </button>
                                             </div>
                                             <div class="col-12 mt-2">

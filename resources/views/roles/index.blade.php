@@ -12,12 +12,25 @@
                     <div class="row">
                         @include('roles.create')
                         <div class="col-lg-12 text-right">
-                            <button type="button" class="btn btn-success" data-toggle="modal"
-                                    data-target="#createRoleModal"><i class="fa fa-plus"></i> Registrar Rol
-                            </button>
+                            <div class="btn-group" role="group" aria-label="Acciones de Rol">
+                                <button type="button" class="btn btn-success mr-2" data-toggle="modal"
+                                        data-target="#createRoleModal" title="Registrar Rol">
+                                    <i class="fa fa-plus"></i> Registrar Rol
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    </div>                    
                     <div class="clearfix"></div>
+                </div>
+                <div class="col-lg-4">
+                    <form id="formSearch" method="GET" action="{{ route('roles.index') }}" class="my-3">
+                        <div class="input-group">
+                            <input type="text" name="search" id="searchName" class="form-control" placeholder="Buscar por nombre" value="{{ request('search') ?? '' }}">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">Buscar</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="x_content">
                     <div class="row">
@@ -80,7 +93,7 @@
         $('#roles').DataTable({
             responsive: true,
             buttons: ['excel', 'pdf', 'print'],
-            dom: 'Bfrtip',
+            dom: 'Brtip',
         });
 
         var successMessage = "{{ session('success') }}";

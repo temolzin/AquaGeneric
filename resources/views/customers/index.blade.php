@@ -47,13 +47,13 @@
                                                 <i class="fas fa-file-import"></i> Importar
                                             </button>
                                             </div>
-                                            <div class="col-6 ps-1">
+                                            <div class="col-12 mt-2">
                                                 <a type="button" class="btn btn-secondary w-100 py-2" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
                                                     <i class="fas fa-file-pdf"></i> Generar Lista
                                                 </a>
                                             </div>
-                                            <div class="col-6 ps-1 mt-2">
-                                                <a type="button" class="btn btn-secondary w-100 py-2" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
+                                            <div class="col-12 mt-2">
+                                                <a type="button" class="btn btn-primary w-100 py-2" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
                                                     <i class="fas fa-file-pdf"></i> Generar Lista Resumen
                                                 </a>
                                             </div>

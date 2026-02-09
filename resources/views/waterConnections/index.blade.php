@@ -11,7 +11,7 @@
                     <h2>Tomas</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                                 <form method="GET" action="{{ route('waterConnections.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control"
@@ -25,12 +25,12 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2"
+                                <button class="btn btn-success mt-2 mr-1"
                                         data-toggle='modal' data-target="#createWaterConnections"
                                         title="Registrar Toma">
                                     <i class="fa fa-plus"></i>
-                                    <span class="d-none d-lg-inline">Registrar Toma</span>
-                                    <span class="d-inline d-lg-none">Nueva Toma</span>
+                                    <span class="d-none d-md-inline">Registrar Toma</span>
+                                    <span class="d-inline d-md-none">Registrar</span>
                                 </button>
                             </div>
                         </div>
