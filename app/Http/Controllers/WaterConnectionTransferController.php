@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class WaterConnectionTransferController extends Controller
@@ -34,9 +33,14 @@ class WaterConnectionTransferController extends Controller
         'note' => 'nullable|string',
     ];
 
-    foreach (LogWaterConnectionTransfer::REQUIRED_DOCUMENT_TYPES as $type) {
-        $rules["documents.$type"] = ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240']; // 10MB
-    }
+        foreach (LogWaterConnectionTransfer::REQUIRED_DOCUMENT_TYPES as $type) {
+            $rules["documents.$type"] = [
+                'required',
+                'file',
+                'mimes:pdf,jpg,jpeg,png',
+                'max:10240'
+            ];
+        }
 
         $request->validate($rules, [
             'new_customer_id.exists' => 'Solo puedes seleccionar clientes activos (con vida) de la misma localidad.',
@@ -76,12 +80,6 @@ class WaterConnectionTransferController extends Controller
                     Media::where('id', $media->id)->update([
                         'custom_properties' => json_encode($existing),
                     ]);
-
-                    if (Schema::hasColumn('media', 'uploaded_by')) {
-                        Media::where('id', $media->id)->update([
-                            'uploaded_by' => Auth::id(),
-                        ]);
-                    }
                 }
 
                 $waterConnection->update([
