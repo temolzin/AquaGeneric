@@ -12,9 +12,13 @@
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <nav class="navigation navbar navbar-expand-md navbar-dark">
                                 <button class="navbar-toggler" type="button" data-toggle="collapse"
-                                    data-target="#navbarsExample04">
-                                    <span class="navbar-toggler-icon"></span>
-                                </button>
+                                        data-target="#navbarsExample04" aria-label="Toggle navigation">
+                                        <span class="navbar-toggler-icon" aria-hidden="true">
+                                            <svg viewBox="0 0 30 30" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                                <path d="M4 7h22M4 15h22M4 23h22" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"></path>
+                                            </svg>
+                                        </span>
+                                    </button>
                                 <div class="collapse navbar-collapse" id="navbarsExample04">
                                     <ul class="navbar-nav mr-auto">
                                         <li class="nav-item active">
@@ -263,4 +267,28 @@
                     </div>
                 </div>
             </footer>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                try {
+                    var $t = $('.navigation .navbar-toggler');
+                    var $c = $('#navbarsExample04');
+                    if ($t.length && $c.length) {
+                        $c.css({ 'display': $c.hasClass('show') ? 'block' : 'none' });
+                        $t.removeAttr('data-toggle').removeAttr('data-target');
+                            $t.off('click._customToggle').on('click._customToggle', function (e) {
+                                e.preventDefault();
+                                if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+                                const isOpen = $c.hasClass('show');
+                                $c
+                                    .toggleClass('show', !isOpen)
+                                    .stop(true, true)
+                                    ;
+                                $t.attr('aria-expanded', String(!isOpen));
+                                return false;
+                            });
+                    }
+                } catch (err) {
+                }
+            });
+        </script>
         @endsection
