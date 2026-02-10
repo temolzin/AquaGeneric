@@ -9,29 +9,25 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <h2>Avisos de Localidades</h2>
-                        <div class="row">
+                        <div class="row mb-2">
                             @include('localityNotices.create')
-                            <div class="col-12 order-first">
-                                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-2">
-                                    <form id="formSearch" method="GET" action="{{ route('localityNotices.index') }}" class="flex-grow-1 w-100">
-                                        <div class="row g-3 align-items-center">
-                                            <div class="col-12 col-md-6">
-                                                <div class="input-group">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-search"></i>
-                                                    </span>
-                                                    <input type="text" name="search" id="searchName" class="form-control" placeholder="Buscar por título o descripción"value="{{ request('search') }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-2">
-                                                <button type="submit" class="btn btn-primary w-100" title="Buscar">
-                                                    <i class="fas fa-search me-1"></i> Buscar
+                            <div class="col-lg-12">
+                                <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                                    <form id="formSearch" method="GET" action="{{ route('localityNotices.index') }}" class="flex-grow-1 mt-2" style="min-width: 300px; max-width: 40%;">
+                                        <div class="input-group">
+                                            <input type="text" name="search" id="searchName" class="form-control" placeholder="Buscar por título o descripción" value="{{ request('search') }}">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-primary" title="Buscar Aviso">
+                                                    <i class="fas fa-search d-lg-none"></i>
+                                                    <span class="d-none d-lg-inline">Buscar</span>
                                                 </button>
                                             </div>
                                         </div>
                                     </form>
-                                    <button class="btn btn-success" style="min-width: 180px;" data-toggle='modal' data-target="#createNotice" title="Registrar Aviso">
-                                        <i class="fa fa-plus"></i> Registrar Aviso
+                                    <button class="btn btn-success mt-2 mr-1" data-toggle='modal' data-target="#createNotice" title="Registrar Aviso">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Aviso</span>
+                                        <span class="d-inline d-md-none">Registrar</span>
                                     </button>
                                 </div>
                             </div>
