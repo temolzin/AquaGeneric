@@ -263,4 +263,38 @@
                     </div>
                 </div>
             </footer>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                try {
+                    var $t = $('.navigation .navbar-toggler');
+                    var $c = $('#navbarsExample04');
+                    if ($t.length && $c.length) {
+                        // Keep initial display consistent
+                        $c.css({ 'display': $c.hasClass('show') ? 'block' : 'none' });
+
+                        // Use slideToggle to show/hide even if other plugins interfere
+                        // Remove data attributes to prevent Bootstrap/other data-api handlers
+                        $t.removeAttr('data-toggle').removeAttr('data-target');
+
+                        $t.off('click._customToggle').on('click._customToggle', function (e) {
+                            e.preventDefault();
+                            // stop other handlers from running (meanmenu/bootstrap)
+                            if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+                            if ($c.hasClass('show')) {
+                                $c.removeClass('show');
+                                $c.stop(true, true).slideUp(200);
+                                $t.attr('aria-expanded', 'false');
+                            } else {
+                                $c.addClass('show');
+                                $c.stop(true, true).slideDown(200);
+                                $t.attr('aria-expanded', 'true');
+                            }
+                            return false;
+                        });
+                    }
+                } catch (err) {
+                    // fail silently
+                }
+            });
+        </script>
         @endsection
