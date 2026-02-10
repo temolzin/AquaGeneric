@@ -73,14 +73,26 @@
                         @php
                             $docTypes = \App\Models\LogWaterConnectionTransfer::REQUIRED_DOCUMENT_TYPES;
                             $docLabels = \App\Models\LogWaterConnectionTransfer::documentTypeLabels();
+                            $lastIndex = count($docTypes) - 1;
                         @endphp
 
                         <div class="row">
-                            @foreach ($docTypes as $type)
-                                <div class="col-12 col-md-6 mb-3">
-                                    <label class="form-label">
-                                        {{ $docLabels[$type] ?? $type }} <span class="text-danger">*</span>
-                                    </label>
+                            @foreach ($docTypes as $index => $type)
+                                <div class="{{ $index === $lastIndex ? 'col-12' : 'col-12 col-md-6' }} mb-3">
+                                    @php
+                                        $label = $docLabels[$type] ?? $type;
+                                        preg_match('/^(.*?)(\s*\((.*)\))?$/u', $label, $m);
+                                        $main = trim($m[1] ?? $label);
+                                        $extra = isset($m[3]) ? trim($m[3]) : null;
+                                    @endphp
+
+                                    <label class="form-label mb-1">{{ $main }} <span class="text-danger">*</span></label>
+
+                                    @if($extra)
+                                        <small class="text-muted d-block mb-2">{{ $extra }}</small>
+                                    @else
+                                        <div style="height: 18px;" class="mb-2"></div>
+                                    @endif
 
                                     <input type="file" name="documents[{{ $type }}]" class="form-control @error("documents.$type") is-invalid @enderror" required accept=".pdf,.jpg,.jpeg,.png">
 
