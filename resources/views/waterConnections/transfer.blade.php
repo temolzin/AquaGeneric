@@ -15,7 +15,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('waterConnections.transfer.store', $connection->id) }}">
+                <form method="POST" action="{{ route('waterConnections.transfer.store', $connection->id) }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="modal-body">
@@ -62,6 +62,33 @@
                             @error('note')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
+                        </div>
+
+                        <hr>
+                        <h5 class="mb-2">Documentos de verificación (obligatorios)</h5>
+                        <small class="text-muted d-block mb-3">
+                            La transferencia NO se completará si falta cualquiera de los documentos requeridos.
+                        </small>
+
+                        @php
+                            $docTypes = \App\Models\LogWaterConnectionTransfer::REQUIRED_DOCUMENT_TYPES;
+                            $docLabels = \App\Models\LogWaterConnectionTransfer::documentTypeLabels();
+                        @endphp
+
+                        <div class="row">
+                            @foreach ($docTypes as $type)
+                                <div class="col-12 col-md-6 mb-3">
+                                    <label class="form-label">
+                                        {{ $docLabels[$type] ?? $type }} <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input type="file" name="documents[{{ $type }}]" class="form-control @error("documents.$type") is-invalid @enderror" required accept=".pdf,.jpg,.jpeg,.png">
+
+                                    @error("documents.$type")
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+                            @endforeach
                         </div>
 
                     </div>
