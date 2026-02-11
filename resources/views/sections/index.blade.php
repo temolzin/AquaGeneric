@@ -144,20 +144,6 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-
-        $('#createSection').on('shown.bs.modal', function() {
-            $('.select2').select2({
-                dropdownParent: $('#createSection')
-            });
-        });
-
-        @foreach($sections as $section)
-            $('#edit{{ $section->id }}').on('shown.bs.modal', function() {
-                $('.select2').select2({
-                    dropdownParent: $(this)
-                });
-            });
-        @endforeach
     });
 </script>
 @endsection

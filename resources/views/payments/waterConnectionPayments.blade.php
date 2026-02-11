@@ -39,24 +39,9 @@
         </div>
     </div>
 </div>
-
-<style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-</style>
-
 @section('js')
 <script>
 $(document).ready(function() {
-    $('#createPayment').on('shown.bs.modal', function() {
-        $('.select2').select2({
-            dropdownParent: $('#createPayment')
-        });
-    });
-
     $('#waterCustomerId').on('change', function() {
         const customerId = $(this).val();
         const waterConnectionSelect = $('#waterConnectionId');
@@ -160,18 +145,6 @@ $(document).ready(function() {
                 text: 'El formato debe ser "mes/año".'
             });
         }
-    });
-});
-
-$('#clientPayments').on('shown.bs.modal', function(){
-    $('.select2').select2({
-        dropdownParent: $('#clientPayments')
-    });
-});
-
-$('#waterConnectionPayments').on('shown.bs.modal', function(){
-    $('.select2').select2({
-        dropdownParent: $('#waterConnectionPayments')
     });
 });
 

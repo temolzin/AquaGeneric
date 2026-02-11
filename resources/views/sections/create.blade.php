@@ -29,7 +29,7 @@
                                     <div class="form-group">
                                         <label for="color" class="form-label">Color de identificación(*)</label>
                                         <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelect" required>
+                                            <select name="color_index" class="form-control" id="colorSelect" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="13" data-color="#e74c3c">Rojo</option>
                                                 <option value="0"  data-color="#3498db">Azul</option>
@@ -40,7 +40,7 @@
                                                 <option value="14" data-color="#34495e">Gris oscuro</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class="input-group-text" id="colorPreview" style="width: 40px; background-color: #f8f9fa;"></span>
+                                                <span class="input-group-text" id="colorPreview" style="width: 40px; background-color: #6c757d;"></span>
                                             </div>
                                         </div>
                                         @error('color_index') <small class="text-danger">{{ $message }}</small> @enderror
@@ -60,9 +60,10 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initializeColorSelect() {
         const colorSelect = document.getElementById('colorSelect');
         const colorPreview = document.getElementById('colorPreview');
+        if (!colorSelect || !colorPreview) return;
 
         const updatePreview = () => {
             const selected = colorSelect.options[colorSelect.selectedIndex];
@@ -71,23 +72,25 @@
             colorPreview.style.border = '1px solid ' + color;
         };
 
-        if (colorSelect && colorPreview) {
-            $('#colorSelect').select2({
-                theme: 'bootstrap4',
-                width: '100%',
-                placeholder: 'Seleccione un color',
-                allowClear: false
-            });
-
-            $('#colorSelect').on('change', function() {
-                updatePreview();
-            });
-
-            updatePreview();
-
-            $('#createSection').on('shown.bs.modal', function () {
-                updatePreview();
-            });
+        if ($(colorSelect).hasClass('select2-hidden-accessible')) {
+            $(colorSelect).select2('destroy');
         }
+        
+        initializeSelect2Custom('#colorSelect', {
+            theme: 'bootstrap4',
+            placeholder: 'Seleccione un color',
+            allowClear: false
+        });
+
+        $('#colorSelect').off('change').on('change', updatePreview);
+        updatePreview();
+    }
+
+    $(document).ready(function() {
+        initializeColorSelect();
+    });
+
+    $(document).on('shown.bs.modal', '#createSection', function() {
+        initializeColorSelect();
     });
 </script>

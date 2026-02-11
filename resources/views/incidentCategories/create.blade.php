@@ -30,7 +30,7 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelectCategory" required>
+                                            <select name="color_index" class="form-control" id="colorSelectCategory" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="0"  data-color="#3498db">Azul</option>
                                                 <option value="13" data-color="#e74c3c">Rojo</option>
@@ -42,7 +42,7 @@
                                                 <option value="3"  data-color="#f1c40f">Amarillo</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class="input-group-text" id="colorPreviewCategory" style="width: 40px; background-color: #f8f9fa;"></span>
+                                                <span class="input-group-text" id="colorPreviewCategory" style="width: 40px; background-color: #6c757d;"></span>
                                             </div>
                                         </div>
                                         @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
@@ -68,16 +68,14 @@
     </div>
 </div>
 
-<style>
-    .input-group .select2-container .select2-selection--single {
-        height: 38px;
-    }
-</style>
+
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initializeColorSelectCategory() {
         const colorSelectCategory = document.getElementById('colorSelectCategory');
         const colorPreviewCategory = document.getElementById('colorPreviewCategory');
+
+        if (!colorSelectCategory || !colorPreviewCategory) return;
 
         const updatePreviewCategory = () => {
             const selectedOption = colorSelectCategory.options[colorSelectCategory.selectedIndex];
@@ -86,22 +84,25 @@
             colorPreviewCategory.style.border = `1px solid ${color}`;
         };
 
-        const initializeColorSelectCategory = () => {
-            if (!colorSelectCategory || !colorPreviewCategory) return;
+        if ($(colorSelectCategory).hasClass('select2-hidden-accessible')) {
+            $(colorSelectCategory).select2('destroy');
+        }
 
-            $('#colorSelectCategory').select2({
-                theme: 'bootstrap4',
-                width: '100%',
-                placeholder: 'Seleccione un color',
-                allowClear: false
-            });
+        initializeSelect2Custom('#colorSelectCategory', {
+            theme: 'bootstrap4',
+            placeholder: 'Seleccione un color',
+            allowClear: false
+        });
 
-            $('#colorSelectCategory').on('change', updatePreviewCategory);
-            updatePreviewCategory();
-        };
+        $('#colorSelectCategory').off('change').on('change', updatePreviewCategory);
+        updatePreviewCategory();
+    }
 
+    $(document).ready(function() {
         initializeColorSelectCategory();
+    });
 
-        $('#create').on('shown.bs.modal', updatePreviewCategory);
+    $(document).on('shown.bs.modal', '#create', function() {
+        initializeColorSelectCategory();
     });
 </script>

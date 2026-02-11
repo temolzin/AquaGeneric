@@ -74,14 +74,4 @@
     </div>
 </div>
 
-<style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-    
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 38px;
-    }
-</style>
+
