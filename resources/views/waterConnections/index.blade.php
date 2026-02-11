@@ -270,7 +270,6 @@
 <script>
     $(document).ready(function() {
         $('#qrModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
         var id = button.data('id');
         var modal = $(this);
         var img = modal.find('#qrImage');
@@ -376,27 +375,9 @@
         });
     });
 
-    $('#createWaterConnections').on('shown.bs.modal', function() {
-        $('.select2').select2({
-            dropdownParent: $('#createWaterConnections')
-        });
-    });
-
-    $('[id^="edit"]').on('shown.bs.modal', function() {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
-
     @if(session('debtError'))
         $('#debtErrorModal').modal('show');
     @endif
-
-    $(document).on('shown.bs.modal', '.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
 </script>
 
 <div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">

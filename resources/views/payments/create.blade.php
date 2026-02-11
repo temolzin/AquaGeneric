@@ -117,25 +117,8 @@
         </div>
     </div>
 </div>
-
-<style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-</style>
-
 <script>
 $(document).ready(function() {
-    $('#createPayment').on('shown.bs.modal', function () {
-        $(this).find('.select2').select2('destroy');
-
-        $(this).find('.select2').select2({
-            dropdownParent: $('#createPayment')
-        });
-    });
-
     $('#customer_id').on('change', function() {
         var customerId = $(this).val();
         if (customerId) {

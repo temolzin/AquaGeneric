@@ -31,7 +31,7 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $earningType->id }}" required>
+                                            <select name="color_index" class="form-control" id="colorSelect{{ $earningType->id }}" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="13" data-color="#e74c3c" {{ $earningType->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="0"  data-color="#3498db" {{ $earningType->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
@@ -69,40 +69,39 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const editModals = document.querySelectorAll('[id^="editEarningType"]');
-        
-        const updatePreview = (select, preview) => {
-            const selected = select.options[select.selectedIndex];
-            const color = selected?.dataset.color || '#6c757d';
-            preview.style.backgroundColor = color;
-            preview.style.border = `1px solid ${color}`;
-        };
-
-        const initializeColorSelect = (modalId) => {
-            const colorSelect = document.getElementById('colorSelect' + modalId);
-            const colorPreview = document.getElementById('colorPreview' + modalId);
+    function initializeColorSelects() {
+        document.querySelectorAll('[id^="colorSelect"]').forEach(colorSelect => {
+            const colorPreview = document.getElementById(colorSelect.id.replace('colorSelect', 'colorPreview'));
             
             if (!colorSelect || !colorPreview) return;
+            
+            const updatePreview = () => {
+                const selected = colorSelect.options[colorSelect.selectedIndex];
+                const color = selected?.dataset.color || '#6c757d';
+                colorPreview.style.backgroundColor = color;
+                colorPreview.style.border = `1px solid ${color}`;
+            };
 
-            $('#colorSelect' + modalId).select2({
+            if ($(colorSelect).hasClass('select2-hidden-accessible')) {
+                $(colorSelect).select2('destroy');
+            }
+            
+            initializeSelect2Custom('#' + colorSelect.id, {
                 theme: 'bootstrap4',
-                width: '100%',
                 placeholder: 'Seleccione un color',
-                allowClear: false,
-                dropdownParent: $('#editEarningType' + modalId)
+                allowClear: false
             });
             
-            $('#colorSelect' + modalId).on('change', function() {
-                updatePreview(this, colorPreview);
-            });
-            
-            updatePreview(colorSelect, colorPreview);
-        };
-
-        editModals.forEach(modal => {
-            const modalId = modal.id.replace('editEarningType', '');
-            initializeColorSelect(modalId);
+            $(colorSelect).off('change').on('change', updatePreview);
+            updatePreview();
         });
+    }
+
+    $(document).ready(function() {
+        initializeColorSelects();
+    });
+
+    $(document).on('shown.bs.modal', '[id^="editEarningType"]', function() {
+        initializeColorSelects();
     });
 </script>

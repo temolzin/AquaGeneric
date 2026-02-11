@@ -31,7 +31,7 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $category->id }}" required>
+                                            <select name="color_index" class="form-control" id="colorSelect{{ $category->id }}" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="13" data-color="#e74c3c" {{ $category->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="0"  data-color="#3498db" {{ $category->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
@@ -70,7 +70,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initializeAllColorSelects() {
         const editModals = document.querySelectorAll('[id^="editInventoryCategory"]');
         
         const updatePreview = (select, preview) => {
@@ -80,21 +80,24 @@
             preview.style.border = `1px solid ${color}`;
         };
 
-        const initializeColorSelect = (modalId) => {
+        const initializeColorSelect = (modal) => {
+            const modalId = modal.id.replace('editInventoryCategory', '');
             const colorSelect = document.getElementById('colorSelect' + modalId);
             const colorPreview = document.getElementById('colorPreview' + modalId);
             
             if (!colorSelect || !colorPreview) return;
 
-            $('#colorSelect' + modalId).select2({
+            if ($(colorSelect).hasClass('select2-hidden-accessible')) {
+                $(colorSelect).select2('destroy');
+            }
+
+            initializeSelect2Custom('#colorSelect' + modalId, {
                 theme: 'bootstrap4',
-                width: '100%',
                 placeholder: 'Seleccione un color',
-                allowClear: false,
-                dropdownParent: $('#editInventoryCategory' + modalId)
+                allowClear: false
             });
             
-            $('#colorSelect' + modalId).on('change', function() {
+            $(colorSelect).off('change').on('change', function() {
                 updatePreview(this, colorPreview);
             });
             
@@ -102,8 +105,15 @@
         };
 
         editModals.forEach(modal => {
-            const modalId = modal.id.replace('editInventoryCategory', '');
-            initializeColorSelect(modalId);
+            initializeColorSelect(modal);
         });
+    }
+
+    $(document).ready(function() {
+        initializeAllColorSelects();
+    });
+
+    $(document).on('shown.bs.modal', '[id^="editInventoryCategory"]', function() {
+        initializeAllColorSelects();
     });
 </script>

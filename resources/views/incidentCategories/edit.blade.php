@@ -31,7 +31,7 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelectCategory{{ $category->id }}" required>
+                                            <select name="color_index" class="form-control" id="colorSelectCategory{{ $category->id }}" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="0"  data-color="#3498db" {{ $category->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
                                                 <option value="13" data-color="#e74c3c" {{ $category->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
@@ -72,7 +72,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const editModals = document.querySelectorAll('[id^="edit"]');
+        const editModals = document.querySelectorAll('[id^="editIncidentCategory"]');
         
         const updatePreview = (select, preview) => {
             const selected = select.options[select.selectedIndex];
@@ -81,21 +81,25 @@
             preview.style.border = `1px solid ${color}`;
         };
 
-        const initializeColorSelect = (modalId) => {
+        const initializeColorSelect = (modal) => {
+            const modalId = modal.id.replace('editIncidentCategory', '');
             const colorSelect = document.getElementById('colorSelectCategory' + modalId);
             const colorPreview = document.getElementById('colorPreviewCategory' + modalId);
             
             if (!colorSelect || !colorPreview) return;
 
-            $('#colorSelectCategory' + modalId).select2({
+            // Destroy if already initialized
+            if ($(colorSelect).hasClass('select2-hidden-accessible')) {
+                $(colorSelect).select2('destroy');
+            }
+
+            initializeSelect2Custom('#colorSelectCategory' + modalId, {
                 theme: 'bootstrap4',
-                width: '100%',
                 placeholder: 'Seleccione un color',
-                allowClear: false,
-                dropdownParent: $('#editIncidentCategory' + modalId)
+                allowClear: false
             });
             
-            $('#colorSelectCategory' + modalId).on('change', function() {
+            $(colorSelect).off('change').on('change', function() {
                 updatePreview(this, colorPreview);
             });
             
@@ -103,8 +107,46 @@
         };
 
         editModals.forEach(modal => {
-            const modalId = modal.id.replace('edit', '');
-            initializeColorSelect(modalId);
+            initializeColorSelect(modal);
+        });
+    });
+
+    // Re-initialize when any modal is shown
+    $(document).on('shown.bs.modal', '[id^="editIncidentCategory"]', function() {
+        const editModals = document.querySelectorAll('[id^="editIncidentCategory"]');
+        const updatePreview = (select, preview) => {
+            const selected = select.options[select.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            preview.style.backgroundColor = color;
+            preview.style.border = `1px solid ${color}`;
+        };
+
+        const initializeColorSelect = (modal) => {
+            const modalId = modal.id.replace('editIncidentCategory', '');
+            const colorSelect = document.getElementById('colorSelectCategory' + modalId);
+            const colorPreview = document.getElementById('colorPreviewCategory' + modalId);
+            
+            if (!colorSelect || !colorPreview) return;
+
+            if ($(colorSelect).hasClass('select2-hidden-accessible')) {
+                $(colorSelect).select2('destroy');
+            }
+
+            initializeSelect2Custom('#colorSelectCategory' + modalId, {
+                theme: 'bootstrap4',
+                placeholder: 'Seleccione un color',
+                allowClear: false
+            });
+            
+            $(colorSelect).off('change').on('change', function() {
+                updatePreview(this, colorPreview);
+            });
+            
+            updatePreview(colorSelect, colorPreview);
+        };
+
+        editModals.forEach(modal => {
+            initializeColorSelect(modal);
         });
     });
 </script>

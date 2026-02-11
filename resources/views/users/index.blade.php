@@ -147,17 +147,5 @@
             });
         }
     });
-
-    $('#create').on('shown.bs.modal', function() {
-        $('.select2').select2({
-                dropdownParent: $('#create')
-        });
-    });
-
-    $('[id^="edit"]').on('shown.bs.modal', function() {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
 </script>
 @endsection

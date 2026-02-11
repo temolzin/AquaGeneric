@@ -31,7 +31,7 @@
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
                                         <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $status->id }}" required>
+                                            <select name="color_index" class="form-control" id="colorSelect{{ $status->id }}" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="13" data-color="#e74c3c" {{ $status->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="0"  data-color="#3498db" {{ $status->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
@@ -70,7 +70,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initializeAllColorSelects() {
         const editModals = document.querySelectorAll('[id^="editIncidentStatus"]');
         
         const updatePreview = (select, preview) => {
@@ -80,21 +80,25 @@
             preview.style.border = `1px solid ${color}`;
         };
 
-        const initializeColorSelect = (modalId) => {
+        const initializeColorSelect = (modal) => {
+            const modalId = modal.id.replace('editIncidentStatus', '');
             const colorSelect = document.getElementById('colorSelect' + modalId);
             const colorPreview = document.getElementById('colorPreview' + modalId);
             
             if (!colorSelect || !colorPreview) return;
 
-            $('#colorSelect' + modalId).select2({
+            // Destroy if already initialized
+            if ($(colorSelect).hasClass('select2-hidden-accessible')) {
+                $(colorSelect).select2('destroy');
+            }
+
+            initializeSelect2Custom('#colorSelect' + modalId, {
                 theme: 'bootstrap4',
-                width: '100%',
                 placeholder: 'Seleccione un color',
-                allowClear: false,
-                dropdownParent: $('#editIncidentStatus' + modalId)
+                allowClear: false
             });
             
-            $('#colorSelect' + modalId).on('change', function() {
+            $(colorSelect).off('change').on('change', function() {
                 updatePreview(this, colorPreview);
             });
             
@@ -102,8 +106,17 @@
         };
 
         editModals.forEach(modal => {
-            const modalId = modal.id.replace('editIncidentStatus', '');
-            initializeColorSelect(modalId);
+            initializeColorSelect(modal);
         });
+    }
+
+    // Initialize when DOM is ready
+    $(document).ready(function() {
+        initializeAllColorSelects();
+    });
+
+    // Re-initialize when any modal is shown
+    $(document).on('shown.bs.modal', '[id^="editIncidentStatus"]', function() {
+        initializeAllColorSelects();
     });
 </script>

@@ -32,7 +32,7 @@
                                     <div class="form-group">
                                         <label for="color" class="form-label">Color(*)</label>
                                         <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $section->id }}" required>
+                                            <select name="color_index" class="form-control" id="colorSelect{{ $section->id }}" required>
                                                 <option value="">Selecciona un color</option>
                                                 <option value="13" data-color="#e74c3c" {{ $section->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="0"  data-color="#3498db" {{ $section->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
@@ -75,45 +75,47 @@
         padding-top: 0.25rem;
         padding-bottom: 0.25rem;
     }
-    .select2-container .select2-selection--single {
-        height: 36px; 
-        display: flex;
-        align-items: center;
-    }
+
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initializeColorSelect() {
         const select = document.getElementById('colorSelect{{ $section->id }}');
         const preview = document.getElementById('colorPreview{{ $section->id }}');
 
-        if (select && preview) {
-            $('#colorSelect{{ $section->id }}').select2({
-                theme: 'bootstrap4',
-                width: '100%',
-                placeholder: 'Selecciona un color',
-                allowClear: false,
-                dropdownParent: $('#edit{{ $section->id }}')
-            });
+        if (!select || !preview) return;
 
-            const updatePreview = () => {
-                const selected = select.options[select.selectedIndex];
-                const color = selected?.dataset.color;
-                if (color) {
-                    preview.style.backgroundColor = color;
-                    preview.style.border = '1px solid ' + color;
-                } else {
-                    preview.style.backgroundColor = '#f8f9fa';
-                    preview.style.border = '1px solid #ccc';
-                }
-            };
-
-            $('#colorSelect{{ $section->id }}').on('change', updatePreview);
-            updatePreview();
-
-            $('#edit{{ $section->id }}').on('shown.bs.modal', function () {
-                updatePreview();
-            });
+        if ($(select).hasClass('select2-hidden-accessible')) {
+            $(select).select2('destroy');
         }
+
+        initializeSelect2Custom('#colorSelect{{ $section->id }}', {
+            theme: 'bootstrap4',
+            placeholder: 'Selecciona un color',
+            allowClear: false
+        });
+
+        const updatePreview = () => {
+            const selected = select.options[select.selectedIndex];
+            const color = selected?.dataset.color;
+            if (color) {
+                preview.style.backgroundColor = color;
+                preview.style.border = '1px solid ' + color;
+            } else {
+                preview.style.backgroundColor = '#f8f9fa';
+                preview.style.border = '1px solid #ccc';
+            }
+        };
+
+        $('#colorSelect{{ $section->id }}').off('change').on('change', updatePreview);
+        updatePreview();
+    }
+
+    $(document).ready(function() {
+        initializeColorSelect();
+    });
+
+    $(document).on('shown.bs.modal', '#edit{{ $section->id }}', function() {
+        initializeColorSelect();
     });
 </script>

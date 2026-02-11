@@ -104,16 +104,22 @@
         </div>
     </div>
 </div>
-
-<style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-</style>
-
 <script>
+    $(document).on('shown.bs.modal', '#createIncidence', function() {
+        $(this).find('.select2').each(function() {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+            
+            $(this).select2({
+                allowClear: false,
+                placeholder: 'Selecciona una opción',
+                width: '100%',
+                dropdownParent: $('#createIncidence')
+            });
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
         const input = document.getElementById('imagesInput');
         const label = input.nextElementSibling;

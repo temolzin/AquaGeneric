@@ -72,12 +72,6 @@
 </div>
 
 <style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-
     #calendarContainer {
         width: 100%;
         margin: 0 auto; 

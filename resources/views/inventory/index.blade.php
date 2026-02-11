@@ -190,13 +190,6 @@
                 }
             })
             .then(function(response) {
-                $('#importResults').removeClass('d-none');
-                $('#resultsContent').html(`
-                    <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
-                    <p><strong>Registros importados:</strong> ${response.data.imported}</p>
-                    <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
-                `);
-                
                 $('#importForm')[0].reset();
                 $('#fileLabel').text('Ningún archivo seleccionado');
                 progressContainer.addClass('d-none');
@@ -204,20 +197,30 @@
                 progressText.text('0%');
                 importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar Datos');
                 
-                if (response.data.failed > 0 && response.data.errors) {
+                if (response.data.failed === 0) {
+                    $('#importResults').removeClass('d-none');
+                    $('#resultsContent').html(`
+                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                    `);
+                    
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
                     $('#importErrors').removeClass('d-none');
-                    let errorsHtml = '<ul>';
+                    let errorsHtml = `
+                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                        <ul class="mt-2 mb-0">
+                    `;
                     response.data.errors.forEach(error => {
                         errorsHtml += `<li>${error}</li>`;
                     });
                     errorsHtml += '</ul>';
                     $('#errorsContent').html(errorsHtml);
-                }
-                
-                if (response.data.imported > 0) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
                 }
             })
             .catch(function(error) {
@@ -254,24 +257,6 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-    });
-
-    $('#createInventory').on('shown.bs.modal', function() {
-        $('.select2').select2({
-            dropdownParent: $('#createInventory')
-        });
-    });
-
-    $('[id^="edit"]').on('shown.bs.modal', function() {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
-
-    $(document).on('shown.bs.modal', '.modal', function() {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
     });
 </script>
 @endsection
