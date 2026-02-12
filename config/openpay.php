@@ -9,4 +9,4 @@ return [
     'webhook_secret' => env('OPENPAY_WEBHOOK_SECRET'),
     'webhook_user' => env('OPENPAY_WEBHOOK_USER'),
     'webhook_password' => env('OPENPAY_WEBHOOK_PASSWORD'),
-];  
+];

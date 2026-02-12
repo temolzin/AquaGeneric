@@ -46,7 +46,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="text-center mb-3">
                     <div class="row">
                         <div class="col-12">
@@ -74,7 +73,9 @@
                                 <label><i class="fas fa-user"></i> Nombre del titular</label>
                                 <input type="text" class="form-control" id="modal-holder-name"
                                     placeholder="Como aparece en la tarjeta" autocomplete="off"
-                                    data-openpay-card="holder_name" required>
+                                    data-openpay-card="holder_name" pattern="[A-Za-z ]+"
+                                    title="Solo letras sin acentos" required>
+                                <small class="text-muted">Solo letras sin acentos</small>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -82,33 +83,48 @@
                                 <label><i class="fas fa-credit-card"></i> Número de tarjeta</label>
                                 <input type="text" class="form-control" id="modal-card-number"
                                     placeholder="•••• •••• •••• ••••" autocomplete="off" data-openpay-card="card_number"
-                                    maxlength="16" required>
+                                    maxlength="16" pattern="[0-9]{16}" inputmode="numeric"
+                                    title="16 dígitos numéricos" required>
                                 <div id="modal-card-brand" class="mt-1" style="min-height: 20px;"></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-4 col-md-3">
                             <div class="form-group">
                                 <label>Mes</label>
-                                <input type="text" class="form-control" id="modal-exp-month" placeholder="MM"
-                                    maxlength="2" data-openpay-card="expiration_month" required>
+                                <select class="form-control" id="modal-exp-month" data-openpay-card="expiration_month" required>
+                                    <option value="">MM</option>
+                                    <option value="01">01 - Enero</option>
+                                    <option value="02">02 - Febrero</option>
+                                    <option value="03">03 - Marzo</option>
+                                    <option value="04">04 - Abril</option>
+                                    <option value="05">05 - Mayo</option>
+                                    <option value="06">06 - Junio</option>
+                                    <option value="07">07 - Julio</option>
+                                    <option value="08">08 - Agosto</option>
+                                    <option value="09">09 - Septiembre</option>
+                                    <option value="10">10 - Octubre</option>
+                                    <option value="11">11 - Noviembre</option>
+                                    <option value="12">12 - Diciembre</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-4 col-md-3">
                             <div class="form-group">
                                 <label>Año</label>
                                 <input type="text" class="form-control" id="modal-exp-year" placeholder="AA"
-                                    maxlength="2" data-openpay-card="expiration_year" required>
+                                    maxlength="2" pattern="[0-9]{2}" inputmode="numeric"
+                                    data-openpay-card="expiration_year" title="2 dígitos del año" required>
                             </div>
                         </div>
                         <div class="col-4 col-md-3">
                             <div class="form-group">
                                 <label>CVV <i class="fas fa-question-circle text-muted"
                                         title="Código de seguridad"></i></label>
-                                <input type="text" class="form-control" id="modal-cvv" placeholder="•••" maxlength="4"
-                                    autocomplete="off" data-openpay-card="cvv2" required>
+                                <input type="text" class="form-control" id="modal-cvv" placeholder="•••" maxlength="3"
+                                    pattern="[0-9]{3}" inputmode="numeric" autocomplete="off"
+                                    data-openpay-card="cvv2" title="3 dígitos numéricos" required>
                             </div>
                         </div>
                         <div class="col-12 col-md-3">
@@ -124,17 +140,14 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="modal-error-message" class="alert alert-danger" style="display: none;">
                         <i class="fas fa-exclamation-triangle"></i>
                         <span id="modal-error-text"></span>
                     </div>
-
                     <div id="modal-success-message" class="alert alert-success" style="display: none;">
                         <i class="fas fa-check-circle"></i>
                         <span id="modal-success-text"></span>
                     </div>
-
                     <div class="openpay-footer text-center py-2 px-3 bg-light rounded mb-3">
                         <div class="row align-items-center">
                             <div class="col-6">

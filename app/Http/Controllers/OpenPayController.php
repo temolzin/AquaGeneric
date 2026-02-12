@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use App\Models\Customer;
 use App\Models\Debt;
+use App\Models\OpenPayLog;
 use App\Services\OpenPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -103,6 +104,10 @@ class OpenPayController extends Controller
                 'openpay_processed_at' => now(),
                 'note' => $request->note ?? "Pago procesado con OpenPay",
             ]);
+
+            OpenPayLog::where('transaction_id', $result['transaction_id'])
+                ->whereNull('payment_id')
+                ->update(['payment_id' => $payment->id]);
 
             $debt->refresh();
             $newRemainingAmount = $debt->remaining_amount;

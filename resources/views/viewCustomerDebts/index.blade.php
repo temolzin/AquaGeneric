@@ -181,7 +181,6 @@
             </div>
         </div>
     </section>
-
 @include('viewCustomerDebts.openpayModal')
 @endsection
 
@@ -299,15 +298,20 @@
             $('#openpayModal').modal('show');
         });
 
-        $('#modal-amount').on('input', function() {
-            var amount = parseFloat($(this).val()) || 0;
-            $('#modal-amount-display').text(amount.toFixed(2));
+        $('#modal-holder-name').on('input', function() {
+            var value = $(this).val();
+            var cleaned = value.replace(/[^A-Za-z\s]/g, '');
+            if (value !== cleaned) {
+                $(this).val(cleaned);
+            }
         });
 
         $('#modal-card-number').on('input', function() {
-            var cardNumber = $(this).val().replace(/\s/g, '');
-            if (cardNumber.length >= 6) {
-                var cardType = OpenPay.card.cardType(cardNumber);
+            var value = $(this).val().replace(/[^0-9]/g, '');
+            $(this).val(value);
+            
+            if (value.length >= 6) {
+                var cardType = OpenPay.card.cardType(value);
                 var cardBrand = '';
                 switch (cardType) {
                     case 'visa':
@@ -324,6 +328,28 @@
             } else {
                 $('#modal-card-brand').html('');
             }
+        });
+
+        $('#modal-exp-year').on('input', function() {
+            var value = $(this).val().replace(/[^0-9]/g, '');
+            $(this).val(value);
+        });
+
+        $('#modal-cvv').on('input', function() {
+            var value = $(this).val().replace(/[^0-9]/g, '');
+            $(this).val(value);
+        });
+
+        $('#modal-amount').on('input', function() {
+            var amount = parseFloat($(this).val()) || 0;
+            var maxAmount = parseFloat($(this).attr('max')) || 0;
+            
+            if (amount > maxAmount) {
+                $(this).val(maxAmount.toFixed(2));
+                amount = maxAmount;
+            }
+            
+            $('#modal-amount-display').text(amount.toFixed(2));
         });
 
         var errorMessages = {
@@ -362,22 +388,52 @@
             $('#modal-error-message').hide();
             $('#modal-success-message').hide();
 
-            var cardNumber = $('#modal-card-number').val().replace(/\s/g, '');
+            var cardNumber = $('#modal-card-number').val().replace(/[^0-9]/g, '');
             var cvv = $('#modal-cvv').val();
             var month = $('#modal-exp-month').val();
             var year = $('#modal-exp-year').val();
             var holderName = $('#modal-holder-name').val();
+            var amount = parseFloat($('#modal-amount').val()) || 0;
+            var maxAmount = parseFloat($('#modal-amount').attr('max')) || 0;
 
-            if (!holderName) {
+            if (!holderName || holderName.trim() === '') {
                 showModalError('Ingresa el nombre del titular');
                 return;
             }
+            if (!/^[A-Za-z\s]+$/.test(holderName)) {
+                showModalError('El nombre del titular solo debe contener letras sin acentos');
+                return;
+            }
 
+            if (!/^[0-9]{16}$/.test(cardNumber)) {
+                showModalError('El número de tarjeta debe tener 16 dígitos numéricos');
+                return;
+            }
             if (!OpenPay.card.validateCardNumber(cardNumber)) {
                 showModalError('Número de tarjeta inválido');
                 return;
             }
 
+            if (!month || month === '') {
+                showModalError('Selecciona el mes de expiración');
+                return;
+            }
+
+            var currentYear = new Date().getFullYear() % 100;
+            var yearNum = parseInt(year, 10);
+            if (!/^[0-9]{2}$/.test(year)) {
+                showModalError('El año debe tener 2 dígitos numéricos');
+                return;
+            }
+            if (yearNum < currentYear) {
+                showModalError('El año debe ser ' + currentYear + ' o mayor');
+                return;
+            }
+
+            if (!/^[0-9]{3}$/.test(cvv)) {
+                showModalError('El CVV debe tener exactamente 3 dígitos numéricos');
+                return;
+            }
             if (!OpenPay.card.validateCVC(cvv)) {
                 showModalError('CVV inválido');
                 return;
@@ -385,6 +441,15 @@
 
             if (!OpenPay.card.validateExpiry(month, year)) {
                 showModalError('Fecha de expiración inválida');
+                return;
+            }
+
+            if (amount <= 0) {
+                showModalError('El monto debe ser mayor a $0.00');
+                return;
+            }
+            if (amount > maxAmount) {
+                showModalError('El monto no puede ser mayor al pendiente ($' + maxAmount.toFixed(2) + ')');
                 return;
             }
 

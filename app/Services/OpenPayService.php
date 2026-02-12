@@ -33,7 +33,6 @@ class OpenPayService
         OpenpayAPI::setProductionMode(!$this->sandbox);
     }
 
-
     protected static function getClientIPv4Static()
     {
         $headers = [
@@ -111,7 +110,7 @@ class OpenPayService
 
             $charge = $this->openpay->charges->create($chargeRequest);
 
-            $this->logTransaction('charge_success', 'success', $chargeRequest, $charge->serializableData, null);
+            $this->logTransaction('charge_success', 'success', $chargeRequest, $charge->serializableData, null, $charge->id);
 
             return [
                 'success' => true,
@@ -157,7 +156,7 @@ class OpenPayService
 
             $charge = $this->openpay->charges->create($chargeRequest);
 
-            $this->logTransaction('charge_success', 'success', $chargeRequest, $charge->serializableData, null);
+            $this->logTransaction('charge_success', 'success', $chargeRequest, $charge->serializableData, null, $charge->id);
 
             return [
                 'success' => true,
