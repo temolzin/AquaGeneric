@@ -26,8 +26,16 @@
                                     <button type="button" class="btn bg-purple mr-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
                                         <i class="fas fa-chart-bar"></i> Reporte Trimestral
                                     </button>
-                                    <button type="button" class="btn btn-success me-2" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
+                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
                                         <i class="fas fa-chart-line"></i> Reporte Anual
+                                    </button>
+                                </div>
+                                <div class="d-flex d-md-none w-100 mt-2" role="group" aria-label="Reportes de Pagos (Móvil)">
+                                    <button type="button" class="btn bg-purple flex-fill mr-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
+                                            <i class="fas fa-chart-bar"></i> Trimestral
+                                        </button>
+                                        <button type="button" class="btn btn-success flex-fill" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
+                                            <i class="fas fa-chart-line"></i> Anual
                                     </button>
                                 </div>
                             </div>
@@ -121,9 +129,9 @@
         </div>
     </div>
 </section>
-@endsection
 @include('viewCustomerPayments.quarterly-report')
 @include('viewCustomerPayments.annualReportTemplate')
+@endsection
 
 @section('js')
 <script>

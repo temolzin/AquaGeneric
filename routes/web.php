@@ -14,6 +14,8 @@ use App\Http\Controllers\FaultReportController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
+use App\Http\Controllers\WaterConnectionTransferController;
+use App\Http\Controllers\WaterConnectionDetailsController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\AdvancePaymentController;
 use App\Http\Controllers\IncidentCategoriesController;
@@ -88,7 +90,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::post('/customers/{id}/update-password', [CustomerController::class, 'updatePassword'])->name('customers.updatePassword');
         Route::post('/customers/{id}/assign-password', [CustomerController::class, 'assignOrUpdatePassword'])->name('customers.assignPassword');
         Route::post('/customers/import', [CustomerController::class, 'import'])->name('customers.import');
-        Route::get('/customers/download-template', [CustomerController::class, 'downloadTemplate'])->name('customers.downloadTemplate');
+        Route::get('/customers-download-template', [CustomerController::class, 'downloadTemplate'])->name('customers.downloadTemplate');
     });
 
     Route::group(['middleware' => ['can:viewRoles']], function () {
@@ -139,6 +141,9 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::patch('/waterConnections/{id}/reactivate', [WaterConnectionController::class, 'reactivate'])->name('waterConnections.reactivate');
         Route::get('/waterConnections/{id}/qr-generate', [WaterConnectionController::class, 'generateQrAjax'])->name('waterConnections.qr-generate');
         Route::get('/waterConnections/{id}/qr-download', [WaterConnectionController::class, 'downloadQr'])->name('waterConnections.qr-download');
+        Route::post('/waterConnections/{id}/transfer', [WaterConnectionTransferController::class, 'store'])->name('waterConnections.transfer.store');
+        Route::get('/waterConnections/{id}/history', [WaterConnectionDetailsController::class, 'history'])->name('waterConnections.history');
+        Route::get('/waterConnections/{id}/debts', [WaterConnectionDetailsController::class, 'debts'])->name('waterConnections.debts');
     });
 
     Route::group(['middleware' => ['can:viewInventory']], function () {
@@ -151,6 +156,8 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewInventoryCategories']], function () {
         Route::get('/inventoryCategories', [InventoryCategoryController::class, 'index'])->name('inventoryCategories.index');
         Route::resource('inventoryCategories', InventoryCategoryController::class);
+        Route::post('/inventory/import', [InventoryController::class, 'import'])->name('inventory.import');
+        Route::get('/inventory-download-template', [InventoryController::class, 'downloadTemplate'])->name('inventory.downloadTemplate');
     });
 
     Route::group(['middleware' => ['can:viewGeneralExpense']], function () {
@@ -187,6 +194,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('employees', EmployeeController::class);
         Route::get('/reports/generateEmployeeListReport', [EmployeeController::class, 'generateEmployeeListReport'])->name('report.generateEmployeeListReport');
         Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');
+        Route::get('/employees-download-template', [EmployeeController::class, 'downloadTemplate'])->name('employees.downloadTemplate');
     });
 
     Route::group(['middleware' => ['can:viewIncidentStatuses']], function () {

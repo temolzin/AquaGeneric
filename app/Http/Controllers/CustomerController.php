@@ -111,11 +111,46 @@ class CustomerController extends Controller
     {
         $customer = Customer::with('user')->find($id);
         if ($customer) {
-            if ($customer->user) {
-                $customer->user->name = $request->input('nameUpdate');
-                $customer->user->last_name = $request->input('lastNameUpdate');
-                $customer->user->email = $request->input('emailUpdate');
-                $customer->user->save();
+            $name = $request->input('nameUpdate');
+            $lastName = $request->input('lastNameUpdate');
+            $email = $request->input('emailUpdate');
+
+            $existingCustomer = Customer::where('email', $email)
+                ->where('id', '!=', $id)
+                ->first();
+
+            if ($existingCustomer) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'El email ya está en uso por otro cliente.');
+            }
+
+            if ($customer->user && $email !== $customer->user->email) {
+                $existingUser = User::where('email', $email)
+                    ->where('id', '!=', $customer->user->id)
+                    ->first();
+                    
+                if ($existingUser) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('error', 'El email ya está en uso por otro usuario.');
+                }
+            }
+
+            if (!$customer->user && $email) {
+                $existingUserWithEmail = User::where('email', $email)->first();
+                
+                if ($existingUserWithEmail) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('error', 'El email ya está registrado como usuario. Asigne este cliente al usuario existente.');
+                }
+            }
+
+            if ($customer->user && empty($email)) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'El email es requerido para clientes con cuenta de usuario.');
             }
 
             $customer->locality = $request->input('localityUpdate');
@@ -130,7 +165,23 @@ class CustomerController extends Controller
             $customer->responsible_name = $request->input('responsibleNameUpdate');
             $customer->note = $request->input('noteUpdate');
 
+            $customer->name = $name;
+            $customer->last_name = $lastName;
+            $customer->email = $email;
             $customer->save();
+
+            if ($customer->user) {
+                $customer->user->update([
+                    'name' => $name,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                ]);
+
+                if ($customer->locality_id && $customer->locality_id != $customer->user->locality_id) {
+                    $customer->user->locality_id = $customer->locality_id;
+                    $customer->user->save();
+                }
+            }
 
             if ($request->hasFile('photo')) {
                 $customer->clearMediaCollection('customerGallery');
@@ -322,6 +373,23 @@ class CustomerController extends Controller
         return $pdf->stream('customers_summary.pdf');
     }
 
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="plantilla_clientes.csv"',
+    ];
+
+        $content = "\xEF\xBB\xBF";
+        
+        $content .= "nombre,apellido,correo_electronico,calle,colonia,localidad,estado,codigo_postal,numero_exterior,numero_interior,estado_civil,estado_titular,nota\n";
+
+        $content .= "Andrea,Estrada,andy@gmail.com,retorno Acolman,Acolman,Acolman,Estado de Mexico,55870,1,2,Casado,Con vida,test\n";
+        $content .= "Andres,Rueda,andres@gmail.com,palma,Valle,Valle de Bravo,Valle de Bravo,55879,3,6,Soltero,Fallecido,test\n";
+
+        return response($content, 200, $headers);
+    }
+
     public function import(Request $request)
     {
         $request->validate([
@@ -335,24 +403,58 @@ class CustomerController extends Controller
             $errors = [];
             $authUser = Auth::user();
             
-            $content = file_get_contents($file->getPathname());
+            $filePath = $file->getPathname();
+            $content = file_get_contents($filePath);
             $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
-
-            if ($encoding !== 'UTF-8') {
-                $convertedContent = mb_convert_encoding($content, 'UTF-8', $encoding);
-                file_put_contents($file->getPathname(), $convertedContent);
-            }
             
-            $handle = fopen($file->getPathname(), 'r');
+            $sourceEncoding = ($encoding && $encoding !== 'UTF-8') ? $encoding : 'UTF-8';
+            $content = mb_convert_encoding($content, 'UTF-8', $sourceEncoding);
+            file_put_contents($filePath, $content);
+            
+            $handle = fopen($filePath, 'r');
             
             $headers = fgetcsv($handle);
+            if (isset($headers[0])) {
+                $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headers[0]);
+                $headers[0] = preg_replace('/^ï»¿/', '', $headers[0]);
+                $headers[0] = ltrim($headers[0], "\0\x0B\xEF\xBB\xBF");
+            }
+
+            foreach ($headers as &$header) {
+                $header = trim($header);
+                $header = preg_replace('/^ï»¿/', '', $header);
+            }
+            unset($header);
+
             $expectedHeaders = ['nombre', 'apellido', 'correo_electronico', 'calle', 'colonia', 'localidad', 'estado', 'codigo_postal', 'numero_exterior', 'numero_interior', 'estado_civil', 'estado_titular', 'nota'];
             
-            if ($headers !== $expectedHeaders) {
+            if (count($headers) !== count($expectedHeaders)) {
                 fclose($handle);
                 return response()->json([
                     'success' => false,
-                    'message' => 'Formato de archivo incorrecto. Por favor descarga la plantilla oficial.'
+                    'message' => 'Número de columnas incorrecto. Se esperaban ' . count($expectedHeaders) . ' columnas, se encontraron ' . count($headers),
+                    'expected_headers' => $expectedHeaders,
+                    'received_headers' => $headers
+                ], 400);
+            }
+
+            $headersMatch = true;
+            $headerMismatches = [];
+            foreach ($expectedHeaders as $index => $expectedHeader) {
+                if (strtolower(trim($headers[$index] ?? '')) !== strtolower($expectedHeader)) {
+                    $headersMatch = false;
+                    $headerMismatches[] = "Columna " . ($index + 1) . ": esperado '{$expectedHeader}', recibido '" . ($headers[$index] ?? 'vacío') . "'";
+                }
+            }
+
+            if (!$headersMatch) {
+                fclose($handle);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Los encabezados no coinciden con la plantilla oficial.',
+                    'expected_headers' => $expectedHeaders,
+                    'received_headers' => $headers,
+                    'mismatches' => $headerMismatches
                 ], 400);
             }
             
@@ -393,6 +495,18 @@ class CustomerController extends Controller
     private function processRowData($rowData, $authUser, $rowNumber)
     {
         try {
+            foreach ($rowData as &$field) {
+                if (is_string($field)) {
+                    if (preg_match('/(Ã.)/u', $field)) {
+                        $field = utf8_decode($field);
+                    }
+
+                    $field = mb_convert_encoding($field, 'UTF-8', 'UTF-8');
+                    $field = @iconv('UTF-8', 'UTF-8//TRANSLIT', $field);
+                }
+            }
+            unset($field);
+
             $requiredFields = [
                 'nombre', 'apellido', 'correo_electronico', 'calle', 'colonia', 
                 'localidad', 'estado', 'codigo_postal', 'numero_exterior'

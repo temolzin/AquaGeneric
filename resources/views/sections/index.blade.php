@@ -88,10 +88,6 @@
                                                             <i class="fas fa-file-pdf"></i>
                                                         </a>
                                                     </div>
-                                                    @include('sections.create')
-                                                    @include('sections.show')
-                                                    @include('sections.edit')
-                                                    @include('sections.delete')
                                                 </td>
                                             </tr>
                                         @empty
@@ -109,6 +105,12 @@
         </div>
     </div>
 </section>
+@include('sections.create')
+@foreach($sections as $section)
+    @include('sections.show', ['section' => $section])
+    @include('sections.edit', ['section' => $section])
+    @include('sections.delete', ['section' => $section])
+@endforeach
 @endsection
 @section('js')
 <script>
@@ -149,11 +151,13 @@
             });
         });
 
-        $('[id^="edit"]').on('shown.bs.modal', function() {
-            $('.select2').select2({
-                dropdownParent: $(this)
+        @foreach($sections as $section)
+            $('#edit{{ $section->id }}').on('shown.bs.modal', function() {
+                $('.select2').select2({
+                    dropdownParent: $(this)
+                });
             });
-        });
+        @endforeach
     });
 </script>
 @endsection

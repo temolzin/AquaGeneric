@@ -11,12 +11,12 @@
                     <h2>Tipos de Gasto</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
+                            <div class="d-flex flex-column flex-lg-row justify-content-lg-end align-items-lg-center gap-3">
+                                <button type="button" class="btn btn-success mt-2"
                                         data-toggle="modal" data-target="#createExpenseTypeModal" title="Registrar Tipo de Gasto">
                                     <i class="fa fa-plus"></i>
                                     <span class="d-none d-md-inline">Registrar Tipo</span>
-                                    <span class="d-inline d-md-none">Tipo</span>
+                                    <span class="d-inline d-md-none">Registrar</span>
                                 </button>
                             </div>
                         </div>
