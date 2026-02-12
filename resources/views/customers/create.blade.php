@@ -126,9 +126,9 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="showPassword" name="showPassword">
-                                                <label class="form-check-label" for="showPassword">
+                                            <div class="custom-control custom-checkbox mb-2">
+                                                <input class="custom-control-input" type="checkbox" id="showPassword" name="showPassword">
+                                                <label class="custom-control-label" for="showPassword">
                                                     Habilitar Inicio de Sesión
                                                 </label>
                                             </div>

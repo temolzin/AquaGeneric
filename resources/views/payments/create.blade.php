@@ -93,9 +93,9 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <input type="checkbox" id="is_future_payment" name="is_future_payment" value="1">
-                                            <label for="is_future_payment">¿El cliente va a pagar por adelantado? (solo para periodos futuros)</label>
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="is_future_payment" name="is_future_payment" value="1">
+                                            <label class="custom-control-label" for="is_future_payment">¿El cliente va a pagar por adelantado? (solo para periodos futuros)</label>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">

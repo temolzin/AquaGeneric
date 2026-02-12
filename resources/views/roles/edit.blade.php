@@ -57,11 +57,17 @@
                                             @foreach ($perms as $permission)
                                                 <tr>
                                                     <td class="text-center">
-                                                        <input type="checkbox"
-                                                            class="perm-checkbox module-{{ $module }}"
-                                                            name="permissions[]"
-                                                            value="{{ $permission->id }}"
-                                                            {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
+                                                        <div 
+                                                            class="custom-control custom-checkbox">
+                                                            <input type="checkbox"
+                                                                class="custom-control-input perm-checkbox module-{{ $module }}"
+                                                                id="permission{{ $permission->id }}"
+                                                                name="permissions[]"
+                                                                value="{{ $permission->id }}"
+                                                                {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
+                                                            <label class="custom-control-label"
+                                                                for="permission{{ $permission->id }}"></label>        
+                                                        </div>            
                                                     </td>
                                                     <td>{{ $permission->description }}</td>
                                                 </tr>
