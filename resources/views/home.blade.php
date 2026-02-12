@@ -83,7 +83,7 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <figure>
-                        <img src="{{ asset('img/panel_aquacontrol.jpeg') }}" alt="Gestión comunitaria">
+                        <img src="{{ asset('img/control_panel.jpg') }}" alt="Gestión comunitaria">
                     </figure>
                 </div>
                 <div class="col-md-6">
@@ -119,7 +119,7 @@
             <div class="row text-center">
                 <div class="col-md-4">
                     <div class="projects_box feature-box">
-                        <i class="fa fa-users feature-icon"></i>
+                        <i class="fas fa-users feature-icon"></i>
                         <h4>Control de usuarios</h4>
                         <p>
                             Registro y gestión de usuarios, tomas de agua y datos de contacto,
@@ -129,7 +129,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="projects_box feature-box">
-                        <i class="fa fa-credit-card feature-icon"></i>
+                        <i class="fas fa-credit-card feature-icon"></i>
                         <h4>Pagos y adeudos</h4>
                         <p>
                             Seguimiento detallado de pagos, historial de movimientos y control
@@ -139,7 +139,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="projects_box feature-box">
-                        <i class="fa fa-bar-chart feature-icon"></i>
+                        <i class="fas fa-chart-bar feature-icon"></i>
                         <h4>Reportes</h4>
                         <p>
                             Generación de reportes financieros y operativos para facilitar
@@ -163,7 +163,7 @@
                                 <div class="Testimonial_box">
                                     <i>
                                         {{-- Icono o imagen representativa --}}
-                                        <img src="{{ asset('img/clientes_aquacontrol.jpeg') }}"
+                                        <img src="{{ asset('img/customer.jpg') }}"
                                             alt="">
                                     </i>
                                 </div>
@@ -235,18 +235,18 @@
                                         <li>
                                             <a href="https://www.facebook.com/rootheimcompany/" target="_blank"
                                                 rel="noopener">
-                                                <i class="fa fa-facebook"></i>
+                                                <i class="fab fa-facebook"></i>
                                             </a>
                                         </li>
                                         <li>
                                             <a href="https://www.instagram.com/rootheimcompany/" target="_blank" rel="noopener">
-                                                <i class="fa fa-instagram"></i>
+                                                <i class="fab fa-instagram"></i>
                                             </a>
                                         </li>
                                         <li>
                                             <a href="https://mx.linkedin.com/company/rootheim" target="_blank"
                                                 rel="noopener">
-                                                <i class="fa fa-linkedin"></i>
+                                                <i class="fab fa-linkedin"></i>
                                             </a>
                                         </li>
                                     </ul>

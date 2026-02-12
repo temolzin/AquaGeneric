@@ -5,11 +5,13 @@
     <meta charset="UTF-8">
     <title>@yield('title', 'Landing')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('assets/index/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/index/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/index/css/responsive.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/index/css/jquery.mCustomScrollbar.min.css') }}">
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
+    
 </head>
 <body class="main-layout">
     <div class="loader_bg">
@@ -18,9 +20,9 @@
         </div>
     </div>
     @yield('content')
-    <script src="{{ asset('assets/index/js/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/index/js/popper.min.js') }}"></script>
-    <script src="{{ asset('assets/index/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/popper/popper.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/index/js/plugin.js') }}"></script>
     <script src="{{ asset('assets/index/js/jquery.mCustomScrollbar.concat.min.js') }}"></script>
     <script src="{{ asset('assets/index/js/custom.js') }}"></script>
