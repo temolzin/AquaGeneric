@@ -20,44 +20,8 @@ class OpenPayController extends Controller
         $this->openPayService = $openPayService;
     }
 
-    /**
-     * Mostrar formulario de pago
-     */
-    public function showPaymentForm($debtId)
-    {
-        try {
-            $debt = Debt::with(['customer', 'waterConnection', 'payments'])->findOrFail($debtId);
-            
-            // Calcular el monto pendiente real basado en los pagos existentes
-            $remainingAmount = $debt->remaining_amount;
-            
-            // Verificar que la deuda no esté pagada
-            if ($debt->isPaid() || $remainingAmount <= 0) {
-                return redirect()->back()->with('error', 'Esta deuda ya está pagada');
-            }
-
-            return view('payments.openpay-form', [
-                'debt' => $debt,
-                'customer' => $debt->customer,
-                'remainingAmount' => $remainingAmount,
-                'totalPaid' => $debt->total_paid,
-                'merchantId' => config('openpay.merchant_id'),
-                'publicKey' => config('openpay.public_key'),
-                'sandbox' => config('openpay.sandbox'),
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error mostrando formulario de pago: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Error al cargar el formulario de pago');
-        }
-    }
-
-    /**
-     * Procesar pago con token
-     */
     public function processPayment(Request $request)
     {
-        Log::info('Procesando pago OpenPay', $request->all());
-
         $validator = Validator::make($request->all(), [
             'token_id' => 'required|string',
             'device_session_id' => 'required|string',
@@ -66,7 +30,6 @@ class OpenPayController extends Controller
         ]);
 
         if ($validator->fails()) {
-            Log::error('Validación fallida', $validator->errors()->toArray());
             return response()->json([
                 'success' => false,
                 'errors' => $validator->errors(),
@@ -76,11 +39,9 @@ class OpenPayController extends Controller
         DB::beginTransaction();
         try {
             $debt = Debt::with(['customer', 'payments', 'waterConnection'])->findOrFail($request->debt_id);
-            
-            // Calcular el monto pendiente real basado en los pagos existentes
+
             $remainingAmount = $debt->remaining_amount;
-            
-            // Verificar que el monto no exceda la deuda pendiente real
+
             if ($request->amount > $remainingAmount) {
                 DB::rollBack();
                 return response()->json([
@@ -89,12 +50,8 @@ class OpenPayController extends Controller
                 ], 400);
             }
 
-            // Generar ID de orden único
             $orderId = 'DEBT-' . $debt->id . '-' . time();
 
-            Log::info('Llamando a OpenPayService->chargeWithToken');
-
-            // Preparar datos del cliente para OpenPay
             $customerData = [
                 'name' => $debt->customer->name ?? 'Cliente',
                 'last_name' => $debt->customer->last_name ?? '',
@@ -102,7 +59,6 @@ class OpenPayController extends Controller
                 'phone_number' => $debt->customer->phone ?? null,
             ];
 
-            // Procesar cargo
             $result = $this->openPayService->chargeWithToken(
                 $request->token_id,
                 $request->amount,
@@ -114,7 +70,6 @@ class OpenPayController extends Controller
 
             if (!$result['success']) {
                 DB::rollBack();
-                Log::error('Error en cargo OpenPay', $result);
                 return response()->json([
                     'success' => false,
                     'error' => $result['error'] ?? 'Error desconocido',
@@ -122,9 +77,8 @@ class OpenPayController extends Controller
                 ], 400);
             }
 
-            // Obtener el customer_id desde la toma de agua
             $customerId = $debt->waterConnection->customer_id ?? $debt->customer->id ?? null;
-            
+
             if (!$customerId) {
                 DB::rollBack();
                 Log::error('No se pudo obtener customer_id para el pago', ['debt_id' => $debt->id]);
@@ -134,7 +88,6 @@ class OpenPayController extends Controller
                 ], 400);
             }
 
-            // Crear registro de pago
             $payment = Payment::create([
                 'customer_id' => $customerId,
                 'debt_id' => $debt->id,
@@ -151,14 +104,11 @@ class OpenPayController extends Controller
                 'note' => $request->note ?? "Pago procesado con OpenPay",
             ]);
 
-            // Recalcular el monto pendiente después de registrar el pago
             $debt->refresh();
             $newRemainingAmount = $debt->remaining_amount;
-            
-            // Sincronizar debt_current con el monto real pendiente
+
             $debt->debt_current = $newRemainingAmount;
-            
-            // Actualizar estado de la deuda
+
             if ($newRemainingAmount <= 0) {
                 $debt->status = 'paid';
                 $debt->debt_current = 0;
@@ -168,11 +118,6 @@ class OpenPayController extends Controller
             $debt->save();
 
             DB::commit();
-
-            Log::info('Pago procesado exitosamente', [
-                'payment_id' => $payment->id,
-                'transaction_id' => $result['transaction_id']
-            ]);
 
             return response()->json([
                 'success' => true,
@@ -184,10 +129,8 @@ class OpenPayController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error processing OpenPay payment: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
-            
+            Log::error('Error al procesar pago OpenPay: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'error' => 'Error al procesar el pago: ' . $e->getMessage(),
@@ -195,34 +138,16 @@ class OpenPayController extends Controller
         }
     }
 
-    /**
-     * Endpoint para VERIFICAR el webhook (código de verificación)
-     */
     public function verifyWebhook(Request $request)
     {
-        Log::info('===== VERIFICACIÓN DE WEBHOOK =====', [
-            'method' => $request->method(),
-            'url' => $request->fullUrl(),
-            'headers' => $request->headers->all(),
-            'params' => $request->all(),
-            'body' => $request->getContent(),
-            'ip' => $request->ip()
-        ]);
-
-        // OpenPay envía un código de verificación en el parámetro 'verification_code'
         $verificationCode = $request->input('verification_code');
-        
+
         if ($verificationCode) {
-            Log::info('✅ CÓDIGO DE VERIFICACIÓN RECIBIDO: ' . $verificationCode);
-            
-            // Devolver el código tal cual lo recibimos (esto verifica el webhook)
             return response()->json([
                 'verification_code' => $verificationCode
             ], 200);
         }
 
-        // Si no hay código de verificación, responder con éxito general
-        Log::info('Sin código de verificación - webhook verificado');
         return response()->json([
             'status' => 'webhook endpoint active',
             'message' => 'Endpoint de webhook configurado correctamente',
@@ -230,20 +155,10 @@ class OpenPayController extends Controller
         ], 200);
     }
 
-    /**
-     * Webhook para recibir y PROCESAR notificaciones de OpenPay
-     */
     public function webhook(Request $request)
     {
-        Log::info('===== WEBHOOK OPENPAY RECIBIDO =====', [
-            'headers' => $request->headers->all(),
-            'body' => $request->all(),
-            'raw_content' => $request->getContent()
-        ]);
-
-        // Verificar la firma del webhook
         if (!$this->openPayService->verifyWebhook($request)) {
-            Log::warning('⚠️ Webhook OpenPay no autorizado - firma inválida');
+            Log::warning('Webhook OpenPay no autorizado');
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -265,19 +180,16 @@ class OpenPayController extends Controller
                 return response()->json(['status' => 'payment not found'], 404);
             }
 
-            // Procesar diferentes tipos de eventos
             switch ($type) {
                 case 'charge.succeeded':
                     $payment->openpay_status = 'completed';
                     $payment->openpay_processed_at = now();
-                    Log::info("✅ Pago #{$payment->id} completado exitosamente");
                     break;
 
                 case 'charge.failed':
                     $payment->openpay_status = 'failed';
                     $payment->openpay_error_message = $transaction['error_message'] ?? 'Error desconocido';
-                    
-                    // Revertir actualización de deuda
+
                     $debt = $payment->debt;
                     $debt->debt_current += $payment->amount;
                     if ($debt->debt_current >= $debt->amount) {
@@ -286,19 +198,15 @@ class OpenPayController extends Controller
                         $debt->status = 'partial';
                     }
                     $debt->save();
-                    
-                    Log::warning("❌ Pago #{$payment->id} falló: " . $payment->openpay_error_message);
                     break;
 
                 case 'charge.cancelled':
                     $payment->openpay_status = 'cancelled';
-                    Log::info("🚫 Pago #{$payment->id} cancelado");
                     break;
 
                 case 'charge.refunded':
                     $payment->openpay_status = 'refunded';
-                    
-                    // Revertir deuda
+
                     $debt = $payment->debt;
                     $debt->debt_current += $payment->amount;
                     if ($debt->debt_current >= $debt->amount) {
@@ -307,12 +215,10 @@ class OpenPayController extends Controller
                         $debt->status = 'partial';
                     }
                     $debt->save();
-                    
-                    Log::info("💰 Pago #{$payment->id} reembolsado");
                     break;
 
                 default:
-                    Log::info("ℹ️ Evento webhook no manejado: {$type}");
+                    break;
             }
 
             $payment->save();
@@ -320,20 +226,15 @@ class OpenPayController extends Controller
             return response()->json(['status' => 'success'], 200);
 
         } catch (\Exception $e) {
-            Log::error('Error procesando webhook OpenPay: ' . $e->getMessage(), [
-                'exception' => $e->getTraceAsString()
-            ]);
+            Log::error('Error procesando webhook OpenPay: ' . $e->getMessage());
             return response()->json(['error' => 'Internal error'], 500);
         }
     }
 
-    /**
-     * Realizar reembolso
-     */
     public function refund(Request $request, $paymentId)
     {
         $validator = Validator::make($request->all(), [
-            'amount' => 'nullable|numeric|min:0.01',
+            'amount' => 'nullable|numeric|min:1.00',
             'description' => 'nullable|string|max:255',
         ]);
 
@@ -376,15 +277,13 @@ class OpenPayController extends Controller
                 ], 400);
             }
 
-            // Actualizar pago
             $payment->openpay_status = 'refunded';
             $payment->save();
 
-            // Actualizar deuda
             $debt = $payment->debt;
             $refundAmount = $request->amount ?? $payment->amount;
             $debt->debt_current += $refundAmount;
-            
+
             if ($debt->debt_current >= $debt->amount) {
                 $debt->status = 'pending';
             } else {
@@ -402,7 +301,7 @@ class OpenPayController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error processing refund: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'error' => 'Error al procesar el reembolso: ' . $e->getMessage(),

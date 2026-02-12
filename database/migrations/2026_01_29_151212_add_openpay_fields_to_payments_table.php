@@ -5,12 +5,11 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up()
     {
-        // Primero añadir las nuevas columnas (esto no requiere doctrine/dbal)
         Schema::table('payments', function (Blueprint $table) {
-            // Campos específicos de OpenPay
             $table->string('openpay_transaction_id')->nullable()->after('method');
             $table->string('openpay_order_id')->nullable()->after('openpay_transaction_id');
             $table->string('openpay_authorization')->nullable()->after('openpay_order_id');
@@ -22,16 +21,13 @@ return new class extends Migration {
             $table->timestamp('openpay_processed_at')->nullable()->after('openpay_card_data');
         });
 
-        // Modificar el enum usando SQL directo
         DB::statement("ALTER TABLE payments MODIFY method ENUM('cash', 'card', 'transfer', 'openpay') NOT NULL DEFAULT 'cash'");
     }
 
     public function down()
     {
-        // Primero revertir el enum
         DB::statement("ALTER TABLE payments MODIFY method ENUM('cash', 'card', 'transfer') NOT NULL DEFAULT 'cash'");
 
-        // Luego eliminar las columnas
         Schema::table('payments', function (Blueprint $table) {
             $table->dropColumn([
                 'openpay_transaction_id',

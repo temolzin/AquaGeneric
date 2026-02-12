@@ -23,34 +23,22 @@ class OpenPayService
         $this->sandbox = config('openpay.sandbox');
         $country = strtoupper(config('openpay.country', 'MX'));
 
-        // Configurar el país primero (requerido para endpoints)
         OpenpayAPI::setCountry($country);
         OpenpayAPI::setEndpointUrl($country);
 
-        // Configurar la IP pública del cliente (REQUERIDO por OpenPay)
         $clientIp = $this->getClientIPv4Static();
         OpenpayAPI::setPublicIp($clientIp);
-        
-        Log::info('OpenPay inicializado', [
-            'merchant_id' => $this->merchantId,
-            'sandbox' => $this->sandbox,
-            'country' => $country,
-            'client_ip' => $clientIp
-        ]);
 
-        $this->openpay = OpenpayAPI::getInstance($this->merchantId, $privateKey);
+        $this->openpay = OpenpayAPI::getInstance($this->merchantId, $privateKey, $country, $clientIp);
         OpenpayAPI::setProductionMode(!$this->sandbox);
     }
 
-    /**
-     * Obtener IP pública IPv4 del cliente (versión estática para el constructor)
-     */
+
     protected static function getClientIPv4Static()
     {
-        // Intentar obtener la IP de los headers (para proxies como ngrok)
         $headers = [
             'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_REAL_IP', 
+            'HTTP_X_REAL_IP',
             'HTTP_CLIENT_IP',
             'HTTP_CF_CONNECTING_IP',
             'REMOTE_ADDR'
@@ -61,7 +49,6 @@ class OpenPayService
                 $ips = explode(',', $_SERVER[$header]);
                 foreach ($ips as $ip) {
                     $ip = trim($ip);
-                    // Solo aceptar IPv4 válidas
                     if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
                         return $ip;
                     }
@@ -69,22 +56,16 @@ class OpenPayService
             }
         }
 
-        // IP de prueba para sandbox (IP mexicana válida)
         return '187.188.12.50';
     }
 
-    /**
-     * Obtener IP pública IPv4 del cliente
-     * OpenPay requiere una IP IPv4 válida, no acepta IPv6
-     */
     protected function getClientIPv4()
     {
-        // Intentar obtener la IP de los headers (para proxies como ngrok)
         $headers = [
             'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_REAL_IP', 
+            'HTTP_X_REAL_IP',
             'HTTP_CLIENT_IP',
-            'HTTP_CF_CONNECTING_IP', // Cloudflare
+            'HTTP_CF_CONNECTING_IP',
             'REMOTE_ADDR'
         ];
 
@@ -93,7 +74,6 @@ class OpenPayService
                 $ips = explode(',', $_SERVER[$header]);
                 foreach ($ips as $ip) {
                     $ip = trim($ip);
-                    // Verificar si es una IPv4 válida (no privada, no reservada)
                     if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
                         return $ip;
                     }
@@ -101,47 +81,33 @@ class OpenPayService
             }
         }
 
-        // Si estamos en sandbox y no hay IPv4 válida, usar una IP de prueba
         if ($this->sandbox) {
-            Log::info('OpenPay Sandbox: Usando IP de prueba porque no hay IPv4 válida disponible');
-            return '187.188.12.50'; // IP mexicana de ejemplo para pruebas
+            return '187.188.12.50';
         }
 
         return null;
     }
 
-    /**
-     * Procesar cargo con tarjeta usando token
-     */
     public function chargeWithToken($tokenId, $amount, $description, $orderId, $customer = null, $deviceSessionId = null)
     {
         try {
-            // Obtener IP IPv4 válida
             $clientIp = $this->getClientIPv4();
-            
+
             $chargeRequest = [
                 'method' => 'card',
                 'source_id' => $tokenId,
-                'amount' => floatval($amount), // Asegurar que sea numérico
+                'amount' => floatval($amount),
                 'description' => $description,
                 'order_id' => $orderId,
                 'device_session_id' => $deviceSessionId,
             ];
 
-            // Si tenemos datos del cliente, agregarlos
             if ($customer) {
-                // Asegurar que el cliente tenga la IP correcta
                 if (is_array($customer) && $clientIp) {
                     $customer['clabe'] = $customer['clabe'] ?? null;
                 }
                 $chargeRequest['customer'] = $customer;
             }
-
-            Log::info('OpenPay chargeRequest', [
-                'request' => $chargeRequest,
-                'client_ip' => $clientIp,
-                'sandbox' => $this->sandbox
-            ]);
 
             $charge = $this->openpay->charges->create($chargeRequest);
 
@@ -163,11 +129,6 @@ class OpenPayService
         } catch (Exception $e) {
             $this->logTransaction('charge_error', 'error', $chargeRequest ?? [], null, $e->getMessage());
 
-            Log::error('OpenPay charge error', [
-                'message' => $e->getMessage(),
-                'code' => method_exists($e, 'getErrorCode') ? $e->getErrorCode() : null,
-            ]);
-
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -176,9 +137,6 @@ class OpenPayService
         }
     }
 
-    /**
-     * Procesar cargo con tarjeta directamente (sin tokenización previa)
-     */
     public function chargeWithCard($cardData, $amount, $description, $orderId, $deviceSessionId = null)
     {
         try {
@@ -225,9 +183,6 @@ class OpenPayService
         }
     }
 
-    /**
-     * Obtener información de una transacción
-     */
     public function getTransaction($transactionId)
     {
         try {
@@ -244,9 +199,6 @@ class OpenPayService
         }
     }
 
-    /**
-     * Realizar reembolso
-     */
     public function refund($transactionId, $description = null, $amount = null)
     {
         try {
@@ -274,9 +226,6 @@ class OpenPayService
         }
     }
 
-    /**
-     * Crear cliente en OpenPay
-     */
     public function createCustomer($customerData)
     {
         try {
@@ -301,9 +250,6 @@ class OpenPayService
         }
     }
 
-    /**
-     * Logging de transacciones
-     */
     protected function logTransaction($eventType, $status, $requestData, $responseData, $errorMessage, $transactionId = null)
     {
         try {
@@ -321,12 +267,8 @@ class OpenPayService
         }
     }
 
-    /**
-     * Verificar webhook de OpenPay
-     */
     public function verifyWebhook($requestData)
     {
-        // OpenPay usa autenticación HTTP Basic para webhooks
         $expectedUser = config('openpay.webhook_user');
         $expectedPassword = config('openpay.webhook_password');
 
