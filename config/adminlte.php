@@ -312,7 +312,7 @@ return [
         'text' => 'Panel',
         'url' => '/dashboard',
         'icon' => 'fas fa-fw fa-home',
-    ], 
+    ],
     [
         'text' => 'Gestión de Pagos',
         'icon' => 'fas fa-fw fa-dollar-sign',
@@ -352,7 +352,7 @@ return [
                 'url' => '/sections',
                 'icon' => 'fas fa-fw fa-th-large',
                 'can'  => 'viewSections'
-            ],   
+            ],
         ],
     ],
     [
