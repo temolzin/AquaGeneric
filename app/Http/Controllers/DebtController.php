@@ -210,7 +210,7 @@ class DebtController extends Controller
         
         if (!$customer) {
             $waterConnections = WaterConnection::where('id', 0)->paginate(10);
-            return view('viewCustomerDebts.index', compact('waterConnections'))
+            return view('viewCustomerDebts.index', compact('waterConnections', 'customer'))
                 ->with('error', 'No se encontró información del cliente.');
         }
 
@@ -238,6 +238,6 @@ class DebtController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('viewCustomerDebts.index', compact('waterConnections'));
+        return view('viewCustomerDebts.index', compact('waterConnections', 'customer'));
     }
 }
