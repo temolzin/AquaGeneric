@@ -110,14 +110,14 @@ class OpenPayController extends Controller
                 ->update(['payment_id' => $payment->id]);
 
             $debt->refresh();
-            $newRemainingAmount = $debt->remaining_amount;
+            
+            $debt->debt_current = $debt->total_paid;
+            
+            $pendingAmount = $debt->remaining_amount;
 
-            $debt->debt_current = $newRemainingAmount;
-
-            if ($newRemainingAmount <= 0) {
+            if ($pendingAmount <= 0) {
                 $debt->status = 'paid';
-                $debt->debt_current = 0;
-            } elseif ($newRemainingAmount < $debt->amount) {
+            } elseif ($debt->debt_current > 0) {
                 $debt->status = 'partial';
             }
             $debt->save();
@@ -196,8 +196,9 @@ class OpenPayController extends Controller
                     $payment->openpay_error_message = $transaction['error_message'] ?? 'Error desconocido';
 
                     $debt = $payment->debt;
-                    $debt->debt_current += $payment->amount;
-                    if ($debt->debt_current >= $debt->amount) {
+                    $debt->debt_current = max(0, $debt->debt_current - $payment->amount);
+                    
+                    if ($debt->debt_current <= 0) {
                         $debt->status = 'pending';
                     } else {
                         $debt->status = 'partial';
@@ -213,8 +214,9 @@ class OpenPayController extends Controller
                     $payment->openpay_status = 'refunded';
 
                     $debt = $payment->debt;
-                    $debt->debt_current += $payment->amount;
-                    if ($debt->debt_current >= $debt->amount) {
+                    $debt->debt_current = max(0, $debt->debt_current - $payment->amount);
+                    
+                    if ($debt->debt_current <= 0) {
                         $debt->status = 'pending';
                     } else {
                         $debt->status = 'partial';

@@ -83,8 +83,8 @@
                                 <label><i class="fas fa-credit-card"></i> Número de tarjeta</label>
                                 <input type="text" class="form-control" id="modal-card-number"
                                     placeholder="•••• •••• •••• ••••" autocomplete="off" data-openpay-card="card_number"
-                                    maxlength="16" pattern="[0-9]{16}" inputmode="numeric"
-                                    title="16 dígitos numéricos" required>
+                                    maxlength="19" pattern="[0-9]{13,19}" inputmode="numeric"
+                                    title="Entre 13 y 19 dígitos numéricos" required>
                                 <div id="modal-card-brand" class="mt-1" style="min-height: 20px;"></div>
                             </div>
                         </div>
@@ -122,9 +122,9 @@
                             <div class="form-group">
                                 <label>CVV <i class="fas fa-question-circle text-muted"
                                         title="Código de seguridad"></i></label>
-                                <input type="text" class="form-control" id="modal-cvv" placeholder="•••" maxlength="3"
-                                    pattern="[0-9]{3}" inputmode="numeric" autocomplete="off"
-                                    data-openpay-card="cvv2" title="3 dígitos numéricos" required>
+                                <input type="text" class="form-control" id="modal-cvv" placeholder="•••" maxlength="4"
+                                    pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off"
+                                    data-openpay-card="cvv2" title="3 o 4 dígitos numéricos" required>
                             </div>
                         </div>
                         <div class="col-12 col-md-3">
@@ -135,7 +135,7 @@
                                         <span class="input-group-text">$</span>
                                     </div>
                                     <input type="number" class="form-control" id="modal-amount" name="amount"
-                                        step="0.01" min="0.01" required>
+                                        step="1.00" min="1.00" required>
                                 </div>
                             </div>
                         </div>

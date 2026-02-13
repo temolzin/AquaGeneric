@@ -405,8 +405,8 @@
                 return;
             }
 
-            if (!/^[0-9]{16}$/.test(cardNumber)) {
-                showModalError('El número de tarjeta debe tener 16 dígitos numéricos');
+            if (!/^[0-9]{13,19}$/.test(cardNumber)) {
+                showModalError('El número de tarjeta debe tener entre 13 y 19 dígitos numéricos');
                 return;
             }
             if (!OpenPay.card.validateCardNumber(cardNumber)) {
@@ -430,8 +430,8 @@
                 return;
             }
 
-            if (!/^[0-9]{3}$/.test(cvv)) {
-                showModalError('El CVV debe tener exactamente 3 dígitos numéricos');
+            if (!/^[0-9]{3,4}$/.test(cvv)) {
+                showModalError('El CVV debe tener 3 o 4 dígitos numéricos');
                 return;
             }
             if (!OpenPay.card.validateCVC(cvv)) {
