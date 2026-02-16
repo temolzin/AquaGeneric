@@ -82,17 +82,7 @@
             colorPreviewCategory.style.border = `1px solid ${color}`;
         };
 
-        if ($(colorSelectCategory).hasClass('select2-hidden-accessible')) {
-            $(colorSelectCategory).select2('destroy');
-        }
-
-        initializeSelect2Custom('#colorSelectCategory', {
-            theme: 'bootstrap4',
-            placeholder: 'Seleccione un color',
-            allowClear: false
-        });
-
-        $('#colorSelectCategory').off('change').on('change', updatePreviewCategory);
+        colorSelectCategory.addEventListener('change', updatePreviewCategory);
         updatePreviewCategory();
     }
 

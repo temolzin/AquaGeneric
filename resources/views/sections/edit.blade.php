@@ -85,16 +85,6 @@
 
         if (!select || !preview) return;
 
-        if ($(select).hasClass('select2-hidden-accessible')) {
-            $(select).select2('destroy');
-        }
-
-        initializeSelect2Custom('#colorSelect{{ $section->id }}', {
-            theme: 'bootstrap4',
-            placeholder: 'Selecciona un color',
-            allowClear: false
-        });
-
         const updatePreview = () => {
             const selected = select.options[select.selectedIndex];
             const color = selected?.dataset.color;
@@ -107,7 +97,7 @@
             }
         };
 
-        $('#colorSelect{{ $section->id }}').off('change').on('change', updatePreview);
+        select.addEventListener('change', updatePreview);
         updatePreview();
     }
 

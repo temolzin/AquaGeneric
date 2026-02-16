@@ -80,17 +80,7 @@
             colorPreview.style.border = selected?.dataset.color ? `1px solid ${selected.dataset.color}` : '1px solid #ccc';
         };
 
-        if ($(colorSelect).hasClass('select2-hidden-accessible')) {
-            $(colorSelect).select2('destroy');
-        }
-
-        initializeSelect2Custom('#colorSelect', {
-            theme: 'bootstrap4',
-            placeholder: 'Seleccione un color',
-            allowClear: false
-        });
-
-        $('#colorSelect').off('change').on('change', updatePreview);
+        colorSelect.addEventListener('change', updatePreview);
         updatePreview();
     }
 

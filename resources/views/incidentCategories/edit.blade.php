@@ -88,17 +88,7 @@
             
             if (!colorSelect || !colorPreview) return;
 
-            if ($(colorSelect).hasClass('select2-hidden-accessible')) {
-                $(colorSelect).select2('destroy');
-            }
-
-            initializeSelect2Custom('#colorSelectCategory' + modalId, {
-                theme: 'bootstrap4',
-                placeholder: 'Seleccione un color',
-                allowClear: false
-            });
-            
-            $(colorSelect).off('change').on('change', function() {
+            colorSelect.addEventListener('change', function() {
                 updatePreview(this, colorPreview);
             });
             
@@ -126,17 +116,7 @@
             
             if (!colorSelect || !colorPreview) return;
 
-            if ($(colorSelect).hasClass('select2-hidden-accessible')) {
-                $(colorSelect).select2('destroy');
-            }
-
-            initializeSelect2Custom('#colorSelectCategory' + modalId, {
-                theme: 'bootstrap4',
-                placeholder: 'Seleccione un color',
-                allowClear: false
-            });
-            
-            $(colorSelect).off('change').on('change', function() {
+            colorSelect.addEventListener('change', function() {
                 updatePreview(this, colorPreview);
             });
             
