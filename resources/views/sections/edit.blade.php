@@ -31,8 +31,8 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="color" class="form-label">Color(*)</label>
-                                        <div class="input-group">
-                                            <select name="color_index" class="form-control" id="colorSelect{{ $section->id }}" required>
+                                        <div class="d-flex align-items-center" style="gap: 0;">
+                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $section->id }}" style="flex: 1;" required>
                                                 <option value="">Selecciona un color</option>
                                                 <option value="13" data-color="#e74c3c" {{ $section->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="0"  data-color="#3498db" {{ $section->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
@@ -43,8 +43,7 @@
                                                 <option value="14" data-color="#34495e" {{ $section->color == 'bg-secondary' ? 'selected' : '' }}>Gris oscuro</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class="input-group-text" id="colorPreview{{ $section->id }}" style="width: 40px; background-color: {{ $section->color ? pdf_color($section->color) : '#f8f9fa' }}; border: 1px solid {{ $section->color ? pdf_color($section->color) : '#ccc' }};">
-                                                </span>
+                                                <span class="input-group-text" id="colorPreview{{ $section->id }}" style="width: 45px; height: 45px; background-color: {{ $section->color ? pdf_color($section->color) : '#f8f9fa' }}; padding: 0; border: 1px solid {{ $section->color ? pdf_color($section->color) : '#ccc' }};"></span>
                                             </div>
                                         </div>
                                         @error('color_index') <small class="text-danger">{{ $message }}</small> @enderror
@@ -106,6 +105,25 @@
     });
 
     $(document).on('shown.bs.modal', '#edit{{ $section->id }}', function() {
+        var modalElement = $(this);
+        var dropdownParent = modalElement.find('.modal-body');
+        
+        modalElement.find('.select2').each(function() {
+            if (!$(this).data('select2')) {
+                $(this).select2({
+                    dropdownParent: dropdownParent,
+                    allowClear: false,
+                    width: '100%'
+                });
+            }
+        });
+        
+        modalElement.on('keydown', function(e) {
+            if ($('.select2-container--open').length && e.keyCode === 27) {
+                e.stopPropagation();
+            }
+        });
+        
         initializeColorSelect();
     });
 </script>

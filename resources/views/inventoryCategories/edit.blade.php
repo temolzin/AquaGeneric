@@ -30,8 +30,8 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
-                                        <div class="input-group">
-                                            <select name="color_index" class="form-control" id="colorSelect{{ $category->id }}" required>
+                                        <div class="d-flex align-items-center" style="gap: 0;">
+                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $category->id }}" style="flex: 1;" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="13" data-color="#e74c3c" {{ $category->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="0"  data-color="#3498db" {{ $category->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
@@ -43,7 +43,7 @@
                                                 <option value="3"  data-color="#f1c40f" {{ $category->color == 'bg-yellow' ? 'selected' : '' }}>Amarillo</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class="input-group-text color-preview" id="colorPreview{{ $category->id }}" style="width: 40px; background-color: {{ $category->color ? pdf_color($category->color) : '#6c757d' }};"></span>
+                                                <span class=\"input-group-text color-preview\" id=\"colorPreview{{ $category->id }}\" style=\"width: 45px; height: 45px; padding: 0; background-color: {{ $category->color ? pdf_color($category->color) : '#6c757d' }}; border: 1px solid #ced4da;\"></span>
                                             </div>
                                         </div>
                                         @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
@@ -104,6 +104,25 @@
     });
 
     $(document).on('shown.bs.modal', '[id^="editInventoryCategory"]', function() {
+        var modalElement = $(this);
+        var dropdownParent = modalElement.find('.modal-body');
+        
+        modalElement.find('.select2').each(function() {
+            if (!$(this).data('select2')) {
+                $(this).select2({
+                    dropdownParent: dropdownParent,
+                    allowClear: false,
+                    width: '100%'
+                });
+            }
+        });
+        
+        modalElement.on('keydown', function(e) {
+            if ($('.select2-container--open').length && e.keyCode === 27) {
+                e.stopPropagation();
+            }
+        });
+        
         initializeAllColorSelects();
     });
 </script>

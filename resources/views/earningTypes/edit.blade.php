@@ -30,8 +30,8 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
-                                        <div class="input-group">
-                                            <select name="color_index" class="form-control" id="colorSelect{{ $earningType->id }}" required>
+                                        <div class="d-flex align-items-center" style="gap: 0;">
+                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $earningType->id }}" style="flex: 1;" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="13" data-color="#e74c3c" {{ $earningType->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="0"  data-color="#3498db" {{ $earningType->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
@@ -42,7 +42,7 @@
                                                 <option value="14" data-color="#34495e" {{ $earningType->color == 'bg-secondary' ? 'selected' : '' }}>Gris oscuro</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class="input-group-text color-preview" id="colorPreview{{ $earningType->id }}" style="width: 40px; background-color: {{ $earningType->color ? pdf_color($earningType->color) : '#6c757d' }};"></span>
+                                                <span class="input-group-text color-preview" id="colorPreview{{ $earningType->id }}" style="width: 45px; height: 45px; padding: 0; background-color: {{ $earningType->color ? pdf_color($earningType->color) : '#6c757d' }}; border: 1px solid #ced4da;"></span>
                                             </div>
                                         </div>
                                         @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
@@ -92,6 +92,25 @@
     });
 
     $(document).on('shown.bs.modal', '[id^="editEarningType"]', function() {
+        var modalElement = $(this);
+        var dropdownParent = modalElement.find('.modal-body');
+        
+        modalElement.find('.select2').each(function() {
+            if (!$(this).data('select2')) {
+                $(this).select2({
+                    dropdownParent: dropdownParent,
+                    allowClear: false,
+                    width: '100%'
+                });
+            }
+        });
+        
+        modalElement.on('keydown', function(e) {
+            if ($('.select2-container--open').length && e.keyCode === 27) {
+                e.stopPropagation();
+            }
+        });
+        
         initializeColorSelects();
     });
 </script>
