@@ -12,7 +12,7 @@
                 </div>
                 <form action="{{ route('incidents.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Registro de Incidencias</h3>
@@ -107,6 +107,9 @@
 
 <script>
     $(document).on('shown.bs.modal', '#createIncidence', function() {
+        var modalElement = $(this);
+        var dropdownParent = modalElement.find('.modal-body');
+        
         $(this).find('.select2').each(function() {
             if ($(this).hasClass('select2-hidden-accessible')) {
                 $(this).select2('destroy');
@@ -116,8 +119,15 @@
                 allowClear: false,
                 placeholder: 'Selecciona una opción',
                 width: '100%',
-                dropdownParent: $('#createIncidence')
+                dropdownParent: dropdownParent
             });
+        });
+        
+        // Prevent Escape key from closing modal when Select2 is active
+        modalElement.on('keydown', function(e) {
+            if ($('.select2-container--open').length && e.keyCode === 27) {
+                e.stopPropagation();
+            }
         });
     });
 

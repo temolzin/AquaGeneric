@@ -11,7 +11,7 @@
                 <form action="{{ route('customers.update', $customer->id) }}" enctype="multipart/form-data" method="post" id="edit-customer-form-{{ $customer->id }}">
                     @csrf
                     @method('PUT')
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Datos del Cliente</h3>

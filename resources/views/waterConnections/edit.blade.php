@@ -11,7 +11,7 @@
                 <form action="{{ route('waterConnections.update', $connection->id) }}" enctype="multipart/form-data" method="post" id="edit-waterConnection-form-{{ $connection->id }}">
                     @csrf
                     @method('PUT')
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
