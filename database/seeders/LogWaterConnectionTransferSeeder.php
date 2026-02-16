@@ -30,7 +30,7 @@ class LogWaterConnectionTransferSeeder extends Seeder
                 continue;
             }
 
-            $waterConnection = DB::table('water_connections')->inRandomOrder()->first();
+            $waterConnection = DB::table('water_connections')->where('locality_id', $locality_id)->inRandomOrder()->first();
             $oldCustomer = DB::table('customers')->where('status', 0)->where('locality_id', $locality_id)->inRandomOrder()->first();
             $newCustomer = DB::table('customers')->where('status', 1)->where('locality_id', $locality_id)->inRandomOrder()->first();
 
