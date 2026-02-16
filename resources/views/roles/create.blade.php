@@ -58,14 +58,14 @@
                                                             class="table table-sm table-bordered table-striped mb-0 module-{{ Str::slug($module) }}">
                                                             <thead>
                                                                 <tr>
-                                                                    <th style="width: 100px;">Seleccionar</th>
+                                                                    <th style="width: 80px; padding-left: 5px;">Seleccionar</th>
                                                                     <th>Permiso</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 @foreach ($modulePermissions as $permission)
                                                                     <tr>
-                                                                        <td>
+                                                                        <td class="text-center aling-middle">
                                                                             <div
                                                                                 class="custom-control custom-checkbox custom-checkbox-lg">
                                                                                 <input type="checkbox"
