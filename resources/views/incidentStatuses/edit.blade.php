@@ -87,7 +87,6 @@
             
             if (!colorSelect || !colorPreview) return;
 
-            // Destroy if already initialized
             if ($(colorSelect).hasClass('select2-hidden-accessible')) {
                 $(colorSelect).select2('destroy');
             }
@@ -110,12 +109,10 @@
         });
     }
 
-    // Initialize when DOM is ready
     $(document).ready(function() {
         initializeAllColorSelects();
     });
 
-    // Re-initialize when any modal is shown
     $(document).on('shown.bs.modal', '[id^="editIncidentStatus"]', function() {
         initializeAllColorSelects();
     });

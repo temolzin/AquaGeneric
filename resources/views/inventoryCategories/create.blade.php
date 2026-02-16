@@ -68,8 +68,6 @@
     </div>
 </div>
 
-
-
 <script>
     function initializeColorSelect() {
         const colorSelect = document.getElementById('colorSelect');

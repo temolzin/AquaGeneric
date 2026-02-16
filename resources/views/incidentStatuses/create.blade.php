@@ -67,8 +67,6 @@
     </div>
 </div>
 
-
-
 <script>
     function initializeColorSelect() {
         const colorSelect = document.getElementById('colorSelect');
@@ -89,7 +87,6 @@
             }
         };
 
-        // Destroy if already initialized
         if ($(colorSelect).hasClass('select2-hidden-accessible')) {
             $(colorSelect).select2('destroy');
         }
@@ -104,12 +101,10 @@
         updatePreview();
     }
 
-    // Initialize when DOM is ready
     $(document).ready(function() {
         initializeColorSelect();
     });
 
-    // Re-initialize when modal is shown
     $(document).on('shown.bs.modal', '#createIncidentStatusModal', function() {
         initializeColorSelect();
     });

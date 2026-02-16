@@ -117,6 +117,7 @@
         </div>
     </div>
 </div>
+
 <script>
 $(document).ready(function() {
     $('#customer_id').on('change', function() {

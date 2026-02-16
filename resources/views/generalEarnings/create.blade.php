@@ -78,8 +78,6 @@
     </div>
 </div>
 
-
-
 <script>
     document.getElementById('receipt').addEventListener('change', function (event) {
         const input = event.target;

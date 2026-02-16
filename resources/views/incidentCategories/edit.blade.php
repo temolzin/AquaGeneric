@@ -88,7 +88,6 @@
             
             if (!colorSelect || !colorPreview) return;
 
-            // Destroy if already initialized
             if ($(colorSelect).hasClass('select2-hidden-accessible')) {
                 $(colorSelect).select2('destroy');
             }
@@ -111,7 +110,6 @@
         });
     });
 
-    // Re-initialize when any modal is shown
     $(document).on('shown.bs.modal', '[id^="editIncidentCategory"]', function() {
         const editModals = document.querySelectorAll('[id^="editIncidentCategory"]');
         const updatePreview = (select, preview) => {

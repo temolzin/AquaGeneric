@@ -39,6 +39,7 @@
         </div>
     </div>
 </div>
+
 @section('js')
 <script>
 $(document).ready(function() {

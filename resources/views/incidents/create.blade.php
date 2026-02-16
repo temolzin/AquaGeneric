@@ -104,6 +104,7 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).on('shown.bs.modal', '#createIncidence', function() {
         $(this).find('.select2').each(function() {

@@ -101,7 +101,6 @@
 </div>
 
 <script>
-    // Re-initialize Select2 when the edit incidents modal is shown
     $(document).on('shown.bs.modal', '#edit{{ $incident->id }}', function() {
         $(this).find('.select2').each(function() {
             if ($(this).hasClass('select2-hidden-accessible')) {
