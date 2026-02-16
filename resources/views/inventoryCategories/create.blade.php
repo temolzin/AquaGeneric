@@ -67,22 +67,25 @@
 </div>
 
 <script>
-    function initializeColorSelect() {
+    document.addEventListener('DOMContentLoaded', function() {
         const colorSelect = document.getElementById('colorSelect');
         const colorPreview = document.getElementById('colorPreview');
-        if (!colorSelect || !colorPreview) return;
 
         const updatePreview = () => {
+            if (!colorSelect || !colorPreview) return;
             const selected = colorSelect.options[colorSelect.selectedIndex];
-            colorPreview.style.backgroundColor = selected?.dataset.color || '#f8f9fa';
-            colorPreview.style.border = selected?.dataset.color ? `1px solid ${selected.dataset.color}` : '1px solid #ccc';
+            const color = selected?.dataset.color || '#6c757d';
+            colorPreview.style.backgroundColor = color;
+            colorPreview.style.border = `1px solid ${color}`;
         };
 
-        colorSelect.addEventListener('change', updatePreview);
-        updatePreview();
-    }
+        const initializeColorSelect = () => {
+            if (!colorSelect || !colorPreview) return;
 
-    $(document).ready(function() {
+            $('#colorSelect').on('change', updatePreview);
+            updatePreview();
+        };
+
         initializeColorSelect();
     });
 
@@ -106,6 +109,13 @@
             }
         });
         
-        initializeColorSelect();
+        const colorSelect = document.getElementById('colorSelect');
+        const colorPreview = document.getElementById('colorPreview');
+        if (colorSelect && colorPreview) {
+            const selected = colorSelect.options[colorSelect.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            colorPreview.style.backgroundColor = color;
+            colorPreview.style.border = `1px solid ${color}`;
+        }
     });
 </script>

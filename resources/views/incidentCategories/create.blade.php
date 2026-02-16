@@ -42,7 +42,6 @@
                                                 <option value="3"  data-color="#f1c40f">Amarillo</option>
                                             </select>
                                             <span class="input-group-text" id="colorPreviewCategory" style="width: 45px; height: 45px; background-color: #6c757d; padding: 0; border: 1px solid #ced4da; margin-left: -1px;"></span>
-                                            </div>
                                         </div>
                                         @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                                     </div>
@@ -68,25 +67,26 @@
 </div>
 
 <script>
-    function initializeColorSelectCategory() {
+    document.addEventListener('DOMContentLoaded', function() {
         const colorSelectCategory = document.getElementById('colorSelectCategory');
         const colorPreviewCategory = document.getElementById('colorPreviewCategory');
 
-        if (!colorSelectCategory || !colorPreviewCategory) return;
-
-        const updatePreviewCategory = () => {
-            const selectedOption = colorSelectCategory.options[colorSelectCategory.selectedIndex];
-            const color = selectedOption?.dataset.color || '#6c757d';
+        const updatePreview = () => {
+            if (!colorSelectCategory || !colorPreviewCategory) return;
+            const selected = colorSelectCategory.options[colorSelectCategory.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
             colorPreviewCategory.style.backgroundColor = color;
             colorPreviewCategory.style.border = `1px solid ${color}`;
         };
 
-        colorSelectCategory.addEventListener('change', updatePreviewCategory);
-        updatePreviewCategory();
-    }
+        const initializeColorSelect = () => {
+            if (!colorSelectCategory || !colorPreviewCategory) return;
 
-    $(document).ready(function() {
-        initializeColorSelectCategory();
+            $('#colorSelectCategory').on('change', updatePreview);
+            updatePreview();
+        };
+
+        initializeColorSelect();
     });
 
     $(document).on('shown.bs.modal', '#create', function() {
@@ -109,6 +109,13 @@
             }
         });
         
-        initializeColorSelectCategory();
+        const colorSelectCategory = document.getElementById('colorSelectCategory');
+        const colorPreviewCategory = document.getElementById('colorPreviewCategory');
+        if (colorSelectCategory && colorPreviewCategory) {
+            const selected = colorSelectCategory.options[colorSelectCategory.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            colorPreviewCategory.style.backgroundColor = color;
+            colorPreviewCategory.style.border = `1px solid ${color}`;
+        }
     });
 </script>

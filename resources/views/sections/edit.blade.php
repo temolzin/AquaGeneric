@@ -70,38 +70,25 @@
     .modal-content {
         padding-bottom: 0.2rem;
     }
-    .modal-footer {
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
-    }
-
 </style>
 
 <script>
-    function initializeColorSelect() {
+    document.addEventListener('DOMContentLoaded', function() {
         const select = document.getElementById('colorSelect{{ $section->id }}');
         const preview = document.getElementById('colorPreview{{ $section->id }}');
 
-        if (!select || !preview) return;
-
         const updatePreview = () => {
+            if (!select || !preview) return;
             const selected = select.options[select.selectedIndex];
-            const color = selected?.dataset.color;
-            if (color) {
-                preview.style.backgroundColor = color;
-                preview.style.border = '1px solid ' + color;
-            } else {
-                preview.style.backgroundColor = '#f8f9fa';
-                preview.style.border = '1px solid #ccc';
-            }
+            const color = selected?.dataset.color || '#6c757d';
+            preview.style.backgroundColor = color;
+            preview.style.border = `1px solid ${color}`;
         };
 
-        select.addEventListener('change', updatePreview);
-        updatePreview();
-    }
-
-    $(document).ready(function() {
-        initializeColorSelect();
+        if (select && preview) {
+            $('#colorSelect{{ $section->id }}').on('change', updatePreview);
+            updatePreview();
+        }
     });
 
     $(document).on('shown.bs.modal', '#edit{{ $section->id }}', function() {
@@ -124,6 +111,13 @@
             }
         });
         
-        initializeColorSelect();
+        const select = document.getElementById('colorSelect{{ $section->id }}');
+        const preview = document.getElementById('colorPreview{{ $section->id }}');
+        if (select && preview) {
+            const selected = select.options[select.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            preview.style.backgroundColor = color;
+            preview.style.border = `1px solid ${color}`;
+        }
     });
 </script>

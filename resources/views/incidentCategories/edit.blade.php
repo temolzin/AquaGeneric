@@ -70,31 +70,23 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const editModals = document.querySelectorAll('[id^="editIncidentCategory"]');
-        
-        const updatePreview = (select, preview) => {
-            const selected = select.options[select.selectedIndex];
-            const color = selected?.dataset.color || '#6c757d';
-            preview.style.backgroundColor = color;
-            preview.style.border = `1px solid ${color}`;
-        };
+        document.querySelectorAll('[id^="colorSelectCategory"]').forEach(el => {
+            const id = el.id.replace('colorSelectCategory', '');
+            const colorSelect = document.getElementById('colorSelectCategory' + id);
+            const colorPreview = document.getElementById('colorPreviewCategory' + id);
 
-        const initializeColorSelect = (modal) => {
-            const modalId = modal.id.replace('editIncidentCategory', '');
-            const colorSelect = document.getElementById('colorSelectCategory' + modalId);
-            const colorPreview = document.getElementById('colorPreviewCategory' + modalId);
-            
-            if (!colorSelect || !colorPreview) return;
+            const updatePreview = () => {
+                if (!colorSelect || !colorPreview) return;
+                const selected = colorSelect.options[colorSelect.selectedIndex];
+                const color = selected?.dataset.color || '#6c757d';
+                colorPreview.style.backgroundColor = color;
+                colorPreview.style.border = `1px solid ${color}`;
+            };
 
-            colorSelect.addEventListener('change', function() {
-                updatePreview(this, colorPreview);
-            });
-            
-            updatePreview(colorSelect, colorPreview);
-        };
-
-        editModals.forEach(modal => {
-            initializeColorSelect(modal);
+            if (colorSelect && colorPreview) {
+                $('#colorSelectCategory' + id).on('change', updatePreview);
+                updatePreview();
+            }
         });
     });
 
@@ -118,30 +110,16 @@
             }
         });
         
-        const editModals = document.querySelectorAll('[id^="editIncidentCategory"]');
-        const updatePreview = (select, preview) => {
-            const selected = select.options[select.selectedIndex];
-            const color = selected?.dataset.color || '#6c757d';
-            preview.style.backgroundColor = color;
-            preview.style.border = `1px solid ${color}`;
-        };
-
-        const initializeColorSelect = (modal) => {
-            const modalId = modal.id.replace('editIncidentCategory', '');
-            const colorSelect = document.getElementById('colorSelectCategory' + modalId);
-            const colorPreview = document.getElementById('colorPreviewCategory' + modalId);
-            
-            if (!colorSelect || !colorPreview) return;
-
-            colorSelect.addEventListener('change', function() {
-                updatePreview(this, colorPreview);
-            });
-            
-            updatePreview(colorSelect, colorPreview);
-        };
-
-        editModals.forEach(modal => {
-            initializeColorSelect(modal);
+        modalElement.find('[id^="colorSelectCategory"]').each(function() {
+            const id = this.id.replace('colorSelectCategory', '');
+            const colorSelect = document.getElementById('colorSelectCategory' + id);
+            const colorPreview = document.getElementById('colorPreviewCategory' + id);
+            if (colorSelect && colorPreview) {
+                const selected = colorSelect.options[colorSelect.selectedIndex];
+                const color = selected?.dataset.color || '#6c757d';
+                colorPreview.style.backgroundColor = color;
+                colorPreview.style.border = `1px solid ${color}`;
+            }
         });
     });
 </script>

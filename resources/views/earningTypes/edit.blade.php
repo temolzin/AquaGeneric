@@ -69,33 +69,36 @@
 </div>
 
 <script>
-    function initializeColorSelects() {
-        document.querySelectorAll('[id^="colorSelect"]').forEach(colorSelect => {
-            const colorPreview = document.getElementById(colorSelect.id.replace('colorSelect', 'colorPreview'));
-            
-            if (!colorSelect || !colorPreview) return;
-            
+    document.addEventListener('DOMContentLoaded', function() {
+        function setupColorSelectForId(id) {
+            const colorSelect = document.getElementById('colorSelect' + id);
+            const colorPreview = document.getElementById('colorPreview' + id);
+
             const updatePreview = () => {
+                if (!colorSelect || !colorPreview) return;
                 const selected = colorSelect.options[colorSelect.selectedIndex];
                 const color = selected?.dataset.color || '#6c757d';
                 colorPreview.style.backgroundColor = color;
                 colorPreview.style.border = `1px solid ${color}`;
             };
 
-            colorSelect.addEventListener('change', updatePreview);
-            updatePreview();
-        });
-    }
+            if (colorSelect && colorPreview) {
+                $('#colorSelect' + id).on('change', updatePreview);
+                updatePreview();
+            }
+        }
 
-    $(document).ready(function() {
-        initializeColorSelects();
+        document.querySelectorAll('[id^="colorSelect"]').forEach(el => {
+            const id = el.id.replace('colorSelect', '');
+            setupColorSelectForId(id);
+        });
     });
 
-    $(document).on('shown.bs.modal', '[id^="editEarningType"]', function() {
+    $(document).on('shown.bs.modal', function() {
         var modalElement = $(this);
-        var dropdownParent = modalElement.find('.modal-body');
         
-        modalElement.find('.select2').each(function() {
+        modalElement.find('.select2:not(.select2-hidden-accessible)').each(function() {
+            var dropdownParent = modalElement.find('.modal-body');
             if (!$(this).data('select2')) {
                 $(this).select2({
                     dropdownParent: dropdownParent,
@@ -110,7 +113,17 @@
                 e.stopPropagation();
             }
         });
-        
-        initializeColorSelects();
+
+        modalElement.find('[id^="colorSelect"]').each(function() {
+            const id = this.id.replace('colorSelect', '');
+            const colorSelect = document.getElementById('colorSelect' + id);
+            const colorPreview = document.getElementById('colorPreview' + id);
+            if (colorSelect && colorPreview) {
+                const selected = colorSelect.options[colorSelect.selectedIndex];
+                const color = selected?.dataset.color || '#6c757d';
+                colorPreview.style.backgroundColor = color;
+                colorPreview.style.border = `1px solid ${color}`;
+            }
+        });
     });
 </script>

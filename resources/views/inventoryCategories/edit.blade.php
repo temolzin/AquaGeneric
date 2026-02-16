@@ -43,7 +43,7 @@
                                                 <option value="3"  data-color="#f1c40f" {{ $category->color == 'bg-yellow' ? 'selected' : '' }}>Amarillo</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class=\"input-group-text color-preview\" id=\"colorPreview{{ $category->id }}\" style=\"width: 45px; height: 45px; padding: 0; background-color: {{ $category->color ? pdf_color($category->color) : '#6c757d' }}; border: 1px solid #ced4da;\"></span>
+                                                <span class="input-group-text" id="colorPreview{{ $category->id }}" style="width: 45px; height: 45px; background-color: {{ $category->color ? pdf_color($category->color) : '#f8f9fa' }}; padding: 0; border: 1px solid {{ $category->color ? pdf_color($category->color) : '#ccc' }};"></span>
                                             </div>
                                         </div>
                                         @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
@@ -70,37 +70,25 @@
 </div>
 
 <script>
-    function initializeAllColorSelects() {
-        const editModals = document.querySelectorAll('[id^="editInventoryCategory"]');
-        
-        const updatePreview = (select, preview) => {
-            const selected = select.options[select.selectedIndex];
-            const color = selected?.dataset.color || '#6c757d';
-            preview.style.backgroundColor = color;
-            preview.style.border = `1px solid ${color}`;
-        };
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[id^="colorSelect"]').forEach(el => {
+            const id = el.id.replace('colorSelect', '');
+            const colorSelect = document.getElementById('colorSelect' + id);
+            const colorPreview = document.getElementById('colorPreview' + id);
 
-        const initializeColorSelect = (modal) => {
-            const modalId = modal.id.replace('editInventoryCategory', '');
-            const colorSelect = document.getElementById('colorSelect' + modalId);
-            const colorPreview = document.getElementById('colorPreview' + modalId);
-            
-            if (!colorSelect || !colorPreview) return;
+            const updatePreview = () => {
+                if (!colorSelect || !colorPreview) return;
+                const selected = colorSelect.options[colorSelect.selectedIndex];
+                const color = selected?.dataset.color || '#6c757d';
+                colorPreview.style.backgroundColor = color;
+                colorPreview.style.border = `1px solid ${color}`;
+            };
 
-            colorSelect.addEventListener('change', function() {
-                updatePreview(this, colorPreview);
-            });
-            
-            updatePreview(colorSelect, colorPreview);
-        };
-
-        editModals.forEach(modal => {
-            initializeColorSelect(modal);
+            if (colorSelect && colorPreview) {
+                $('#colorSelect' + id).on('change', updatePreview);
+                updatePreview();
+            }
         });
-    }
-
-    $(document).ready(function() {
-        initializeAllColorSelects();
     });
 
     $(document).on('shown.bs.modal', '[id^="editInventoryCategory"]', function() {
@@ -123,6 +111,16 @@
             }
         });
         
-        initializeAllColorSelects();
+        modalElement.find('[id^="colorSelect"]').each(function() {
+            const id = this.id.replace('colorSelect', '');
+            const colorSelect = document.getElementById('colorSelect' + id);
+            const colorPreview = document.getElementById('colorPreview' + id);
+            if (colorSelect && colorPreview) {
+                const selected = colorSelect.options[colorSelect.selectedIndex];
+                const color = selected?.dataset.color || '#6c757d';
+                colorPreview.style.backgroundColor = color;
+                colorPreview.style.border = `1px solid ${color}`;
+            }
+        });
     });
 </script>

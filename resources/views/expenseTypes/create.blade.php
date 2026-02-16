@@ -41,7 +41,6 @@
                                                 <option value="14" data-color="#34495e">Gris oscuro</option>
                                             </select>
                                             <span class="input-group-text" id="colorPreview" style="width: 45px; height: 45px; background-color: #6c757d; padding: 0; border: 1px solid #ced4da; margin-left: -1px;"></span>
-                                            </div>
                                         </div>
                                         @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                                     </div>
@@ -67,24 +66,25 @@
 </div>
 
 <script>
-    function initializeColorSelect() {
+    document.addEventListener('DOMContentLoaded', function() {
         const colorSelect = document.getElementById('colorSelect');
         const colorPreview = document.getElementById('colorPreview');
-        
-        if (!colorSelect || !colorPreview) return;
 
         const updatePreview = () => {
+            if (!colorSelect || !colorPreview) return;
             const selected = colorSelect.options[colorSelect.selectedIndex];
             const color = selected?.dataset.color || '#6c757d';
             colorPreview.style.backgroundColor = color;
             colorPreview.style.border = `1px solid ${color}`;
         };
 
-        $('#colorSelect').on('change', updatePreview);
-        updatePreview();
-    }
+        const initializeColorSelect = () => {
+            if (!colorSelect || !colorPreview) return;
 
-    $(document).ready(function() {
+            $('#colorSelect').on('change', updatePreview);
+            updatePreview();
+        };
+
         initializeColorSelect();
     });
 
@@ -108,6 +108,13 @@
             }
         });
         
-        initializeColorSelect();
+        const colorSelect = document.getElementById('colorSelect');
+        const colorPreview = document.getElementById('colorPreview');
+        if (colorSelect && colorPreview) {
+            const selected = colorSelect.options[colorSelect.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            colorPreview.style.backgroundColor = color;
+            colorPreview.style.border = `1px solid ${color}`;
+        }
     });
 </script>
