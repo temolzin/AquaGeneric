@@ -12,7 +12,7 @@
                 </div>
                 <form action="{{ route('payments.store') }}" method="post" enctype="multipart/form-data" id="paymentForm">
                     @csrf
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Ingrese Datos del Pago</h3>
@@ -120,6 +120,27 @@
 
 <script>
 $(document).ready(function() {
+    $('#createPayment').on('shown.bs.modal', function() {
+        var modalElement = $(this);
+        var dropdownParent = modalElement.find('.modal-body');
+        
+        modalElement.find('.select2').each(function() {
+            if (!$(this).data('select2')) {
+                $(this).select2({
+                    dropdownParent: dropdownParent,
+                    allowClear: false,
+                    width: '100%'
+                });
+            }
+        });
+        
+        modalElement.on('keydown', function(e) {
+            if ($('.select2-container--open').length && e.keyCode === 27) {
+                e.stopPropagation();
+            }
+        });
+    });
+
     $('#customer_id').on('change', function() {
         var customerId = $(this).val();
         if (customerId) {
@@ -133,7 +154,9 @@ $(document).ready(function() {
                         waterConnectionSelect.append('<option value="' + connection.id + '">' + 
                             connection.name + '</option>');
                     });
-                    $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>');
+                    // Trigger change to update Select2
+                    waterConnectionSelect.trigger('change');
+                    $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>').trigger('change');
                     $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
                     $('#is_future_payment').prop('checked', false);
                 },
@@ -143,8 +166,8 @@ $(document).ready(function() {
                 }
             });
         } else {
-            $('#water_connection_id').empty().append('<option value="">Selecciona una toma</option>');
-            $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>');
+            $('#water_connection_id').empty().append('<option value="">Selecciona una toma</option>').trigger('change');
+            $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>').trigger('change');
             $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
             $('#is_future_payment').prop('checked', false);
         }
@@ -163,6 +186,8 @@ $(document).ready(function() {
                         debtSelect.append('<option value="' + debt.id + '">' + 
                             debt.start_date + ' - $' + debt.remaining_amount + '</option>');
                     });
+                    // Trigger change to update Select2
+                    debtSelect.trigger('change');
                     $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
                     $('#is_future_payment').prop('checked', false);
                 },
@@ -172,7 +197,7 @@ $(document).ready(function() {
                 }
             });
         } else {
-            $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>');
+            $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>').trigger('change');
             $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
             $('#is_future_payment').prop('checked', false);
         }
