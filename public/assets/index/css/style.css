@@ -21,7 +21,7 @@
 @import url(animate.min.css);
 @import url(normalize.css);
 @import url(icomoon.css);
-@import url(font-awesome.min.css);
+/* font-awesome import removed - using vendor/fontawesome-free instead */
 @import url(meanmenu.css);
 @import url(owl.carousel.min.css);
 @import url(swiper.min.css);
@@ -847,5 +847,17 @@ ul.social_icon li a:hover {
 }
 
 /** end footer **/
+
+/* --- Merged from public/css/landing-extra.css --- */
+.navigation.navbar {
+     background-color: transparent !important;
+     box-shadow: none !important;
+}
+.navigation .navbar-collapse {
+     background-color: transparent !important;
+}
+.navigation.navbar-dark .navbar-nav .nav-link {
+     color: #fff !important;
+}
 
 

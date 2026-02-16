@@ -194,19 +194,19 @@
         display: inherit !important;
         padding: 0;
         width: 100%;
-            margin-top: 0;
-            position: relative;
+        margin-top: 0;
+        position: relative;
     }
     .navigation .navbar-collapse {
         background: #fff;
         padding: 20px;
-            margin-top: 0;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            margin-right: 0;
-            z-index: 10000010;
+        margin-top: 0;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        margin-right: 0;
+        z-index: 10000010;
     }
     .navigation .navbar-collapse.show {
         display: block !important;
