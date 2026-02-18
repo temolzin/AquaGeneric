@@ -12,7 +12,7 @@
                 </div>
                 <form action="{{ route('incidents.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Registro de Incidencias</h3>
@@ -105,15 +105,31 @@
     </div>
 </div>
 
-<style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-</style>
-
 <script>
+    $(document).on('shown.bs.modal', '#createIncidence', function() {
+        var modalElement = $(this);
+        var dropdownParent = modalElement.find('.modal-body');
+        
+        $(this).find('.select2').each(function() {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+            
+            $(this).select2({
+                allowClear: false,
+                placeholder: 'Selecciona una opción',
+                width: '100%',
+                dropdownParent: dropdownParent
+            });
+        });
+
+        modalElement.on('keydown', function(e) {
+            if ($('.select2-container--open').length && e.keyCode === 27) {
+                e.stopPropagation();
+            }
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
         const input = document.getElementById('imagesInput');
         const label = input.nextElementSibling;

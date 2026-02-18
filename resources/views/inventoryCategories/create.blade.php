@@ -29,8 +29,8 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
-                                        <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelect" required>
+                                        <div class="d-flex align-items-center" style="gap: 0;">
+                                            <select name="color_index" class="form-control select2" id="colorSelect" style="flex: 1;" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="13" data-color="#e74c3c">Rojo</option>
                                                 <option value="0"  data-color="#3498db">Azul</option>
@@ -41,9 +41,7 @@
                                                 <option value="14" data-color="#34495e">Gris oscuro</option>
                                                 <option value="3"  data-color="#f1c40f">Amarillo</option>
                                             </select>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" id="colorPreview" style="width: 40px; background-color: #f8f9fa;"></span>
-                                            </div>
+                                            <span class="input-group-text" id="colorPreview" style="width: 45px; height: 45px; background-color: #6c757d; padding: 0; border: 1px solid #ced4da; margin-left: -1px;"></span>
                                         </div>
                                         @error('color_index') <span class="invalid-feedback">{{ $message }}</span> @enderror
                                     </div>
@@ -68,39 +66,56 @@
     </div>
 </div>
 
-<style>
-    .input-group .select2-container .select2-selection--single {
-        height: 38px;
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const colorSelect = document.getElementById('colorSelect');
         const colorPreview = document.getElementById('colorPreview');
 
         const updatePreview = () => {
+            if (!colorSelect || !colorPreview) return;
             const selected = colorSelect.options[colorSelect.selectedIndex];
-            colorPreview.style.backgroundColor = selected?.dataset.color || '#f8f9fa';
-            colorPreview.style.border = selected?.dataset.color ? `1px solid ${selected.dataset.color}` : '1px solid #ccc';
+            const color = selected?.dataset.color || '#6c757d';
+            colorPreview.style.backgroundColor = color;
+            colorPreview.style.border = `1px solid ${color}`;
         };
 
         const initializeColorSelect = () => {
             if (!colorSelect || !colorPreview) return;
-
-            $('#colorSelect').select2({
-                theme: 'bootstrap4',
-                width: '100%',
-                placeholder: 'Seleccione un color',
-                allowClear: false
-            });
 
             $('#colorSelect').on('change', updatePreview);
             updatePreview();
         };
 
         initializeColorSelect();
+    });
 
-        $('#createInventoryCategoryModal').on('shown.bs.modal', updatePreview);
+    $(document).on('shown.bs.modal', '#createInventoryCategoryModal', function() {
+        var modalElement = $(this);
+        var dropdownParent = modalElement.find('.modal-body');
+        
+        modalElement.find('.select2').each(function() {
+            if (!$(this).data('select2')) {
+                $(this).select2({
+                    dropdownParent: dropdownParent,
+                    allowClear: false,
+                    width: '100%'
+                });
+            }
+        });
+        
+        modalElement.on('keydown', function(e) {
+            if ($('.select2-container--open').length && e.keyCode === 27) {
+                e.stopPropagation();
+            }
+        });
+        
+        const colorSelect = document.getElementById('colorSelect');
+        const colorPreview = document.getElementById('colorPreview');
+        if (colorSelect && colorPreview) {
+            const selected = colorSelect.options[colorSelect.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            colorPreview.style.backgroundColor = color;
+            colorPreview.style.border = `1px solid ${color}`;
+        }
     });
 </script>

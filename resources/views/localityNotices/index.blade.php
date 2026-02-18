@@ -159,12 +159,6 @@ $(document).ready(function() {
         });
     }
 
-    $('#createNotice').on('shown.bs.modal', function() {
-        $('.select2').select2({
-            dropdownParent: $('#createNotice')
-        });
-    });
-
     $('#createNoticeForm').on('submit', function(e) {
         var startDate = new Date($('#start_date').val());
         var endDate = new Date($('#end_date').val());

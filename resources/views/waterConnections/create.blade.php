@@ -13,7 +13,7 @@
                 </div>
                 <form action="{{ route('waterConnections.store') }}" method="post" enctype="multipart/form-data" id="waterConnectionForm">
                     @csrf
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         @php
                             $currentConnections = auth()->user()->locality->waterConnections()->count() ?? 0;
                             $connectionLimit = auth()->user()->locality->membership->water_connections_number ?? 0;
@@ -268,12 +268,6 @@
 </div>
 
 <style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-    
     .disabled-input {
         background-color: #f8f9fa !important;
         cursor: not-allowed !important;
@@ -300,6 +294,29 @@
                 checkbox.disabled = false;
             });
         }
+    });
+
+    $(document).ready(function() {
+        $('#createWaterConnections').on('shown.bs.modal', function() {
+            var modalElement = $(this);
+            var dropdownParent = modalElement.find('.modal-body');
+
+            modalElement.find('.select2').each(function() {
+                if (!$(this).data('select2')) {
+                    $(this).select2({
+                        dropdownParent: dropdownParent,
+                        allowClear: false,
+                        width: '100%'
+                    });
+                }
+            });
+
+            modalElement.on('keydown', function(e) {
+                if ($('.select2-container--open').length && e.keyCode === 27) {
+                    e.stopPropagation();
+                }
+            });
+        });
     });
 
     document.getElementById('waterConnectionForm').addEventListener('submit', function(e) {
