@@ -70,7 +70,12 @@ class PaymentController extends Controller
         }
 
         $payments = $query->paginate(10);
-        $customers = Customer::with('user')->where('locality_id', $authUser->locality_id)->get();
+        $customers = Customer::with('user')
+            ->where('locality_id', $authUser->locality_id)
+            ->whereHas('waterConnections.debts', function ($q) {
+                $q->whereIn('status', ['pending', 'partial']);
+            })
+            ->get();
 
         return view('payments.index', compact('payments', 'customers'));
     }
