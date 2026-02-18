@@ -122,8 +122,7 @@
                 dropdownParent: dropdownParent
             });
         });
-        
-        // Prevent Escape key from closing modal when Select2 is active
+
         modalElement.on('keydown', function(e) {
             if ($('.select2-container--open').length && e.keyCode === 27) {
                 e.stopPropagation();

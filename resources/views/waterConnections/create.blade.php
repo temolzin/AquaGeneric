@@ -281,12 +281,10 @@
     });
 
     $(document).ready(function() {
-        // Initialize Select2 in modal on shown event
         $('#createWaterConnections').on('shown.bs.modal', function() {
             var modalElement = $(this);
             var dropdownParent = modalElement.find('.modal-body');
-            
-            // Initialize Select2 with proper dropdownParent
+
             modalElement.find('.select2').each(function() {
                 if (!$(this).data('select2')) {
                     $(this).select2({
@@ -296,8 +294,7 @@
                     });
                 }
             });
-            
-            // Prevent Escape key from closing modal when Select2 is active
+
             modalElement.on('keydown', function(e) {
                 if ($('.select2-container--open').length && e.keyCode === 27) {
                     e.stopPropagation();
