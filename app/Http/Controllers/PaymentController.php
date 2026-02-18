@@ -73,7 +73,7 @@ class PaymentController extends Controller
         $customers = Customer::with('user')
             ->where('locality_id', $authUser->locality_id)
             ->whereHas('waterConnections.debts', function ($q) {
-                $q->whereIn('status', ['pending', 'partial']);
+                $q->whereIn('status', [Debt::STATUS_PENDING, Debt::STATUS_PARTIAL]);
             })
             ->get();
 
