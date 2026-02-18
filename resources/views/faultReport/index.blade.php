@@ -75,28 +75,37 @@
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             @can('viewFaultReport')
-                                                            <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $report->id }}">
+                                                            <button type="button" class="btn btn-info btn-sm mr-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $report->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
                                                             @endcan
 
                                                             @can('editFaultReport')
-                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $report->id }}">
+                                                            <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $report->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
                                                             @endcan
 
                                                             @can('deleteFaultReport')
-                                                            <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $report->id }}" disabled>
+                                                            <button type="button" class="btn btn-secondary btn-sm mr-1" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $report->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                             @endcan
+
+                                                            <button type="button" class="btn bg-purple btn-sm mr-1" data-toggle="modal" title="Cambiar Estatus" data-target="#changeStatusModal" data-fault-report-id="{{ $report->id }}" data-fault-report-title="{{ $report->title }}">
+                                                                <i class="fas fa-exchange-alt"></i>
+                                                            </button>
+
+                                                            <button type="button" class="btn bg-maroon btn-sm" data-toggle="modal" title="Historial de Reporte" data-target="#historyModal{{ $report->id }}">
+                                                                <i class="fas fa-history"></i>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 @include('faultReport.show')
                                                 @include('faultReport.edit')
                                                 @include('faultReport.delete')
+                                                @include('faultReport.historyModal')
                                             @endforeach
                                         @endif
                                     </tbody>
@@ -112,6 +121,7 @@
             </div>
         </div>
     </div>
+    @include('faultReport.changeStatusModal')
 </section>
 @endsection
 
@@ -147,6 +157,58 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+
+        $('#changeStatusModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var faultReportId = button.data('fault-report-id');
+            var faultReportTitle = button.data('fault-report-title');
+
+            var modal = $(this);
+            modal.find('#faultReportId').val(faultReportId);
+            modal.find('#faultReportTitleDisplay').text(faultReportTitle);
+            modal.find('#statusSelect').val('');
+            modal.find('#comentarioText').val('');
+        });
+
+        $('#changeStatusForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            var form = $(this);
+            var formData = form.serialize();
+            
+            $.ajax({
+                url: "{{ route('faultReport.updateStatus') }}", 
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al actualizar el estatus',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+        });
     });
 </script>
 @endsection

@@ -4,27 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class FaultReport extends Model implements HasMedia
+class LogFaultReport extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia;
-
-    protected $table = 'fault_report';
+    use HasFactory;
+    use InteractsWithMedia;
 
     protected $fillable = [
-        'created_by',
         'locality_id',
-        'title',
-        'description',
+        'created_by',
         'status',
-        'date_report',
-    ];
-
-    protected $dates = [
-        'date_report',
+        'comentario',
+        'fault_report_id'
     ];
 
     public function locality()
@@ -37,9 +30,8 @@ class FaultReport extends Model implements HasMedia
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function logs()
+    public function faultReport()
     {
-        return $this->hasMany(LogFaultReport::class, 'fault_report_id')->orderBy('created_at', 'desc');
+        return $this->belongsTo(FaultReport::class, 'fault_report_id');
     }
-
 }
