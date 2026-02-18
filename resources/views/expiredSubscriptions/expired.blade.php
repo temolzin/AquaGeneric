@@ -85,6 +85,13 @@
     }
 </style>
 
+@php 
+    $role = auth()->user()->getRoleNames()->first();
+@endphp    
+
+@switch($role)
+    @case('Supervisor')
+    @case('Secretaria')    
 <div class="subscription-lock-screen">
     <img src="{{ asset('img/logo.png') }}" alt="Logo del sistema">
     <h1>Acceso Restringido</h1>
@@ -107,7 +114,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-
+    
             <div class="modal-body">
                 <p>
                     Si ya realizaste el pago, por favor ingresa el <strong>token de renovación</strong> proporcionado por el administrador para reactivar tu cuenta.
@@ -137,6 +144,18 @@
         </div>
     </div>
 </div>
+    @break   
+    @case('Cliente')
+        <div class="subscription-lock-screen">
+            <img src="{{ asset('img/logo.png') }}" alt="Logo del sistema">
+            <h1>Servicio no disponible</h1>
+            <p>
+                La membresía de su localidad ha expirado.
+                Por favor póngase en contacto con el supervisor para revisar la membresía de su sistema de agua.
+            </p>
+        </div>
+    @break
+@endswitch
 
 @endsection
 
