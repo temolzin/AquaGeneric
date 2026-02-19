@@ -95,7 +95,8 @@
                                                     $methodLabels = [
                                                         'cash' => 'Efectivo',
                                                         'transfer' => 'Transferencia', 
-                                                        'card' => 'Tarjeta'
+                                                        'card' => 'Tarjeta',
+                                                        'openpay' => 'Tarjeta (En línea)'
                                                     ];
                                                 @endphp
                                                 <span>{{ $methodLabels[$payment->method] ?? $payment->method }}</span>
