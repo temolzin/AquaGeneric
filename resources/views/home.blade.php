@@ -197,19 +197,20 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <form class="main_form">
+                            <form action="{{ route('contact.send') }}" method="POST" class="main_form">
+                                @csrf
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <input class="form_contril" placeholder="Nombre" type="text">
+                                        <input name="name" class="form_contril" placeholder="Nombre" type="text" required>
                                     </div>
                                     <div class="col-md-12">
-                                        <input class="form_contril" placeholder="Correo electrónico" type="email">
+                                        <input name="email" class="form_contril" placeholder="Correo electrónico" type="email" required>
                                     </div>
                                     <div class="col-md-12">
-                                        <textarea class="textarea" placeholder="Mensaje"></textarea>
+                                        <textarea name="message" class="textarea" placeholder="Mensaje" required></textarea>
                                     </div>
                                     <div class="col-sm-12">
-                                        <button class="send_btn">Enviar mensaje</button>
+                                        <button type="submit" class="send_btn">Enviar mensaje</button>
                                     </div>
                                 </div>
                             </form>
@@ -288,6 +289,28 @@
                             });
                     }
                 } catch (err) {
+                }
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var successMessage = "{{ session('success') }}";
+                if (successMessage) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: successMessage,
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+                var errorMessage = "{{ session('error') }}";
+                if (errorMessage) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: errorMessage,
+                        confirmButtonText: 'Aceptar'
+                    });
                 }
             });
         </script>

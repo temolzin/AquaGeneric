@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\HomeContactController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CustomerController;
@@ -49,6 +50,7 @@ use App\Http\Controllers\GeneralEarningController;
 
 Route::view('/', 'home')->name('home');
 Route::view('/login', 'login')->name('login');
+Route::post('/contact/send', [HomeContactController::class, 'send'])->name('contact.send');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
