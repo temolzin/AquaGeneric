@@ -85,58 +85,76 @@
     }
 </style>
 
-<div class="subscription-lock-screen">
-    <img src="{{ asset('img/logo.png') }}" alt="Logo del sistema">
-    <h1>Acceso Restringido</h1>
-    <p>
-        La suscripción al sistema de gestión de agua ha expirado. Si ya realizaste el pago, por favor ingresa el token de renovación para restablecer el acceso.
-    </p>
-    <button class="btn btn-renew" data-toggle="modal" data-target="#tokenModal">
-        Ingresar Token de Renovación
-    </button>
-</div>
+@php 
+    use App\Models\User;
 
-<div class="modal fade" id="tokenModal" tabindex="-1" role="dialog" aria-labelledby="tokenModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-        <div class="modal-content border-0">
-            <div class="modal-header">
-                <h5 class="modal-title d-flex align-items-center" id="tokenModalLabel">
-                    <i class="fas fa-key"></i> Validación de Token
-                </h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+    $role = auth()->user()->getRoleNames()->first();
+@endphp    
 
-            <div class="modal-body">
-                <p>
-                    Si ya realizaste el pago, por favor ingresa el <strong>token de renovación</strong> proporcionado por el administrador para reactivar tu cuenta.
-                </p>
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                            @foreach ($errors->all() as $error)
-                                {{ $error }}
-                            @endforeach
-                    </div>
-                @endif
-                <form action="{{ route('validatetoken') }}" method="POST" id="tokenForm">
-                    @csrf
-                    <div class="input-group mt-4 mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-lock text-primary"></i></span>
-                        </div>
-                        <input type="text" class="form-control" name="token" placeholder="Pega aquí tu token de renovación..." required>
-                    </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Validar Token</button>
-            </div>
-        </form>
+@switch($role)
+    @case(User::ROLE_SUPERVISOR)
+    @case(User::ROLE_SECRETARY)    
+        <div class="subscription-lock-screen">
+            <img src="{{ asset('img/logo.png') }}" alt="Logo del sistema">
+            <h1>Acceso Restringido</h1>
+            <p>
+                La suscripción al sistema de gestión de agua ha expirado. Si ya realizaste el pago, por favor ingresa el token de renovación para restablecer el acceso.
+            </p>
+            <button class="btn btn-renew" data-toggle="modal" data-target="#tokenModal">
+                Ingresar Token de Renovación
+            </button>
         </div>
-    </div>
-</div>
+        <div class="modal fade" id="tokenModal" tabindex="-1" role="dialog" aria-labelledby="tokenModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content border-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title d-flex align-items-center" id="tokenModalLabel">
+                            <i class="fas fa-key"></i> Validación de Token
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div> 
+                    <div class="modal-body">
+                        <p>
+                            Si ya realizaste el pago, por favor ingresa el <strong>token de renovación</strong> proporcionado por el administrador para reactivar tu cuenta.
+                        </p>
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                    @foreach ($errors->all() as $error)
+                                        {{ $error }}
+                                    @endforeach
+                            </div>
+                        @endif
+                        <form action="{{ route('validatetoken') }}" method="POST" id="tokenForm">
+                            @csrf
+                            <div class="input-group mt-4 mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-lock text-primary"></i></span>
+                                </div>
+                                <input type="text" class="form-control" name="token" placeholder="Pega aquí tu token de renovación..." required>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Validar Token</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    @break   
+    @case(User::ROLE_CUSTOMER)
+        <div class="subscription-lock-screen">
+            <img src="{{ asset('img/logo.png') }}" alt="Logo del sistema">
+            <h1>Servicio no disponible</h1>
+            <p>
+                La membresía de su localidad ha expirado.
+                Por favor póngase en contacto con el supervisor para revisar la membresía de su sistema de agua.
+            </p>
+        </div>
+    @break
+@endswitch
 
 @endsection
 

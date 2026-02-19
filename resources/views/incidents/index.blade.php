@@ -183,12 +183,6 @@
         }
     });
 
-    $(document).on('shown.bs.modal', '.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
-
     $('#createResponsible').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var incidentId = button.data('incident-id');

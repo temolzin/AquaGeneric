@@ -40,7 +40,7 @@
                                             </div>
                                             <div class="col-6 ps-1">
                                                 <button class="btn btn-info w-100 py-2" data-toggle="modal" data-target="#importData" title="Importar Empleados">
-                                                    <i class="fas fa-file-import"></i> Importar
+                                                    <i class="fas fa-file-import"></i> Importar Empleados
                                                 </button>
                                             </div>
                                             <div class="col-12 mt-2">
@@ -182,13 +182,6 @@
                     }
                 })
                 .then(function(response) {
-                    $('#importResults').removeClass('d-none');
-                    $('#resultsContent').html(`
-                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
-                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
-                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
-                    `);
-
                     $('#importForm')[0].reset();
                     $('#fileLabel').text('Ningún archivo seleccionado');
                     progressContainer.addClass('d-none');
@@ -196,20 +189,30 @@
                     progressText.text('0%');
                     importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar');
 
-                    if (response.data.failed > 0 && response.data.errors) {
+                    if (response.data.failed === 0) {
+                        $('#importResults').removeClass('d-none');
+                        $('#resultsContent').html(`
+                            <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                            <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                            <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                        `);
+                        
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
                         $('#importErrors').removeClass('d-none');
-                        let errorsHtml = '<ul>';
+                        let errorsHtml = `
+                            <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                            <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                            <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                            <ul class="mt-2 mb-0">
+                        `;
                         response.data.errors.forEach(error => {
                             errorsHtml += `<li>${error}</li>`;
                         });
                         errorsHtml += '</ul>';
                         $('#errorsContent').html(errorsHtml);
-                    }
-
-                    if (response.data.imported > 0) {
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 3000);
                     }
                 })
                 .catch(function(error) {

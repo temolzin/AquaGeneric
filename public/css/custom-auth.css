@@ -1,0 +1,36 @@
+html, body { width: 100%; overflow-x: hidden; }
+
+@media (max-width: 767.98px) {
+  body { overflow-x: hidden; }
+
+  .unified-login-container {
+    width: calc(100% - 24px) !important;
+    max-width: none !important;
+    min-height: calc(100vh - 24px) !important;
+    margin: 12px auto !important;
+    flex-direction: column !important;
+    box-sizing: border-box;
+  }
+
+  .unified-login-container .info-section,
+  .unified-login-container .login-section {
+    width: 100% !important;
+  }
+
+  .unified-login-container .features-list {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .unified-login-container {
+    flex-direction: row !important;
+    width: 92% !important;
+    max-width: 1200px !important;
+    min-height: 600px !important;
+    margin: 0 auto !important;
+  }
+
+  .unified-login-container .info-section { width: 45% !important; }
+  .unified-login-container .login-section { width: 55% !important; }
+}

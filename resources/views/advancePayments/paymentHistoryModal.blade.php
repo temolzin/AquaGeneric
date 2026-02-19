@@ -10,7 +10,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                     <div class="card">
                         <div class="card-header py-2 bg-secondary">
                             <h3 class="card-title">Periodo de Anticipación</h3>
@@ -72,12 +72,6 @@
 </div>
 
 <style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-
     #calendarContainer {
         width: 100%;
         margin: 0 auto; 

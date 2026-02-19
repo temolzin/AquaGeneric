@@ -16,7 +16,7 @@
                         <i class="fas fa-file-csv text-info fa-3x mb-3"></i>
                         <h5 class="text-dark">Subir Archivo CSV</h5>
                         <p class="text-muted small">Formato aceptado: .csv</p>
-                        <a href="{{ asset('layout/plantilla_empleados.csv') }}" class="btn btn-outline-info btn-sm mt-2" download>Descargar Plantilla CSV</a>
+                        <a href="{{ route('employees.downloadTemplate') }}" class="btn btn-outline-info btn-sm mt-2" download>Descargar Plantilla CSV</a>
                     </div>
                     <div class="bg-light-info p-3 rounded mb-3 text-center">
                         <h6 class="text-info mb-3">
@@ -142,118 +142,18 @@
         background-color: #138496;
     }
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#excel_file').on('change', function() {
-            var fileName = $(this).val().split('\\').pop();
-            if (fileName) {
-                $('#fileLabel').html('<i class="fas fa-file-csv mr-2 text-success"></i>' + fileName);
-                $('#fileName').removeClass('d-none');
-                $('#selectedFileName').text(fileName);
-
-                $('#importResults').addClass('d-none');
-                $('#importErrors').addClass('d-none');
-            } else {
-                $('#fileLabel').html('<i class="fas fa-file-csv mr-2"></i>Buscar archivo CSV...');
-                $('#fileName').addClass('d-none');
-            }
-        });
-
-        $('#importForm').on('submit', function(e) {
-            e.preventDefault();
-
-            var formData = new FormData(this);
-            var importButton = $('#importButton');
-            var progressContainer = $('#progressContainer');
-            var progressBar = $('#progressBar');
-            var progressText = $('#progressText');
-
-            $('#importResults').addClass('d-none');
-            $('#importErrors').addClass('d-none');
-
-            progressContainer.removeClass('d-none');
-            importButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Importando...');
-
-            axios.post('{{ route('employees.import') }}', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                onUploadProgress: function(progressEvent) {
-                    if (progressEvent.lengthComputable) {
-                        var percentComplete = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                        progressBar.css('width', percentComplete + '%');
-                        progressText.text(percentComplete + '%');
-                    }
-                }
-            })
-            .then(function(response) {
-                console.log('Respuesta exitosa:', response.data);
-
-                $('#importResults').removeClass('d-none');
-                $('#resultsContent').html(`
-                    <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
-                    <p><strong>Registros importados:</strong> ${response.data.imported}</p>
-                    <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
-                `);
-
-                $('#importForm')[0].reset();
-                $('#fileLabel').html('<i class="fas fa-file-csv mr-2"></i>Buscar archivo CSV...');
-                $('#fileName').addClass('d-none');
-
-                progressContainer.addClass('d-none');
-                progressBar.css('width', '0%');
-                progressText.text('0%');
-                importButton.prop('disabled', false).html('<i class="fas fa-file-import mr-2"></i>Importar');
-
-                if (response.data.failed > 0 && response.data.errors && response.data.errors.length > 0) {
-                    $('#importErrors').removeClass('d-none');
-                    let errorsHtml = '<ul class="mb-0">';
-                    response.data.errors.forEach(error => {
-                        errorsHtml += `<li class="small">${error}</li>`;
-                    });
-                    errorsHtml += '</ul>';
-                    $('#errorsContent').html(errorsHtml);
-                }
-
-                if (response.data.imported > 0) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
-                }
-            })
-            .catch(function(error) {
-                console.error('Error en la petición:', error);
-
-                $('#importErrors').removeClass('d-none');
-                let errorMessage = 'Error al importar el archivo. Verifica el formato.';
-
-                if (error.response && error.response.data) {
-                    if (error.response.data.message) {
-                        errorMessage = error.response.data.message;
-                    }
-                    if (error.response.data.errors) {
-                        let errors = error.response.data.errors;
-                        let errorsHtml = '<ul class="mb-0">';
-                        for (let field in errors) {
-                            errors[field].forEach(msg => {
-                                errorsHtml += `<li class="small">${msg}</li>`;
-                            });
-                        }
-                        errorsHtml += '</ul>';
-                        $('#errorsContent').html(errorsHtml);
-                    } else {
-                        $('#errorsContent').html('<p class="mb-0">' + errorMessage + '</p>');
-                    }
-                } else {
-                    $('#errorsContent').html('<p class="mb-0">' + errorMessage + '</p>');
-                }
-
-                progressContainer.addClass('d-none');
-                importButton.prop('disabled', false).html('<i class="fas fa-file-import mr-2"></i>Importar');
-            });
-        });
+    $('#excel_file').on('change', function() {
+        var fileName = $(this).val().split('\\').pop();
+        var hasFile = fileName ? true : false;
+        
+        $('#fileLabel').html(
+            hasFile 
+                ? '<i class="fas fa-file-csv mr-2 text-success"></i>' + fileName
+                : '<i class="fas fa-file-csv mr-2"></i>Buscar archivo CSV...'
+        );
+        
+        $('#fileName').toggleClass('d-none', !hasFile);
+        $('#selectedFileName').text(fileName);
     });
 </script>

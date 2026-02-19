@@ -47,13 +47,13 @@
                                                 <i class="fas fa-file-import"></i> Importar
                                             </button>
                                             </div>
-                                            <div class="col-6 ps-1">
+                                            <div class="col-12 mt-2">
                                                 <a type="button" class="btn btn-secondary w-100 py-2" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
                                                     <i class="fas fa-file-pdf"></i> Generar Lista
                                                 </a>
                                             </div>
-                                            <div class="col-6 ps-1 mt-2">
-                                                <a type="button" class="btn btn-secondary w-100 py-2" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
+                                            <div class="col-12 mt-2">
+                                                <a type="button" class="btn btn-primary w-100 py-2" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
                                                     <i class="fas fa-file-pdf"></i> Generar Lista Resumen
                                                 </a>
                                             </div>
@@ -207,34 +207,37 @@
                 }
             })
             .then(function(response) {
-                $('#importResults').removeClass('d-none');
-                $('#resultsContent').html(`
-                    <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
-                    <p><strong>Registros importados:</strong> ${response.data.imported}</p>
-                    <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
-                `);
-                
                 $('#importForm')[0].reset();
                 $('#fileLabel').text('Ningún archivo seleccionado');
                 progressContainer.addClass('d-none');
                 progressBar.css('width', '0%');
                 progressText.text('0%');
                 importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar Datos');
-                
-                if (response.data.failed > 0 && response.data.errors) {
+
+                if (response.data.failed === 0) {
+                    $('#importResults').removeClass('d-none');
+                    $('#resultsContent').html(`
+                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                    `);
+                    
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
                     $('#importErrors').removeClass('d-none');
-                    let errorsHtml = '<ul>';
+                    let errorsHtml = `
+                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                        <ul class="mt-2 mb-0">
+                    `;
                     response.data.errors.forEach(error => {
                         errorsHtml += `<li>${error}</li>`;
                     });
                     errorsHtml += '</ul>';
                     $('#errorsContent').html(errorsHtml);
-                }
-                
-                if (response.data.imported > 0) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
                 }
             })
             .catch(function(error) {

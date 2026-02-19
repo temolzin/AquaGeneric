@@ -11,7 +11,7 @@
                     <h2>Tomas</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                                 <form method="GET" action="{{ route('waterConnections.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control"
@@ -25,12 +25,12 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2"
+                                <button class="btn btn-success mt-2 mr-1"
                                         data-toggle='modal' data-target="#createWaterConnections"
                                         title="Registrar Toma">
                                     <i class="fa fa-plus"></i>
-                                    <span class="d-none d-lg-inline">Registrar Toma</span>
-                                    <span class="d-inline d-lg-none">Nueva Toma</span>
+                                    <span class="d-none d-md-inline">Registrar Toma</span>
+                                    <span class="d-inline d-md-none">Registrar</span>
                                 </button>
                             </div>
                         </div>
@@ -49,7 +49,7 @@
                                             <th>PROPIETARIO</th>
                                             <th>COSTO</th>
                                             <th>TIPO</th>
-                                            <th>SECCIÓN</th> 
+                                            <th>SECCIÓN</th>
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
@@ -99,6 +99,20 @@
                                                             </button>
                                                             @endcan
 
+                                                            <button type="button" class="btn btn-primary mr-2" data-toggle="modal" title="Detalles / Historial"  data-target="#details{{ $connection->id }}">
+                                                                <i class="fas fa-history"></i>
+                                                            </button>
+
+                                                            @if(isset($connection->customer_status) && (int)$connection->customer_status === 0)
+                                                                <button type="button"
+                                                                        class="btn btn-dark mr-2"
+                                                                        title="Cambiar propietario (titular fallecido)"
+                                                                        data-toggle="modal"
+                                                                        data-target="#transferOwner{{ $connection->id }}">
+                                                                    <i class="fas fa-exchange-alt"></i>
+                                                                </button>
+                                                            @endif
+
                                                             {{--
                                                             @can('deleteWaterConnection')
                                                             <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $connection->id }}">
@@ -131,6 +145,8 @@
                                                 @include('waterConnections.show')
                                                 @include('waterConnections.edit')
                                                 @include('waterConnections.delete')
+                                                @include('waterConnections.details', ['connection' => $connection])
+                                                @include('waterConnections.transfer', ['connection' => $connection, 'customers' => $customers])
 
                                                 <div class="modal fade" id="cancel{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="cancelLabel{{ $connection->id }}" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
@@ -254,15 +270,14 @@
 <script>
     $(document).ready(function() {
         $('#qrModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
         var id = button.data('id');
         var modal = $(this);
         var img = modal.find('#qrImage');
         var downloadBtn = modal.find('#downloadQrBtn');
-        
+
         img.attr('src', '').attr('alt', 'Cargando...');
         downloadBtn.attr('href', '#').hide();
-        
+
         $.ajax({
             url: '/waterConnections/' + id + '/qr-generate',
             method: 'GET',
@@ -317,29 +332,52 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-    });
 
-    $('#createWaterConnections').on('shown.bs.modal', function() {
-        $('.select2').select2({
-            dropdownParent: $('#createWaterConnections')
+        const loadedHistory = {};
+
+        $('div.modal[id^="details"]').on('shown.bs.modal', function () {
+            const $modal = $(this);
+            const connectionId = $modal.data('connection-id');
+
+            if (loadedHistory[connectionId]) return;
+
+            const $container = $('#historyContent' + connectionId);
+            $container.html('<div class="text-muted">Cargando historial...</div>');
+
+            $.get('/waterConnections/' + connectionId + '/history')
+                .done(function (html) {
+                    $container.html(html);
+                    loadedHistory[connectionId] = true;
+                })
+                .fail(function () {
+                    $container.html('<div class="alert alert-danger mb-0">No se pudo cargar el historial.</div>');
+                });
         });
-    });
 
-    $('[id^="edit"]').on('shown.bs.modal', function() {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
+        const loadedDebts = {};
+
+        $(document).on('click', 'a[id^="debts-tab-"]', function () {
+            const connectionId = $(this).attr('id').replace('debts-tab-', '');
+
+            if (loadedDebts[connectionId]) return;
+
+            const $container = $('#debtsContent' + connectionId);
+            $container.html('<div class="text-muted">Cargando deudas...</div>');
+
+            $.get('/waterConnections/' + connectionId + '/debts')
+                .done(function (html) {
+                    $container.html(html);
+                    loadedDebts[connectionId] = true;
+                })
+                .fail(function () {
+                    $container.html('<div class="alert alert-danger mb-0">No se pudieron cargar las deudas.</div>');
+                });
         });
     });
 
     @if(session('debtError'))
         $('#debtErrorModal').modal('show');
     @endif
-    
-    $(document).on('shown.bs.modal', '.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
 </script>
 
 <div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
