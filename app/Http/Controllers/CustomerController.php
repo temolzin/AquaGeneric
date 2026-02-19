@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Jobs\SendCustomerCredentialsEmail;
 
 class CustomerController extends Controller
 {
@@ -54,7 +55,7 @@ class CustomerController extends Controller
             'zip_code' => 'required|string',
             'exterior_number' => 'nullable|string',
             'interior_number' => 'required|string',
-            'email' => $emailRule, 
+            'email' => $emailRule,
             'marital_status' => 'required|string',
             'status' => 'required|string',
             'responsible_name' => 'nullable|string',
@@ -74,13 +75,13 @@ class CustomerController extends Controller
                 'last_name' => $request->last_name,
                 'email' => $request->email,
                 'password' => Hash::make($passview),
-                'locality_id' => $authUser->locality_id, 
+                'locality_id' => $authUser->locality_id,
             ]);
 
             session(['passview_'.$user->id => $passview]);
 
             $user->assignRole('cliente');
-            
+
             $customerData['user_id'] = $user->id;
             $customerData['name'] = $user->name;
             $customerData['last_name'] = $user->last_name;
@@ -129,7 +130,7 @@ class CustomerController extends Controller
                 $existingUser = User::where('email', $email)
                     ->where('id', '!=', $customer->user->id)
                     ->first();
-                    
+
                 if ($existingUser) {
                     return redirect()->back()
                         ->withInput()
@@ -139,7 +140,7 @@ class CustomerController extends Controller
 
             if (!$customer->user && $email) {
                 $existingUserWithEmail = User::where('email', $email)->first();
-                
+
                 if ($existingUserWithEmail) {
                     return redirect()->back()
                         ->withInput()
@@ -219,6 +220,8 @@ class CustomerController extends Controller
 
             session(['passview_'.$user->id => $passview]);
 
+            SendCustomerCredentialsEmail::dispatch($customer->id, Auth::id(), $passview);
+
             $hash = md5($customer->id);
             $pdfUrl = route('generate.user.access.pdf', $hash);
 
@@ -232,6 +235,8 @@ class CustomerController extends Controller
         $customer->user->save();
 
         session(['passview_'.$customer->user->id => $passview]);
+
+        SendCustomerCredentialsEmail::dispatch($customer->id, Auth::id(), $passview);
 
         $hash = md5($customer->id);
         $pdfUrl = route('generate.user.access.pdf', $hash);
@@ -253,7 +258,7 @@ class CustomerController extends Controller
         if ($customer->user) {
             $customer->user->delete();
         }
-        
+
         $customer->delete();
         return redirect()->route('customers.index')->with('success', 'Cliente eliminado correctamente.');
     }
@@ -274,11 +279,11 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)
-            ->with('user') 
+            ->with('user')
             ->whereDoesntHave('waterConnections.debts', function ($query) {
                 $query->where('status', '!=', 'paid');
             })->get();
-    
+
         $pdf = Pdf::loadView('reports.reportCurrentCustomers', compact('customers', 'authUser'));
         return $pdf->stream('reporte_clientes_al_corriente.pdf');
     }
@@ -287,7 +292,7 @@ class CustomerController extends Controller
     {
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)
-            ->with('user') 
+            ->with('user')
             ->whereHas('waterConnections.debts', function ($query) {
                 $query->where('status', '!=', 'paid');
             })->get();
@@ -316,6 +321,7 @@ class CustomerController extends Controller
                 'temporaryPassword' => $temporaryPassword,
                 'authUser' => auth()->user(),
                 'date' => now()->format('j \\d\\e F \\d\\e Y'),
+                'showCustomerId' => true,
             ];
 
             $pdf = Pdf::loadView('reports.genneratepasswordforcustomer', $data)
@@ -334,7 +340,7 @@ class CustomerController extends Controller
         $authUser = auth()->user();
         $debtId = Crypt::decrypt($debt_id);
 
-        $debt = Debt::with(['waterConnection', 'customer.user']) 
+        $debt = Debt::with(['waterConnection', 'customer.user'])
             ->findOrFail($debtId);
         $customer = $debt->customer;
 
@@ -351,12 +357,12 @@ class CustomerController extends Controller
 
         return $pdf->stream('reporte_historial_pagos.pdf');
     }
-    
+
     public function generateCustomerSummaryPdf(Request $request)
     {
         $authUser = auth()->user();
         $query = Customer::where('locality_id', $authUser->locality_id)
-            ->with(['waterConnections', 'user']); 
+            ->with(['waterConnections', 'user']);
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -364,7 +370,7 @@ class CustomerController extends Controller
                 $q->whereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"])
                 ->orWhere('email', 'LIKE', "%{$search}%");
             })->orWhere('id', 'LIKE', "%{$search}%");
-        }   
+        }
 
         $customers = $query->get();
         $pdf = Pdf::loadView('reports.pdfCustomersSummary', compact('customers', 'authUser'))
@@ -381,7 +387,7 @@ class CustomerController extends Controller
     ];
 
         $content = "\xEF\xBB\xBF";
-        
+
         $content .= "nombre,apellido,correo_electronico,calle,colonia,localidad,estado,codigo_postal,numero_exterior,numero_interior,estado_civil,estado_titular,nota\n";
 
         $content .= "Andrea,Estrada,andy@gmail.com,retorno Acolman,Acolman,Acolman,Estado de Mexico,55870,1,2,Casado,Con vida,test\n";
@@ -393,7 +399,7 @@ class CustomerController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'excel_file' => 'required|file|mimes:csv|max:10240' 
+            'excel_file' => 'required|file|mimes:csv|max:10240'
         ]);
 
         try {
@@ -402,17 +408,17 @@ class CustomerController extends Controller
             $imported = 0;
             $errors = [];
             $authUser = Auth::user();
-            
+
             $filePath = $file->getPathname();
             $content = file_get_contents($filePath);
             $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
-            
+
             $sourceEncoding = ($encoding && $encoding !== 'UTF-8') ? $encoding : 'UTF-8';
             $content = mb_convert_encoding($content, 'UTF-8', $sourceEncoding);
             file_put_contents($filePath, $content);
-            
+
             $handle = fopen($filePath, 'r');
-            
+
             $headers = fgetcsv($handle);
             if (isset($headers[0])) {
                 $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headers[0]);
@@ -427,7 +433,7 @@ class CustomerController extends Controller
             unset($header);
 
             $expectedHeaders = ['nombre', 'apellido', 'correo_electronico', 'calle', 'colonia', 'localidad', 'estado', 'codigo_postal', 'numero_exterior', 'numero_interior', 'estado_civil', 'estado_titular', 'nota'];
-            
+
             if (count($headers) !== count($expectedHeaders)) {
                 fclose($handle);
                 return response()->json([
@@ -457,24 +463,24 @@ class CustomerController extends Controller
                     'mismatches' => $headerMismatches
                 ], 400);
             }
-            
+
             while (($rowData = fgetcsv($handle)) !== FALSE) {
                 $processed++;
-                
+
                 if (empty(array_filter($rowData))) {
                     continue;
                 }
-                
+
                 $result = $this->processRowData($rowData, $authUser, $processed);
                 if ($result['success']) {
                     $imported++;
                 } else {
-                    $errors[] = $result['error']; 
+                    $errors[] = $result['error'];
                 }
             }
-            
+
             fclose($handle);
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Importación completada',
@@ -483,7 +489,7 @@ class CustomerController extends Controller
                 'failed' => count($errors),
                 'errors' => $errors
             ]);
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -508,24 +514,24 @@ class CustomerController extends Controller
             unset($field);
 
             $requiredFields = [
-                'nombre', 'apellido', 'correo_electronico', 'calle', 'colonia', 
+                'nombre', 'apellido', 'correo_electronico', 'calle', 'colonia',
                 'localidad', 'estado', 'codigo_postal', 'numero_exterior'
             ];
-            
+
             $missingFields = [];
             foreach ($requiredFields as $index => $fieldName) {
                 if (empty(trim($rowData[$index] ?? ''))) {
                     $missingFields[] = $fieldName;
                 }
             }
-            
+
             if (!empty($missingFields)) {
                 return [
                     'success' => false,
                     'error' => "Fila $rowNumber: Campos requeridos faltantes: " . implode(', ', $missingFields)
                 ];
             }
-            
+
             $zipCode = trim($rowData[7] ?? '');
             if (!is_numeric($zipCode)) {
                 return [
@@ -533,7 +539,7 @@ class CustomerController extends Controller
                     'error' => "Fila $rowNumber: Código postal '$zipCode' debe ser numérico"
                 ];
             }
-            
+
             $email = trim($rowData[2] ?? '');
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 return [
@@ -541,27 +547,27 @@ class CustomerController extends Controller
                     'error' => "Fila $rowNumber: Email '$email' no tiene formato válido"
                 ];
             }
-            
+
             $maritalStatusInput = trim($rowData[10] ?? '');
             $maritalStatusMap = ['Soltero' => 0, 'Casado' => 1];
-            
+
             if (!isset($maritalStatusMap[$maritalStatusInput])) {
                 return [
                     'success' => false,
                     'error' => "Fila $rowNumber: Estado civil '$maritalStatusInput' inválido. Solo se permiten: Soltero, Casado"
                 ];
             }
-            
+
             $statusInput = trim($rowData[11] ?? 'Con vida');
             $statusMap = ['Con vida' => 1, 'Fallecido' => 0];
-            
+
             if (!isset($statusMap[$statusInput])) {
                 return [
                     'success' => false,
                     'error' => "Fila $rowNumber: Estado titular '$statusInput' inválido. Solo se permiten: Con vida, Fallecido"
                 ];
             }
-            
+
             $data = [
                 'name' => trim($rowData[0]),
                 'last_name' => trim($rowData[1]),
@@ -579,17 +585,17 @@ class CustomerController extends Controller
                 'locality_id' => $authUser->locality_id,
                 'created_by' => $authUser->id,
             ];
-            
+
             if (Customer::where('email', $data['email'])->exists()) {
                 return [
                     'success' => false,
                     'error' => "Fila $rowNumber: El email '{$data['email']}' ya existe en el sistema"
                 ];
             }
-            
+
             Customer::create($data);
             return ['success' => true];
-            
+
         } catch (\Exception $e) {
             return [
                 'success' => false,
