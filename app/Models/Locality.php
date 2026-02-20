@@ -71,11 +71,15 @@ class Locality extends Model implements HasMedia
             return self::SUBSCRIPTION_NONE;
         }
 
-        $decrypted = Crypt::decrypt($this->token);
-        $endDate = Carbon::parse($decrypted['data']['endDate'])->startOfDay();
-        $today = now()->startOfDay();
-
-        return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
+        try {
+            $tokenValidation = Crypt::decrypt($this->token);
+            $endDate = Carbon::parse($tokenValidation['data']['endDate'])->startOfDay();
+            $today = now()->startOfDay();
+            
+            return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
+        } catch (Exception $e) {
+            return self::SUBSCRIPTION_NONE;return self::SUBSCRIPTION_NONE;
+        }
     }
 
     public function registerMediaCollections(): void
