@@ -73,8 +73,6 @@ class FaultReportController extends Controller
     public function updateStatus(Request $request)
     {
         try {
-            \Log::info('updateStatus called', $request->all());
-
             $request->validate([
                 'fault_report_id' => 'required|exists:fault_report,id',
                 'status' => 'required|string|in:Pendiente,En revisión,Completado',
@@ -95,8 +93,6 @@ class FaultReportController extends Controller
             $report->status = $request->status;
             $report->save();
 
-            \Log::info('Fault Report updated', ['report_id' => $report->id, 'new_status' => $request->status]);
-
             $logDescription = $request->comentario ?: 'Cambio de estatus: ' . 
                 $previousStatus . ' → ' . $request->status;
 
@@ -108,19 +104,12 @@ class FaultReportController extends Controller
                 'locality_id' => $authUser->locality_id,
             ]);
 
-            \Log::info('Log created successfully:', [
-                'log_id' => $logFaultReport->id, 
-                'status_value' => $logFaultReport->status,
-                'status_type' => gettype($logFaultReport->status)
-            ]);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Estatus actualizado correctamente'
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Error in updateStatus: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al actualizar el estatus: ' . $e->getMessage()
