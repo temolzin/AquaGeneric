@@ -493,6 +493,12 @@ return [
         'icon' => 'fas fa-fw fa-exclamation-circle text-white',
     ],
     [
+        'text' => 'Mis Tarjetas',
+        'url' => '/customerCards',
+        'can'  => 'viewCustomerDebts',
+        'icon' => 'fas fa-fw fa-credit-card text-white',
+    ],
+    [
         'text' => 'Mis Tomas de Agua',
         'url' => '/viewCustomerWaterConnections',
         'can' => 'viewWaterConnections',

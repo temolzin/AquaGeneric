@@ -23,12 +23,25 @@ class OpenPayController extends Controller
 
     public function processPayment(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'token_id' => 'required|string',
-            'device_session_id' => 'required|string',
+        $useSavedCard = $request->input('use_saved_card') === '1';
+
+        $rules = [
             'debt_id' => 'required|exists:debts,id',
+            'device_session_id' => 'required|string',
             'amount' => 'required|numeric|min:0.01',
-        ]);
+        ];
+
+        if ($useSavedCard) {
+            $rules['saved_card_id'] = 'required|string';
+            $rules['cvv2'] = 'required|string|min:3|max:4';
+        }
+
+        if (!$useSavedCard) {
+            $rules['token_id'] = 'required|string';
+            $rules['amount'] = 'required|numeric|min:1.00';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([
@@ -60,14 +73,28 @@ class OpenPayController extends Controller
                 'phone_number' => $debt->customer->phone ?? null,
             ];
 
-            $result = $this->openPayService->chargeWithToken(
-                $request->token_id,
-                $request->amount,
-                "Pago de deuda #{$debt->id} - {$debt->customer->name} {$debt->customer->last_name}",
-                $orderId,
-                $customerData,
-                $request->device_session_id
-            );
+            if ($useSavedCard) {
+                $result = $this->openPayService->chargeWithCardId(
+                    $request->saved_card_id,
+                    $request->cvv2,
+                    $request->amount,
+                    "Pago de deuda #{$debt->id} - {$debt->customer->name} {$debt->customer->last_name}",
+                    $orderId,
+                    $customerData,
+                    $request->device_session_id
+                );
+            }
+
+            if (!$useSavedCard) {
+                $result = $this->openPayService->chargeWithToken(
+                    $request->token_id,
+                    $request->amount,
+                    "Pago de deuda #{$debt->id} - {$debt->customer->name} {$debt->customer->last_name}",
+                    $orderId,
+                    $customerData,
+                    $request->device_session_id
+                );
+            }
 
             if (!$result['success']) {
                 DB::rollBack();
@@ -110,9 +137,9 @@ class OpenPayController extends Controller
                 ->update(['payment_id' => $payment->id]);
 
             $debt->refresh();
-            
+
             $debt->debt_current = $debt->total_paid;
-            
+
             $pendingAmount = $debt->remaining_amount;
 
             if ($pendingAmount <= 0) {
@@ -197,7 +224,7 @@ class OpenPayController extends Controller
 
                     $debt = $payment->debt;
                     $debt->debt_current = max(0, $debt->debt_current - $payment->amount);
-                    
+
                     if ($debt->debt_current <= 0) {
                         $debt->status = 'pending';
                     } else {
@@ -215,7 +242,7 @@ class OpenPayController extends Controller
 
                     $debt = $payment->debt;
                     $debt->debt_current = max(0, $debt->debt_current - $payment->amount);
-                    
+
                     if ($debt->debt_current <= 0) {
                         $debt->status = 'pending';
                     } else {

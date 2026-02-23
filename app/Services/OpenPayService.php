@@ -282,4 +282,103 @@ class OpenPayService
         return $_SERVER['PHP_AUTH_USER'] === $expectedUser &&
             $_SERVER['PHP_AUTH_PW'] === $expectedPassword;
     }
+
+    public function createCard($tokenId, $deviceSessionId = null)
+    {
+        try {
+            $cardData = [
+                'token_id' => $tokenId,
+                'device_session_id' => $deviceSessionId,
+            ];
+
+            $card = $this->openpay->cards->add($cardData);
+
+            $this->logTransaction('card_create_success', 'success', $cardData, $card->serializableData, null, $card->id);
+
+            return [
+                'success' => true,
+                'card_id' => $card->id,
+                'brand' => $card->brand ?? 'unknown',
+                'last_four' => substr($card->card_number ?? '', -4),
+                'holder_name' => $card->holder_name ?? '',
+                'expiration_month' => $card->expiration_month ?? '',
+                'expiration_year' => $card->expiration_year ?? '',
+                'card' => $card,
+            ];
+        } catch (Exception $e) {
+            $this->logTransaction('card_create_error', 'error', ['token_id' => $tokenId], null, $e->getMessage());
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+                'error_code' => method_exists($e, 'getErrorCode') ? $e->getErrorCode() : null,
+            ];
+        }
+    }
+
+    public function deleteCard($cardId)
+    {
+        try {
+            $card = $this->openpay->cards->get($cardId);
+            $card->delete();
+
+            $this->logTransaction('card_delete_success', 'success', ['card_id' => $cardId], null, null, $cardId);
+
+            return [
+                'success' => true,
+            ];
+        } catch (Exception $e) {
+            $this->logTransaction('card_delete_error', 'error', ['card_id' => $cardId], null, $e->getMessage(), $cardId);
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function chargeWithCardId($cardId, $cvv2, $amount, $description, $orderId, $customer = null, $deviceSessionId = null)
+    {
+        try {
+            $chargeRequest = [
+                'method' => 'card',
+                'source_id' => $cardId,
+                'cvv2' => $cvv2,
+                'amount' => floatval($amount),
+                'description' => $description,
+                'order_id' => $orderId,
+                'device_session_id' => $deviceSessionId,
+            ];
+
+            if ($customer) {
+                $chargeRequest['customer'] = $customer;
+            }
+
+            $charge = $this->openpay->charges->create($chargeRequest);
+
+            $this->logTransaction('charge_card_success', 'success', array_merge($chargeRequest, ['cvv2' => '***']), $charge->serializableData, null, $charge->id);
+
+            return [
+                'success' => true,
+                'transaction_id' => $charge->id,
+                'authorization' => $charge->authorization ?? null,
+                'status' => $charge->status,
+                'card' => [
+                    'type' => $charge->card->type ?? null,
+                    'brand' => $charge->card->brand ?? null,
+                    'card_number' => $charge->card->card_number ?? null,
+                    'holder_name' => $charge->card->holder_name ?? null,
+                ],
+                'charge' => $charge,
+            ];
+        } catch (Exception $e) {
+            $this->logTransaction('charge_card_error', 'error', ['card_id' => $cardId, 'amount' => $amount], null, $e->getMessage());
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+                'error_code' => method_exists($e, 'getErrorCode') ? $e->getErrorCode() : null,
+            ];
+        }
+    }
 }
