@@ -10,7 +10,6 @@ class MembershipsTableSeeder extends Seeder
 {
     public function run()
     {
-        // Admin estable (si no hay rol Admin, usa el menor id disponible)
         $adminId = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Admin');
             })
@@ -18,13 +17,10 @@ class MembershipsTableSeeder extends Seeder
             ->value('id');
 
         if (!$adminId) {
-            $adminId = User::orderBy('id')->value('id'); // fallback estable
+            $adminId = User::orderBy('id')->value('id');
         }
 
-        // Si aún así no hay usuarios, evita crashear con SQL inválido
-        // (en tu flujo normal ya existen porque UsersTableSeeder corre antes)
         if (!$adminId) {
-            // Puedes lanzar excepción o simplemente salir; aquí salimos para no romper el seed completo
             return;
         }
 
@@ -58,7 +54,7 @@ class MembershipsTableSeeder extends Seeder
                 ->first();
 
             if ($existing){
-                // Update sin tocar created_by
+
                 DB::table('memberships')
                     ->where('id', $existing->id)
                     ->update([
@@ -69,7 +65,6 @@ class MembershipsTableSeeder extends Seeder
                     'updated_at' => now(),
                 ]);
 
-                // Opcional: si existe pero created_by está null, lo rellenamos 1 vez (idempotente)
                 DB::table('memberships')
                     ->where('id', $existing->id)
                     ->whereNull('created_by')
@@ -78,7 +73,7 @@ class MembershipsTableSeeder extends Seeder
                         'updated_at' => now(),
                     ]);
             } else {
-                // Insert con created_by
+
                 DB::table('memberships')->insert([
                     'name' => $m['name'],
                     'price' => $m['price'],
@@ -92,7 +87,6 @@ class MembershipsTableSeeder extends Seeder
             }
         }
 
-        // Mantener tu corrección de defaults, si sigue aplicando al negocio
         DB::table('memberships')
             ->where('water_connections_number', 0)
             ->orWhere('users_number', 0)

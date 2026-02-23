@@ -67,7 +67,7 @@ class UsersTableSeeder extends Seeder
             $user = User::where('email', $u['email'])->first();
 
             if (!$user) {
-                // Crear
+
                 $user = User::create([
                     'locality_id' => $u['locality_id'],
                     'name' => $u['name'],
@@ -77,7 +77,7 @@ class UsersTableSeeder extends Seeder
                     'password' => Hash::make($u['password']),
                 ]);
             } else {
-                // Actualizar datos “no sensibles” (sin tocar password)
+
                 $user->update([
                     'locality_id' => $u['locality_id'],
                     'name' => $u['name'],
@@ -86,8 +86,6 @@ class UsersTableSeeder extends Seeder
                 ]);
             }
 
-            // Rol determinístico (evita duplicidad)
-            // Si la empresa prefiere no “pisar” roles, se puede dejar assignRole con check.
             $user->syncRoles([$u['role']]);
         }
     }

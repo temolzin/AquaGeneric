@@ -12,13 +12,10 @@ class LocalitiesTableSeeder extends Seeder
 {
     public function run()
     {
-        // Asegurar que existan memberships antes de asignarlos
         if (Membership::count() === 0) {
              $this->call(MembershipsTableSeeder::class);
         }
 
-        // Map determinístico: localidad -> nombre del plan
-        // (No depende de autoincrement IDs)
         $localitiesData = [
             [
                 'name' => 'Smallville',
@@ -46,13 +43,11 @@ class LocalitiesTableSeeder extends Seeder
             ],
         ];
 
-        // Fallback determinístico: primer membership por id (NO random)
         $defaultMembershipId = Membership::orderBy('id')->value('id');
 
         foreach ($localitiesData as $data) {
             $membershipId = Membership::where('name', $data['membership_name'])->value('id') ?: $defaultMembershipId;
 
-            // 1) Crear/actualizar localidad SIN token primero (token requiere locality_id real)
             $locality = Locality::updateOrCreate(
                 ['name' => $data['name']],
                 [
@@ -64,12 +59,10 @@ class LocalitiesTableSeeder extends Seeder
                 ]
             );
 
-            // 2) Token determinístico usando el ID real de la localidad
             $locality->token = $this->generateTokenData($locality->id, (bool) $data['token_expired']);
             $locality->save();
         }
 
-        // Completar datos faltantes de forma determinística (no random)
         Locality::whereNull('membership_id')->get()->each(function ($locality) use ($defaultMembershipId) {
             $locality->membership_id = $defaultMembershipId;
             $locality->save();
@@ -80,7 +73,6 @@ class LocalitiesTableSeeder extends Seeder
             $locality->save();
         });
 
-        // Mantener tu lógica de asignación de fecha si aplica en tu schema
         Locality::whereNotNull('membership_id')
             ->whereNull('membership_assigned_at')
             ->update(['membership_assigned_at' => now()]);
