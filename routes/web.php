@@ -206,6 +206,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewFaultReport']], function () {
         Route::get('/faultReport', [FaultReportController::class, 'index'])->name('faultReport.index');
         Route::resource('faultReport', FaultReportController::class);
+        Route::post('/faultReport/update-status', [FaultReportController::class, 'updateStatus'])->name('faultReport.updateStatus');
     });
 
     Route::group(['middleware' => ['can:viewCustomerFaultReports']], function () {

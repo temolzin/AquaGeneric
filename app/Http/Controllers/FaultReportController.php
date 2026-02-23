@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\FaultReport;
+use App\Models\LogFaultReport;
+use Illuminate\Support\Facades\Auth;
 
 class FaultReportController extends Controller
 {
@@ -66,5 +68,52 @@ class FaultReportController extends Controller
         $report->delete();
 
         return redirect()->route('faultReport.index')->with('success', 'Reporte de falla eliminado correctamente.');
+    }
+
+    public function updateStatus(Request $request)
+    {
+        try {
+            $request->validate([
+                'fault_report_id' => 'required|exists:fault_report,id',
+                'status' => 'required|string|in:pending,in_review,completed',
+                'description' => 'sometimes|string|max:500'
+            ]);
+
+            $authUser = auth()->user();
+            $report = FaultReport::findOrFail($request->fault_report_id);
+
+            if ($report->locality_id != $authUser->locality_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No tienes permisos para actualizar este reporte'
+                ], 403);
+            }
+
+            $previousStatus = $report->status;
+            $report->status = $request->status;
+            $report->save();
+
+            $logDescription = $request->description ?: 'Cambio de estatus: ' . 
+                $previousStatus . ' → ' . $request->status;
+
+            $logFaultReport = LogFaultReport::create([
+                'fault_report_id' => $report->id,
+                'status' => $request->status,
+                'description' => $logDescription,
+                'created_by' => $authUser->id,
+                'locality_id' => $authUser->locality_id,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estatus actualizado correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estatus: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

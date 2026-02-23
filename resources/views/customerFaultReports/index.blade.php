@@ -97,12 +97,16 @@
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                             @endcan
+                                                            <button type="button" class="btn bg-maroon mr-2" data-toggle="modal" title="Ver Historial del Reporte" data-target="#historyModal{{ $report->id }}">
+                                                                <i class="fas fa-history"></i>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 @include('customerFaultReports.show')
                                                 @include('customerFaultReports.edit')
                                                 @include('customerFaultReports.delete')
+                                                @include('customerFaultReports.historyModal')
                                             @endforeach
                                         @endif
                                     </tbody>
