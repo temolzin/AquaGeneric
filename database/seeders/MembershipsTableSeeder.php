@@ -10,12 +10,13 @@ class MembershipsTableSeeder extends Seeder
 {
     public function run()
     {
-        $admin = User::whereHas('roles', function($q) {
-            $q->where('name', 'Admin');
-        })->first();
+        $adminId = User::whereHas('roles', fn($q) => $q->where('name', 'Admin'))
+            ->orderBy('id')
+            ->value('id')
+            ?? User::orderBy('id')->value('id');
 
-        if (!$admin) {
-            $admin = User::first();
+        if (!$adminId) {
+            return;
         }
 
         $memberships = [
@@ -27,7 +28,7 @@ class MembershipsTableSeeder extends Seeder
                 'users_number' => 1,
             ],
             [
-                'name' => 'Premium Plan - 6 Months', 
+                'name' => 'Premium Plan - 6 Months',
                 'price' => 499.00,
                 'term_months' => 6,
                 'water_connections_number' => 4000,
@@ -42,6 +43,27 @@ class MembershipsTableSeeder extends Seeder
             ]
         ];
 
+        $now = now();
+
+         $payload = collect($memberships)->map(function ($m) use ($adminId, $now) {
+            return [
+                'name' => $m['name'],
+                'price' => $m['price'],
+                'term_months' => $m['term_months'],
+                'water_connections_number' => $m['water_connections_number'],
+                'users_number' => $m['users_number'],
+                'created_by' => $adminId,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        })->toArray();
+
+        DB::table('memberships')->upsert(
+            $payload,
+            ['name'],
+            ['price', 'term_months', 'water_connections_number', 'users_number', 'updated_at']
+        );
+
         DB::table('memberships')
             ->where('water_connections_number', 0)
             ->orWhere('users_number', 0)
@@ -50,23 +72,5 @@ class MembershipsTableSeeder extends Seeder
                 'users_number' => 1,
                 'updated_at' => now(),
             ]);
-
-        foreach ($memberships as $membership) {
-            $existing = DB::table('memberships')
-                ->where('name', $membership['name'])
-                ->first();
-            
-            if (!$existing) {
-                DB::table('memberships')->insert([
-                    'name' => $membership['name'],
-                    'price' => $membership['price'],
-                    'term_months' => $membership['term_months'],
-                    'water_connections_number' => $membership['water_connections_number'],
-                    'users_number' => $membership['users_number'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-        }
     }
 }
