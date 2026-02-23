@@ -73,7 +73,7 @@ class UsersTableSeeder extends Seeder
                 'name' => $u['name'],
                 'last_name' => $u['last_name'],
                 'phone' => $u['phone'],
-                'password' => Hash::make($u['password']), // solo afecta en insert
+                'password' => Hash::make($u['password']),
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
