@@ -166,19 +166,21 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             <div class="line">Total Tarjeta: ${{ number_format($totalCard, 2) }}</div>
             <div class="line">Total Transferencia: ${{ number_format($totalTransfer, 2) }}</div>
             <div class="line" style="text-align: center;"><strong>Total pagos: ${{ number_format($totalPayments, 2) }}</strong></div>
-            
-            @if(isset($earnings) && $earnings->count() > 0)
-                <h4 style="color: #0B1C80; font-size: 14pt; text-align: center; margin-bottom: 10px; margin-top: 15px; font-family: 'Montserrat', sans-serif;">Ingresos Adicionales</h4>
-                @foreach($earnings as $earning)
-                    <div class="line">{{ $earning->earningType?->name ?? 'Sin tipo' }}: ${{ number_format($earning->amount, 2) }}</div>
-                @endforeach
-                <div class="line" style="text-align: center;"><strong>Total ingresos adicionales: ${{ number_format($totalEarnings, 2) }}</strong></div>
-            @endif
-            
-            <div class="line" style="margin-top: 10px; text-align: right;"><strong>Total general: ${{ number_format($totalIncome ?? $totalPayments, 2) }}</strong></div>
         </div>
 
-        <div class="section" style="margin-top: -10px;">
+        @if(isset($earnings) && $earnings->count() > 0)
+        <div class="section" style="margin-top: 10px;">
+            <h4>Ingresos Adicionales</h4>
+            @foreach($earnings as $earning)
+                <div class="line">{{ $earning->earningType?->name ?? 'Sin tipo' }}: ${{ number_format($earning->amount, 2) }}</div>
+            @endforeach
+            <div class="line" style="text-align: center;"><strong>Total ingresos adicionales: ${{ number_format($totalEarnings, 2) }}</strong></div>
+        </div>
+        @endif
+
+        <div class="line" style="margin-top: 0px; text-align: right;"><strong>Total general: ${{ number_format($totalIncome ?? $totalPayments, 2) }}</strong></div>
+
+        <div class="section" style="margin-top: -40px;">
             <h4>Egresos</h4>
             @php
                 $expensesByType = $expenses->groupBy(function($expense) {
