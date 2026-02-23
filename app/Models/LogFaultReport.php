@@ -12,6 +12,10 @@ class LogFaultReport extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
 
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_IN_REVIEW = 'in_review';
+    public const STATUS_COMPLETED = 'completed';
+
     protected $fillable = [
         'locality_id',
         'created_by',

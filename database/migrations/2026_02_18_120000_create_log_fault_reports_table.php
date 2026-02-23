@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateLogFaultReportsTable extends Migration
 {
+    private const FAULT_REPORT_STATUSES = ['pending', 'in_review', 'completed'];
+
     /**
      * Run the migrations.
      *
@@ -18,7 +20,7 @@ class CreateLogFaultReportsTable extends Migration
             $table->unsignedBigInteger('fault_report_id');
             $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('created_by');
-            $table->enum('status', ['Pendiente', 'En revisión', 'Completado'])->default('Pendiente');
+            $table->enum('status', self::FAULT_REPORT_STATUSES)->default('pending');
             $table->text('comentario')->nullable();
             $table->timestamps();
 

@@ -36,9 +36,9 @@
                                             <label for="statusSelect" class="form-label">Estatus(*)</label>
                                             <select class="form-control select2" name="status" id="statusSelect" required>
                                                 <option value="">Selecciona una opción</option>
-                                                <option value="Pendiente">Pendiente</option>
-                                                <option value="En revisión">En revisión</option>
-                                                <option value="Completado">Completado</option>
+                                                <option value="pending">Pendiente</option>
+                                                <option value="in_review">En revisión</option>
+                                                <option value="completed">Completado</option>
                                             </select>
                                         </div>
                                     </div>

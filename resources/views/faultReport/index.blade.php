@@ -43,12 +43,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(count($reports) <= 0)
-                                            <tr>
-                                                <td colspan="6">No hay resultados</td>
-                                            </tr>
-                                        @else
-                                            @foreach($reports as $report)
+                                        @forelse($reports as $report)
                                                 <tr>
                                                     <td>{{ $report->id }}</td>
                                                     <td>{{ $report->title }}</td>
@@ -106,8 +101,11 @@
                                                 @include('faultReport.edit')
                                                 @include('faultReport.delete')
                                                 @include('faultReport.historyModal')
-                                            @endforeach
-                                        @endif
+                                        @empty
+                                            <tr>
+                                                <td colspan="6">No hay resultados</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                                 <div class="d-flex justify-content-center">
@@ -181,23 +179,14 @@
                 type: 'POST',
                 data: formData,
                 success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: response.message,
-                            confirmButtonText: 'Aceptar'
-                        }).then(function() {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message,
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
+                    Swal.fire({
+                        icon: response.success ? 'success' : 'error',
+                        title: response.success ? 'Éxito' : 'Error',
+                        text: response.message,
+                        confirmButtonText: 'Aceptar'
+                    }).then(function() {
+                        if (response.success) location.reload();
+                    });
                 },
                 error: function(xhr, status, error) {
                     Swal.fire({

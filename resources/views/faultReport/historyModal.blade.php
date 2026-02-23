@@ -45,7 +45,21 @@
                                             <hr style="margin: 8px 0; border-top: 1px solid #aaa;">
                                             <div style="font-size: 0.9rem;">
                                                 <p class="mb-1"><strong>Estatus:</strong>
-                                                    <span class="badge" style="background-color: #007bff; color: white; padding: 6px 10px; font-size: 12px; border-radius: 4px;">{{ $log->status }}</span>
+                                                    <span class="badge" style="background-color: #007bff; color: white; padding: 6px 10px; font-size: 12px; border-radius: 4px;">
+                                                        @switch($log->status)
+                                                            @case('pending')
+                                                                Pendiente
+                                                                @break
+                                                            @case('in_review')
+                                                                En revisión
+                                                                @break
+                                                            @case('completed')
+                                                                Completado
+                                                                @break
+                                                            @default
+                                                                {{ $log->status }}
+                                                        @endswitch
+                                                    </span>
                                                 </p>
                                                 <p class="mb-1"><strong>Comentario:</strong> {{ $log->comentario ?: 'Sin comentario' }}</p>
                                             </div>

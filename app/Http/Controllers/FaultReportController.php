@@ -75,7 +75,7 @@ class FaultReportController extends Controller
         try {
             $request->validate([
                 'fault_report_id' => 'required|exists:fault_report,id',
-                'status' => 'required|string|in:Pendiente,En revisión,Completado',
+                'status' => 'required|string|in:pending,in_review,completed',
                 'comentario' => 'sometimes|string|max:500'
             ]);
 
