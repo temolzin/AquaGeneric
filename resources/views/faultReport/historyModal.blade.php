@@ -61,7 +61,7 @@
                                                         @endswitch
                                                     </span>
                                                 </p>
-                                                <p class="mb-1"><strong>Comentario:</strong> {{ $log->comentario ?: 'Sin comentario' }}</p>
+                                                <p class="mb-1"><strong>Comentario:</strong> {{ $log->description ?: 'Sin comentario' }}</p>
                                             </div>
                                         </div>
                                     </div>

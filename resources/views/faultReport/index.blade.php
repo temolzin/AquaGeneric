@@ -165,7 +165,7 @@
             modal.find('#faultReportId').val(faultReportId);
             modal.find('#faultReportTitleDisplay').text(faultReportTitle);
             modal.find('#statusSelect').val('');
-            modal.find('#comentarioText').val('');
+            modal.find('#descriptionText').val('');
         });
 
         $('#changeStatusForm').on('submit', function(e) {

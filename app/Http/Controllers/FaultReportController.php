@@ -76,7 +76,7 @@ class FaultReportController extends Controller
             $request->validate([
                 'fault_report_id' => 'required|exists:fault_report,id',
                 'status' => 'required|string|in:pending,in_review,completed',
-                'comentario' => 'sometimes|string|max:500'
+                'description' => 'sometimes|string|max:500'
             ]);
 
             $authUser = auth()->user();
@@ -93,13 +93,13 @@ class FaultReportController extends Controller
             $report->status = $request->status;
             $report->save();
 
-            $logDescription = $request->comentario ?: 'Cambio de estatus: ' . 
+            $logDescription = $request->description ?: 'Cambio de estatus: ' . 
                 $previousStatus . ' → ' . $request->status;
 
             $logFaultReport = LogFaultReport::create([
                 'fault_report_id' => $report->id,
                 'status' => $request->status,
-                'comentario' => $logDescription,
+                'description' => $logDescription,
                 'created_by' => $authUser->id,
                 'locality_id' => $authUser->locality_id,
             ]);

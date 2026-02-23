@@ -20,7 +20,7 @@ class LogFaultReport extends Model implements HasMedia
         'locality_id',
         'created_by',
         'status',
-        'comentario',
+        'description',
         'fault_report_id'
     ];
 

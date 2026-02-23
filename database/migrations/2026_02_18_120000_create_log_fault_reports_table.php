@@ -21,7 +21,7 @@ class CreateLogFaultReportsTable extends Migration
             $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('created_by');
             $table->enum('status', self::FAULT_REPORT_STATUSES)->default('pending');
-            $table->text('comentario')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
 
             $table->foreign('fault_report_id')->references('id')->on('fault_report')->onDelete('cascade');
