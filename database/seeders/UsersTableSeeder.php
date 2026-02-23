@@ -15,49 +15,80 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        User::firstOrCreate([
-            'locality_id' => null,
-            'name' => 'Jose',
-            'last_name' => 'Lopez Osorio',
-            'email' => 'jose@gmail.com',
-            'phone' => '7798745677',
-            'password' => Hash::make('12345'),
-        ])->assignRole('Admin');
+        $users = [
+            [
+                'email' => 'jose@gmail.com',
+                'locality_id' => null,
+                'name' => 'Jose',
+                'last_name' => 'Lopez Osorio',
+                'phone' => '7798745677',
+                'password' => '12345',
+                'role' => 'Admin',
+            ],
+            [
+                'email' => 'eri@gmail.com',
+                'locality_id' => 2,
+                'name' => 'Erika',
+                'last_name' => 'Lopez Perez',
+                'phone' => '7798745677',
+                'password' => '12345',
+                'role' => 'Secretaria',
+            ],
+            [
+                'email' => 'juan@gmail.com',
+                'locality_id' => 1,
+                'name' => 'Juan',
+                'last_name' => 'Perez Garcia',
+                'phone' => '5512998832',
+                'password' => '12345',
+                'role' => 'Supervisor',
+            ],
+            [
+                'email' => 'mario@gmail.com',
+                'locality_id' => 3,
+                'name' => 'Mario',
+                'last_name' => 'Gomez Fernandez',
+                'phone' => '5588997766',
+                'password' => '12345',
+                'role' =>'Supervisor',
+            ],
+            [
+                'email' => 'alonso@gmail.com',
+                'locality_id' => 1,
+                'name' => 'Alonso',
+                'last_name' => 'Gutiérrez López',
+                'phone' => '5556161351',
+                'password' => '12345',
+                'role' => 'Cliente',
+            ],
+        ];
 
-        User::firstOrCreate([
-            'locality_id' => 2,
-            'name' => 'Erika',
-            'last_name' => 'Lopez Perez',
-            'email' => 'eri@gmail.com',
-            'phone' => '7798745677',
-            'password' => Hash::make('12345'),
-        ])->assignRole('Secretaria');
+        foreach ($users as $u) {
+            $user = User::where('email', $u['email'])->first();
 
-        User::firstOrCreate([
-            'locality_id' => 1,
-            'name' => 'Juan',
-            'last_name' => 'Perez Garcia',
-            'email' => 'juan@gmail.com',
-            'phone' => '5512998832',
-            'password' => Hash::make('12345'),
-        ])->assignRole('Supervisor');
+            if (!$user) {
+                // Crear
+                $user = User::create([
+                    'locality_id' => $u['locality_id'],
+                    'name' => $u['name'],
+                    'last_name' => $u['last_name'],
+                    'email' => $u['email'],
+                    'phone' => $u['phone'],
+                    'password' => Hash::make($u['password']),
+                ]);
+            } else {
+                // Actualizar datos “no sensibles” (sin tocar password)
+                $user->update([
+                    'locality_id' => $u['locality_id'],
+                    'name' => $u['name'],
+                    'last_name' => $u['last_name'],
+                    'phone' => $u['phone'],
+                ]);
+            }
 
-        User::firstOrCreate([
-            'locality_id' => 3,
-            'name' => 'Mario',
-            'last_name' => 'Gomez Fernandez',
-            'email' => 'mario@gmail.com',
-            'phone' => '5588997766',
-            'password' => Hash::make('12345'),
-        ])->assignRole('Supervisor');
-
-        User::firstOrCreate([
-            'locality_id' => 1,
-            'name' => 'Alonso',
-            'last_name' => 'Gutiérrez López',
-            'email' => 'alonso@gmail.com',
-            'phone' => '5556161351',
-            'password' => Hash::make('12345'),
-        ])->assignRole('Cliente');
+            // Rol determinístico (evita duplicidad)
+            // Si la empresa prefiere no “pisar” roles, se puede dejar assignRole con check.
+            $user->syncRoles([$u['role']]);
+        }
     }
 }
