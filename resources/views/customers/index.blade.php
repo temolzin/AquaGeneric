@@ -20,17 +20,17 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <div class="btn-group d-none d-md-flex" role="group" aria-label="Acciones de Cliente">
-                                        <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
+                                    <div class="d-none d-lg-flex flex-wrap gap-0" role="group" aria-label="Acciones de Cliente">
+                                        <button class="btn btn-success mx-1 my-1" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
                                             <i class="fa fa-plus"></i> Registrar Cliente
                                         </button>
-                                        <button class="btn bg-purple mr-2" data-toggle='modal' data-target="#importData" title="Importar Datos">
+                                        <button class="btn bg-purple mx-1 my-1" data-toggle='modal' data-target="#importData" title="Importar Datos">
                                             <i class="fas fa-file-import"></i> Importar Datos
                                         </button>
-                                        <a type="button" class="btn btn-secondary me-2" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
+                                        <a type="button" class="btn btn-secondary mx-1 my-1" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista
                                         </a>
-                                        <a type="button" class="btn btn-primary ms-2" style="margin-left: 10px;" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
+                                        <a type="button" class="btn btn-primary mx-1 my-1" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista Resumen
                                         </a>
                                     </div>

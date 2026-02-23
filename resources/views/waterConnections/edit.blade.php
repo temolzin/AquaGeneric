@@ -13,6 +13,14 @@
                     @method('PUT')
                     <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
+                            <div class="card-header py-2 bg-secondary">
+                                <h3 class="card-title">Datos de la Toma</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-lg-12">

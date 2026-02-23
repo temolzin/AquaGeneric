@@ -270,6 +270,7 @@
 <script>
     $(document).ready(function() {
         $('#qrModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
         var id = button.data('id');
         var modal = $(this);
         var img = modal.find('#qrImage');

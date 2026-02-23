@@ -87,19 +87,19 @@
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <div class="btn-group" role="group" aria-label="Opciones">
+                                                            <div class="d-flex flex-wrap gap-0">
                                                                 @can('viewNotice')
-                                                                <button type="button" class="btn btn-info btn-sm mr-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $notice->id }}">
+                                                                <button type="button" class="btn btn-info btn-sm mx-1 mb-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $notice->id }}">
                                                                     <i class="fas fa-eye"></i>
                                                                 </button>
                                                                 @endcan
                                                                 @can('editNotice')
-                                                                <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Aviso" data-target="#edit{{ $notice->id }}">
+                                                                <button type="button" class="btn btn-warning btn-sm mx-1 mb-1" data-toggle="modal" title="Editar Aviso" data-target="#edit{{ $notice->id }}">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
                                                                 @endcan
                                                                 @can('deleteNotice')
-                                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" title="Eliminar Aviso" data-target="#delete{{ $notice->id }}">
+                                                                <button type="button" class="btn btn-danger btn-sm mx-1 mb-1" data-toggle="modal" title="Eliminar Aviso" data-target="#delete{{ $notice->id }}">
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                                 @endcan
