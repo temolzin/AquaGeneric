@@ -10,15 +10,10 @@ class MembershipsTableSeeder extends Seeder
 {
     public function run()
     {
-        $adminId = User::whereHas('roles', function ($q) {
-                $q->where('name', 'Admin');
-            })
+        $adminId = User::whereHas('roles', fn($q) => $q->where('name', 'Admin'))
             ->orderBy('id')
-            ->value('id');
-
-        if (!$adminId) {
-            $adminId = User::orderBy('id')->value('id');
-        }
+            ->value('id')
+            ?? User::orderBy('id')->value('id');
 
         if (!$adminId) {
             return;
@@ -48,44 +43,26 @@ class MembershipsTableSeeder extends Seeder
             ]
         ];
 
-        foreach ($memberships as $m) {
-            $existing = DB::table('memberships')
-                ->where('name', $m['name'])
-                ->first();
+        $now = now();
 
-            if ($existing){
+         $payload = collect($memberships)->map(function ($m) use ($adminId, $now) {
+            return [
+                'name' => $m['name'],
+                'price' => $m['price'],
+                'term_months' => $m['term_months'],
+                'water_connections_number' => $m['water_connections_number'],
+                'users_number' => $m['users_number'],
+                'created_by' => $adminId,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        })->toArray();
 
-                DB::table('memberships')
-                    ->where('id', $existing->id)
-                    ->update([
-                    'price' => $m['price'],
-                    'term_months' => $m['term_months'],
-                    'water_connections_number' => $m['water_connections_number'],
-                    'users_number' => $m['users_number'],
-                    'updated_at' => now(),
-                ]);
-
-                DB::table('memberships')
-                    ->where('id', $existing->id)
-                    ->whereNull('created_by')
-                    ->update([
-                        'created_by' => $adminId,
-                        'updated_at' => now(),
-                    ]);
-            } else {
-
-                DB::table('memberships')->insert([
-                    'name' => $m['name'],
-                    'price' => $m['price'],
-                    'term_months' => $m['term_months'],
-                    'water_connections_number' => $m['water_connections_number'],
-                    'users_number' => $m['users_number'],
-                    'created_by' => $adminId,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-        }
+        DB::table('memberships')->upsert(
+            $payload,
+            ['name'],
+            ['price', 'term_months', 'water_connections_number', 'users_number', 'updated_at']
+        );
 
         DB::table('memberships')
             ->where('water_connections_number', 0)

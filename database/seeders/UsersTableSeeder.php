@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UsersTableSeeder extends Seeder
 {
@@ -15,6 +16,8 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+        $now = now();
+
         $users = [
             [
                 'email' => 'jose@gmail.com',
@@ -63,30 +66,29 @@ class UsersTableSeeder extends Seeder
             ],
         ];
 
-        foreach ($users as $u) {
+        $payload = collect($users)->map(function ($u) use ($now) {
+            return [
+                'email' => $u['email'],
+                'locality_id' => $u['locality_id'],
+                'name' => $u['name'],
+                'last_name' => $u['last_name'],
+                'phone' => $u['phone'],
+                'password' => Hash::make($u['password']), // solo afecta en insert
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        })->toArray();
+
+        DB::table('users')->upsert(
+            $payload,
+            ['email'],
+            ['locality_id', 'name', 'last_name', 'phone', 'updated_at']
+        );
+
+        collect($users)->each(function ($u) {
             $user = User::where('email', $u['email'])->first();
-
-            if (!$user) {
-
-                $user = User::create([
-                    'locality_id' => $u['locality_id'],
-                    'name' => $u['name'],
-                    'last_name' => $u['last_name'],
-                    'email' => $u['email'],
-                    'phone' => $u['phone'],
-                    'password' => Hash::make($u['password']),
-                ]);
-            } else {
-
-                $user->update([
-                    'locality_id' => $u['locality_id'],
-                    'name' => $u['name'],
-                    'last_name' => $u['last_name'],
-                    'phone' => $u['phone'],
-                ]);
-            }
-
-            $user->syncRoles([$u['role']]);
-        }
+            $user?->syncRoles([$u['role']]);
+        });
     }
 }
+
