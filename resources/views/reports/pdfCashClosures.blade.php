@@ -161,24 +161,31 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
         </div>
 
         <div class="section">
-            <h4>Ingresos</h4>
+            <h4>Pagos</h4>
             <div class="line">Total Efectivo: ${{ number_format($totalCash, 2) }}</div>
             <div class="line">Total Tarjeta: ${{ number_format($totalCard, 2) }}</div>
             <div class="line">Total Transferencia: ${{ number_format($totalTransfer, 2) }}</div>
-            <div class="line"><strong>Total ingresos: ${{ number_format($totalPayments, 2) }}</strong></div>
+            <div class="line" style="text-align: center;"><strong>Total pagos: ${{ number_format($totalPayments, 2) }}</strong></div>
         </div>
 
-        <div class="section">
+        @if(isset($earnings) && $earnings->count() > 0)
+        <div class="section" style="margin-top: 10px;">
+            <h4>Ingresos Adicionales</h4>
+            @foreach($earnings as $earning)
+                <div class="line">{{ $earning->earningType?->name ?? 'Sin tipo' }}: ${{ number_format($earning->amount, 2) }}</div>
+            @endforeach
+            <div class="line" style="text-align: center;"><strong>Total ingresos adicionales: ${{ number_format($totalEarnings, 2) }}</strong></div>
+        </div>
+        @endif
+
+        <div class="line" style="margin-top: 0px; text-align: right;"><strong>Total general: ${{ number_format($totalIncome ?? $totalPayments, 2) }}</strong></div>
+
+        <div class="section" style="margin-top: -40px;">
             <h4>Egresos</h4>
             @php
-                $typeLabels = [
-                    'mainteinence' => 'Mantenimiento',
-                    'services' => 'Servicios',
-                    'supplies' => 'Insumos',
-                    'taxes' => 'Impuestos',
-                    'staff' => 'Personal',
-                ];
-                $expensesByType = $expenses->groupBy('type')->map(function($group) {
+                $expensesByType = $expenses->groupBy(function($expense) {
+                    return $expense->expenseType?->name ?? 'Sin tipo';
+                })->map(function($group) {
                     return $group->sum('amount');
                 });
             @endphp
@@ -186,17 +193,15 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             @if($expenses->isEmpty())
                 <div class="line">No hay egresos registrados.</div>
             @else
-                @foreach($typeLabels as $key => $label)
-                    @if(isset($expensesByType[$key]))
-                        <div class="line">{{ $label }}: ${{ number_format($expensesByType[$key], 2) }}</div>
-                    @endif
+                @foreach($expensesByType as $typeName => $amount)
+                    <div class="line">{{ $typeName }}: ${{ number_format($amount, 2) }}</div>
                 @endforeach
-                <div class="line"><strong>Total egresos: ${{ number_format($totalExpenses, 2) }}</strong></div>
+                <div class="line" style="text-align: center;"><strong>Total egresos: ${{ number_format($totalExpenses, 2) }}</strong></div>
             @endif
         </div>
 
-        <h4 style="text-align:center; font-family:'Montserrat', sans-serif; font-size:14pt; color:#0B1C80; margin-top:20px;">
-            TOTAL NETO DEL CORTE: ${{ number_format(($totalPayments - $totalExpenses), 2) }}
+        <h4 style="text-align:center; font-family:'Montserrat', sans-serif; font-size:14pt; color:#0B1C80; margin-top:10px;">
+            TOTAL NETO DEL CORTE: ${{ number_format(($totalIncome ?? $totalPayments) - $totalExpenses, 2) }}
         </h4>
     </div>
 

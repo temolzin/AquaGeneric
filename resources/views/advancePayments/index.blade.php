@@ -11,19 +11,19 @@
 
     <div class="row mb-3">
         <div class="col-lg-12">
-            <div class="d-flex flex-wrap gap-2 justify-content-end">
-                <button class="btn btn-primary flex-grow-1 flex-md-grow-0 mr-1 mt-2" id="btnGenerateReportGraph" title="Generar PDF de Gráficos">
+            <div class="d-flex flex-wrap justify-content-end mb-2">
+                <button class="btn btn-primary mt-2 mx-1 mb-2" id="btnGenerateReportGraph" title="Generar PDF de Gráficos">
                     <i class="fa fa-chart-pie"></i>
                     <span class="d-none d-md-inline">Generar PDF de Gráficos</span>
                     <span class="d-inline d-md-none">Gráficos</span>
                 </button>
-                <button class="btn btn-success flex-grow-1 flex-md-grow-0 ml-1 mt-2" data-toggle="modal"
+                <button class="btn btn-success mt-2 mx-1 mb-2" data-toggle="modal"
                         data-target="#paymentHistoryModal" title="Historial de pagos">
                     <i class="fa fa-calendar"></i>
                     <span class="d-none d-md-inline">Historial de Pagos</span>
                     <span class="d-inline d-md-none">Historial</span>
                 </button>
-                <button class="btn bg-teal flex-grow-1 flex-md-grow-0 ml-1 mt-2" data-toggle="modal"
+                <button class="btn bg-teal mt-2 mx-1 mb-2" data-toggle="modal"
                         data-target="#generateAdvancePaymentsReportModal" title="Reporte de Pagos Adelantados">
                         <i class="fas fa-file-pdf"></i>
                     <span class="d-none d-md-inline">Reporte de Pagos Adelantados</span>

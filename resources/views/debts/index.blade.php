@@ -22,20 +22,20 @@
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap justify-content-end gap-2">
-                                    <button type="button" class="btn btn-primary flex-grow-1 flex-lg-grow-0 mr-1 mt-2" data-toggle="modal"
+                                <div class="d-flex flex-wrap justify-content-end mb-2">
+                                    <button type="button" class="btn btn-primary mt-2 mx-1 mb-2" data-toggle="modal"
                                             title="Asignar Deuda a Todos" data-target="#assignDebtModal">
                                         <i class="fa fa-plus"></i>
                                         <span class="d-none d-lg-inline">Asignar Deuda a Todos</span>
                                         <span class="d-inline d-lg-none">Asignar a Todos</span>
                                     </button>
-                                    <button type="button" class="btn btn-success flex-grow-1 flex-lg-grow-0 ml-1 mt-2" data-toggle="modal"
+                                    <button type="button" class="btn btn-success mt-2 mx-1 mb-2" data-toggle="modal"
                                             title="Crear Deuda" data-target="#createDebt">
                                         <i class="fa fa-plus"></i>
                                         <span class="d-none d-lg-inline">Crear Deuda</span>
                                         <span class="d-inline d-lg-none">Crear Deuda</span>
                                     </button>
-                                    <a type="button" class="btn btn-secondary flex-grow-1 flex-lg-grow-0 mt-2 ml-1" target="_blank"
+                                    <a type="button" class="btn btn-secondary mt-2 mx-1 mb-2" target="_blank"
                                     title="Clientes con deudas" href="{{ route('report.with-debts') }}">
                                         <i class="fas fa-file-pdf"></i>
                                         <span class="d-none d-lg-inline">Clientes con deudas</span>

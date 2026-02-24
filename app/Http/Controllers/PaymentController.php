@@ -444,32 +444,41 @@ class PaymentController extends Controller
             ->whereDate('created_at', $today)
             ->get();
 
+        $earnings = GeneralEarning::where('locality_id', $authUser->locality_id)
+            ->whereDate('earning_date', $today)
+            ->get();
+
         $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
             ->whereDate('expense_date', $today)
             ->get();
 
         $totalPayments = $payments->sum('amount');
+        $totalEarnings = $earnings->sum('amount');
+        $totalIncome = $totalPayments + $totalEarnings;
         $totalExpenses = $expenses->sum('amount');
         $totalCash = $payments->where('method', 'cash')->sum('amount');
         $totalCard = $payments->where('method', 'card')->sum('amount');
         $totalTransfer = $payments->where('method', 'transfer')->sum('amount');
-        $finalAmount = $totalPayments - $totalExpenses;
+        $finalAmount = $totalIncome - $totalExpenses;
 
         $latestClosure = (object) [
             'opened_at' => now()->startOfDay(),
             'closed_at' => now()->endOfDay(),
             'initial_amount' => 0,
             'final_amount' => $finalAmount,
-            'total_sales' => $totalPayments,
+            'total_sales' => $totalIncome,
             'total_expenses' => $totalExpenses,
         ];
 
         $pdf = PDF::loadView('reports.pdfCashClosures', [
             'closures' => collect([$latestClosure]),
             'payments' => $payments,
+            'earnings' => $earnings,
             'expenses' => $expenses,
             'authUser' => $authUser,
             'totalPayments' => $totalPayments,
+            'totalEarnings' => $totalEarnings,
+            'totalIncome' => $totalIncome,
             'totalExpenses' => $totalExpenses,
             'totalCash' => $totalCash,
             'totalCard' => $totalCard,
