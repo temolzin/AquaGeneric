@@ -32,11 +32,14 @@ class SendContactFormEmail implements ShouldQueue
      */
     public function handle()
     {
-        // Determine recipient: prefer MAIL_ADMIN, then mail.from.address, then MAIL_FROM_ADDRESS
-        $to = env('MAIL_ADMIN') ?: config('mail.from.address') ?: env('MAIL_FROM_ADDRESS');
+        // Determine recipient: prefer MAIL_USERNAME, then mail.from.address, then MAIL_FROM_ADDRESS
+        $to = env('MAIL_USERNAME') ?: config('mail.from.address') ?: env('MAIL_FROM_ADDRESS');
         if (empty($to)) {
             return;
         }
+
+        $fromAddress = env('MAIL_FROM_ADDRESS') ?: $to;
+        $fromName = env('MAIL_FROM_NAME') ?: config('app.name');
 
         $logoPath = public_path('img/logo.png');
         $footerPath = public_path('img/rootheim.png');
@@ -46,10 +49,12 @@ class SendContactFormEmail implements ShouldQueue
 
         $html = View::make('emails.contactForm', $viewData)->render();
 
-        Mail::send([], [], function ($message) use ($to, $html) {
-            $logoCid = $message->embed(public_path('img/logo.png'));
-            $footerCid = $message->embed(public_path('img/rootheim.png'));
+        Mail::send([], [], function ($message) use ($to, $fromAddress, $fromName, $html, $logoPath, $footerPath) {
+            $logoCid = $message->embed($logoPath);
+            $footerCid = $message->embed($footerPath);
+
             $message->to($to)
+                ->from($fromAddress, $fromName)
                 ->subject('Contacto desde sitio — ' . ($this->data['name'] ?? ''))
                 ->setBody($html, 'text/html');
 

@@ -860,4 +860,32 @@ ul.social_icon li a:hover {
      color: #fff !important;
 }
 
+/* WhatsApp floating button */
+.whatsapp-float {
+     position: fixed;
+     width: 60px;
+     height: 60px;
+     bottom: 20px;
+     right: 20px;
+     background-color: #25D366;
+     color: #fff;
+     border-radius: 50%;
+     text-align: center;
+     font-size: 28px;
+     box-shadow: 2px 2px 6px rgba(0,0,0,0.25);
+     z-index: 9999;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+}
+.whatsapp-float:hover {
+     transform: scale(1.05);
+     transition: transform .15s ease-in-out;
+     text-decoration: none;
+     color: #fff;
+}
+@media (max-width: 576px) {
+     .whatsapp-float { right: 16px; bottom: 16px; width:56px; height:56px; font-size:24px; }
+}
+
 

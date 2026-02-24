@@ -315,3 +315,7 @@
             });
         </script>
         @endsection
+    
+    <a href="https://wa.me/{{ env('WHATSAPP_NUMBER', '5215619660990') }}?text={{ urlencode(env('WHATSAPP_MESSAGE', 'Hola, estoy interesado en AquaControl. ¿Me pueden ayudar?')) }}" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat por WhatsApp">
+        <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    </a>

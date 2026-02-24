@@ -47,20 +47,15 @@ class ContactFormMail extends Mailable
             // ignore embed failures; view will fall back to asset() URLs
         }
 
+        $fromAddress = env('MAIL_FROM_ADDRESS') ?: env('MAIL_USERNAME');
+        $fromName = env('MAIL_FROM_NAME') ?: config('app.name');
+
         $m = $this->subject($subject)
                 ->view('emails.contactForm')
                 ->with(array_merge($viewData, ['logoCid' => $logoCid, 'footerCid' => $footerCid]));
 
-        // Determine From: prefer MAIL_ADMIN, then configured mail.from.address, then MAIL_FROM_ADDRESS
-        $fromAddress = env('MAIL_ADMIN') ?: config('mail.from.address') ?: env('MAIL_FROM_ADDRESS');
-        $fromName = env('MAIL_ADMIN_NAME') ?: config('mail.from.name') ?: env('MAIL_FROM_NAME') ?: null;
-
         if (!empty($fromAddress)) {
-            if ($fromName) {
-                $m->from($fromAddress, $fromName);
-            } else {
-                $m->from($fromAddress);
-            }
+            $m->from($fromAddress, $fromName);
         }
 
         if (!empty($viewData['email'])) {
