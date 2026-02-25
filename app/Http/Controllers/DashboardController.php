@@ -74,6 +74,7 @@ class DashboardController extends Controller
         $notices = \App\Models\LocalityNotice::with(['creator', 'locality'])
             ->where('locality_id', $authUser->locality_id)
             ->where('is_active', true)
+            ->where('start_date', '<=', now())
             ->where('end_date', '>=', now())
             ->orderBy('created_at', 'desc')
             ->get();

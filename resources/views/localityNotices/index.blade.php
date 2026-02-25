@@ -42,7 +42,6 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>TÍTULO</th>
-                                                <th>LOCALIDAD</th>
                                                 <th>FECHA Y HORA DE INICIO</th>
                                                 <th>FECHA Y HORA DE FIN</th>
                                                 <th>ESTATUS</th>
@@ -61,19 +60,15 @@
                                                         <td>
                                                             {{ Str::limit($notice->title, 40) }}                                                       
                                                         </td>
-                                                        <td>{{ $notice->locality->name }}</td>
                                                         <td>{{ $notice->start_date->format('d/m/Y H:i') }}</td>
                                                         <td>{{ $notice->end_date->format('d/m/Y H:i') }}</td>
                                                         <td>
                                                             @php
-                                                                $now = now();
-                                                                $startDate = \Carbon\Carbon::parse($notice->start_date);
-                                                                $endDate = \Carbon\Carbon::parse($notice->end_date);
-                                                                
-                                                                if ($notice->is_active && $startDate <= $now && $endDate >= $now) {
+                                                                $status = $notice->status;
+                                                                if ($status === 'active') {
                                                                     $badgeClass = 'badge-success';
                                                                     $text = 'Activo';
-                                                                } elseif ($startDate > $now) {
+                                                                } elseif ($status === 'scheduled') {
                                                                     $badgeClass = 'badge-primary';
                                                                     $text = 'Programado';
                                                                 } else {

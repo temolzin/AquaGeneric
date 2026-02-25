@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Models\LocalityNotice;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,7 +16,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            $now = now();
+
+            LocalityNotice::where('is_active', false)
+                ->where('start_date', '<=', $now)
+                ->where('end_date', '>=', $now)
+                ->update(['is_active' => true]);
+
+            LocalityNotice::where('is_active', true)
+                ->where('end_date', '<', $now)
+                ->update(['is_active' => false]);
+        })->everyMinute();
     }
 
     /**
