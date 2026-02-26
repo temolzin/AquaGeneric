@@ -41,7 +41,7 @@
                                         <table id="notices" class="table table-striped display responsive nowrap" style="width:100%">
                                             <thead>
                                                 <tr>
-                                                    <th></th> {{-- control + --}}
+                                                    <th></th>
                                                     <th>ID</th>
                                                     <th>TÍTULO</th>
                                                     <th>LOCALIDAD</th>
@@ -59,7 +59,7 @@
                                                 @else
                                                     @foreach($localityNotices as $notice)
                                                         <tr>
-                                                            <td></td> {{-- control + --}}
+                                                            <td></td>
                                                             <td>{{ $notice->id }}</td>
                                                             <td>
                                                                 {{ Str::limit($notice->title, 40) }}
@@ -114,7 +114,6 @@
                                             </tbody>
                                         </table>
 
-                                        {{-- MODALES: se renderizan fuera de la tabla para evitar HTML inválido y problemas con Responsive --}}
                                         @if (count($localityNotices) > 0)
                                             @foreach($localityNotices as $notice)
                                                 @include('localityNotices.delete', ['notice' => $notice])
@@ -122,8 +121,6 @@
                                                 @include('localityNotices.show', ['notice' => $notice])
                                             @endforeach
                                         @endif
-
-
 
                                     <div class="d-flex justify-content-center">
                                        {!! $localityNotices->appends(request()->query())->links('pagination::bootstrap-4') !!}
@@ -140,10 +137,6 @@
 
 @section('css')
 <style>
-
-/* =========================
-   MOBILE (como ya está perfecto)
-   ========================= */
 @media (max-width: 767.98px) {
 
   table.dataTable td.dtr-control:before {
@@ -166,10 +159,6 @@
   }
 
 }
-
-/* =========================
-   DESKTOP (como estaba antes)
-   ========================= */
 @media (min-width: 768px) {
 
     table.dataTable td.dtr-control:before {
@@ -214,33 +203,28 @@ $(document).ready(function() {
     order: [[1, 'desc']],
 
     columnDefs: [
-        // Columna 0: control (+) (usa clase correcta)
+
         {
             targets: 0,
             className: 'dtr-control',
             orderable: false,
             searchable: false,
-            responsivePriority: 1 // que NUNCA se oculte
+            responsivePriority: 1
         },
 
-        // TÍTULO siempre visible
         { targets: 2, className: 'all', responsivePriority: 2 },
 
-        // Visible en desktop/tablet, oculto en móvil
         { targets: [1,3,4,5,6], className: 'min-tablet', responsivePriority: 100 },
 
-        // OPCIONES: oculto en tabla y sale al expandir
         { targets: 7, className: 'none', responsivePriority: 3 }
     ],
 });
 
-/* Recalcular en cambios de tamaño/layout (devtools, sidebar, reloads) */
 $(window).on('resize', function () {
     table.columns.adjust();
     table.responsive.recalc();
 });
 
-/* Recalcular una vez después de cargar (evita el “desaparece tras recargar”) */
 setTimeout(function () {
     table.columns.adjust();
     table.responsive.recalc();
