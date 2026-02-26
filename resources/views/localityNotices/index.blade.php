@@ -212,11 +212,23 @@ $(document).ready(function() {
             responsivePriority: 1
         },
 
-        { targets: 2, className: 'all', responsivePriority: 2 },
+        {
+            targets: 2,
+            className: 'all',
+            responsivePriority: 2
+        },
 
-        { targets: [1,3,4,5,6], className: 'min-tablet', responsivePriority: 100 },
+        {
+            targets: [1,3,4,5,6],
+            className: 'min-tablet',
+            responsivePriority: 100
+        },
 
-        { targets: 7, className: 'none', responsivePriority: 3 }
+        {
+            targets: 7,
+            className: 'none',
+            responsivePriority: 3
+        }
     ],
 });
 
