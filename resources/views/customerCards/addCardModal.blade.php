@@ -28,7 +28,6 @@
                 <form id="add-card-form">
                     @csrf
                     <input type="hidden" id="add-card-brand" name="brand">
-
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -49,7 +48,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label><i class="fas fa-credit-card"></i> Número de tarjeta</label>
                         <input type="text" class="form-control" id="add-card-number"
@@ -58,25 +56,24 @@
                             title="Entre 13 y 19 dígitos numéricos" required>
                         <div id="add-card-brand-display" class="mt-1" style="min-height: 20px;"></div>
                     </div>
-
                     <div class="row">
                         <div class="col-4">
                             <div class="form-group">
                                 <label>Mes</label>
                                 <select class="form-control" id="add-exp-month" data-openpay-card="expiration_month" required>
                                     <option value="">MM</option>
-                                    <option value="01">01 - Enero</option>
-                                    <option value="02">02 - Febrero</option>
-                                    <option value="03">03 - Marzo</option>
-                                    <option value="04">04 - Abril</option>
-                                    <option value="05">05 - Mayo</option>
-                                    <option value="06">06 - Junio</option>
-                                    <option value="07">07 - Julio</option>
-                                    <option value="08">08 - Agosto</option>
-                                    <option value="09">09 - Septiembre</option>
-                                    <option value="10">10 - Octubre</option>
-                                    <option value="11">11 - Noviembre</option>
-                                    <option value="12">12 - Diciembre</option>
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
                                 </select>
                             </div>
                         </div>
@@ -97,23 +94,9 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="add-card-error" class="alert alert-danger" style="display: none;">
                         <i class="fas fa-exclamation-triangle"></i>
                         <span id="add-card-error-text"></span>
-                    </div>
-
-                    <div class="openpay-footer text-center py-2 px-3 bg-light rounded">
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <small>Transacciones vía:</small>
-                                <img src="{{ asset('img/openpay.png') }}" alt="OpenPay" style="max-height: 25px;">
-                            </div>
-                            <div class="col-6">
-                                <img src="{{ asset('img/security.png') }}" alt="Seguridad" style="max-height: 25px;">
-                                <small class="d-block">Encriptación 256 bits</small>
-                            </div>
-                        </div>
                     </div>
                 </form>
             </div>

@@ -77,6 +77,21 @@ class CustomerCardController extends Controller
             ], 422);
         }
 
+        $lastFour = substr(preg_replace('/[^0-9]/', '', $request->card_number), -4);
+        $duplicate = CustomerCard::where('customer_id', $customer->id)
+            ->where('last_four', $lastFour)
+            ->where('expiration_month', $request->expiration_month)
+            ->where('expiration_year', $request->expiration_year)
+            ->first();
+
+        if ($duplicate) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Esta tarjeta ya se encuentra en tu lista (' . $duplicate->display_name . ').',
+                'duplicate' => true,
+            ], 422);
+        }
+
         $result = $this->openPayService->createCard(
             $request->token_id,
             $request->device_session_id

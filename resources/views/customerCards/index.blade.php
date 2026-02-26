@@ -1,115 +1,142 @@
 @extends('adminlte::page')
 
 @section('title', config('adminlte.title') . ' | Mis Tarjetas')
-
+@section('plugins.Toastr', true)
 @section('content')
     <section class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card card-outline card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-credit-card"></i> Mis Tarjetas Guardadas
-                            </h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal"
-                                    data-target="#addCardModal"
-                                    {{ $cards->count() >= 10 ? 'disabled title=\"Has alcanzado el límite de 10 tarjetas\"' : '' }}>
-                                    <i class="fas fa-plus"></i> Agregar Tarjeta
-                                </button>
+                    <div class="card-header d-flex flex-column flex-md-row align-items-md-center">
+                        <h3 class="card-title mb-2 mb-md-0">
+                            <i class="fas fa-credit-card"></i> Mis Tarjetas Guardadas
+                        </h3>
+                        <div class="ml-md-auto">
+                            <button type="button" class="btn btn-success btn-sm" data-toggle="modal"
+                                data-target="#addCardModal" {{ $cards->count() >= 10 ? 'disabled title=\"Has alcanzado el límite de 10 tarjetas\"' : '' }}>
+                                <i class="fas fa-plus"></i> Agregar Tarjeta
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <strong>Seguridad:</strong> Tus tarjetas se almacenan de forma segura.
+                                    Solo guardamos los últimos 4 dígitos y un token seguro para pagos.
+                                </div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-12">
-                                    <div class="alert alert-info">
-                                        <i class="fas fa-shield-alt"></i>
-                                        <strong>Seguridad:</strong> Tus tarjetas se almacenan de forma segura.
-                                        Solo guardamos los últimos 4 dígitos y un token seguro para pagos.
-                                    </div>
-                                </div>
+
+                        @if($cards->isEmpty())
+                            <div class="text-center py-5">
+                                <i class="fas fa-credit-card fa-4x text-muted mb-3"></i>
+                                <h4 class="text-muted">No tienes tarjetas guardadas</h4>
+                                <p class="text-muted">Agrega una tarjeta para realizar pagos más rápidos.</p>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCardModal">
+                                    <i class="fas fa-plus"></i> Agregar mi primera tarjeta
+                                </button>
                             </div>
+                        @else
 
-                            @if($cards->isEmpty())
-                                <div class="text-center py-5">
-                                    <i class="fas fa-credit-card fa-4x text-muted mb-3"></i>
-                                    <h4 class="text-muted">No tienes tarjetas guardadas</h4>
-                                    <p class="text-muted">Agrega una tarjeta para realizar pagos más rápidos.</p>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addCardModal">
-                                        <i class="fas fa-plus"></i> Agregar mi primera tarjeta
-                                    </button>
-                                </div>
-                            @else
-                                <div class="row">
-                                    @foreach($cards as $card)
-                                        <div class="col-md-6 col-lg-4 mb-3">
-                                            <div
-                                                class="card h-100 {{ $card->is_default ? 'border-primary' : '' }} {{ $card->is_expired ? 'border-danger' : '' }}">
-                                                <div class="card-body">
-                                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                                        <div>
-                                                            <i class="{{ $card->brand_icon }} fa-2x"></i>
-                                                        </div>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-link p-0 text-muted" data-toggle="dropdown">
-                                                                <i class="fas fa-ellipsis-v"></i>
-                                                            </button>
-                                                            <div class="dropdown-menu dropdown-menu-right">
-                                                                <a href="#" class="dropdown-item btn-edit-alias"
-                                                                    data-card-id="{{ $card->id }}" data-alias="{{ $card->alias }}">
-                                                                    <i class="fas fa-edit"></i> Editar Alias
+                            <div class="d-block d-md-none">
+                                @foreach($cards as $card)
+                                    <div class="mobile-card-row d-flex align-items-center p-3 mb-2 rounded border {{ $card->is_default ? 'border-primary' : ($card->is_expired ? 'border-danger' : 'border-secondary') }}"
+                                        style="cursor:pointer; background:#fff;" data-card-id="{{ $card->id }}"
+                                        data-alias="{{ e($card->alias) }}" data-brand-icon="{{ $card->brand_icon }}"
+                                        data-display-name="{{ e($card->display_name) }}" data-last-four="{{ $card->last_four }}"
+                                        data-holder="{{ e($card->holder_name) }}"
+                                        data-expiry="{{ $card->expiration_month }}/{{ $card->expiration_year }}"
+                                        data-is-default="{{ $card->is_default ? '1' : '0' }}"
+                                        data-is-expired="{{ $card->is_expired ? '1' : '0' }}">
+                                        <div class="mr-3" style="pointer-events:none;">
+                                            <i class="{{ $card->brand_icon }} fa-2x"></i>
+                                        </div>
+                                        <div class="flex-grow-1" style="pointer-events:none;">
+                                            <div class="font-weight-bold" id="mobile-display-{{ $card->id }}">
+                                                {{ $card->alias ?: ucfirst($card->brand) }}
+                                            </div>
+                                            <small class="text-muted">&bull;&bull;&bull;&bull; {{ $card->last_four }}</small>
+                                        </div>
+                                        <div class="d-flex align-items-center" style="pointer-events:none;">
+                                            @if($card->is_expired)
+                                                <span class="badge badge-danger mr-2">Expirada</span>
+                                            @elseif($card->is_default)
+                                                <span class="badge badge-primary mr-2"><i class="fas fa-star"></i></span>
+                                            @endif
+                                            <i class="fas fa-chevron-right text-muted"></i>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="d-none d-md-flex flex-wrap row">
+                                @foreach($cards as $card)
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <div
+                                            class="card h-100 {{ $card->is_default ? 'border-primary' : '' }} {{ $card->is_expired ? 'border-danger' : '' }}">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <i class="{{ $card->brand_icon }} fa-2x"></i>
+                                                    </div>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-link p-0 text-muted" data-toggle="dropdown">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a href="#" class="dropdown-item btn-edit-alias"
+                                                                data-card-id="{{ $card->id }}" data-alias="{{ $card->alias }}">
+                                                                <i class="fas fa-edit"></i> Editar Alias
+                                                            </a>
+                                                            @if(!$card->is_default)
+                                                                <a href="#" class="dropdown-item btn-set-default"
+                                                                    data-card-id="{{ $card->id }}">
+                                                                    <i class="fas fa-star"></i> Establecer como predeterminada
                                                                 </a>
-                                                                @if(!$card->is_default)
-                                                                    <a href="#" class="dropdown-item btn-set-default"
-                                                                        data-card-id="{{ $card->id }}">
-                                                                        <i class="fas fa-star"></i> Establecer como predeterminada
-                                                                    </a>
-                                                                @endif
-                                                                <div class="dropdown-divider"></div>
-                                                                <a href="#" class="dropdown-item text-danger btn-delete-card"
-                                                                    data-card-id="{{ $card->id }}"
-                                                                    data-display-name="{{ $card->display_name }}">
-                                                                    <i class="fas fa-trash"></i> Eliminar
-                                                                </a>
-                                                            </div>
+                                                            @endif
+                                                            <div class="dropdown-divider"></div>
+                                                            <a href="#" class="dropdown-item text-danger btn-delete-card"
+                                                                data-card-id="{{ $card->id }}"
+                                                                data-display-name="{{ $card->display_name }}">
+                                                                <i class="fas fa-trash"></i> Eliminar
+                                                            </a>
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                    <h5 class="mb-1" id="card-display-{{ $card->id }}">
-                                                        {{ $card->alias ?: ucfirst($card->brand) }}
-                                                    </h5>
-                                                    <p class="text-muted mb-2">
-                                                        <span class="card-number-dots">•••• •••• ••••</span> {{ $card->last_four }}
-                                                    </p>
+                                                <h5 class="mb-1" id="card-display-{{ $card->id }}">
+                                                    {{ $card->alias ?: ucfirst($card->brand) }}
+                                                </h5>
+                                                <p class="text-muted mb-2">
+                                                    <span class="card-number-dots">•••• •••• ••••</span> {{ $card->last_four }}
+                                                </p>
 
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <small class="text-muted">
-                                                            Vence: {{ $card->expiration_month }}/{{ $card->expiration_year }}
-                                                        </small>
-                                                        <div>
-                                                            @if($card->is_expired)
-                                                                <span class="badge badge-danger">Expirada</span>
-                                                            @endif
-                                                            @if($card->is_default)
-                                                                <span class="badge badge-primary">
-                                                                    <i class="fas fa-star"></i> Predeterminada
-                                                                </span>
-                                                            @endif
-                                                        </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">
+                                                        Vence: {{ $card->expiration_month }}/{{ $card->expiration_year }}
+                                                    </small>
+                                                    <div>
+                                                        @if($card->is_expired)
+                                                            <span class="badge badge-danger">Expirada</span>
+                                                        @endif
+                                                        @if($card->is_default)
+                                                            <span class="badge badge-primary">
+                                                                <i class="fas fa-star"></i> Predeterminada
+                                                            </span>
+                                                        @endif
                                                     </div>
+                                                </div>
 
-                                                    <div class="mt-2">
-                                                        <small class="text-muted">{{ $card->holder_name }}</small>
-                                                    </div>
+                                                <div class="mt-2">
+                                                    <small class="text-muted">{{ $card->holder_name }}</small>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
-                                </div>
-                            @endif
-                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -119,6 +146,55 @@
     @include('customerCards.addCardModal')
     @include('customerCards.editAliasModal')
     @include('customerCards.deleteCardModal')
+
+    <div class="modal fade" id="mobileCardDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header" id="mobileCardDetailHeader">
+                    <h5 class="modal-title">
+                        <i id="mobileCardDetailIcon" class=""></i>
+                        <span id="mobileCardDetailTitle"></span>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted"><i class="fas fa-user mr-1"></i> Titular</span>
+                            <strong id="mobileCardDetailHolder"></strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted"><i class="fas fa-credit-card mr-1"></i> Número</span>
+                            <strong>&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; <span
+                                    id="mobileCardDetailLastFour"></span></strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted"><i class="far fa-calendar-alt mr-1"></i> Vencimiento</span>
+                            <strong id="mobileCardDetailExpiry"></strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between" id="mobileCardDetailStatusRow">
+                            <span class="text-muted"><i class="fas fa-info-circle mr-1"></i> Estado</span>
+                            <span id="mobileCardDetailStatus"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer d-flex flex-column" style="gap:8px;">
+                    <button type="button" class="btn btn-outline-secondary btn-block mobile-action-edit-alias">
+                        <i class="fas fa-edit"></i> Editar Alias
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-block mobile-action-set-default"
+                        style="display:none;">
+                        <i class="fas fa-star"></i> Establecer como predeterminada
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-block mobile-action-delete">
+                        <i class="fas fa-trash"></i> Eliminar tarjeta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
@@ -421,6 +497,9 @@
                                     showSuccess('Tarjeta registrada correctamente', function () {
                                         location.reload();
                                     });
+                                } else if (data.duplicate) {
+                                    hideLoading();
+                                    toastr.warning(data.error, 'Tarjeta ya registrada', { timeOut: 5000 });
                                 } else {
                                     hideLoading();
                                     toastr.error(data.error || 'Error al guardar la tarjeta');
@@ -606,8 +685,100 @@
             });
 
             @if(config('openpay.sandbox'))
-                toastr.info('Modo de prueba activo. Usa tarjetas de prueba.', 'Sandbox', { timeOut: 4000 });
+                if (typeof toastr !== 'undefined') {
+                    toastr.info('Modo de prueba activo. Usa tarjetas de prueba.', 'Sandbox', { timeOut: 4000 });
+                }
             @endif
+
+                    var mobileActiveCardId = null;
+
+            $(document).on('click', '.mobile-card-row', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var row = $(this);
+                mobileActiveCardId = row.data('card-id');
+                var isDefault = row.data('is-default') == '1';
+                var isExpired = row.data('is-expired') == '1';
+                var alias = row.data('alias');
+                var brand = row.data('brand-icon');
+                var name = alias
+                    ? alias + ' \u2022\u2022\u2022\u2022 ' + row.data('last-four')
+                    : row.data('display-name');
+
+                var header = $('#mobileCardDetailHeader');
+                header.removeClass('bg-danger bg-primary bg-secondary');
+                if (isExpired) header.addClass('bg-danger text-white');
+                else if (isDefault) header.addClass('bg-primary text-white');
+                else header.addClass('bg-secondary text-white');
+
+                $('#mobileCardDetailIcon').attr('class', brand + ' mr-2');
+                $('#mobileCardDetailTitle').text(name);
+                $('#mobileCardDetailHolder').text(row.data('holder'));
+                $('#mobileCardDetailLastFour').text(row.data('last-four'));
+                $('#mobileCardDetailExpiry').text(row.data('expiry'));
+
+                if (isExpired) {
+                    $('#mobileCardDetailStatus').html('<span class="badge badge-danger">Expirada</span>');
+                } else if (isDefault) {
+                    $('#mobileCardDetailStatus').html('<span class="badge badge-primary"><i class="fas fa-star"></i> Predeterminada</span>');
+                } else {
+                    $('#mobileCardDetailStatus').html('<span class="badge badge-success">Activa</span>');
+                }
+
+                if (isDefault) {
+                    $('.mobile-action-set-default').hide();
+                } else {
+                    $('.mobile-action-set-default').show();
+                }
+
+                $('#mobileCardDetailModal').modal('show');
+            });
+
+            $('.mobile-action-edit-alias').on('click', function () {
+                $('#mobileCardDetailModal').modal('hide');
+                var row = $('.mobile-card-row[data-card-id="' + mobileActiveCardId + '"]');
+                setTimeout(function () {
+                    $('#edit-card-id').val(mobileActiveCardId);
+                    $('#edit-alias').val(row.data('alias') || '');
+                    $('#editAliasModal').modal('show');
+                }, 300);
+            });
+
+            $('.mobile-action-set-default').on('click', function () {
+                $('#mobileCardDetailModal').modal('hide');
+                setTimeout(function () {
+                    showLoading('Actualizando tarjeta predeterminada...');
+                    $.ajax({
+                        url: '/customerCards/' + mobileActiveCardId + '/default',
+                        method: 'POST',
+                        data: { _token: '{{ csrf_token() }}' },
+                        success: function (data) {
+                            if (data.success) {
+                                showSuccess('Tarjeta establecida como predeterminada', function () {
+                                    location.reload();
+                                });
+                            } else {
+                                hideLoading();
+                                toastr.error(data.error || 'Error al actualizar');
+                            }
+                        },
+                        error: function () {
+                            hideLoading();
+                            toastr.error('Error de conexión');
+                        }
+                    });
+                }, 300);
+            });
+
+            $('.mobile-action-delete').on('click', function () {
+                $('#mobileCardDetailModal').modal('hide');
+                var row = $('.mobile-card-row[data-card-id="' + mobileActiveCardId + '"]');
+                setTimeout(function () {
+                    $('#delete-card-id').val(mobileActiveCardId);
+                    $('#delete-card-name').text(row.data('display-name'));
+                    $('#deleteCardModal').modal('show');
+                }, 300);
+            });
         });
     </script>
 @endsection

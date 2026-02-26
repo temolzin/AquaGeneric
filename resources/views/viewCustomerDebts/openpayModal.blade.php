@@ -62,7 +62,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="text-center mb-3">
+                <div id="card-brands-section" class="text-center mb-3">
                     <div class="row">
                         <div class="col-12">
                             <small class="text-muted">Tarjetas de débito</small>
@@ -86,6 +86,10 @@
                     <input type="hidden" id="modal-use-saved-card" name="use_saved_card" value="0">
 
                     <div id="new-card-form-section">
+                        <div class="alert alert-info py-2 px-3 mb-3">
+                            <i class="fas fa-info-circle"></i>
+                            <small>Esta tarjeta <strong>no será registrada</strong>, solo se usará para este pago.</small>
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -114,18 +118,18 @@
                                     <label>Mes</label>
                                     <select class="form-control" id="modal-exp-month" data-openpay-card="expiration_month">
                                         <option value="">MM</option>
-                                        <option value="01">01 - Enero</option>
-                                        <option value="02">02 - Febrero</option>
-                                        <option value="03">03 - Marzo</option>
-                                        <option value="04">04 - Abril</option>
-                                        <option value="05">05 - Mayo</option>
-                                        <option value="06">06 - Junio</option>
-                                        <option value="07">07 - Julio</option>
-                                        <option value="08">08 - Agosto</option>
-                                        <option value="09">09 - Septiembre</option>
-                                        <option value="10">10 - Octubre</option>
-                                        <option value="11">11 - Noviembre</option>
-                                        <option value="12">12 - Diciembre</option>
+                                        <option value="01">01</option>
+                                        <option value="02">02</option>
+                                        <option value="03">03</option>
+                                        <option value="04">04</option>
+                                        <option value="05">05</option>
+                                        <option value="06">06</option>
+                                        <option value="07">07</option>
+                                        <option value="08">08</option>
+                                        <option value="09">09</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
                                     </select>
                                 </div>
                             </div>
@@ -183,11 +187,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 d-flex align-items-center">
-                                <button type="button" class="btn btn-outline-secondary btn-block" id="btn-back-to-saved">
-                                    <i class="fas fa-arrow-left"></i> Elegir otra tarjeta
-                                </button>
-                            </div>
                         </div>
                     </div>
                     <div id="modal-error-message" class="alert alert-danger" style="display: none;">
@@ -222,6 +221,56 @@
                     </span>
                     <span id="modal-button-loading" style="display: none;">
                         <span class="spinner-border spinner-border-sm"></span> Procesando...
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="savedCardPayModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 280px; margin-left: auto; margin-right: auto;">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white py-1 px-3">
+                <small class="modal-title font-weight-bold">
+                    <i class="fas fa-lock"></i> Confirmar Pago
+                </small>
+                <button type="button" class="close text-white p-1" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body py-2 px-3">
+                <div class="text-center mb-2">
+                    <i id="savedCardPayIcon" class=""></i>
+                    <span class="font-weight-bold" id="savedCardPayName"></span>
+                    <small class="text-muted ml-1">&bull;&bull;&bull;&bull; <span id="savedCardPayLastFour"></span></small>
+                </div>
+                <div class="form-group mb-2">
+                    <label class="small mb-1">CVV</label>
+                    <input type="password" class="form-control form-control-sm text-center" id="savedCardPayCvv" 
+                        placeholder="•••" maxlength="4" inputmode="numeric" autocomplete="off"
+                        style="letter-spacing: 6px;">
+                </div>
+                <div class="form-group mb-0">
+                    <label class="small mb-1">Monto</label>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="number" class="form-control" id="savedCardPayAmount" 
+                            step="1.00" min="1.00">
+                    </div>
+                </div>
+                <div id="savedCardPayError" class="alert alert-danger mt-2 mb-0 py-1 px-2" style="display: none;">
+                    <small id="savedCardPayErrorText"></small>
+                </div>
+            </div>
+            <div class="modal-footer py-1 px-3">
+                <button type="button" class="btn btn-secondary btn-sm py-0 px-2" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success btn-sm py-0 px-2" id="savedCardPayBtn">
+                    <span id="savedCardPayBtnText"><i class="fas fa-check"></i> Pagar</span>
+                    <span id="savedCardPayBtnLoading" style="display: none;">
+                        <span class="spinner-border spinner-border-sm"></span>
                     </span>
                 </button>
             </div>

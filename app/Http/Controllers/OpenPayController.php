@@ -74,8 +74,28 @@ class OpenPayController extends Controller
             ];
 
             if ($useSavedCard) {
+                $savedCard = \App\Models\CustomerCard::where('openpay_card_id', $request->saved_card_id)
+                    ->where('customer_id', $debt->customer->id ?? null)
+                    ->first();
+
+                if (!$savedCard) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'La tarjeta seleccionada no fue encontrada. Por favor recarga la página e inténtalo de nuevo.',
+                    ], 404);
+                }
+
+                if (str_starts_with($savedCard->openpay_card_id, 'test_sandbox_')) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Esta es una tarjeta de prueba del seeder y no puede procesarse. Registra una tarjeta real desde el módulo Mis Tarjetas.',
+                    ], 400);
+                }
+
                 $result = $this->openPayService->chargeWithCardId(
-                    $request->saved_card_id,
+                    $savedCard->openpay_card_id,
                     $request->cvv2,
                     $request->amount,
                     "Pago de deuda #{$debt->id} - {$debt->customer->name} {$debt->customer->last_name}",

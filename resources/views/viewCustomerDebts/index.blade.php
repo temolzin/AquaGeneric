@@ -344,6 +344,9 @@
             }
 
             $('#saved-cards-section').show();
+            $('#new-card-form-section').hide();
+            $('#saved-card-cvv-section').hide();
+            $('#card-brands-section').hide();
 
             savedCards.forEach(function(card) {
                 var defaultBadge = card.is_default ? ' <i class="fas fa-star text-primary" title="Predeterminada"></i>' : '';
@@ -369,25 +372,43 @@
 
         function showNewCardForm() {
             currentPaymentMode = 'new';
-            $('#new-card-form-section').show();
+            $('#saved-cards-section').hide();
             $('#saved-card-cvv-section').hide();
+            $('#new-card-form-section').show();
+            $('#card-brands-section').show();
             $('#modal-use-saved-card').val('0');
             $('#modal-saved-card-id').val('');
             selectedSavedCard = null;
         }
 
+        function isMobileDevice() {
+            return window.innerWidth < 768;
+        }
+
         function showSavedCardCvv(card) {
             currentPaymentMode = 'saved';
             selectedSavedCard = card;
-            $('#new-card-form-section').hide();
-            $('#saved-card-cvv-section').show();
             $('#modal-use-saved-card').val('1');
             $('#modal-saved-card-id').val(card.openpay_card_id);
-            $('#modal-saved-cvv').val('');
             
             var amount = parseFloat($('#modal-amount').val()) || 0;
             var maxAmount = parseFloat($('#modal-amount').attr('max')) || 0;
-            $('#modal-amount-saved').val(amount.toFixed(2)).attr('max', maxAmount);
+            
+            if (isMobileDevice()) {
+                $('#savedCardPayIcon').attr('class', card.brand_icon);
+                $('#savedCardPayName').text(card.display_name);
+                $('#savedCardPayLastFour').text(card.last_four);
+                $('#savedCardPayCvv').val('');
+                $('#savedCardPayError').hide();
+                $('#savedCardPayAmount').val(amount.toFixed(2)).attr('max', maxAmount);
+                $('#savedCardPayModal').modal('show');
+            } else {
+                $('#new-card-form-section').hide();
+                $('#saved-card-cvv-section').show();
+                $('#card-brands-section').hide();
+                $('#modal-saved-cvv').val('');
+                $('#modal-amount-saved').val(amount.toFixed(2)).attr('max', maxAmount);
+            }
         }
 
         $(document).on('click', '.saved-card-item', function() {
@@ -471,9 +492,6 @@
 
             loadSavedCards(function() {
                 renderSavedCards();
-                if (savedCards.length > 0) {
-                    showNewCardForm();
-                }
                 $('#openpayModal').modal('show');
             });
         });
@@ -712,6 +730,83 @@
                     showModalError(errorMsg);
                 }
             );
+        });
+
+        $('#savedCardPayBtn').on('click', function() {
+            var btn = $(this);
+            btn.prop('disabled', true);
+            $('#savedCardPayBtnText').hide();
+            $('#savedCardPayBtnLoading').show();
+            $('#savedCardPayError').hide();
+
+            var cvv = $('#savedCardPayCvv').val();
+            var amount = parseFloat($('#savedCardPayAmount').val()) || 0;
+            var maxAmount = parseFloat($('#savedCardPayAmount').attr('max')) || 0;
+
+            if (!/^[0-9]{3,4}$/.test(cvv)) {
+                $('#savedCardPayErrorText').text('CVV inválido (3-4 dígitos)');
+                $('#savedCardPayError').show();
+                btn.prop('disabled', false);
+                $('#savedCardPayBtnText').show();
+                $('#savedCardPayBtnLoading').hide();
+                return;
+            }
+
+            if (amount <= 0) {
+                $('#savedCardPayErrorText').text('Ingresa un monto válido');
+                $('#savedCardPayError').show();
+                btn.prop('disabled', false);
+                $('#savedCardPayBtnText').show();
+                $('#savedCardPayBtnLoading').hide();
+                return;
+            }
+
+            if (amount > maxAmount) {
+                $('#savedCardPayErrorText').text('Máximo: $' + maxAmount.toFixed(2));
+                $('#savedCardPayError').show();
+                btn.prop('disabled', false);
+                $('#savedCardPayBtnText').show();
+                $('#savedCardPayBtnLoading').hide();
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route("openpay.process") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    debt_id: $('#modal-debt-id').val(),
+                    amount: amount,
+                    use_saved_card: '1',
+                    saved_card_id: selectedSavedCard.openpay_card_id,
+                    cvv2: cvv,
+                    device_session_id: getDeviceSessionId()
+                },
+                success: function(data) {
+                    $('#savedCardPayModal').modal('hide');
+                    if (data.success) {
+                        showPaymentSuccess(data.message);
+                    } else {
+                        showModalError(data.error || 'Error al procesar el pago');
+                    }
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false);
+                    $('#savedCardPayBtnText').show();
+                    $('#savedCardPayBtnLoading').hide();
+                    var errorMsg = xhr.responseJSON?.error || 'Error de conexión';
+                    $('#savedCardPayErrorText').text(errorMsg);
+                    $('#savedCardPayError').show();
+                }
+            });
+        });
+
+        $('#savedCardPayModal').on('hidden.bs.modal', function() {
+            $('#savedCardPayCvv').val('');
+            $('#savedCardPayError').hide();
+            $('#savedCardPayBtn').prop('disabled', false);
+            $('#savedCardPayBtnText').show();
+            $('#savedCardPayBtnLoading').hide();
         });
 
         @if(config('openpay.sandbox'))
