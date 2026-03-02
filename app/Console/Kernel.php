@@ -16,18 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            $now = now();
-
-            LocalityNotice::where('is_active', false)
-                ->where('start_date', '<=', $now)
-                ->where('end_date', '>=', $now)
-                ->update(['is_active' => true]);
-
-            LocalityNotice::where('is_active', true)
-                ->where('end_date', '<', $now)
-                ->update(['is_active' => false]);
-        })->everyMinute();
+        // $schedule->command('inspire')->hourly();
     }
 
     /**

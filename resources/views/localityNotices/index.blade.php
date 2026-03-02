@@ -36,7 +36,6 @@
                     <div class="x_content">
                         <div class="row">
                             <div class="col-sm-12">
-<<<<<<< fix/customer-notice-status-and-report-list-view
                                 <div class="card-box table-responsive">
                                     <table id="notices" class="table table-striped display responsive nowrap" style="width:100%">
                                         <thead>
@@ -51,40 +50,30 @@
                                         </thead>
                                         <tbody>
                                             @if (count($localityNotices) <= 0)
-=======
-                                <div class="card-box">
-
-                                        <table id="notices" class="table table-striped display responsive nowrap" style="width:100%">
-                                            <thead>
->>>>>>> develop
                                                 <tr>
-                                                    <th></th>
-                                                    <th>ID</th>
-                                                    <th>TÍTULO</th>
-                                                    <th>LOCALIDAD</th>
-                                                    <th>FECHA Y HORA DE INICIO</th>
-                                                    <th>FECHA Y HORA DE FIN</th>
-                                                    <th>ESTATUS</th>
-                                                    <th>OPCIONES</th>
+                                                    <td colspan="6" class="text-center">No hay avisos registrados</td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if (count($localityNotices) <= 0)
+                                            @else
+                                                @foreach($localityNotices as $notice)
                                                     <tr>
-<<<<<<< fix/customer-notice-status-and-report-list-view
+                                                        <td></td>
                                                         <td>{{ $notice->id }}</td>
                                                         <td>
-                                                            {{ Str::limit($notice->title, 40) }}                                                       
+                                                            {{ Str::limit($notice->title, 40) }}
                                                         </td>
+                                                        <td>{{ $notice->locality->name }}</td>
                                                         <td>{{ $notice->start_date->format('d/m/Y H:i') }}</td>
                                                         <td>{{ $notice->end_date->format('d/m/Y H:i') }}</td>
                                                         <td>
                                                             @php
-                                                                $status = $notice->status;
-                                                                if ($status === 'active') {
+                                                                $now = now();
+                                                                $startDate = \Carbon\Carbon::parse($notice->start_date);
+                                                                $endDate = \Carbon\Carbon::parse($notice->end_date);
+
+                                                                if ($notice->is_active && $startDate <= $now && $endDate >= $now) {
                                                                     $badgeClass = 'badge-success';
                                                                     $text = 'Activo';
-                                                                } elseif ($status === 'scheduled') {
+                                                                } elseif ($startDate > $now) {
                                                                     $badgeClass = 'badge-primary';
                                                                     $text = 'Programado';
                                                                 } else {
@@ -92,68 +81,9 @@
                                                                     $text = 'Expirado';
                                                                 }
                                                             @endphp
-                                                            
+
                                                             <span class="badge {{ $badgeClass }} px-1 py-1">
                                                                 {{ $text }}
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex flex-wrap gap-0">
-                                                                @can('viewNotice')
-                                                                <button type="button" class="btn btn-info btn-sm mx-1 mb-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $notice->id }}">
-                                                                    <i class="fas fa-eye"></i>
-                                                                </button>
-                                                                @endcan
-                                                                @can('editNotice')
-                                                                <button type="button" class="btn btn-warning btn-sm mx-1 mb-1" data-toggle="modal" title="Editar Aviso" data-target="#edit{{ $notice->id }}">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </button>
-                                                                @endcan
-                                                                @can('deleteNotice')
-                                                                <button type="button" class="btn btn-danger btn-sm mx-1 mb-1" data-toggle="modal" title="Eliminar Aviso" data-target="#delete{{ $notice->id }}">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                                @endcan
-                                                            </div>
-                                                        </td>
-                                                        @include('localityNotices.delete', ['notice' => $notice])
-                                                        @include('localityNotices.edit', ['notice' => $notice])
-                                                        @include('localityNotices.show', ['notice' => $notice])
-=======
-                                                        <td colspan="7" class="text-center">No hay avisos registrados</td>
->>>>>>> develop
-                                                    </tr>
-                                                @else
-                                                    @foreach($localityNotices as $notice)
-                                                        <tr>
-                                                            <td></td>
-                                                            <td>{{ $notice->id }}</td>
-                                                            <td>
-                                                                {{ Str::limit($notice->title, 40) }}
-                                                            </td>
-                                                            <td>{{ $notice->locality->name }}</td>
-                                                            <td>{{ $notice->start_date->format('d/m/Y H:i') }}</td>
-                                                            <td>{{ $notice->end_date->format('d/m/Y H:i') }}</td>
-                                                            <td>
-                                                                @php
-                                                                    $now = now();
-                                                                    $startDate = \Carbon\Carbon::parse($notice->start_date);
-                                                                    $endDate = \Carbon\Carbon::parse($notice->end_date);
-
-                                                                    if ($notice->is_active && $startDate <= $now && $endDate >= $now) {
-                                                                        $badgeClass = 'badge-success';
-                                                                        $text = 'Activo';
-                                                                    } elseif ($startDate > $now) {
-                                                                        $badgeClass = 'badge-primary';
-                                                                        $text = 'Programado';
-                                                                    } else {
-                                                                        $badgeClass = 'badge-secondary';
-                                                                        $text = 'Expirado';
-                                                                    }
-                                                                @endphp
-
-                                                                <span class="badge {{ $badgeClass }} px-1 py-1">
-                                                                    {{ $text }}
                                                                 </span>
                                                             </td>
                                                             <td>
@@ -176,18 +106,13 @@
                                                                 </div>
                                                             </td>
                                                         </tr>
+                                                        @include('localityNotices.delete', ['notice' => $notice])
+                                                        @include('localityNotices.edit', ['notice' => $notice])
+                                                        @include('localityNotices.show', ['notice' => $notice])
                                                     @endforeach
-                                                @endif
-                                            </tbody>
-                                        </table>
-
-                                        @if (count($localityNotices) > 0)
-                                            @foreach($localityNotices as $notice)
-                                                @include('localityNotices.delete', ['notice' => $notice])
-                                                @include('localityNotices.edit', ['notice' => $notice])
-                                                @include('localityNotices.show', ['notice' => $notice])
-                                            @endforeach
-                                        @endif
+                                            @endif
+                                        </tbody>
+                                    </table>
 
                                     <div class="d-flex justify-content-center">
                                        {!! $localityNotices->appends(request()->query())->links('pagination::bootstrap-4') !!}
