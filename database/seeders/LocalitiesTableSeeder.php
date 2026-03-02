@@ -12,11 +12,8 @@ class LocalitiesTableSeeder extends Seeder
 {
     public function run()
     {
-        $memberships = Membership::all();
-        
-        if ($memberships->isEmpty()) {
-            $this->call(MembershipsTableSeeder::class);
-            $memberships = Membership::all();
+        if (Membership::count() === 0) {
+             $this->call(MembershipsTableSeeder::class);
         }
 
         $localitiesData = [
@@ -25,56 +22,63 @@ class LocalitiesTableSeeder extends Seeder
                 'municipality' => 'Smallville',
                 'state' => 'Kansas',
                 'zip_code' => '66002',
-                'membership_id' => 2,
-                'token' => $this->generateTokenData(false)
+                'membership_name' => 'Premium Plan - 6 Months',
+                'token_expired' => false,
             ],
             [
                 'name' => 'Springfield',
                 'municipality' => 'Springfield',
                 'state' => 'Oregon',
                 'zip_code' => '97477',
-                'membership_id' => 3,
-                'token' => $this->generateTokenData(false)
+                'membership_name' => 'Enterprise Plan - 12 Months',
+                'token_expired' => false,
             ],
             [
                 'name' => 'Dunder Mifflin',
                 'municipality' => 'Scranton',
                 'state' => 'Pennsylvania',
                 'zip_code' => '18503',
-                'membership_id' => 1,
-                'token' => $this->generateTokenData(true)
+                'membership_name' => 'Basic Plan - 3 Months',
+                'token_expired' => true,
             ],
         ];
 
+        $defaultMembershipId = Membership::orderBy('id')->value('id');
+
         foreach ($localitiesData as $data) {
-            Locality::updateOrCreate(
-                ['name' => $data['name']], 
-                $data
+            $membershipId = Membership::where('name', $data['membership_name'])->value('id') ?: $defaultMembershipId;
+
+            $locality = Locality::updateOrCreate(
+                ['name' => $data['name']],
+                [
+                    'name' => $data['name'],
+                    'municipality' => $data['municipality'],
+                    'state' => $data['state'],
+                    'zip_code' => $data['zip_code'],
+                    'membership_id' => $membershipId,
+                ]
             );
+
+            $locality->token = $this->generateTokenData($locality->id, (bool) $data['token_expired']);
+            $locality->save();
         }
 
-        Locality::whereNull('membership_id')->orWhereNull('token')->get()->each(function ($locality) use ($memberships) {
-            $updateData = [];
-            
-            if (is_null($locality->membership_id)) {
-                $updateData['membership_id'] = $memberships->random()->id;
-            }
-            
-            if (is_null($locality->token) || empty($locality->token)) {
-                $updateData['token'] = $this->generateTokenData(false);
-            }
-            
-            if (!empty($updateData)) {
-                $locality->update($updateData);
-            }
+        Locality::whereNull('membership_id')->get()->each(function ($locality) use ($defaultMembershipId) {
+            $locality->membership_id = $defaultMembershipId;
+            $locality->save();
+        });
+
+        Locality::whereNull('token')->orWhere('token', '')->get()->each(function ($locality) {
+            $locality->token = $this->generateTokenData($locality->id, false);
+            $locality->save();
         });
 
         Locality::whereNotNull('membership_id')
-                ->whereNull('membership_assigned_at')
-                ->update(['membership_assigned_at' => now()]);
+            ->whereNull('membership_assigned_at')
+            ->update(['membership_assigned_at' => now()]);
     }
 
-    private function generateTokenData(bool $isExpired = false): string
+    private function generateTokenData(int $localityId, bool $isExpired = false): string
     {
         $startDate = Carbon::now()->format('Y-m-d');
         $endDate = Carbon::now()->addYear()->format('Y-m-d');
@@ -84,6 +88,6 @@ class LocalitiesTableSeeder extends Seeder
             $endDate = Carbon::now()->subDay()->format('Y-m-d');
         }
 
-        return Token::generateTokenForLocality($localityId ?? 1, $startDate, $endDate);
+        return Token::generateTokenForLocality($localityId, $startDate, $endDate);
     }
 }

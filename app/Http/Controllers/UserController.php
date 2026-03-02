@@ -8,36 +8,40 @@ use App\Models\Locality;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\QueryException;
 
 class UserController extends Controller
 {
     public function index()
     {
         $currentUserId = auth()->id();
-        
+
         $roles = Role::whereIn('name', ['Supervisor', 'Secretaria'])->get();
-        
+
         $localities = Locality::all();
-        
+
         $users = User::where('id', '!=', $currentUserId)
                     ->whereDoesntHave('roles', function($query) {
                         $query->whereIn('name', ['cliente', '$currentUserId']);
                     })
                     ->orderBy('id', 'desc')
                     ->get();
-                    
+
         return view('users.index', compact('users', 'localities', 'roles'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'email' => 'required|email|max:255|unique:users,email',
             'locality_id' => 'required|exists:localities,id'
+        ], [
+            'email.unique' => 'Ya existe un usuario con ese correo.',
         ]);
 
         try {
             $locality = Locality::with('membership')->findOrFail($request->locality_id);
-            
+
             if (!$locality->membership) {
                 return redirect()->back()->with('error', 'La localidad no tiene una membresía asignada. Por favor, contacte al administrador.');
             }
@@ -45,9 +49,7 @@ class UserController extends Controller
             $currentUsersCount = User::where('locality_id', $request->locality_id)->count();
 
             if ($currentUsersCount >= $locality->membership->users_number) {
-                return redirect()->back()->with('error', 
-                    'No se pueden registrar más usuarios. Límite de ' . $locality->membership->users_number . 
-                    ' usuarios alcanzado para la localidad '. $locality->name .'.');
+                return redirect()->back()->with('error', 'No se pueden registrar más usuarios. Límite de ' . $locality->membership->users_number . ' usuarios alcanzado para la localidad '. $locality->name .'.');
             }
 
             $userData = $request->only(['name', 'last_name', 'email', 'phone','locality_id']);
@@ -63,10 +65,14 @@ class UserController extends Controller
 
             return redirect()->back()->with('success', 'Usuario creado exitosamente');
 
+        } catch (QueryException $e) {
+            if (isset($e->errorInfo[1]) && (int)$e->errorInfo[1] === 1062) {
+                return redirect()->back()->withInput()->with('error', 'Ya existe un usuario con ese correo.');
+            }
+            return redirect()->back()->withInput()->with('error', 'Hubo un problema al crear el usuario. Intenta nuevamente.');
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->back()->with('error', 'Localidad no encontrada.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error al crear el usuario: ' . $e->getMessage());
         }
     }
 
@@ -109,9 +115,9 @@ class UserController extends Controller
     {
         $userId = Crypt::decrypt($encryptedUserId);
         $user = User::findOrFail($userId);
-        
+
         $roles = Role::whereIn('name', ['Supervisor', 'Secretaria'])->get();
-        
+
         return view('users.assignRole', compact('user', 'roles'));
     }
 
