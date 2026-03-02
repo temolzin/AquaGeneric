@@ -129,6 +129,17 @@
         var successMessage = "{{ session('success') }}";
         var errorMessage = "{{ session('error') }}";
 
+        @if ($errors->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: @json($errors->first()),
+                confirmButtonText: 'Aceptar'
+            });
+
+            $('#create').modal('show');
+        @endif
+
         if (successMessage) {
             Swal.fire({
                 icon: 'success',
