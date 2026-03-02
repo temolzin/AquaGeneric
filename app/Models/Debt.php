@@ -18,6 +18,22 @@ class Debt extends Model
         'water_connection_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note'
     ];
 
+    protected static function booted()
+    {
+        parent::booted();
+
+        static::addGlobalScope('byUserLocality', function ($query) {
+            $user = auth()->user();
+            if ($user && $user->locality_id) {
+                $query->where('debts.locality_id', $user->locality_id);
+            }
+        });
+
+        static::deleting(function ($debt) {
+            $debt->payments()->delete();
+        });
+    }
+
     public function waterConnection()
     {
         return $this->belongsTo(WaterConnection::class);
@@ -48,12 +64,12 @@ class Debt extends Model
         return $this->hasMany(Payment::class, 'debt_id');
     }
 
-    protected static function boot()
+    public function scopeByUserLocality($query)
     {
-        parent::boot();
-
-        static::deleting(function ($debt) {
-            $debt->payments()->delete();
-        });
+        $user = auth()->user();
+        if ($user && $user->locality_id) {
+            return $query->where('locality_id', $user->locality_id);
+        }
+        return $query;
     }
 }
