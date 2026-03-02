@@ -208,12 +208,15 @@
         .card-number-dots {
             letter-spacing: 2px;
         }
+
         .card.border-primary {
             border-width: 2px !important;
         }
+
         .card.border-danger {
             border-width: 2px !important;
         }
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -227,9 +230,11 @@
             z-index: 9999;
             flex-direction: column;
         }
+
         .loading-overlay.active {
             display: flex;
         }
+
         .loading-spinner {
             width: 60px;
             height: 60px;
@@ -238,20 +243,24 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
         .loading-text {
             color: white;
             margin-top: 15px;
             font-size: 18px;
             font-weight: 500;
         }
+
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
             }
+
             100% {
                 transform: rotate(360deg);
             }
         }
+
         .success-modal-overlay {
             position: fixed;
             top: 0;
@@ -264,9 +273,11 @@
             align-items: center;
             z-index: 9999;
         }
+
         .success-modal-overlay.active {
             display: flex;
         }
+
         .success-modal-content {
             background: white;
             border-radius: 10px;
@@ -276,6 +287,7 @@
             max-width: 400px;
             width: 90%;
         }
+
         .success-modal-icon {
             width: 80px;
             height: 80px;
@@ -287,21 +299,25 @@
             align-items: center;
             margin: 0 auto 20px;
         }
+
         .success-modal-icon i {
             font-size: 40px;
             color: #28a745;
         }
+
         .success-modal-title {
             font-size: 24px;
             font-weight: 600;
             color: #333;
             margin-bottom: 10px;
         }
+
         .success-modal-text {
             font-size: 16px;
             color: #666;
             margin-bottom: 25px;
         }
+
         .success-modal-btn {
             padding: 10px 40px;
             font-size: 16px;
@@ -309,10 +325,12 @@
             background-color: #6f42c1;
             border-color: #6f42c1;
         }
+
         .success-modal-btn:hover {
             background-color: #5a32a3;
             border-color: #5a32a3;
         }
+
         .btn-loading .spinner-border {
             width: 1rem;
             height: 1rem;
@@ -329,10 +347,12 @@
             OpenPay.setId('{{ config("openpay.merchant_id") }}');
             OpenPay.setApiKey('{{ config("openpay.public_key") }}');
             OpenPay.setSandboxMode({{ config("openpay.sandbox") ? 'true' : 'false' }});
+
             $('#addCardModal').on('show.bs.modal', function () {
                 openpayDeviceSessionId = OpenPay.deviceData.setup("add-card-form", "deviceIdHiddenFieldName");
                 resetAddCardForm();
             });
+
             $('#add-holder-name').on('input', function () {
                 var value = $(this).val();
                 var cleaned = value.replace(/[^A-Za-z\s]/g, '');
@@ -340,6 +360,7 @@
                     $(this).val(cleaned);
                 }
             });
+
             var cardBrandConfig = {
                 'visa': { icon: 'fab fa-cc-visa fa-lg text-primary', label: 'Visa', value: 'visa' },
                 'mastercard': { icon: 'fab fa-cc-mastercard fa-lg text-warning', label: 'MasterCard', value: 'mastercard' },
@@ -357,68 +378,84 @@
                     $('#add-card-brand').val(config.value);
                 }
             });
+
             $('#add-exp-year').on('input', function () {
                 var value = $(this).val().replace(/[^0-9]/g, '');
                 $(this).val(value);
             });
+
             $('#add-cvv').on('input', function () {
                 var value = $(this).val().replace(/[^0-9]/g, '');
                 $(this).val(value);
             });
+
             $('#btn-save-card').on('click', function () {
                 var btn = $(this);
                 btn.prop('disabled', true);
                 $('#btn-save-text').hide();
                 $('#btn-save-loading').show();
                 $('#add-card-error').hide();
+
                 var cardNumber = $('#add-card-number').val().replace(/[^0-9]/g, '');
                 var cvv = $('#add-cvv').val();
                 var month = $('#add-exp-month').val();
                 var year = $('#add-exp-year').val();
                 var holderName = $('#add-holder-name').val();
                 var alias = $('#add-alias').val();
+
                 if (!holderName || holderName.trim() === '') {
                     showAddCardError('Ingresa el nombre del titular');
                     return;
                 }
+
                 if (!/^[A-Za-z\s]+$/.test(holderName)) {
                     showAddCardError('El nombre del titular solo debe contener letras sin acentos');
                     return;
                 }
+
                 if (!/^[0-9]{13,19}$/.test(cardNumber)) {
                     showAddCardError('El número de tarjeta debe tener entre 13 y 19 dígitos');
                     return;
                 }
+
                 if (!OpenPay.card.validateCardNumber(cardNumber)) {
                     showAddCardError('Número de tarjeta inválido');
                     return;
                 }
+
                 if (!month || month === '') {
                     showAddCardError('Selecciona el mes de expiración');
                     return;
                 }
+
                 var currentYear = new Date().getFullYear() % 100;
                 var yearNum = parseInt(year, 10);
+
                 if (!/^[0-9]{2}$/.test(year)) {
                     showAddCardError('El año debe tener 2 dígitos');
                     return;
                 }
+
                 if (yearNum < currentYear) {
                     showAddCardError('El año debe ser ' + currentYear + ' o mayor');
                     return;
                 }
+
                 if (!/^[0-9]{3,4}$/.test(cvv)) {
                     showAddCardError('El CVV debe tener 3 o 4 dígitos');
                     return;
                 }
+
                 if (!OpenPay.card.validateCVC(cvv)) {
                     showAddCardError('CVV inválido');
                     return;
                 }
+
                 if (!OpenPay.card.validateExpiry(month, year)) {
                     showAddCardError('Fecha de expiración inválida');
                     return;
                 }
+
                 OpenPay.token.extractFormAndCreate(
                     'add-card-form',
                     function (response) {
@@ -467,6 +504,7 @@
                     }
                 );
             });
+
             $(document).on('click', '.btn-set-default', function (e) {
                 e.preventDefault();
                 var cardId = $(this).data('card-id');
@@ -485,6 +523,7 @@
                     }
                 });
             });
+
             $(document).on('click', '.btn-edit-alias', function (e) {
                 e.preventDefault();
                 var cardId = $(this).data('card-id');
@@ -493,6 +532,7 @@
                 $('#edit-alias-input').val(alias || '');
                 $('#editAliasModal').modal('show');
             });
+
             $('#btn-save-alias').on('click', function () {
                 var cardId = $('#edit-alias-card-id').val();
                 var alias = $('#edit-alias-input').val();
@@ -515,6 +555,7 @@
                     }
                 });
             });
+
             $(document).on('click', '.btn-delete-card', function (e) {
                 e.preventDefault();
                 var cardId = $(this).data('card-id');
@@ -523,6 +564,7 @@
                 $('#delete-card-name').text(displayName);
                 $('#deleteCardModal').modal('show');
             });
+
             $('#btn-confirm-delete').on('click', function () {
                 var cardId = $('#delete-card-id').val();
                 var btn = $(this);
@@ -541,6 +583,7 @@
                     }
                 });
             });
+
             function showAddCardError(message) {
                 $('#add-card-error-text').text(message);
                 $('#add-card-error').show();
@@ -548,6 +591,7 @@
                 $('#btn-save-text').show();
                 $('#btn-save-loading').hide();
             }
+
             function resetAddCardForm() {
                 $('#add-card-form')[0].reset();
                 $('#add-card-brand-display').html('');
@@ -562,6 +606,7 @@
                 $('#loadingText').text(text);
                 $('#loadingOverlay').addClass('active');
             }
+
             function hideLoading() {
                 $('#loadingOverlay').removeClass('active');
             }
@@ -577,6 +622,7 @@
                 btn && btn.prop('disabled', false);
                 toastr.error('Error de conexión');
             }
+
             var successCallback = null;
             function showSuccess(text, callback) {
                 text = text || 'Operación realizada correctamente';
@@ -585,18 +631,22 @@
                 $('#successOverlay').addClass('active');
                 successCallback = callback;
             }
+
             $('#successAcceptBtn').on('click', function () {
                 $('#successOverlay').removeClass('active');
                 if (successCallback && typeof successCallback === 'function') {
                     successCallback();
                 }
             });
+
             @if(config('openpay.sandbox'))
                 if (typeof toastr !== 'undefined') {
                     toastr.info('Modo de prueba activo. Usa tarjetas de prueba.', 'Sandbox', { timeOut: 4000 });
                 }
             @endif
+
                 var mobileActiveCardId = null;
+
             $(document).on('click', '.mobile-card-row', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -623,12 +673,14 @@
                     default: { badge: 'badge-primary', text: 'Predeterminada', icon: '<i class="fas fa-star"></i> ' },
                     active: { badge: 'badge-success', text: 'Activa', icon: '' }
                 };
+
                 var statusKey = isExpired ? 'expired' : (isDefault ? 'default' : 'active');
                 var status = statusConfig[statusKey];
                 $('#mobileCardDetailStatus').html('<span class="badge ' + status.badge + '">' + status.icon + status.text + '</span>');
                 $('.mobile-action-set-default').toggle(!isDefault);
                 $('#mobileCardDetailModal').modal('show');
             });
+
             $('.mobile-action-edit-alias').on('click', function () {
                 $('#mobileCardDetailModal').modal('hide');
                 var row = $('.mobile-card-row[data-card-id="' + mobileActiveCardId + '"]');
@@ -638,6 +690,7 @@
                     $('#editAliasModal').modal('show');
                 }, 300);
             });
+
             $('.mobile-action-set-default').on('click', function () {
                 $('#mobileCardDetailModal').modal('hide');
                 setTimeout(function () {
@@ -660,6 +713,7 @@
                     });
                 }, 300);
             });
+
             $('.mobile-action-delete').on('click', function () {
                 $('#mobileCardDetailModal').modal('hide');
                 var row = $('.mobile-card-row[data-card-id="' + mobileActiveCardId + '"]');
