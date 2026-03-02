@@ -39,7 +39,7 @@
                                     <div class="card-body">
                                         @if($notices && $notices->count() > 0)
                                             <div class="row">
-                                                @foreach($notices->take(3) as $notice)
+                                                @foreach($notices as $notice)
                                                     <div class="col-md-4 mb-3">
                                                         <div class="card h-100 border-left-{{ $notice->is_active ? 'success' : 'secondary' }} border-left-3">
                                                             <div class="card-body">

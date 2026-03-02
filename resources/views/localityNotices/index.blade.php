@@ -36,57 +36,54 @@
                     <div class="x_content">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="card-box">
-
-                                        <table id="notices" class="table table-striped display responsive nowrap" style="width:100%">
-                                            <thead>
+                                <div class="card-box table-responsive">
+                                    <table id="notices" class="table table-striped display responsive nowrap" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>TÍTULO</th>
+                                                <th>FECHA Y HORA DE INICIO</th>
+                                                <th>FECHA Y HORA DE FIN</th>
+                                                <th>ESTATUS</th>
+                                                <th>OPCIONES</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (count($localityNotices) <= 0)
                                                 <tr>
-                                                    <th></th>
-                                                    <th>ID</th>
-                                                    <th>TÍTULO</th>
-                                                    <th>LOCALIDAD</th>
-                                                    <th>FECHA Y HORA DE INICIO</th>
-                                                    <th>FECHA Y HORA DE FIN</th>
-                                                    <th>ESTATUS</th>
-                                                    <th>OPCIONES</th>
+                                                    <td colspan="6" class="text-center">No hay avisos registrados</td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if (count($localityNotices) <= 0)
+                                            @else
+                                                @foreach($localityNotices as $notice)
                                                     <tr>
-                                                        <td colspan="7" class="text-center">No hay avisos registrados</td>
-                                                    </tr>
-                                                @else
-                                                    @foreach($localityNotices as $notice)
-                                                        <tr>
-                                                            <td></td>
-                                                            <td>{{ $notice->id }}</td>
-                                                            <td>
-                                                                {{ Str::limit($notice->title, 40) }}
-                                                            </td>
-                                                            <td>{{ $notice->locality->name }}</td>
-                                                            <td>{{ $notice->start_date->format('d/m/Y H:i') }}</td>
-                                                            <td>{{ $notice->end_date->format('d/m/Y H:i') }}</td>
-                                                            <td>
-                                                                @php
-                                                                    $now = now();
-                                                                    $startDate = \Carbon\Carbon::parse($notice->start_date);
-                                                                    $endDate = \Carbon\Carbon::parse($notice->end_date);
+                                                        <td></td>
+                                                        <td>{{ $notice->id }}</td>
+                                                        <td>
+                                                            {{ Str::limit($notice->title, 40) }}
+                                                        </td>
+                                                        <td>{{ $notice->locality->name }}</td>
+                                                        <td>{{ $notice->start_date->format('d/m/Y H:i') }}</td>
+                                                        <td>{{ $notice->end_date->format('d/m/Y H:i') }}</td>
+                                                        <td>
+                                                            @php
+                                                                $now = now();
+                                                                $startDate = \Carbon\Carbon::parse($notice->start_date);
+                                                                $endDate = \Carbon\Carbon::parse($notice->end_date);
 
-                                                                    if ($notice->is_active && $startDate <= $now && $endDate >= $now) {
-                                                                        $badgeClass = 'badge-success';
-                                                                        $text = 'Activo';
-                                                                    } elseif ($startDate > $now) {
-                                                                        $badgeClass = 'badge-primary';
-                                                                        $text = 'Programado';
-                                                                    } else {
-                                                                        $badgeClass = 'badge-secondary';
-                                                                        $text = 'Expirado';
-                                                                    }
-                                                                @endphp
+                                                                if ($notice->is_active && $startDate <= $now && $endDate >= $now) {
+                                                                    $badgeClass = 'badge-success';
+                                                                    $text = 'Activo';
+                                                                } elseif ($startDate > $now) {
+                                                                    $badgeClass = 'badge-primary';
+                                                                    $text = 'Programado';
+                                                                } else {
+                                                                    $badgeClass = 'badge-secondary';
+                                                                    $text = 'Expirado';
+                                                                }
+                                                            @endphp
 
-                                                                <span class="badge {{ $badgeClass }} px-1 py-1">
-                                                                    {{ $text }}
+                                                            <span class="badge {{ $badgeClass }} px-1 py-1">
+                                                                {{ $text }}
                                                                 </span>
                                                             </td>
                                                             <td>
@@ -109,18 +106,13 @@
                                                                 </div>
                                                             </td>
                                                         </tr>
+                                                        @include('localityNotices.delete', ['notice' => $notice])
+                                                        @include('localityNotices.edit', ['notice' => $notice])
+                                                        @include('localityNotices.show', ['notice' => $notice])
                                                     @endforeach
-                                                @endif
-                                            </tbody>
-                                        </table>
-
-                                        @if (count($localityNotices) > 0)
-                                            @foreach($localityNotices as $notice)
-                                                @include('localityNotices.delete', ['notice' => $notice])
-                                                @include('localityNotices.edit', ['notice' => $notice])
-                                                @include('localityNotices.show', ['notice' => $notice])
-                                            @endforeach
-                                        @endif
+                                            @endif
+                                        </tbody>
+                                    </table>
 
                                     <div class="d-flex justify-content-center">
                                        {!! $localityNotices->appends(request()->query())->links('pagination::bootstrap-4') !!}

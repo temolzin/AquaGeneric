@@ -57,6 +57,8 @@ class LocalityNoticeController extends Controller
             return redirect()->back()->with('error', 'La fecha de fin no puede ser anterior a hoy.')->withInput();
         }
 
+        $isActive = $startDate->lessThanOrEqualTo($today);
+
         $localityNotice = LocalityNotice::create([
             'created_by' => auth()->id(),
             'locality_id' => auth()->user()->locality_id,
@@ -64,14 +66,15 @@ class LocalityNoticeController extends Controller
             'description' => $request->input('description'),
             'start_date' => $request->input('start_date'),
             'end_date' => $request->input('end_date'),
-            'is_active' => true
+            'is_active' => $isActive
         ]);
 
         if ($request->hasFile('attachment')) {
             $localityNotice->addMediaFromRequest('attachment')->toMediaCollection('notice_attachments');
         }
 
-        return redirect()->route('localityNotices.index')->with('success', 'Aviso de localidad creado correctamente.');
+        $status = $isActive ? 'programado' : 'activo';
+        return redirect()->route('localityNotices.index')->with('success', "Aviso de localidad creado correctamente como {$status}.");
     }
 
     public function show($id)
@@ -107,11 +110,13 @@ class LocalityNoticeController extends Controller
                 return redirect()->back()->with('error', 'La fecha de fin no puede ser anterior a hoy.')->withInput();
             }
 
+            $isActive = $startDate->lessThanOrEqualTo($today) && $request->input('is_active', true);
+
             $localityNotice->title = $request->input('title');
             $localityNotice->description = $request->input('description');
             $localityNotice->start_date = $request->input('start_date');
             $localityNotice->end_date = $request->input('end_date');
-            $localityNotice->is_active = $request->input('is_active', true);
+            $localityNotice->is_active = $isActive;
 
             if ($request->has('remove_attachment')) {
                 $localityNotice->clearMediaCollection('notice_attachments');
@@ -149,28 +154,18 @@ class LocalityNoticeController extends Controller
         $localityNotice = LocalityNotice::find($id);
         
         if ($localityNotice) {
-            $now = now();
-            $endDate = Carbon::parse($localityNotice->end_date);
-            
-            if ($endDate->lt($now)) {
-                if ($localityNotice->is_active) {
-                    $localityNotice->is_active = false;
-                    $localityNotice->save();
-                    
-                    return redirect()->back()->with('warning', 'El aviso ha expirado y ha sido desactivado automáticamente.');
-                } else {
-                    return redirect()->back()->with('error', 'No se puede activar un aviso que ya ha expirado.');
-                }
+            if (now()->gt($localityNotice->end_date)) {
+                return redirect()->back()->with('error', 'No se puede activar un aviso expirado.');
             }
             
             $localityNotice->is_active = !$localityNotice->is_active;
             $localityNotice->save();
             $status = $localityNotice->is_active ? 'activado' : 'desactivado';
 
-            return redirect()->back()->with('success', "Aviso de localidad {$status} correctamente.");
+            return redirect()->back()->with('success', "Aviso {$status} correctamente.");
         }
 
-        return redirect()->back()->with('error', 'Aviso de localidad no encontrado.');
+        return redirect()->back()->with('error', 'Aviso no encontrado.');
     }
 
     public function downloadAttachment($id)
@@ -197,17 +192,5 @@ class LocalityNoticeController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-    }
-
-    public function deactivateExpiredNotices()
-    {
-        $expiredNotices = LocalityNotice::where('is_active', true)->where('end_date', '<', now())->get();
-
-        foreach ($expiredNotices as $notice) {
-            $notice->is_active = false;
-            $notice->save();
-        }
-
-        return $expiredNotices->count();
     }
 }

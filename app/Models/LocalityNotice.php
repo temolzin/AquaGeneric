@@ -11,6 +11,10 @@ class LocalityNotice extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_SCHEDULED = 'scheduled';
+    public const STATUS_EXPIRED = 'expired';
+
     protected $table = 'locality_notices';
 
     protected $fillable = [
@@ -48,21 +52,30 @@ class LocalityNotice extends Model implements HasMedia
 
     public function scopeActive($query)
     {
+        $now = now();
         return $query->where('is_active', true)
-                    ->where('start_date', '<=', now())
-                    ->where('end_date', '>=', now());
+                    ->where('start_date', '<=', $now)
+                    ->where('end_date', '>=', $now);
     }
 
-    public function scopeByLocality($query, $localityId)
+    public function getStatusAttribute()
     {
-        return $query->where('locality_id', $localityId);
+        $now = now();
+        
+        if ($this->end_date < $now) {
+            return self::STATUS_EXPIRED;
+        }
+        
+        if ($this->start_date > $now) {
+            return self::STATUS_SCHEDULED;
+        }
+        
+        return self::STATUS_ACTIVE;
     }
 
-    public function getIsCurrentlyActiveAttribute()
+    public function isActive(): bool
     {
-        return $this->is_active && 
-               $this->start_date <= now() && 
-               $this->end_date >= now();
+        return $this->getStatusAttribute() === self::STATUS_ACTIVE && $this->is_active;
     }
 
     public function getLocalityNameAttribute()
