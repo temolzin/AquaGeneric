@@ -24,7 +24,6 @@
                         </div>
                     </div>
                 </div>
-
                 <form id="add-card-form">
                     @csrf
                     <input type="hidden" id="add-card-brand" name="brand">

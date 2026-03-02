@@ -24,6 +24,7 @@ class CustomerCard extends Model
         'expiration_month',
         'expiration_year',
         'is_default',
+        'created_by',
     ];
 
     /**
@@ -38,6 +39,11 @@ class CustomerCard extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function getDisplayNameAttribute()

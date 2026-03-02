@@ -1,5 +1,4 @@
-<div class="modal fade" id="openpayModal" tabindex="-1" role="dialog" aria-labelledby="openpayModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="openpayModal" tabindex="-1" role="dialog" aria-labelledby="openpayModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header bg-gradient-success text-white">
@@ -76,7 +75,6 @@
                         </div>
                     </div>
                 </div>
-
                 <form id="openpay-modal-form">
                     @csrf
                     <input type="hidden" name="debt_id" id="modal-debt-id">
@@ -84,7 +82,6 @@
                     <input type="hidden" id="modal-device-session-id" name="device_session_id">
                     <input type="hidden" id="modal-saved-card-id" name="saved_card_id">
                     <input type="hidden" id="modal-use-saved-card" name="use_saved_card" value="0">
-
                     <div id="new-card-form-section">
                         <div class="alert alert-info py-2 px-3 mb-3">
                             <i class="fas fa-info-circle"></i>
@@ -94,20 +91,14 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label><i class="fas fa-user"></i> Nombre del titular</label>
-                                    <input type="text" class="form-control" id="modal-holder-name"
-                                        placeholder="Como aparece en la tarjeta" autocomplete="off"
-                                        data-openpay-card="holder_name" pattern="[A-Za-z ]+"
-                                        title="Solo letras sin acentos">
+                                    <input type="text" class="form-control" id="modal-holder-name" placeholder="Como aparece en la tarjeta" autocomplete="off" data-openpay-card="holder_name" pattern="[A-Za-z ]+" title="Solo letras sin acentos">
                                     <small class="text-muted">Solo letras sin acentos</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label><i class="fas fa-credit-card"></i> Número de tarjeta</label>
-                                    <input type="text" class="form-control" id="modal-card-number"
-                                        placeholder="•••• •••• •••• ••••" autocomplete="off" data-openpay-card="card_number"
-                                        maxlength="19" pattern="[0-9]{13,19}" inputmode="numeric"
-                                        title="Entre 13 y 19 dígitos numéricos">
+                                    <input type="text" class="form-control" id="modal-card-number" placeholder="•••• •••• •••• ••••" autocomplete="off" data-openpay-card="card_number" maxlength="19" pattern="[0-9]{13,19}" inputmode="numeric" title="Entre 13 y 19 dígitos numéricos">
                                     <div id="modal-card-brand" class="mt-1" style="min-height: 20px;"></div>
                                 </div>
                             </div>
@@ -136,18 +127,13 @@
                             <div class="col-4 col-md-3">
                                 <div class="form-group">
                                     <label>Año</label>
-                                    <input type="text" class="form-control" id="modal-exp-year" placeholder="AA"
-                                        maxlength="2" pattern="[0-9]{2}" inputmode="numeric"
-                                        data-openpay-card="expiration_year" title="2 dígitos del año">
+                                    <input type="text" class="form-control" id="modal-exp-year" placeholder="AA" maxlength="2" pattern="[0-9]{2}" inputmode="numeric" data-openpay-card="expiration_year" title="2 dígitos del año">
                                 </div>
                             </div>
                             <div class="col-4 col-md-3" id="cvv-new-card-container">
                                 <div class="form-group">
-                                    <label>CVV <i class="fas fa-question-circle text-muted"
-                                            title="Código de seguridad"></i></label>
-                                    <input type="text" class="form-control" id="modal-cvv" placeholder="•••" maxlength="4"
-                                        pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off"
-                                        data-openpay-card="cvv2" title="3 o 4 dígitos numéricos">
+                                    <label>CVV <i class="fas fa-question-circle text-muted" title="Código de seguridad"></i></label>
+                                    <input type="text" class="form-control" id="modal-cvv" placeholder="•••" maxlength="4" pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off" data-openpay-card="cvv2" title="3 o 4 dígitos numéricos">
                                 </div>
                             </div>
                             <div class="col-12 col-md-3">
@@ -157,8 +143,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">$</span>
                                         </div>
-                                        <input type="number" class="form-control" id="modal-amount" name="amount"
-                                            step="1.00" min="1.00" required>
+                                        <input type="number" class="form-control" id="modal-amount" name="amount" step="1.00" min="1.00" required>
                                     </div>
                                 </div>
                             </div>
@@ -169,9 +154,7 @@
                             <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <label><i class="fas fa-lock"></i> CVV de la tarjeta guardada</label>
-                                    <input type="password" class="form-control form-control-md" id="modal-saved-cvv" placeholder="•••" maxlength="4"
-                                        pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off"
-                                        title="3 o 4 dígitos numéricos" style="letter-spacing: 5px; text-align: center;">
+                                    <input type="password" class="form-control form-control-md" id="modal-saved-cvv" placeholder="•••" maxlength="4" pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off" title="3 o 4 dígitos numéricos" style="letter-spacing: 5px; text-align: center;">
                                     <small class="text-muted">Código de seguridad</small>
                                 </div>
                             </div>
@@ -182,8 +165,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">$</span>
                                         </div>
-                                        <input type="number" class="form-control" id="modal-amount-saved" name="amount_saved"
-                                            step="1.00" min="1.00">
+                                        <input type="number" class="form-control" id="modal-amount-saved" name="amount_saved" step="1.00" min="1.00">
                                     </div>
                                 </div>
                             </div>
@@ -227,7 +209,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="savedCardPayModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 280px; margin-left: auto; margin-right: auto;">
         <div class="modal-content">
@@ -247,9 +228,7 @@
                 </div>
                 <div class="form-group mb-2">
                     <label class="small mb-1">CVV</label>
-                    <input type="password" class="form-control form-control-sm text-center" id="savedCardPayCvv" 
-                        placeholder="•••" maxlength="4" inputmode="numeric" autocomplete="off"
-                        style="letter-spacing: 6px;">
+                    <input type="password" class="form-control form-control-sm text-center" id="savedCardPayCvv" placeholder="•••" maxlength="4" inputmode="numeric" autocomplete="off" style="letter-spacing: 6px;">
                 </div>
                 <div class="form-group mb-0">
                     <label class="small mb-1">Monto</label>

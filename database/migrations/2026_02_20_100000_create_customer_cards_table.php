@@ -24,6 +24,7 @@ class CreateCustomerCardsTable extends Migration
             $table->string('expiration_month', 2);
             $table->string('expiration_year', 2);
             $table->boolean('is_default')->default(false);
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             
             $table->index('customer_id');

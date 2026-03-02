@@ -28,7 +28,6 @@
                                 </div>
                             </div>
                         </div>
-
                         @if($cards->isEmpty())
                             <div class="text-center py-5">
                                 <i class="fas fa-credit-card fa-4x text-muted mb-3"></i>
@@ -39,7 +38,6 @@
                                 </button>
                             </div>
                         @else
-
                             <div class="d-block d-md-none">
                                 @foreach($cards as $card)
                                     <div class="mobile-card-row d-flex align-items-center p-3 mb-2 rounded border {{ $card->is_default ? 'border-primary' : ($card->is_expired ? 'border-danger' : 'border-secondary') }}"
@@ -104,14 +102,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <h5 class="mb-1" id="card-display-{{ $card->id }}">
                                                     {{ $card->alias ?: ucfirst($card->brand) }}
                                                 </h5>
                                                 <p class="text-muted mb-2">
                                                     <span class="card-number-dots">•••• •••• ••••</span> {{ $card->last_four }}
                                                 </p>
-
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <small class="text-muted">
                                                         Vence: {{ $card->expiration_month }}/{{ $card->expiration_year }}
@@ -127,7 +123,6 @@
                                                         @endif
                                                     </div>
                                                 </div>
-
                                                 <div class="mt-2">
                                                     <small class="text-muted">{{ $card->holder_name }}</small>
                                                 </div>
@@ -142,11 +137,9 @@
             </div>
         </div>
     </section>
-
     @include('customerCards.addCardModal')
     @include('customerCards.editAliasModal')
     @include('customerCards.deleteCardModal')
-
     <div class="modal fade" id="mobileCardDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -195,12 +188,10 @@
             </div>
         </div>
     </div>
-
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loadingText">Procesando...</div>
     </div>
-
     <div class="success-modal-overlay" id="successOverlay">
         <div class="success-modal-content">
             <div class="success-modal-icon">
@@ -212,21 +203,17 @@
         </div>
     </div>
 @endsection
-
 @section('css')
     <style>
         .card-number-dots {
             letter-spacing: 2px;
         }
-
         .card.border-primary {
             border-width: 2px !important;
         }
-
         .card.border-danger {
             border-width: 2px !important;
         }
-
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -240,11 +227,9 @@
             z-index: 9999;
             flex-direction: column;
         }
-
         .loading-overlay.active {
             display: flex;
         }
-
         .loading-spinner {
             width: 60px;
             height: 60px;
@@ -253,24 +238,20 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
         .loading-text {
             color: white;
             margin-top: 15px;
             font-size: 18px;
             font-weight: 500;
         }
-
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
             }
-
             100% {
                 transform: rotate(360deg);
             }
         }
-
         .success-modal-overlay {
             position: fixed;
             top: 0;
@@ -283,11 +264,9 @@
             align-items: center;
             z-index: 9999;
         }
-
         .success-modal-overlay.active {
             display: flex;
         }
-
         .success-modal-content {
             background: white;
             border-radius: 10px;
@@ -297,7 +276,6 @@
             max-width: 400px;
             width: 90%;
         }
-
         .success-modal-icon {
             width: 80px;
             height: 80px;
@@ -309,25 +287,21 @@
             align-items: center;
             margin: 0 auto 20px;
         }
-
         .success-modal-icon i {
             font-size: 40px;
             color: #28a745;
         }
-
         .success-modal-title {
             font-size: 24px;
             font-weight: 600;
             color: #333;
             margin-bottom: 10px;
         }
-
         .success-modal-text {
             font-size: 16px;
             color: #666;
             margin-bottom: 25px;
         }
-
         .success-modal-btn {
             padding: 10px 40px;
             font-size: 16px;
@@ -335,12 +309,10 @@
             background-color: #6f42c1;
             border-color: #6f42c1;
         }
-
         .success-modal-btn:hover {
             background-color: #5a32a3;
             border-color: #5a32a3;
         }
-
         .btn-loading .spinner-border {
             width: 1rem;
             height: 1rem;
@@ -348,23 +320,19 @@
         }
     </style>
 @endsection
-
 @section('js')
     <script type="text/javascript" src="https://openpay.s3.amazonaws.com/openpay.v1.min.js"></script>
     <script type="text/javascript" src="https://openpay.s3.amazonaws.com/openpay-data.v1.min.js"></script>
     <script>
         var openpayDeviceSessionId = null;
-
         $(document).ready(function () {
             OpenPay.setId('{{ config("openpay.merchant_id") }}');
             OpenPay.setApiKey('{{ config("openpay.public_key") }}');
             OpenPay.setSandboxMode({{ config("openpay.sandbox") ? 'true' : 'false' }});
-
             $('#addCardModal').on('show.bs.modal', function () {
                 openpayDeviceSessionId = OpenPay.deviceData.setup("add-card-form", "deviceIdHiddenFieldName");
                 resetAddCardForm();
             });
-
             $('#add-holder-name').on('input', function () {
                 var value = $(this).val();
                 var cleaned = value.replace(/[^A-Za-z\s]/g, '');
@@ -372,61 +340,43 @@
                     $(this).val(cleaned);
                 }
             });
+            var cardBrandConfig = {
+                'visa': { icon: 'fab fa-cc-visa fa-lg text-primary', label: 'Visa', value: 'visa' },
+                'mastercard': { icon: 'fab fa-cc-mastercard fa-lg text-warning', label: 'MasterCard', value: 'mastercard' },
+                'american_express': { icon: 'fab fa-cc-amex fa-lg text-info', label: 'AMEX', value: 'american_express' }
+            };
 
             $('#add-card-number').on('input', function () {
                 var value = $(this).val().replace(/[^0-9]/g, '');
                 $(this).val(value);
-
                 if (value.length >= 6) {
                     var cardType = OpenPay.card.cardType(value);
-                    var cardBrand = '';
-                    var brandValue = '';
-                    switch (cardType) {
-                        case 'visa':
-                            cardBrand = '<i class="fab fa-cc-visa fa-lg text-primary"></i> Visa';
-                            brandValue = 'visa';
-                            break;
-                        case 'mastercard':
-                            cardBrand = '<i class="fab fa-cc-mastercard fa-lg text-warning"></i> MasterCard';
-                            brandValue = 'mastercard';
-                            break;
-                        case 'american_express':
-                            cardBrand = '<i class="fab fa-cc-amex fa-lg text-info"></i> AMEX';
-                            brandValue = 'american_express';
-                            break;
-                    }
+                    var config = cardBrandConfig[cardType] || { icon: '', label: '', value: cardType };
+                    var cardBrand = config.icon ? '<i class="' + config.icon + '"></i> ' + config.label : '';
                     $('#add-card-brand-display').html(cardBrand);
-                    $('#add-card-brand').val(brandValue || cardType);
-                } else {
-                    $('#add-card-brand-display').html('');
-                    $('#add-card-brand').val('');
+                    $('#add-card-brand').val(config.value);
                 }
             });
-
             $('#add-exp-year').on('input', function () {
                 var value = $(this).val().replace(/[^0-9]/g, '');
                 $(this).val(value);
             });
-
             $('#add-cvv').on('input', function () {
                 var value = $(this).val().replace(/[^0-9]/g, '');
                 $(this).val(value);
             });
-
             $('#btn-save-card').on('click', function () {
                 var btn = $(this);
                 btn.prop('disabled', true);
                 $('#btn-save-text').hide();
                 $('#btn-save-loading').show();
                 $('#add-card-error').hide();
-
                 var cardNumber = $('#add-card-number').val().replace(/[^0-9]/g, '');
                 var cvv = $('#add-cvv').val();
                 var month = $('#add-exp-month').val();
                 var year = $('#add-exp-year').val();
                 var holderName = $('#add-holder-name').val();
                 var alias = $('#add-alias').val();
-
                 if (!holderName || holderName.trim() === '') {
                     showAddCardError('Ingresa el nombre del titular');
                     return;
@@ -469,15 +419,12 @@
                     showAddCardError('Fecha de expiración inválida');
                     return;
                 }
-
                 OpenPay.token.extractFormAndCreate(
                     'add-card-form',
                     function (response) {
                         var currentDeviceSessionId = openpayDeviceSessionId || $('input[name="deviceIdHiddenFieldName"]').val();
-
                         $('#addCardModal').modal('hide');
                         showLoading('Guardando tarjeta...');
-
                         $.ajax({
                             url: '{{ route("customerCards.store") }}',
                             method: 'POST',
@@ -493,17 +440,13 @@
                                 brand: $('#add-card-brand').val() || 'unknown'
                             },
                             success: function (data) {
-                                if (data.success) {
-                                    showSuccess('Tarjeta registrada correctamente', function () {
-                                        location.reload();
-                                    });
-                                } else if (data.duplicate) {
-                                    hideLoading();
-                                    toastr.warning(data.error, 'Tarjeta ya registrada', { timeOut: 5000 });
-                                } else {
-                                    hideLoading();
-                                    toastr.error(data.error || 'Error al guardar la tarjeta');
-                                }
+                                var handlers = {
+                                    success: function() { showSuccess('Tarjeta registrada correctamente', function() { location.reload(); }); },
+                                    duplicate: function() { hideLoading(); toastr.warning(data.error, 'Tarjeta ya registrada', { timeOut: 5000 }); },
+                                    error: function() { hideLoading(); toastr.error(data.error || 'Error al guardar la tarjeta'); }
+                                };
+                                var action = data.success ? 'success' : (data.duplicate ? 'duplicate' : 'error');
+                                handlers[action]();
                             },
                             error: function (xhr) {
                                 hideLoading();
@@ -524,47 +467,32 @@
                     }
                 );
             });
-
             $(document).on('click', '.btn-set-default', function (e) {
                 e.preventDefault();
                 var cardId = $(this).data('card-id');
                 var btn = $(this);
                 btn.prop('disabled', true);
                 showLoading('Actualizando...');
-
                 $.ajax({
                     url: '/customerCards/' + cardId + '/default',
                     method: 'POST',
                     data: { _token: '{{ csrf_token() }}' },
                     success: function (data) {
-                        if (data.success) {
-                            showSuccess('Tarjeta predeterminada actualizada', function () {
-                                location.reload();
-                            });
-                        } else {
-                            hideLoading();
-                            btn.prop('disabled', false);
-                            toastr.error(data.error || 'Error al establecer como predeterminada');
-                        }
+                        handleAjaxResponse(data, 'Tarjeta predeterminada actualizada', 'Error al establecer como predeterminada', btn);
                     },
                     error: function () {
-                        hideLoading();
-                        btn.prop('disabled', false);
-                        toastr.error('Error de conexión');
+                        handleAjaxError(btn);
                     }
                 });
             });
-
             $(document).on('click', '.btn-edit-alias', function (e) {
                 e.preventDefault();
                 var cardId = $(this).data('card-id');
                 var alias = $(this).data('alias');
-
                 $('#edit-alias-card-id').val(cardId);
                 $('#edit-alias-input').val(alias || '');
                 $('#editAliasModal').modal('show');
             });
-
             $('#btn-save-alias').on('click', function () {
                 var cardId = $('#edit-alias-card-id').val();
                 var alias = $('#edit-alias-input').val();
@@ -572,7 +500,6 @@
                 btn.prop('disabled', true);
                 $('#editAliasModal').modal('hide');
                 showLoading('Actualizando alias...');
-
                 $.ajax({
                     url: '/customerCards/' + cardId + '/alias',
                     method: 'PUT',
@@ -581,64 +508,39 @@
                         alias: alias
                     },
                     success: function (data) {
-                        if (data.success) {
-                            showSuccess('Alias actualizado correctamente', function () {
-                                location.reload();
-                            });
-                        } else {
-                            hideLoading();
-                            btn.prop('disabled', false);
-                            toastr.error(data.error || 'Error al actualizar alias');
-                        }
+                        handleAjaxResponse(data, 'Alias actualizado correctamente', 'Error al actualizar alias', btn);
                     },
                     error: function () {
-                        hideLoading();
-                        btn.prop('disabled', false);
-                        toastr.error('Error de conexión');
+                        handleAjaxError(btn);
                     }
                 });
             });
-
             $(document).on('click', '.btn-delete-card', function (e) {
                 e.preventDefault();
                 var cardId = $(this).data('card-id');
                 var displayName = $(this).data('display-name');
-
                 $('#delete-card-id').val(cardId);
                 $('#delete-card-name').text(displayName);
                 $('#deleteCardModal').modal('show');
             });
-
             $('#btn-confirm-delete').on('click', function () {
                 var cardId = $('#delete-card-id').val();
                 var btn = $(this);
                 btn.prop('disabled', true);
                 $('#deleteCardModal').modal('hide');
                 showLoading('Eliminando tarjeta...');
-
                 $.ajax({
                     url: '/customerCards/' + cardId,
                     method: 'DELETE',
                     data: { _token: '{{ csrf_token() }}' },
                     success: function (data) {
-                        if (data.success) {
-                            showSuccess('Tarjeta eliminada correctamente', function () {
-                                location.reload();
-                            });
-                        } else {
-                            hideLoading();
-                            toastr.error(data.error || 'Error al eliminar tarjeta');
-                            btn.prop('disabled', false);
-                        }
+                        handleAjaxResponse(data, 'Tarjeta eliminada correctamente', 'Error al eliminar tarjeta', btn);
                     },
                     error: function () {
-                        hideLoading();
-                        toastr.error('Error de conexión');
-                        btn.prop('disabled', false);
+                        handleAjaxError(btn);
                     }
                 });
             });
-
             function showAddCardError(message) {
                 $('#add-card-error-text').text(message);
                 $('#add-card-error').show();
@@ -646,7 +548,6 @@
                 $('#btn-save-text').show();
                 $('#btn-save-loading').hide();
             }
-
             function resetAddCardForm() {
                 $('#add-card-form')[0].reset();
                 $('#add-card-brand-display').html('');
@@ -656,19 +557,27 @@
                 $('#btn-save-text').show();
                 $('#btn-save-loading').hide();
             }
-
             function showLoading(text) {
                 text = text || 'Procesando...';
                 $('#loadingText').text(text);
                 $('#loadingOverlay').addClass('active');
             }
-
             function hideLoading() {
                 $('#loadingOverlay').removeClass('active');
             }
 
-            var successCallback = null;
+            function handleAjaxResponse(data, successMsg, errorMsg, btn) {
+                data.success
+                    ? showSuccess(successMsg, function() { location.reload(); })
+                    : (hideLoading(), btn && btn.prop('disabled', false), toastr.error(data.error || errorMsg));
+            }
 
+            function handleAjaxError(btn) {
+                hideLoading();
+                btn && btn.prop('disabled', false);
+                toastr.error('Error de conexión');
+            }
+            var successCallback = null;
             function showSuccess(text, callback) {
                 text = text || 'Operación realizada correctamente';
                 hideLoading();
@@ -676,22 +585,18 @@
                 $('#successOverlay').addClass('active');
                 successCallback = callback;
             }
-
             $('#successAcceptBtn').on('click', function () {
                 $('#successOverlay').removeClass('active');
                 if (successCallback && typeof successCallback === 'function') {
                     successCallback();
                 }
             });
-
             @if(config('openpay.sandbox'))
                 if (typeof toastr !== 'undefined') {
                     toastr.info('Modo de prueba activo. Usa tarjetas de prueba.', 'Sandbox', { timeOut: 4000 });
                 }
             @endif
-
-                    var mobileActiveCardId = null;
-
+                var mobileActiveCardId = null;
             $(document).on('click', '.mobile-card-row', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -704,36 +609,26 @@
                 var name = alias
                     ? alias + ' \u2022\u2022\u2022\u2022 ' + row.data('last-four')
                     : row.data('display-name');
-
                 var header = $('#mobileCardDetailHeader');
                 header.removeClass('bg-danger bg-primary bg-secondary');
-                if (isExpired) header.addClass('bg-danger text-white');
-                else if (isDefault) header.addClass('bg-primary text-white');
-                else header.addClass('bg-secondary text-white');
-
+                var headerClass = isExpired ? 'bg-danger' : (isDefault ? 'bg-primary' : 'bg-secondary');
+                header.addClass(headerClass + ' text-white');
                 $('#mobileCardDetailIcon').attr('class', brand + ' mr-2');
                 $('#mobileCardDetailTitle').text(name);
                 $('#mobileCardDetailHolder').text(row.data('holder'));
                 $('#mobileCardDetailLastFour').text(row.data('last-four'));
                 $('#mobileCardDetailExpiry').text(row.data('expiry'));
-
-                if (isExpired) {
-                    $('#mobileCardDetailStatus').html('<span class="badge badge-danger">Expirada</span>');
-                } else if (isDefault) {
-                    $('#mobileCardDetailStatus').html('<span class="badge badge-primary"><i class="fas fa-star"></i> Predeterminada</span>');
-                } else {
-                    $('#mobileCardDetailStatus').html('<span class="badge badge-success">Activa</span>');
-                }
-
-                if (isDefault) {
-                    $('.mobile-action-set-default').hide();
-                } else {
-                    $('.mobile-action-set-default').show();
-                }
-
+                var statusConfig = {
+                    expired: { badge: 'badge-danger', text: 'Expirada', icon: '' },
+                    default: { badge: 'badge-primary', text: 'Predeterminada', icon: '<i class="fas fa-star"></i> ' },
+                    active: { badge: 'badge-success', text: 'Activa', icon: '' }
+                };
+                var statusKey = isExpired ? 'expired' : (isDefault ? 'default' : 'active');
+                var status = statusConfig[statusKey];
+                $('#mobileCardDetailStatus').html('<span class="badge ' + status.badge + '">' + status.icon + status.text + '</span>');
+                $('.mobile-action-set-default').toggle(!isDefault);
                 $('#mobileCardDetailModal').modal('show');
             });
-
             $('.mobile-action-edit-alias').on('click', function () {
                 $('#mobileCardDetailModal').modal('hide');
                 var row = $('.mobile-card-row[data-card-id="' + mobileActiveCardId + '"]');
@@ -743,7 +638,6 @@
                     $('#editAliasModal').modal('show');
                 }, 300);
             });
-
             $('.mobile-action-set-default').on('click', function () {
                 $('#mobileCardDetailModal').modal('hide');
                 setTimeout(function () {
@@ -757,9 +651,6 @@
                                 showSuccess('Tarjeta establecida como predeterminada', function () {
                                     location.reload();
                                 });
-                            } else {
-                                hideLoading();
-                                toastr.error(data.error || 'Error al actualizar');
                             }
                         },
                         error: function () {
@@ -769,7 +660,6 @@
                     });
                 }, 300);
             });
-
             $('.mobile-action-delete').on('click', function () {
                 $('#mobileCardDetailModal').modal('hide');
                 var row = $('.mobile-card-row[data-card-id="' + mobileActiveCardId + '"]');
