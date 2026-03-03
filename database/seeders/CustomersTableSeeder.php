@@ -56,7 +56,6 @@ class CustomersTableSeeder extends Seeder
             ]);
         }
 
-        // Agregar cliente Alonso específico
         $alonso = User::find(5);
         if ($alonso) {
             $locality = Locality::where('name', 'Smallville')->first();
