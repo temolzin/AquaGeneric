@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 use App\Models\WaterConnection;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class WaterConnectionsTableSeeder extends Seeder
@@ -23,10 +24,17 @@ class WaterConnectionsTableSeeder extends Seeder
         foreach ($localities as $localityId) {
             $customers = DB::table('customers')->where('locality_id', $localityId)->whereNull('deleted_at')->pluck('id')->toArray();
             $costs = DB::table('costs')->where('locality_id', $localityId)->pluck('id')->toArray();
-            $users = DB::table('users')->pluck('id')->toArray();
+            $users = DB::table('users')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
+                ->where('users.locality_id', $localityId)
+                ->distinct()
+                ->pluck('users.id')
+                ->toArray();
             $localitySections = DB::table('sections')->where('locality_id', $localityId)->pluck('id')->toArray();
 
-            if (empty($localitySections)) {
+            if (empty($localitySections) || empty($users)) {
                 continue;
             }
 
