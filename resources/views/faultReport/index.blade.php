@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Reporte')
 
@@ -170,12 +170,12 @@
 
         $('#changeStatusForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             var form = $(this);
             var formData = form.serialize();
-            
+
             $.ajax({
-                url: "{{ route('faultReport.updateStatus') }}", 
+                url: "{{ route('faultReport.updateStatus') }}",
                 type: 'POST',
                 data: formData,
                 success: function(response) {

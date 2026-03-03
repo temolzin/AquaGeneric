@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Mis Deudas')
 
@@ -57,7 +57,7 @@
                                                             <div>
                                                                 <strong class="text-dark">
                                                                     {{ $connection->name ?: 'Toma #' . $connection->id }}
-                                                                </strong>                                                                
+                                                                </strong>
                                                                 <div class="connection-details mt-1">
                                                                     @if($connection->street || $connection->exterior_number)
                                                                         <div>
@@ -75,7 +75,7 @@
                                                                             </small>
                                                                         </div>
                                                                     @endif
-                                                                    
+
                                                                     @if($connection->type)
                                                                         <small class="badge badge-secondary mt-1">
                                                                             {{ $connection->type === 'residencial' ? 'Residencial' : 'Comercial' }}
@@ -86,7 +86,7 @@
                                                             <div class="badges">
                                                                 <i class="fas fa-chevron-down rotate-icon ml-2"></i>
                                                             </div>
-                                                        </div>                                                        
+                                                        </div>
                                                         <div id="collapse-{{ $connection->id }}" class="collapse mt-3">
                                                             <div class="table-responsive">
                                                                 <table class="table table-bordered table-sm">
@@ -120,10 +120,10 @@
                                                                                     @php
                                                                                         $badgeClass = [
                                                                                             'pending' => 'danger',
-                                                                                            'partial' => 'warning', 
+                                                                                            'partial' => 'warning',
                                                                                             'paid' => 'success'
                                                                                         ][$debt->status] ?? 'secondary';
-                                                                                        
+
                                                                                         $statusLabels = [
                                                                                             'pending' => 'No pagada',
                                                                                             'partial' => 'Abonada',

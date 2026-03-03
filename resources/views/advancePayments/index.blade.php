@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Pagos adelantados')
 
@@ -132,12 +132,12 @@
                 label: 'Pagos',
                 data: data,
                 backgroundColor: [
-                    '#FF1493', 
-                    '#00FF00', 
-                    '#FF0000', 
-                    '#0000FF', 
-                    '#FFFF00', 
-                    '#FF00FF'  
+                    '#FF1493',
+                    '#00FF00',
+                    '#FF0000',
+                    '#0000FF',
+                    '#FFFF00',
+                    '#FF00FF'
                 ],
                 borderColor: '#FFFFFF',
                 borderWidth: 4,

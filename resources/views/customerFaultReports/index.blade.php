@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Mis Reportes de Fallas')
 
@@ -23,7 +23,7 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success mt-2" data-toggle='modal' 
+                                <button class="btn btn-success mt-2" data-toggle='modal'
                                     data-target="#createCustomerFaultReports" title="Registrar Reporte">
                                     <i class="fa fa-plus"></i>
                                     <span class="d-none d-md-inline">Registrar Reporte</span>

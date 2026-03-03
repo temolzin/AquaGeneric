@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Empleados')
 
@@ -119,7 +119,7 @@
                                                         @include('employees.delete')
                                                         @include('employees.show')
                                                         @include('employees.import-modal')
-                                                        @include('employees.create') 
+                                                        @include('employees.create')
                                                     </tr>
                                                 @endforeach
                                             @endif
@@ -140,7 +140,7 @@
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        $(document).ready(function () 
+        $(document).ready(function ()
         {
             $('#employees').DataTable
             ({
@@ -196,7 +196,7 @@
                             <p><strong>Registros importados:</strong> ${response.data.imported}</p>
                             <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
                         `);
-                        
+
                         setTimeout(() => {
                             window.location.reload();
                         }, 3000);
@@ -218,7 +218,7 @@
                 .catch(function(error) {
                     $('#importErrors').removeClass('d-none');
                     let errorMessage = 'Error al importar el archivo. Verifica el formato.';
-                    
+
                     if (error.response && error.response.data && error.response.data.message) {
                         errorMessage = error.response.data.message;
                     }
@@ -240,7 +240,7 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
-            if (errorMessage) 
+            if (errorMessage)
             {
                 Swal.fire
                 ({

@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Tipos de Ingreso')
 
@@ -55,7 +55,7 @@
                                                             <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editEarningType{{ $earningType->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" 
+                                                            <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro"
                                                             data-toggle="modal" data-target="#deleteEarningType{{ $earningType->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
@@ -93,12 +93,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .color-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }

@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Inventario')
 
@@ -29,8 +29,8 @@
                                         <span class="d-none d-md-inline">Registrar Componente</span>
                                         <span class="d-inline d-md-none">Nuevo Componente</span>
                                     </button>
-                                    <a class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank" 
-                                    href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}" 
+                                    <a class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank"
+                                    href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}"
                                     title="Generar Lista">
                                         <i class="fas fa-file-pdf"></i> Generar Lista
                                     </a>
@@ -135,12 +135,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .color-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }
@@ -175,10 +175,10 @@
             var progressContainer = $('#progressContainer');
             var progressBar = $('#progressBar');
             var progressText = $('#progressText');
-            
+
             progressContainer.removeClass('d-none');
             importButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Importando...');
-            
+
             axios.post('{{ route('inventory.import') }}', formData, {
                 headers: {'Content-Type': 'multipart/form-data'},
                 onUploadProgress: function(progressEvent) {
@@ -196,7 +196,7 @@
                 progressBar.css('width', '0%');
                 progressText.text('0%');
                 importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar Datos');
-                
+
                 if (response.data.failed === 0) {
                     $('#importResults').removeClass('d-none');
                     $('#resultsContent').html(`
@@ -204,7 +204,7 @@
                         <p><strong>Registros importados:</strong> ${response.data.imported}</p>
                         <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
                     `);
-                    
+
                     setTimeout(() => {
                         window.location.reload();
                     }, 3000);
@@ -226,11 +226,11 @@
             .catch(function(error) {
                 $('#importErrors').removeClass('d-none');
                 let errorMessage = 'Error al importar el archivo. Verifica el formato.';
-                
+
                 if (error.response && error.response.data && error.response.data.message) {
                     errorMessage = error.response.data.message;
                 }
-                
+
                 $('#errorsContent').html('<p>' + errorMessage + '</p>');
                 progressContainer.addClass('d-none');
                 importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar Datos');

@@ -1,0 +1,22 @@
+@media (max-width: 767.98px) {
+
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .35rem;
+  }
+
+  .pagination .page-item {
+    margin: 0;
+  }
+
+  .pagination .page-link {
+    padding: .35rem .6rem;
+    line-height: 1.2;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .pagination {
+    justify-content: center;
+  }
+}
