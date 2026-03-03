@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -6,23 +7,26 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
+use App\Models\MailConfiguration;
 
 class SendContactFormEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $data;
+    protected $contactData;
 
     /**
      * Create a new job instance.
      *
+     * @param array $contactData
      * @return void
      */
-    public function __construct(array $data)
+    public function __construct(array $contactData)
     {
-        $this->data = $data;
+        $this->contactData = $contactData;
     }
 
     /**
@@ -32,35 +36,40 @@ class SendContactFormEmail implements ShouldQueue
      */
     public function handle()
     {
-        // Determine recipient: prefer MAIL_USERNAME, then mail.from.address, then MAIL_FROM_ADDRESS
-        $to = env('MAIL_USERNAME') ?: config('mail.from.address') ?: env('MAIL_FROM_ADDRESS');
-        if (empty($to)) {
-            return;
+        $contactData = $this->contactData;
+
+        $mailConfig = MailConfiguration::whereNotNull('host')
+            ->whereNotNull('username')
+            ->whereNotNull('password')
+            ->first();
+
+        if (!$mailConfig || !$mailConfig->isComplete()) {
+            throw new \Exception('No hay una configuración de correo válida disponible para enviar el mensaje de contacto.');
         }
 
-        $fromAddress = env('MAIL_FROM_ADDRESS') ?: $to;
-        $fromName = env('MAIL_FROM_NAME') ?: config('app.name');
+        Config::set('mail.mailers.smtp.host', $mailConfig->host);
+        Config::set('mail.mailers.smtp.port', $mailConfig->port);
+        Config::set('mail.mailers.smtp.username', $mailConfig->username);
+        Config::set('mail.mailers.smtp.password', $mailConfig->password);
+        Config::set('mail.mailers.smtp.encryption', $mailConfig->encryption);
+        Config::set('mail.from.address', $mailConfig->username);
+        Config::set('mail.from.name', $mailConfig->from_name ?? 'AquaControl');
 
-        $logoPath = public_path('img/logo.png');
-        $footerPath = public_path('img/rootheim.png');
-        $viewData = array_merge($this->data, [
-            'contactMessage' => $this->data['message'] ?? null,
-        ]);
+        app('mail.manager')->forgetMailers();
 
-        $html = View::make('emails.contactForm', $viewData)->render();
+        Mail::send([], [], function ($message) use ($contactData) {
+            $logoCid = $message->embed(public_path('img/logo.png'));
+            $footerCid = $message->embed(public_path('img/rootheim.png'));
 
-        Mail::send([], [], function ($message) use ($to, $fromAddress, $fromName, $html, $logoPath, $footerPath) {
-            $logoCid = $message->embed($logoPath);
-            $footerCid = $message->embed($footerPath);
+            $html = View::make('emails.contactForm', array_merge($contactData, [
+                'logoCid' => $logoCid,
+                'footerCid' => $footerCid,
+            ]))->render();
 
-            $message->to($to)
-                ->from($fromAddress, $fromName)
-                ->subject('Contacto desde sitio — ' . ($this->data['name'] ?? ''))
+            $message->to(env('CONTACT_FORM_TO_EMAIL'))
+                ->replyTo($contactData['email'], $contactData['name'])
+                ->subject('Nuevo mensaje de contacto - AquaControl')
                 ->setBody($html, 'text/html');
-
-            if (!empty($this->data['email'])) {
-                try { $message->replyTo($this->data['email'], $this->data['name'] ?? null); } catch (\Throwable $e) { /* ignore */ }
-            }
         });
     }
 }

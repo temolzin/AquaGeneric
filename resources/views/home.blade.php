@@ -197,17 +197,34 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <form action="{{ route('contact.send') }}" method="POST" class="main_form">
+                            <form class="main_form" action="{{ route('contact.send') }}" method="POST">
                                 @csrf
+
+                                @if(session('contact_success'))
+                                    <div class="alert alert-success" style="margin-bottom: 15px;">
+                                        {{ session('contact_success') }}
+                                    </div>
+                                @endif
+
+                                @if($errors->any())
+                                    <div class="alert alert-danger" style="margin-bottom: 15px;">
+                                        <ul style="margin: 0; padding-left: 20px;">
+                                            @foreach($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <input name="name" class="form_contril" placeholder="Nombre" type="text" required>
+                                        <input class="form_contril" name="name" placeholder="Nombre" type="text" value="{{ old('name') }}" required>
                                     </div>
                                     <div class="col-md-12">
-                                        <input name="email" class="form_contril" placeholder="Correo electrónico" type="email" required>
+                                        <input class="form_contril" name="email" placeholder="Correo electrónico" type="email" value="{{ old('email') }}" required>
                                     </div>
                                     <div class="col-md-12">
-                                        <textarea name="message" class="textarea" placeholder="Mensaje" required></textarea>
+                                        <textarea class="textarea" name="message" placeholder="Mensaje" required>{{ old('message') }}</textarea>
                                     </div>
                                     <div class="col-sm-12">
                                         <button type="submit" class="send_btn">Enviar mensaje</button>
@@ -292,30 +309,9 @@
                 }
             });
         </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var successMessage = "{{ session('success') }}";
-                if (successMessage) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: successMessage,
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-                var errorMessage = "{{ session('error') }}";
-                if (errorMessage) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: errorMessage,
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-            });
-        </script>
         @endsection
-    
-    <a href="https://wa.me/{{ env('WHATSAPP_NUMBER', '5215619660990') }}?text={{ urlencode(env('WHATSAPP_MESSAGE', 'Hola, estoy interesado en AquaControl. ¿Me pueden ayudar?')) }}" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat por WhatsApp">
-        <i class="fab fa-whatsapp" aria-hidden="true"></i>
-    </a>
+
+        <a href="https://wa.me/{{ env('WHATSAPP_NUMBER', '5215619660990') }}?text={{ urlencode(env('WHATSAPP_MESSAGE', 'Hola, estoy interesado en AquaControl. ¿Me pueden ayudar?')) }}"
+            class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat por WhatsApp">
+            <i class="fab fa-whatsapp" aria-hidden="true"></i>
+        </a>

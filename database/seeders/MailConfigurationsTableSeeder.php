@@ -15,7 +15,7 @@ class MailConfigurationsTableSeeder extends Seeder
     public function run()
     {
         MailConfiguration::updateOrCreate(
-            ['locality_id' => 1],
+            ['locality_id' => null],
             [
                 'mailer' => 'smtp',
                 'host' => 'smtp.gmail.com',
@@ -23,7 +23,7 @@ class MailConfigurationsTableSeeder extends Seeder
                 'username' => 'aquacontrolmailtesting@gmail.com',
                 'password' => 'lfjo iynk oaef lrgp',
                 'encryption' => 'tls',
-                'from_name' => 'Servicios de Agua Smallville',
+                'from_name' => 'AquaControl Contacto',
             ]
         );
 
