@@ -60,6 +60,11 @@ class Customer extends Model implements HasMedia
         return $this->hasMany(Debt::class);
     }
 
+    public function cards()
+    {
+        return $this->hasMany(CustomerCard::class);
+    }
+
     public function locality()
     {
         return $this->belongsTo(Locality::class);

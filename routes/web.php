@@ -36,6 +36,7 @@ use App\Http\Controllers\CustomerFaultReportController;
 use App\Http\Controllers\EarningTypeController;
 use App\Http\Controllers\GeneralEarningController;
 use App\Http\Controllers\OpenPayController;
+use App\Http\Controllers\CustomerCardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -264,6 +265,15 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware' => ['can:viewCustomerDebts']], function () {
         Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
+    });
+
+    Route::group(['middleware' => ['can:viewCustomerDebts']], function () {
+        Route::get('/customerCards', [CustomerCardController::class, 'index'])->name('customerCards.index');
+        Route::post('/customerCards', [CustomerCardController::class, 'store'])->name('customerCards.store');
+        Route::post('/customerCards/{id}/default', [CustomerCardController::class, 'setDefault'])->name('customerCards.setDefault');
+        Route::put('/customerCards/{id}/alias', [CustomerCardController::class, 'updateAlias'])->name('customerCards.updateAlias');
+        Route::delete('/customerCards/{id}', [CustomerCardController::class, 'destroy'])->name('customerCards.destroy');
+        Route::get('/customerCards/for-payment', [CustomerCardController::class, 'getCardsForPayment'])->name('customerCards.forPayment');
     });
 
     Route::group(['middleware' => ['can:viewEarningTypes']], function () {
