@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Estatus de Incidencia')
 
@@ -65,7 +65,7 @@
                                                         </button>
                                                         @endcan
                                                         @can('deleteIncidentStatuses')
-                                                        <button type="button" class="btn {{ $status->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2" title="{{ $status->hasDependencies() ? 'Eliminación no permitida: Existen incidencias asociadas a este estatus.' : 'Eliminar Registro' }}" 
+                                                        <button type="button" class="btn {{ $status->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2" title="{{ $status->hasDependencies() ? 'Eliminación no permitida: Existen incidencias asociadas a este estatus.' : 'Eliminar Registro' }}"
                                                         {{ $status->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#deleteIncidentStatus' . $status->id }}>
                                                         <i class="fas fa-trash-alt"></i>
                                                         </button>
@@ -104,12 +104,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .status-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .status-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }

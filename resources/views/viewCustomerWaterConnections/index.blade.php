@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Mis Tomas de Agua')
 
@@ -67,7 +67,7 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
-                                                    <button type="button" class="btn btn-info mr-2" data-toggle="modal" 
+                                                    <button type="button" class="btn btn-info mr-2" data-toggle="modal"
                                                             title="Ver Detalles" data-target="#view{{ $connection->id }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>

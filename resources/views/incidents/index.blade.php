@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Incidencias')
 
@@ -75,7 +75,7 @@
                                                         <td>{{ $incident->name }}</td>
                                                         <td>
                                                             @forelse ($incident->responsible_employees as $employee)
-                                                                <img src="{{ $employee->getFirstMediaUrl('employeeGallery') ?: asset('img/userDefault.png') }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}" 
+                                                                <img src="{{ $employee->getFirstMediaUrl('employeeGallery') ?: asset('img/userDefault.png') }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}"
                                                                     class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 3px;">
                                                             @empty
                                                                 <span class="text-muted">Sin asignar</span>
@@ -196,12 +196,12 @@
 
     $('#changeStatusForm').on('submit', function(e) {
         e.preventDefault();
-        
+
         var form = $(this);
         var formData = form.serialize();
-        
+
         $.ajax({
-            url: "{{ route('incidents.updateStatus') }}", 
+            url: "{{ route('incidents.updateStatus') }}",
             type: 'POST',
             data: formData,
             success: function(response) {

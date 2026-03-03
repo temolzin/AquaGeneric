@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Mis Pagos')
 
@@ -94,7 +94,7 @@
                                                 @php
                                                     $methodLabels = [
                                                         'cash' => 'Efectivo',
-                                                        'transfer' => 'Transferencia', 
+                                                        'transfer' => 'Transferencia',
                                                         'card' => 'Tarjeta'
                                                     ];
                                                 @endphp
@@ -102,8 +102,8 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
-                                                    <a href="{{ route('viewCustomerPayments.receipt', Crypt::encrypt($payment->id)) }}" 
-                                                       class="btn btn-info mr-2" 
+                                                    <a href="{{ route('viewCustomerPayments.receipt', Crypt::encrypt($payment->id)) }}"
+                                                       class="btn btn-info mr-2"
                                                        target="_blank"
                                                        title="Descargar Comprobante">
                                                         <i class="fas fa-receipt"></i>
@@ -115,7 +115,7 @@
                                     </tbody>
                                 </table>
                                 @endif
-                                
+
                                 @if($payments->total() > $payments->perPage())
                                 <div class="d-flex justify-content-center mt-3">
                                     {!! $payments->links('pagination::bootstrap-4') !!}
@@ -144,7 +144,7 @@
             paging: false,
             info: false,
             searching: false,
-            order: [[1, 'desc']] 
+            order: [[1, 'desc']]
         });
         @endif
 
@@ -180,7 +180,7 @@
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
         let currentQuarter;
-        
+
         switch (true) {
             case (currentMonth >= 1 && currentMonth <= 3):
                 currentQuarter = 1;

@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', 'Suscripción Vencida')
 
@@ -85,15 +85,15 @@
     }
 </style>
 
-@php 
+@php
     use App\Models\User;
 
     $role = auth()->user()->getRoleNames()->first();
-@endphp    
+@endphp
 
 @switch($role)
     @case(User::ROLE_SUPERVISOR)
-    @case(User::ROLE_SECRETARY)    
+    @case(User::ROLE_SECRETARY)
         <div class="subscription-lock-screen">
             <img src="{{ asset('img/logo.png') }}" alt="Logo del sistema">
             <h1>Acceso Restringido</h1>
@@ -114,7 +114,7 @@
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                    </div> 
+                    </div>
                     <div class="modal-body">
                         <p>
                             Si ya realizaste el pago, por favor ingresa el <strong>token de renovación</strong> proporcionado por el administrador para reactivar tu cuenta.
@@ -143,7 +143,7 @@
                 </div>
             </div>
         </div>
-    @break   
+    @break
     @case(User::ROLE_CUSTOMER)
         <div class="subscription-lock-screen">
             <img src="{{ asset('img/logo.png') }}" alt="Logo del sistema">

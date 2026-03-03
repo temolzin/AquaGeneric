@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Clientes')
 
@@ -22,7 +22,9 @@
                                     </form>
                                     <div class="d-none d-lg-flex flex-wrap gap-0" role="group" aria-label="Acciones de Cliente">
                                         <button class="btn btn-success mx-1 my-1" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
-                                            <i class="fa fa-plus"></i> Registrar Cliente
+                                            <i class="fa fa-plus"></i>
+                                            <span class="d-none d-md-inline">Registrar Cliente</span>
+                                            <span class="d-inline d-md-none">Registrar</span>
                                         </button>
                                         <button class="btn bg-purple mx-1 my-1" data-toggle='modal' data-target="#importData" title="Importar Datos">
                                             <i class="fas fa-file-import"></i> Importar Datos
@@ -39,7 +41,9 @@
                                             <div class="col-6 pe-1">
                                                 <button class="btn btn-success w-100 py-2" data-toggle='modal'
                                                         data-target="#createCustomer" title="Registrar Cliente">
-                                                        <i class="fa fa-plus"></i> Registrar Cliente
+                                                        <i class="fa fa-plus"></i>
+                                                        <span class="d-none d-md-inline">Registrar Cliente</span>
+                                                        <span class="d-inline d-md-none">Registrar</span>
                                                 </button>
                                             </div>
                                             <div class="col-6 ps-1">
@@ -186,16 +190,16 @@
 
         $('#importForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             var formData = new FormData(this);
             var importButton = $('#importButton');
             var progressContainer = $('#progressContainer');
             var progressBar = $('#progressBar');
             var progressText = $('#progressText');
-            
+
             progressContainer.removeClass('d-none');
             importButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Importando...');
-            
+
             axios.post('{{ route('customers.import') }}', formData, {
                 headers: {'Content-Type': 'multipart/form-data'},
                 onUploadProgress: function(progressEvent) {
@@ -221,7 +225,7 @@
                         <p><strong>Registros importados:</strong> ${response.data.imported}</p>
                         <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
                     `);
-                    
+
                     setTimeout(() => {
                         window.location.reload();
                     }, 3000);
@@ -243,11 +247,11 @@
             .catch(function(error) {
                 $('#importErrors').removeClass('d-none');
                 let errorMessage = 'Error al importar el archivo. Verifica el formato.';
-                
+
                 if (error.response && error.response.data && error.response.data.message) {
                     errorMessage = error.response.data.message;
                 }
-                
+
                 $('#errorsContent').html('<p>' + errorMessage + '</p>');
                 progressContainer.addClass('d-none');
                 importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar Datos');

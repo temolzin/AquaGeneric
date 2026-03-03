@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Secciones')
 
@@ -83,7 +83,7 @@
                                                             </button>
                                                         @endcan
                                                         @endif
-                                                        <a href="{{ route('reports.pdfSections', ['section_id' => $section->id, 'search' => request('search')]) }}" 
+                                                        <a href="{{ route('reports.pdfSections', ['section_id' => $section->id, 'search' => request('search')]) }}"
                                                            target="_blank" class="btn bg-maroon mr-2" title="Generar Lista de la Sección en PDF">
                                                             <i class="fas fa-file-pdf"></i>
                                                         </a>

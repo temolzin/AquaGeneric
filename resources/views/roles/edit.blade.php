@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', 'Editar rol')
 
@@ -30,7 +30,7 @@
                 <label for="name">Permisos</label>
                 <div id="accordionPermissions">
                     @foreach ($permissions as $module => $perms)
-                        <div class="card mb-2" style="border-radius: 8px; border: 1px solid #e6e6e6;">  
+                        <div class="card mb-2" style="border-radius: 8px; border: 1px solid #e6e6e6;">
                             <div class="p-3 d-flex justify-content-between align-items-center"
                                 data-toggle="collapse"
                                 data-target="#module-{{ $module }}"
@@ -57,7 +57,7 @@
                                             @foreach ($perms as $permission)
                                                 <tr>
                                                     <td class="text-center">
-                                                        <div 
+                                                        <div
                                                             class="custom-control custom-checkbox">
                                                             <input type="checkbox"
                                                                 class="custom-control-input perm-checkbox module-{{ $module }}"
@@ -66,8 +66,8 @@
                                                                 value="{{ $permission->id }}"
                                                                 {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
                                                             <label class="custom-control-label"
-                                                                for="permission{{ $permission->id }}"></label>        
-                                                        </div>            
+                                                                for="permission{{ $permission->id }}"></label>
+                                                        </div>
                                                     </td>
                                                     <td>{{ $permission->description }}</td>
                                                 </tr>
