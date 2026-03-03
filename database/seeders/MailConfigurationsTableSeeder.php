@@ -15,7 +15,7 @@ class MailConfigurationsTableSeeder extends Seeder
     public function run()
     {
         MailConfiguration::updateOrCreate(
-            ['locality_id' => null],
+            ['locality_id' => 1],
             [
                 'mailer' => 'smtp',
                 'host' => 'smtp.gmail.com',
@@ -23,7 +23,7 @@ class MailConfigurationsTableSeeder extends Seeder
                 'username' => 'aquacontrolmailtesting@gmail.com',
                 'password' => 'lfjo iynk oaef lrgp',
                 'encryption' => 'tls',
-                'from_name' => 'AquaControl Contacto',
+                'from_name' => 'Servicios de Agua Smallville',
             ]
         );
 
@@ -37,6 +37,19 @@ class MailConfigurationsTableSeeder extends Seeder
                 'password' => 'springfield_pass',
                 'encryption' => 'ssl',
                 'from_name' => 'Springfield Water Dept',
+            ]
+        );
+
+        MailConfiguration::updateOrCreate(
+            ['locality_id' => null],
+            [
+                'mailer' => 'smtp',
+                'host' => 'smtp.gmail.com',
+                'port' => 587,
+                'username' => 'aquacontrolmailtesting@gmail.com',
+                'password' => 'lfjo iynk oaef lrgp',
+                'encryption' => 'tls',
+                'from_name' => 'AquaControl',
             ]
         );
     }

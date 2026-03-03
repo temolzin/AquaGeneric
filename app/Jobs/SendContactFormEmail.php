@@ -18,27 +18,17 @@ class SendContactFormEmail implements ShouldQueue
 
     protected $contactData;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param array $contactData
-     * @return void
-     */
     public function __construct(array $contactData)
     {
         $this->contactData = $contactData;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
         $contactData = $this->contactData;
 
-        $mailConfig = MailConfiguration::whereNotNull('host')
+        $mailConfig = MailConfiguration::whereNull('locality_id')
+            ->whereNotNull('host')
             ->whereNotNull('username')
             ->whereNotNull('password')
             ->first();
@@ -47,6 +37,9 @@ class SendContactFormEmail implements ShouldQueue
             throw new \Exception('No hay una configuración de correo válida disponible para enviar el mensaje de contacto.');
         }
 
+        // Configuración dinámica SMTP
+        Config::set('mail.default', 'smtp');
+        Config::set('mail.mailers.smtp.transport', 'smtp');
         Config::set('mail.mailers.smtp.host', $mailConfig->host);
         Config::set('mail.mailers.smtp.port', $mailConfig->port);
         Config::set('mail.mailers.smtp.username', $mailConfig->username);
@@ -55,6 +48,7 @@ class SendContactFormEmail implements ShouldQueue
         Config::set('mail.from.address', $mailConfig->username);
         Config::set('mail.from.name', $mailConfig->from_name ?? 'AquaControl');
 
+        // Reiniciar mailer en memoria
         app('mail.manager')->forgetMailers();
 
         Mail::send([], [], function ($message) use ($contactData) {
@@ -66,7 +60,7 @@ class SendContactFormEmail implements ShouldQueue
                 'footerCid' => $footerCid,
             ]))->render();
 
-            $message->to(env('CONTACT_FORM_TO_EMAIL'))
+            $message->to(config('mail.contact_form_to'))
                 ->replyTo($contactData['email'], $contactData['name'])
                 ->subject('Nuevo mensaje de contacto - AquaControl')
                 ->setBody($html, 'text/html');
