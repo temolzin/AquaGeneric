@@ -21,6 +21,10 @@ class PaymentsTableSeeder extends Seeder
         $debtIds = DB::table('debts')->pluck('id');
         $userIds = DB::table('users')->pluck('id')->toArray();
 
+        $alonsoCustomerId = DB::table('customers')
+            ->where('user_id', 5)
+            ->value('id');
+
         foreach ($debtIds as $debtId) {
             $debt = DB::table('debts')->find($debtId);
 
@@ -28,27 +32,44 @@ class PaymentsTableSeeder extends Seeder
                 $waterConnection = DB::table('water_connections')->where('id', $debt->water_connection_id)->first();
 
                 if ($waterConnection) {
-                    $remainingDebt = $debt->debt_current;
+                    if ($waterConnection->customer_id == $alonsoCustomerId) {
+                        if ($debt->debt_current > 0) {
+                            $createdAt = $this->getRandomCreatedAt();
+                            $updatedAt = $createdAt;
 
-                    while ($remainingDebt > 0) {
-                        $amount = ($remainingDebt < self::MIN_AMOUNT)
-                            ? $remainingDebt
-                            : rand(self::MIN_AMOUNT, min($remainingDebt, $debt->debt_current));
+                            $payments[] = $this->createPayment(
+                                $debt,
+                                $userIds,
+                                $faker,
+                                (int)$debt->debt_current,
+                                $createdAt,
+                                $updatedAt,
+                                $waterConnection->customer_id
+                            );
+                        }
+                    } else {
+                        $remainingDebt = $debt->debt_current;
 
-                        $remainingDebt -= $amount;
+                        while ($remainingDebt > 0) {
+                            $amount = ($remainingDebt < self::MIN_AMOUNT)
+                                ? $remainingDebt
+                                : rand(self::MIN_AMOUNT, min($remainingDebt, $debt->debt_current));
 
-                        $createdAt = $this->getRandomCreatedAt();
-                        $updatedAt = $createdAt;
+                            $remainingDebt -= $amount;
 
-                        $payments[] = $this->createPayment(
-                            $debt,
-                            $userIds,
-                            $faker,
-                            $amount,
-                            $createdAt,
-                            $updatedAt,
-                            $waterConnection->customer_id
-                        );
+                            $createdAt = $this->getRandomCreatedAt();
+                            $updatedAt = $createdAt;
+
+                            $payments[] = $this->createPayment(
+                                $debt,
+                                $userIds,
+                                $faker,
+                                $amount,
+                                $createdAt,
+                                $updatedAt,
+                                $waterConnection->customer_id
+                            );
+                        }
                     }
                 }
             }

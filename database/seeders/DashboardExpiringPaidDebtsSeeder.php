@@ -18,9 +18,14 @@ class DashboardExpiringPaidDebtsSeeder extends Seeder
         $faker = Faker::create();
         $today = Carbon::today();
         $limitDate = $today->copy()->addDays(self::DASHBOARD_EXPIRING_DAYS);
-        
+
+        $alonsoCustomerId = DB::table('customers')
+            ->where('user_id', 5)
+            ->value('id') ?? 0;
+
         $customerIdsWithEmail = DB::table('customers')
             ->whereNotNull('email')
+            ->where('id', '!=', $alonsoCustomerId)
             ->pluck('id');
 
         $validConnections = DB::table('water_connections')

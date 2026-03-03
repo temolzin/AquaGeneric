@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
 use App\Models\Customer;
 use App\Models\User;
+use App\Models\Locality;
 
 class CustomersTableSeeder extends Seeder
 {
@@ -53,6 +54,34 @@ class CustomersTableSeeder extends Seeder
                 'locality_id' => $locality_id,
                 'created_by' => $faker->randomElement($userIds),
             ]);
+        }
+
+        // Agregar cliente Alonso específico
+        $alonso = User::find(5);
+        if ($alonso) {
+            $locality = Locality::where('name', 'Smallville')->first();
+            if ($locality) {
+                Customer::updateOrCreate(
+                    ['user_id' => $alonso->id],
+                    [
+                        'name' => 'Alonso',
+                        'last_name' => 'Gutiérrez López',
+                        'email' => $alonso->email,
+                        'locality' => 'Smallville',
+                        'state' => 'Kansas',
+                        'zip_code' => '66002',
+                        'block' => '1',
+                        'street' => 'Calle Principal',
+                        'exterior_number' => '123',
+                        'interior_number' => '',
+                        'marital_status' => 0,
+                        'status' => 1,
+                        'responsible_name' => null,
+                        'locality_id' => $locality->id,
+                        'created_by' => 1,
+                    ]
+                );
+            }
         }
     }
 }
