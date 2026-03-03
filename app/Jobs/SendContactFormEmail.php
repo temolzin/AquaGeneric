@@ -37,7 +37,6 @@ class SendContactFormEmail implements ShouldQueue
             throw new \Exception('No hay una configuración de correo válida disponible para enviar el mensaje de contacto.');
         }
 
-        // Configuración dinámica SMTP
         Config::set('mail.default', 'smtp');
         Config::set('mail.mailers.smtp.transport', 'smtp');
         Config::set('mail.mailers.smtp.host', $mailConfig->host);
@@ -48,7 +47,6 @@ class SendContactFormEmail implements ShouldQueue
         Config::set('mail.from.address', $mailConfig->username);
         Config::set('mail.from.name', $mailConfig->from_name ?? 'AquaControl');
 
-        // Reiniciar mailer en memoria
         app('mail.manager')->forgetMailers();
 
         Mail::send([], [], function ($message) use ($contactData) {
