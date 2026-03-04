@@ -23,17 +23,31 @@ class DebtsTableSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        $waterConnectionIds = DB::table('water_connections')->pluck('id')->toArray();
-
         $startDate = Carbon::createFromDate(2024, 1, 1);
         $endDate = Carbon::createFromDate(2024, 12, 31);
 
+        $alonsoCustomerId = DB::table('customers')
+            ->where('user_id', 5)
+            ->value('id');
+
+        $waterConnectionIds = DB::table('water_connections')
+            ->where('customer_id', '!=', $alonsoCustomerId)
+            ->pluck('id')
+            ->toArray();
         foreach (range(1, self::DEBT_COUNT) as $index) {
+            if (empty($waterConnectionIds)) {
+                break;
+            }
+
             $waterConnectionId = $faker->randomElement($waterConnectionIds);
             $waterConnection = DB::table('water_connections')->find($waterConnectionId);
-            
+
+            if (!$waterConnection) {
+                continue;
+            }
+
             $createdBy = $this->getUserForLocality($waterConnection->locality_id);
-            
+
             if (!$createdBy) {
                 continue;
             }
@@ -49,7 +63,6 @@ class DebtsTableSeeder extends Seeder
             $amount = rand(self::MIN_AMOUNT, self::MAX_AMOUNT);
             $paymentAmount = rand(0, $amount);
             $debtCurrent = $amount - $paymentAmount;
-
             $status = $this->determineDebtStatus($paymentAmount, $debtCurrent);
 
             DB::table('debts')->insert([
@@ -66,6 +79,51 @@ class DebtsTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+        }
+
+        if ($alonsoCustomerId) {
+            $alonsoWaterConnections = DB::table('water_connections')
+                ->where('customer_id', $alonsoCustomerId)
+                ->orderBy('id', 'asc')
+                ->get();
+
+            $smallvilleLocality = DB::table('localities')->where('name', 'Smallville')->first();
+            if ($smallvilleLocality) {
+                $createdBy = $this->getUserForLocality($smallvilleLocality->id);
+
+                if ($createdBy && $alonsoWaterConnections->count() >= 2) {
+                    $alonsoStartDate = Carbon::now()->subMonths(2);
+                    $alonsoEndDate = Carbon::now()->subMonths(1);
+                    DB::table('debts')->insert([
+                        'water_connection_id' => $alonsoWaterConnections[0]->id,
+                        'locality_id' => $smallvilleLocality->id,
+                        'created_by' => $createdBy,
+                        'start_date' => $alonsoStartDate,
+                        'end_date' => $alonsoEndDate,
+                        'amount' => 500.00,
+                        'debt_current' => 250.00,
+                        'status' => 'partial',
+                        'note' => 'Deuda del mes anterior',
+                        'deleted_at' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                    DB::table('debts')->insert([
+                        'water_connection_id' => $alonsoWaterConnections[1]->id,
+                        'locality_id' => $smallvilleLocality->id,
+                        'created_by' => $createdBy,
+                        'start_date' => $alonsoEndDate->copy()->addDay(),
+                        'end_date' => Carbon::now(),
+                        'amount' => 350.00,
+                        'debt_current' => 175.00,
+                        'status' => 'partial',
+                        'note' => 'Deuda actual',
+                        'deleted_at' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
         }
     }
 

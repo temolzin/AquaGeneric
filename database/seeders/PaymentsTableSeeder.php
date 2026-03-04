@@ -21,41 +21,71 @@ class PaymentsTableSeeder extends Seeder
         $debtIds = DB::table('debts')->pluck('id');
         $userIds = DB::table('users')->pluck('id')->toArray();
 
+        $alonsoCustomerId = DB::table('customers')
+            ->where('user_id', 5)
+            ->value('id');
+
         foreach ($debtIds as $debtId) {
             $debt = DB::table('debts')->find($debtId);
 
-            if ($debt) {
-                $waterConnection = DB::table('water_connections')->where('id', $debt->water_connection_id)->first();
-
-                if ($waterConnection) {
-                    $remainingDebt = $debt->debt_current;
-
-                    while ($remainingDebt > 0) {
-                        $amount = ($remainingDebt < self::MIN_AMOUNT)
-                            ? $remainingDebt
-                            : rand(self::MIN_AMOUNT, min($remainingDebt, $debt->debt_current));
-
-                        $remainingDebt -= $amount;
-
-                        $createdAt = $this->getRandomCreatedAt();
-                        $updatedAt = $createdAt;
-
-                        $payments[] = $this->createPayment(
-                            $debt,
-                            $userIds,
-                            $faker,
-                            $amount,
-                            $createdAt,
-                            $updatedAt,
-                            $waterConnection->customer_id
-                        );
-                    }
-                }
+            if (!$debt) {
+                continue;
             }
+
+            $waterConnection = DB::table('water_connections')->where('id', $debt->water_connection_id)->first();
+
+            if (!$waterConnection) {
+                continue;
+            }
+
+            ($waterConnection->customer_id == $alonsoCustomerId)
+                ? $this->handleAlonsoPayment($debt, $userIds, $faker, $waterConnection, $payments)
+                : $this->handleRegularPayment($debt, $userIds, $faker, $waterConnection, $payments);
         }
 
-
         DB::table('payments')->insert($payments);
+    }
+
+    private function handleAlonsoPayment($debt, array $userIds, $faker, $waterConnection, &$payments)
+    {
+        if ($debt->debt_current > 0) {
+            $createdAt = $this->getRandomCreatedAt();
+
+            $payments[] = $this->createPayment(
+                $debt,
+                $userIds,
+                $faker,
+                (int)$debt->debt_current,
+                $createdAt,
+                $createdAt,
+                $waterConnection->customer_id
+            );
+        }
+    }
+
+    private function handleRegularPayment($debt, array $userIds, $faker, $waterConnection, &$payments)
+    {
+        $remainingDebt = $debt->debt_current;
+
+        while ($remainingDebt > 0) {
+            $amount = ($remainingDebt < self::MIN_AMOUNT)
+                ? $remainingDebt
+                : rand(self::MIN_AMOUNT, min($remainingDebt, $debt->debt_current));
+
+            $remainingDebt -= $amount;
+
+            $createdAt = $this->getRandomCreatedAt();
+
+            $payments[] = $this->createPayment(
+                $debt,
+                $userIds,
+                $faker,
+                $amount,
+                $createdAt,
+                $createdAt,
+                $waterConnection->customer_id
+            );
+        }
     }
 
     private function getRandomCreatedAt(): Carbon
