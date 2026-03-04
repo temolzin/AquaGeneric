@@ -39,5 +39,18 @@ class MailConfigurationsTableSeeder extends Seeder
                 'from_name' => 'Springfield Water Dept',
             ]
         );
+
+        MailConfiguration::updateOrCreate(
+            ['locality_id' => null],
+            [
+                'mailer' => 'smtp',
+                'host' => 'smtp.gmail.com',
+                'port' => 587,
+                'username' => 'aquacontrolmailtesting@gmail.com',
+                'password' => 'lfjo iynk oaef lrgp',
+                'encryption' => 'tls',
+                'from_name' => 'AquaControl',
+            ]
+        );
     }
 }

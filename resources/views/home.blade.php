@@ -197,19 +197,37 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <form class="main_form">
+                            <form class="main_form" action="{{ route('contact.send') }}" method="POST">
+                                @csrf
+
+                                @if(session('contact_success'))
+                                    <div class="alert alert-success" style="margin-bottom: 15px;">
+                                        {{ session('contact_success') }}
+                                    </div>
+                                @endif
+
+                                @if($errors->any())
+                                    <div class="alert alert-danger" style="margin-bottom: 15px;">
+                                        <ul style="margin: 0; padding-left: 20px;">
+                                            @foreach($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <input class="form_contril" placeholder="Nombre" type="text">
+                                        <input class="form_contril" name="name" placeholder="Nombre" type="text" value="{{ old('name') }}" required>
                                     </div>
                                     <div class="col-md-12">
-                                        <input class="form_contril" placeholder="Correo electrónico" type="email">
+                                        <input class="form_contril" name="email" placeholder="Correo electrónico" type="email" value="{{ old('email') }}" required>
                                     </div>
                                     <div class="col-md-12">
-                                        <textarea class="textarea" placeholder="Mensaje"></textarea>
+                                        <textarea class="textarea" name="message" placeholder="Mensaje" required>{{ old('message') }}</textarea>
                                     </div>
                                     <div class="col-sm-12">
-                                        <button class="send_btn">Enviar mensaje</button>
+                                        <button type="submit" class="send_btn">Enviar mensaje</button>
                                     </div>
                                 </div>
                             </form>
@@ -292,3 +310,8 @@
             });
         </script>
         @endsection
+
+        <a href="https://wa.me/{{ env('WHATSAPP_NUMBER') }}?text={{ urlencode(env('WHATSAPP_MESSAGE', 'Hola, estoy interesado en AquaControl. ¿Me pueden ayudar?')) }}"
+            class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat por WhatsApp">
+            <i class="fab fa-whatsapp" aria-hidden="true"></i>
+        </a>
