@@ -37,6 +37,7 @@ use App\Http\Controllers\EarningTypeController;
 use App\Http\Controllers\GeneralEarningController;
 use App\Http\Controllers\OpenPayController;
 use App\Http\Controllers\CustomerCardController;
+use App\Http\Controllers\LocalityOpenPayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -134,6 +135,10 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::post('/localities/generateTeoken', [LocalityController::class, 'generateToken'])->name('localities.generateToken');
         Route::post('/localities/{locality}/update-pdf-background', [LocalityController::class, 'updatePdfBackground'])->name('localities.updatePdfBackground');
         Route::get('/reports/movements/generate', [MovementHistoryController::class, 'generatePDF'])->name('reports.generatePdfMovementsHistory');
+        
+        Route::put('/localities/{locality}/openpay', [LocalityOpenPayController::class, 'update'])->name('localities.openpay.update');
+        Route::get('/localities/{locality}/openpay/test', [LocalityOpenPayController::class, 'testConnection'])->name('localities.openpay.test');
+        Route::get('/localities/{locality}/openpay/webhook-info', [LocalityOpenPayController::class, 'getWebhookUrl'])->name('localities.openpay.webhook-info');
     });
 
     Route::group(['middleware' => ['can:viewWaterConnection']], function () {

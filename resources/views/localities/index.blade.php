@@ -103,6 +103,12 @@
                                                     <button type="button" class="btn bg-navy mr-2" data-toggle="modal" title="Fondo de reporte" data-target="#editPdfBackground{{$locality->id}}">
                                                             <i class="fas fa-fill-drip"></i>
                                                     </button>
+                                                    <button type="button" class="btn {{ $locality->hasOpenPayEnabled() ? 'btn-success' : 'btn-outline-success' }} mr-2" 
+                                                            data-toggle="modal" 
+                                                            title="{{ $locality->hasOpenPayEnabled() ? 'OpenPay configurado' : 'Configurar OpenPay' }}" 
+                                                            data-target="#openpayConfigModal{{$locality->id}}">
+                                                        <i class="fas fa-credit-card"></i>
+                                                    </button>
                                                     @can('deleteLocality')
                                                         @if($locality->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
@@ -136,6 +142,7 @@
                                             @include('localities.editPdfBackground')
                                             @include('localities.tokenModal')
                                             @include('localities.historyModal')
+                                            @include('localities.openpayConfig')
                                         </tr>
                                         @endforeach
                                         @endif

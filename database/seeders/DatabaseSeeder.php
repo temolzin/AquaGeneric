@@ -41,5 +41,6 @@ class DatabaseSeeder extends Seeder
         $this->call(GeneralEarningsSeeder::class);
         $this->call(LogInventorySeeder::class);
         $this->call(CustomerCardsSeeder::class);
+        $this->call(LocalityOpenPaySeeder::class);
     }
 }

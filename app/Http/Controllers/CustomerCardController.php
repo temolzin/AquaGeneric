@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CustomerCard;
 use App\Models\Customer;
+use App\Models\Locality;
 use App\Services\OpenPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,17 +14,23 @@ class CustomerCardController extends Controller
 {
     const MAX_CARDS = 10;
 
-    protected $openPayService;
-
-    public function __construct(OpenPayService $openPayService)
+    protected function getOpenPayServiceForUser(): OpenPayService
     {
-        $this->openPayService = $openPayService;
+        $user = Auth::user();
+        $locality = $user->locality;
+
+        if ($locality && $locality->hasOpenPayEnabled()) {
+            return OpenPayService::forLocality($locality);
+        }
+
+        return OpenPayService::global();
     }
 
     public function index()
     {
         $user = Auth::user();
         $customer = Customer::where('user_id', $user->id)->first();
+        $locality = $user->locality;
 
         if (!$customer) {
             return redirect()->route('dashboard')
@@ -35,7 +42,7 @@ class CustomerCardController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('customerCards.index', compact('cards', 'customer'));
+        return view('customerCards.index', compact('cards', 'customer', 'locality'));
     }
 
     public function store(Request $request)
@@ -60,12 +67,20 @@ class CustomerCardController extends Controller
 
         $user = Auth::user();
         $customer = Customer::where('user_id', $user->id)->first();
+        $locality = $user->locality;
 
         if (!$customer) {
             return response()->json([
                 'success' => false,
                 'error' => 'No se encontró un cliente asociado a tu cuenta.',
             ], 404);
+        }
+
+        if (!$locality || !$locality->hasOpenPayEnabled()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'El pago con tarjeta no está habilitado para tu localidad.',
+            ], 400);
         }
 
         $currentCardsCount = CustomerCard::where('customer_id', $customer->id)->count();
@@ -92,7 +107,9 @@ class CustomerCardController extends Controller
             ], 422);
         }
 
-        $result = $this->openPayService->createCard(
+        $openPayService = $this->getOpenPayServiceForUser();
+
+        $result = $openPayService->createCard(
             $request->token_id,
             $request->device_session_id
         );
@@ -208,6 +225,7 @@ class CustomerCardController extends Controller
     {
         $user = Auth::user();
         $customer = Customer::where('user_id', $user->id)->first();
+        $locality = $user->locality;
 
         if (!$customer) {
             return response()->json([
@@ -227,7 +245,10 @@ class CustomerCardController extends Controller
             ], 404);
         }
 
-        $result = $this->openPayService->deleteCard($card->openpay_card_id);
+        if ($locality && $locality->hasOpenPayEnabled()) {
+            $openPayService = $this->getOpenPayServiceForUser();
+            $result = $openPayService->deleteCard($card->openpay_card_id);
+        }
 
         $wasDefault = $card->is_default;
         $card->delete();
