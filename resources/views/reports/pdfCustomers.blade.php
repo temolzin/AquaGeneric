@@ -1,201 +1,37 @@
-@php
-$locality = Auth::user()->locality ?? null;
-$verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
-    ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
-    : public_path('img/backgroundReport.png');
+@extends('reports.layouts.base')
 
-$horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizontal')
-    ? $locality->getFirstMedia('pdfBackgroundHorizontal')->getPath()
-    : public_path('img/customersBackgroundHorizontal.png');
-@endphp
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Lista de Clientes</title>
-        <style>
-            @page {
-                size: A4 portrait;
-                margin: 0;
-            }
+@section('title')
+    Lista de clientes
+@endsection
 
-            html {
-                margin: 0;
-                padding: 15px;
-            }
+@section('subtitle')
+    {{ $localityLine ?? '' }}
+@endsection
 
-            body {
-                height: 100%;
-                margin: 0;
-                padding: 0;
-                background-image: url('file://{{ $verticalBgPath }}');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-            }
-
-            #page_pdf {
-                margin: 40px;
-            }
-
-            .info_empresa {
-                width: 100%;
-                margin-top: 60px;
-                text-align: center;
-                align-content: stretch;
-                font-family: 'Montserrat', sans-serif;
-            }
-
-            .aqua_titulo {
-                font-family: 'Montserrat', sans-serif;
-                font-size: 20pt;
-                font-weight: bold;
-                margin-right: 5px;
-                display: inline-block;
-                text-decoration: none;
-                color: #0B1C80;
-                text-transform: uppercase;
-            }
-
-            p, label, span, table {
-                font-family: 'Montserrat', sans-serif;
-                font-size: 12pt;
-            }
-
-            .h2 {
-                font-family: 'Montserrat', sans-serif;
-                font-size: 15pt;
-            }
-
-            .h3 {
-                font-weight: bold;
-                font-family: 'Montserrat', sans-serif;
-                font-size: 13pt;
-                display: block;
-                color: #0B1C80;
-                text-align: left;
-                margin-bottom: 5px;
-            }
-
-            .textable {
-                text-align: center;
-                font-family: 'Montserrat', sans-serif;
-                font-size: 10pt;
-                color: #FFF;
-            }
-
-            .textcenter {
-                background-color: #FFF;
-                text-align: center;
-                font-size: 9pt;
-                font-family: 'Montserrat', sans-serif;
-            }
-
-            #reporte_detalle {
-                border-collapse: collapse;
-                width: 100%;
-                margin-bottom: 150px;
-                page-break-inside: auto;
-            }
-
-            #reporte_detalle thead th {
-                background: #0B1C80;
-                color: #FFF;
-                padding: 5px;
-            }
-
-            #detalle_clientes tr {
-                border-top: 1px solid #bfc9ff;
-            }
-
-            .info_Eabajo {
-                text-align: center;
-                margin-top: 22px;
-                padding: 10px;
-                position: absolute;
-                bottom: 1px;
-                left: 20px;
-                right: 20px;
-            }
-
-            .text_infoE {
-                text-align: center;
-                font-size: 10pt;
-                font-family: 'Montserrat', sans-serif;
-                color: white;
-                text-decoration: none;
-                display: inline-block;
-            }
-
-            #reporte_head {
-                justify-content: center;
-            }
-
-            #reporte_head .logo {
-                height: auto;
-                margin-left: 60px;
-            }
-
-            #reporte_head .logo img {
-                border-radius: 50%;
-                width: 120px;
-                height: 120px;
-            }
-
-            .title {
-                color: #0B1C80;
-                font-family: 'Montserrat', sans-serif;
-                font-size: 12pt;
-                text-align: center;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="page_pdf">
-            <table id="reporte_head">
+@section('content')
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th style="width:60px;">ID</th>
+                <th>NOMBRE</th>
+                <th>DIRECCIÓN</th>
+                <th style="width:90px;">NUM. TOMAS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($customers as $customer)
                 <tr>
+                    <td class="center">{{ $customer->id }}</td>
+                    <td>{{ $customer->name }} {{ $customer->last_name }}</td>
                     <td>
-                        <div class="logo">
-                            @if ($authUser->locality->hasMedia('localityGallery'))
-                                <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $authUser->locality->name }}">
-                            @else
-                                <img src='img/localityDefault.png' alt="Default Photo">
-                            @endif
-                        </div>
+                        {{ $customer->street }}
+                        No. Ext. {{ $customer->exterior_number ?? '—' }}
+                        No. Int. {{ $customer->interior_number ?? '—' }}
+                    </td>
+                    <td class="center">{{ $customer->water_connections_count ?? $customer->waterConnections->count() }}
                     </td>
                 </tr>
-            </table>
-            <div class="info_empresa">
-                <p class="aqua_titulo">
-                    COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUser->locality->name }}, {{ $authUser->locality->municipality }}, {{ $authUser->locality->state }}
-                </p>
-            </div>
-            <div class="title">
-                <h3>LISTA DE CLIENTES</h3>
-            </div>
-            <table id="reporte_detalle">
-                <thead>
-                    <tr>
-                        <th class="textable">ID</th>
-                        <th class="textable">NOMBRE</th>
-                        <th class="textable">DIRECCIÓN</th>
-                        <th class="textable">NUM. DE TOMAS</th>
-                    </tr>
-                </thead>
-                <tbody id="detalle_clientes">
-                    @foreach ($customers as $customer)
-                        <tr>
-                            <td class="textcenter">{{ $customer->id }}</td>
-                            <td class="textcenter">{{ $customer->name }} {{ $customer->last_name }}</td>
-                            <td class="textcenter"> {{ $customer->street }} No. Ext.{{ $customer->interior_number }} No. Int.{{ $customer->interior_number }}</td>
-                            <td class="textcenter">{{ $customer->waterConnections->count() }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="info_Eabajo">
-            <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
-            <a class="text_infoE" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a><img src="img/rootheim.png" width="20px" height="15px">
-        </div>
-    </body>
-</html>
+            @endforeach
+        </tbody>
+    </table>
+@endsection

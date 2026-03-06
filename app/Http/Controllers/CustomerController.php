@@ -268,9 +268,55 @@ class CustomerController extends Controller
         $authUser = auth()->user();
         $customers = Customer::where('locality_id', $authUser->locality_id)
             ->with('user')
+            ->withCount('waterConnections')
             ->get();
-        $pdf = PDF::loadView('reports.pdfCustomers', compact('customers', 'authUser'))
+
+        $locality = $authUser->locality;
+
+        // Logo: DomPDF recomienda file:// (ruta absoluta)
+        $logoPath = null;
+        if ($locality && $locality->hasMedia('localityGallery')) {
+            $media = $locality->getFirstMedia('localityGallery');
+            $logoPath = $media ? $media->getPath() : null;
+        } else {
+            $logoPath = public_path('img/localityDefault.png');
+        }
+
+        $localityLine = $locality
+            ? "{$locality->name}, {$locality->municipality}, {$locality->state}"
+            : null;
+
+        $pdf = PDF::loadView('reports.pdfCustomers',  [
+                'authUser'     => $authUser,
+                'customers'    => $customers,
+                'reportTitle'  => 'Lista de Clientes',
+                'generatedAt'  => now()->format('d/m/Y H:i'),
+                'generatedBy'  => $authUser->name ?? $authUser->email,
+                'logoPath'     => $logoPath,
+                'localityLine' => $localityLine,
+            ])
             ->setPaper('A4', 'landscape');
+
+        // Render primero para que exista el canvas con tamaño final
+        $dompdf = $pdf->getDomPDF();
+        $dompdf->render();
+
+        $canvas = $dompdf->getCanvas();
+        $font = $dompdf->getFontMetrics()->get_font("DejaVu Sans", "normal");
+        $size = 9;
+
+        $w = $canvas->get_width();
+        $h = $canvas->get_height();
+
+        // Solo página actual (SIN total)
+        $canvas->page_text(
+            $w - 70,     // X: ajusta si lo quieres más a la derecha/izquierda
+            $h - 24,     // Y: ajusta si lo quieres más arriba/abajo
+            "Página {PAGE_NUM}",
+            $font,
+            $size,
+            [0, 0, 0]
+        );
 
         return $pdf->stream('customers.pdf');
     }
