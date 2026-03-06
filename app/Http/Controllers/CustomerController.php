@@ -273,7 +273,6 @@ class CustomerController extends Controller
 
         $locality = $authUser->locality;
 
-        // Logo: DomPDF recomienda file:// (ruta absoluta)
         $logoPath = null;
         if ($locality && $locality->hasMedia('localityGallery')) {
             $media = $locality->getFirstMedia('localityGallery');
@@ -297,7 +296,6 @@ class CustomerController extends Controller
             ])
             ->setPaper('A4', 'landscape');
 
-        // Render primero para que exista el canvas con tamaño final
         $dompdf = $pdf->getDomPDF();
         $dompdf->render();
 
@@ -308,10 +306,9 @@ class CustomerController extends Controller
         $w = $canvas->get_width();
         $h = $canvas->get_height();
 
-        // Solo página actual (SIN total)
         $canvas->page_text(
-            $w - 70,     // X: ajusta si lo quieres más a la derecha/izquierda
-            $h - 24,     // Y: ajusta si lo quieres más arriba/abajo
+            $w - 70,
+            $h - 24,
             "Página {PAGE_NUM}",
             $font,
             $size,

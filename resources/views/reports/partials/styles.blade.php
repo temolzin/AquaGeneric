@@ -31,7 +31,6 @@
         color: #333;
     }
 
-    /* Aire entre header y tabla (evita empalmes en página 2+) */
     table.report-table { margin-top: 8px; }
 
     table {
@@ -54,8 +53,6 @@
         font-weight: bold;
         text-align: center;
         font-size: 10px;
-
-        /* CLAVE contra “líneas blancas” */
         border: 1px solid #0B1C80;
     }
 

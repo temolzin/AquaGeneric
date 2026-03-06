@@ -7,9 +7,7 @@
                 <strong>AquaControl</strong>
                 <span style="font-size:9px;"> powered by Root Heim Company</span>
             </td>
-
             <td class="right" style="vertical-align:bottom;">
-                {{-- La numeración la dibuja Canvas --}}
             </td>
         </tr>
     </table>
