@@ -116,8 +116,14 @@ class MembershipController extends Controller
 
     public function destroy(Membership $membership)
     {
+        if ($membership->hasDependencies()) {
+            return redirect()->route('memberships.index')
+                ->with('error', 'No se puede eliminar la membresía porque tiene localidades asociadas.');
+        }
         $membership->delete();
-        return redirect()->route('memberships.index')->with('success', 'Membresía eliminada exitosamente.');
+
+        return redirect()->route('memberships.index')
+        ->with('success', 'Membresía eliminada exitosamente.');
     }
 
     public function generateMembershipListReport()
