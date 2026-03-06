@@ -134,8 +134,6 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             text-align: center;
         }
 
-        }
-
         .info_bottom {
             display: inline-block;
         }
