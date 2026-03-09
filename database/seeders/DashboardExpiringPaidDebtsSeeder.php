@@ -53,7 +53,6 @@ class DashboardExpiringPaidDebtsSeeder extends Seeder
                 'note' => 'Dashboard prueba deuda pagada próxima a vencer #' . ($index + 1),
                 'deleted_at' => null,
                 'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
     }

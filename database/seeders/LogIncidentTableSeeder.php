@@ -57,7 +57,6 @@ class LogIncidentTableSeeder extends Seeder
                 [
                     'employee_id' => $log['employee_id'],
                     'created_by' => $log['created_by'],
-                    'updated_at' => now(),
                 ]
             );
         }

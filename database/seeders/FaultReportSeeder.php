@@ -54,7 +54,6 @@ class FaultReportSeeder extends Seeder
                 'status'        => $faker->randomElement($statuses),
                 'date_report'   => $faker->dateTimeBetween('-6 months', 'now'),
                 'created_at'    => now(),
-                'updated_at'    => now(),
                 'deleted_at'    => null,
             ]);
         }

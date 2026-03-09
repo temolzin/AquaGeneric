@@ -74,7 +74,6 @@ class LogInventorySeeder extends Seeder
                     'amount' => $currentAmount,
                     'description' => $description . " (" . ($change >= 0 ? "+" : "") . $change . ")",
                     'created_at' => $createdAt,
-                    'updated_at' => $createdAt,
                 ];
                 
                 $currentAmount = $previousAmount;

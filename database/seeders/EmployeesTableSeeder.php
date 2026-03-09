@@ -51,7 +51,6 @@ class EmployeesTableSeeder extends Seeder
                 'locality_id' => $locality_id,
                 'created_by' => $faker->randomElement($userIds),
                 'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
     }

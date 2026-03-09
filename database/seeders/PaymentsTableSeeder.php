@@ -106,7 +106,6 @@ class PaymentsTableSeeder extends Seeder
             'note' => 'Pago correspondiente a la deuda #' . $debt->id . ' en localidad ' . $debt->locality_id,
             'deleted_at' => null,
             'created_at' => $createdAt,
-            'updated_at' => $updatedAt,
         ];
     }
 }
