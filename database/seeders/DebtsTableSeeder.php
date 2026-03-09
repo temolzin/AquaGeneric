@@ -15,16 +15,8 @@ class DebtsTableSeeder extends Seeder
     private const MAX_AMOUNT = 1000;
     private const DEBT_STATUSES = ['pending','partial','paid'];
 
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        DB::table('payments')->delete();
-        DB::table('debts')->delete();
-        
         $faker = Faker::create();
         $startDate = Carbon::createFromDate(2024, 1, 1);
         $endDate = Carbon::createFromDate(2024, 12, 31);

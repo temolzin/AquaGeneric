@@ -21,17 +21,17 @@ class IncidentSeeder extends Seeder
         foreach (Locality::all() as $locality) {
             $createdBy = $this->getUserForLocality($locality->id);
             
-            $pendienteId = IncidentStatus::where('status', 'Pendiente')
+            $pendingId = IncidentStatus::where('status', 'Pendiente')
                 ->where('locality_id', $locality->id)
                 ->value('id');
-            $enProgresoId = IncidentStatus::where('status', 'En progreso')
+            $inProgressId = IncidentStatus::where('status', 'En progreso')
                 ->where('locality_id', $locality->id)
                 ->value('id');
 
-            $plomeriaId = IncidentCategory::where('name', 'Plomería')
+            $plumbingId = IncidentCategory::where('name', 'Plomería')
                 ->where('locality_id', $locality->id)
                 ->value('id');
-            $electricaId = IncidentCategory::where('name', 'Eléctrica')
+            $electricalId = IncidentCategory::where('name', 'Eléctrica')
                 ->where('locality_id', $locality->id)
                 ->value('id');
 
@@ -39,18 +39,18 @@ class IncidentSeeder extends Seeder
                 [
                     'name' => 'Falla en iluminación',
                     'description' => 'No funcionan las luces del pasillo principal.',
-                    'status_id' => $pendienteId,
+                    'status_id' => $pendingId,
                     'start_date' => Carbon::now()->subDays(3)->toDateString(),
-                    'category_id' => $electricaId,
+                    'category_id' => $electricalId,
                     'locality_id' => $locality->id,
                     'created_by' => $createdBy,
                 ],
                 [
                     'name' => 'Fuga en baño',
                     'description' => 'Se reporta fuga de agua en el baño de hombres.',
-                    'status_id' => $enProgresoId,
+                    'status_id' => $inProgressId,
                     'start_date' => Carbon::now()->subDays(2)->toDateString(),
-                    'category_id' => $plomeriaId,
+                    'category_id' => $plumbingId,
                     'locality_id' => $locality->id,
                     'created_by' => $createdBy,
                 ],
