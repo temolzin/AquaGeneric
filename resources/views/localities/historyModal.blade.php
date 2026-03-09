@@ -21,6 +21,7 @@
                             <option value="costos">Costos</option>
                             <option value="deudas">Deudas</option>
                             <option value="gastos">Gastos</option>
+                            <option value="ingresos">Ingresos</option>
                         </select>
                     </div>
                     <div class="form-group"> 
