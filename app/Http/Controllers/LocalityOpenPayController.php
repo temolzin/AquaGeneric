@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Locality;
+use App\Models\OpenPayWebhookVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Crypt;
@@ -72,8 +73,6 @@ class LocalityOpenPayController extends Controller
         try {
             $service = \App\Services\OpenPayService::forLocality($locality);
             
-            // Hacer una llamada REAL a la API de OpenPay para verificar credenciales
-            // Intentamos obtener la lista de clientes (limitado a 1) para validar la conexión
             $result = $service->testCredentials();
             
             if ($result['success']) {
@@ -109,5 +108,44 @@ class LocalityOpenPayController extends Controller
             'locality_id' => $locality->id,
             'instructions' => 'Configura esta URL en tu panel de OpenPay. El webhook es único para todas las localidades y el sistema identifica automáticamente la localidad por la transacción.',
         ]);
+    }
+
+    public function webhookVerifications()
+    {
+        $verifications = OpenPayWebhookVerification::orderBy('created_at', 'desc')
+            ->take(50)
+            ->get();
+
+        return view('localities.webhookVerifications', compact('verifications'));
+    }
+
+    public function webhookVerificationsApi()
+    {
+        $verifications = OpenPayWebhookVerification::orderBy('created_at', 'desc')
+            ->take(20)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'verifications' => $verifications,
+        ]);
+    }
+
+    public function deleteVerification($id)
+    {
+        $verification = OpenPayWebhookVerification::find($id);
+        
+        if ($verification) {
+            $verification->delete();
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'No encontrado'], 404);
+    }
+
+    public function clearVerifications()
+    {
+        OpenPayWebhookVerification::truncate();
+        return response()->json(['success' => true, 'message' => 'Todos los códigos han sido eliminados']);
     }
 }

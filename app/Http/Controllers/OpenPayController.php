@@ -246,6 +246,14 @@ class OpenPayController extends Controller
                 ]);
 
                 if ($verificationCode) {
+                    \App\Models\OpenPayWebhookVerification::create([
+                        'verification_code' => $verificationCode,
+                        'openpay_event_id' => $data['id'] ?? null,
+                        'event_date' => isset($data['event_date']) ? \Carbon\Carbon::parse($data['event_date']) : now(),
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
+                    ]);
+
                     return response($verificationCode, 200)
                         ->header('Content-Type', 'text/plain');
                 }

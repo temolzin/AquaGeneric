@@ -139,6 +139,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::put('/localities/{locality}/openpay', [LocalityOpenPayController::class, 'update'])->name('localities.openpay.update');
         Route::get('/localities/{locality}/openpay/test', [LocalityOpenPayController::class, 'testConnection'])->name('localities.openpay.test');
         Route::get('/localities/{locality}/openpay/webhook-info', [LocalityOpenPayController::class, 'getWebhookUrl'])->name('localities.openpay.webhook-info');
+        
+        Route::get('/openpay/webhook-verifications', [LocalityOpenPayController::class, 'webhookVerifications'])->name('openpay.webhook.verifications');
+        Route::get('/openpay/webhook-verifications/api', [LocalityOpenPayController::class, 'webhookVerificationsApi'])->name('openpay.webhook.verifications.api');
+        Route::delete('/openpay/webhook-verifications/{id}', [LocalityOpenPayController::class, 'deleteVerification'])->name('openpay.webhook.verifications.delete');
+        Route::delete('/openpay/webhook-verifications', [LocalityOpenPayController::class, 'clearVerifications'])->name('openpay.webhook.verifications.clear');
     });
 
     Route::group(['middleware' => ['can:viewWaterConnection']], function () {
