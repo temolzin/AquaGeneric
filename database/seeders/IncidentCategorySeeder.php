@@ -55,7 +55,6 @@ class IncidentCategorySeeder extends Seeder
                         'description' => $categoryConfig['description'],
                         'color' => $categoryConfig['color'],
                         'created_by' => $createdBy,
-                        'updated_at' => now(),
                     ]
                 );
             }

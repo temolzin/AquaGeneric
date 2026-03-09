@@ -72,7 +72,6 @@ class LocalityNoticesSeeder extends Seeder
                         'created_by' => $faker->randomElement($userIds),
                         'attachment_url' => null,
                         'created_at' => now(),
-                        'updated_at' => now(),
                     ]);
                 }
             }

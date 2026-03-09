@@ -34,7 +34,6 @@ class GeneralEarningsSeeder extends Seeder
                     ->where('id', $earning->id)
                     ->update([
                         'earning_type_id' => $earningType->id,
-                        'updated_at' => now()
                     ]);
             } else {
                 $generalType = EarningType::where('name', 'Operación Administrativa')

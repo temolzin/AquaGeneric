@@ -21,36 +21,30 @@ class IncidentSeeder extends Seeder
         foreach (Locality::all() as $locality) {
             $createdBy = $this->getUserForLocality($locality->id);
             
-            $pendingId = IncidentStatus::where('status', 'Pendiente')
-                ->where('locality_id', $locality->id)
-                ->value('id');
-            $inProgressId = IncidentStatus::where('status', 'En progreso')
-                ->where('locality_id', $locality->id)
-                ->value('id');
+            $statusIds = IncidentStatus::where('locality_id', $locality->id)
+                ->pluck('id')
+                ->toArray();
 
-            $plumbingId = IncidentCategory::where('name', 'Plomería')
-                ->where('locality_id', $locality->id)
-                ->value('id');
-            $electricalId = IncidentCategory::where('name', 'Eléctrica')
-                ->where('locality_id', $locality->id)
-                ->value('id');
+            $categoryIds = IncidentCategory::where('locality_id', $locality->id)
+                ->pluck('id')
+                ->toArray();
 
             $incidents = [
                 [
                     'name' => 'Falla en iluminación',
                     'description' => 'No funcionan las luces del pasillo principal.',
-                    'status_id' => $pendingId,
+                    'status_id' => $statusIds[array_rand($statusIds)] ?? null,
                     'start_date' => Carbon::now()->subDays(3)->toDateString(),
-                    'category_id' => $electricalId,
+                    'category_id' => $categoryIds[array_rand($categoryIds)] ?? null,
                     'locality_id' => $locality->id,
                     'created_by' => $createdBy,
                 ],
                 [
                     'name' => 'Fuga en baño',
                     'description' => 'Se reporta fuga de agua en el baño de hombres.',
-                    'status_id' => $inProgressId,
+                    'status_id' => $statusIds[array_rand($statusIds)] ?? null,
                     'start_date' => Carbon::now()->subDays(2)->toDateString(),
-                    'category_id' => $plumbingId,
+                    'category_id' => $categoryIds[array_rand($categoryIds)] ?? null,
                     'locality_id' => $locality->id,
                     'created_by' => $createdBy,
                 ],
@@ -68,7 +62,6 @@ class IncidentSeeder extends Seeder
                         'start_date' => $incident['start_date'],
                         'category_id' => $incident['category_id'],
                         'created_by' => $incident['created_by'],
-                        'updated_at' => now(),
                     ]
                 );
             }

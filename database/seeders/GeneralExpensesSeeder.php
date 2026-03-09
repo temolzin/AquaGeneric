@@ -97,7 +97,6 @@ class GeneralExpensesSeeder extends Seeder
                     'amount' => mt_rand(10, 50) * 100,
                     'expense_date' => $faker->dateTimeBetween('-60 days', 'now'),
                     'created_at' => now(),
-                    'updated_at' => now(),
                 ]);
                 
                 $recordsCreated++;

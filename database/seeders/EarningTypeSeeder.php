@@ -32,7 +32,6 @@ class EarningTypeSeeder extends Seeder
                 'color' => color(16),
                 'created_by' => $adminUserId,
                 'created_at' => now(),
-                'updated_at' => now(),
             ]
         );
 

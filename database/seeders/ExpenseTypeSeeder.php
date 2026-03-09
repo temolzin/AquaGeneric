@@ -32,7 +32,6 @@ class ExpenseTypeSeeder extends Seeder
                 'color'       => color(16),
                 'created_by'  => $adminUserId,
                 'created_at'  => now(),
-                'updated_at'  => now(),
             ]
         );
 
@@ -89,7 +88,6 @@ class ExpenseTypeSeeder extends Seeder
                         'color' => $type['color'],
                         'created_by' => collect($userIds)->random(),
                         'created_at' => now(),
-                        'updated_at' => now(),
                     ]
                 );
             }

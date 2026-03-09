@@ -50,7 +50,6 @@ class IncidentStatusSeeder extends Seeder
                         'description' => $statusConfig['description'],
                         'color' => $statusConfig['color'],
                         'created_by' => $createdBy,
-                        'updated_at' => now(),
                     ]
                 );
             }

@@ -62,7 +62,6 @@ class CostsTableSeeder extends Seeder
                     'price' => $cost['price'],
                     'description' => $cost['description'],
                     'created_by' => $createdBy,
-                    'updated_at' => now(),
                 ]
             );
         }

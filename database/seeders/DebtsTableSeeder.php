@@ -18,8 +18,8 @@ class DebtsTableSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        $startDate = Carbon::createFromDate(2024, 1, 1);
-        $endDate = Carbon::createFromDate(2024, 12, 31);
+        $startDate = Carbon::now()->subMonths(2)->startOfMonth();
+        $endDate = Carbon::now()->endOfMonth();
 
         $customers = DB::table('customers')
             ->whereNotIn('user_id', [1, 5])
@@ -71,7 +71,6 @@ class DebtsTableSeeder extends Seeder
                     'note' => 'Deuda generada de prueba #' . ($debtCount + 1),
                     'deleted_at' => null,
                     'created_at' => now(),
-                    'updated_at' => now(),
                 ]);
 
                 $debtCount++;
@@ -107,7 +106,6 @@ class DebtsTableSeeder extends Seeder
                         'note' => 'Deuda del mes anterior',
                         'deleted_at' => null,
                         'created_at' => now(),
-                        'updated_at' => now(),
                     ]);
                     DB::table('debts')->insert([
                         'water_connection_id' => $alonsoWaterConnections[1]->id,
@@ -121,7 +119,6 @@ class DebtsTableSeeder extends Seeder
                         'note' => 'Deuda actual',
                         'deleted_at' => null,
                         'created_at' => now(),
-                        'updated_at' => now(),
                     ]);
                 }
             }
