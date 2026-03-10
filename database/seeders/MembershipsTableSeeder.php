@@ -10,9 +10,6 @@ class MembershipsTableSeeder extends Seeder
 {
     public function run()
     {
-        // the membership.created_by column is nullable, so the seeder should
-        // run even if no administrative user exists yet.  Try to pick an admin
-        // first; fall back to the first user or null.
         $adminId = User::whereHas('roles', fn($q) => $q->where('name', 'Admin'))
             ->orderBy('id')
             ->value('id');

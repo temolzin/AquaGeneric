@@ -12,7 +12,6 @@ class LocalitiesTableSeeder extends Seeder
 {
     public function run()
     {
-        // ensure the three default membership plans exist before seeding localities
         if (Membership::count() === 0) {
             $this->call(MembershipsTableSeeder::class);
         }
