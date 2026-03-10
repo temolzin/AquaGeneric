@@ -13,7 +13,7 @@ class LocalitiesTableSeeder extends Seeder
     public function run()
     {
         if (Membership::count() === 0) {
-             $this->call(MembershipsTableSeeder::class);
+            $this->call(MembershipsTableSeeder::class);
         }
 
         $localitiesData = [
@@ -44,9 +44,20 @@ class LocalitiesTableSeeder extends Seeder
         ];
 
         $defaultMembershipId = Membership::orderBy('id')->value('id');
+        if (is_null($defaultMembershipId)) {
+            throw new \Exception('No memberships available when seeding localities');
+        }
 
         foreach ($localitiesData as $data) {
-            $membershipId = Membership::where('name', $data['membership_name'])->value('id') ?: $defaultMembershipId;
+            $membership = Membership::firstOrCreate([
+                'name' => $data['membership_name'],
+            ], [
+                'price' => 0,
+                'term_months' => 0,
+                'water_connections_number' => 0,
+                'users_number' => 0,
+                'created_by' => \App\Models\User::orderBy('id')->value('id'), 
+            ]);
 
             $locality = Locality::updateOrCreate(
                 ['name' => $data['name']],
@@ -55,7 +66,7 @@ class LocalitiesTableSeeder extends Seeder
                     'municipality' => $data['municipality'],
                     'state' => $data['state'],
                     'zip_code' => $data['zip_code'],
-                    'membership_id' => $membershipId,
+                    'membership_id' => $membership->id,
                 ]
             );
 
