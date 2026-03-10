@@ -28,7 +28,14 @@ class WaterConnectionsTableSeeder extends Seeder
                 ->whereNotIn('id', [DB::table('customers')->where('user_id', 5)->value('id') ?? 0])
                 ->pluck('id')
                 ->toArray();
+            
             $costs = DB::table('costs')->where('locality_id', $localityId)->pluck('id')->toArray();
+            
+            if (empty($costs)) {
+                $allCosts = DB::table('costs')->pluck('id')->toArray();
+                $costs = !empty($allCosts) ? $allCosts : [];
+            }
+            
             $users = DB::table('users')
                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                 ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
@@ -39,7 +46,7 @@ class WaterConnectionsTableSeeder extends Seeder
                 ->toArray();
             $localitySections = DB::table('sections')->where('locality_id', $localityId)->pluck('id')->toArray();
 
-            if (empty($localitySections) || empty($users)) {
+            if (empty($localitySections) || empty($users) || empty($costs)) {
                 continue;
             }
 
@@ -49,10 +56,6 @@ class WaterConnectionsTableSeeder extends Seeder
             ]);
 
             foreach ($customers as $customerId) {
-
-                if (empty($costs)) {
-                    continue;
-                }
 
                 WaterConnection::create([
                     'customer_id' => $customerId,
@@ -100,54 +103,68 @@ class WaterConnectionsTableSeeder extends Seeder
 
         $alonsoCustomer = DB::table('customers')->where('user_id', 5)->first();
         $smallvilleLocality = DB::table('localities')->where('name', 'Smallville')->first();
+        
         if ($alonsoCustomer && $smallvilleLocality) {
-            $costs = DB::table('costs')->where('locality_id', $smallvilleLocality->id)->pluck('id')->toArray();
-            $users = DB::table('users')
-                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
-                ->where('users.locality_id', $smallvilleLocality->id)
-                ->distinct()
-                ->pluck('users.id')
-                ->toArray();
-            $sections = DB::table('sections')->where('locality_id', $smallvilleLocality->id)->pluck('id')->toArray();
             
-            if (!empty($costs) && !empty($users) && !empty($sections)) {
-                WaterConnection::create([
-                    'customer_id' => $alonsoCustomer->id,
-                    'locality_id' => $smallvilleLocality->id,
-                    'cost_id' => $costs[0],
-                    'created_by' => $users[0],
-                    'name' => 'Cierra Hermosa',
-                    'block' => 'Tecamac',
-                    'street' => 'Calle Principal',
-                    'exterior_number' => '123',
-                    'interior_number' => 'A',
-                    'occupants_number' => 4,
-                    'water_days' => json_encode(['monday', 'wednesday']),
-                    'has_water_pressure' => true,
-                    'has_cistern' => false,
-                    'type' => 'residencial',
-                    'section_id' => $sections[0],
-                ]);
+            $alonsoConnectionCount = DB::table('water_connections')
+                ->where('customer_id', $alonsoCustomer->id)
+                ->count();
+            
+            if ($alonsoConnectionCount === 0) {
+                $costs = DB::table('costs')->where('locality_id', $smallvilleLocality->id)->pluck('id')->toArray();
+                
+                if (empty($costs)) {
+                    $allCosts = DB::table('costs')->pluck('id')->toArray();
+                    $costs = !empty($allCosts) ? $allCosts : [];
+                }
+                
+                $users = DB::table('users')
+                    ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                    ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
+                    ->where('users.locality_id', $smallvilleLocality->id)
+                    ->distinct()
+                    ->pluck('users.id')
+                    ->toArray();
+                $sections = DB::table('sections')->where('locality_id', $smallvilleLocality->id)->pluck('id')->toArray();
+                
+                if (!empty($costs) && !empty($users) && !empty($sections)) {
+                    WaterConnection::create([
+                        'customer_id' => $alonsoCustomer->id,
+                        'locality_id' => $smallvilleLocality->id,
+                        'cost_id' => $costs[0],
+                        'created_by' => $users[0],
+                        'name' => 'Cierra Hermosa',
+                        'block' => 'Tecamac',
+                        'street' => 'Calle Principal',
+                        'exterior_number' => '123',
+                        'interior_number' => 'A',
+                        'occupants_number' => 4,
+                        'water_days' => json_encode(['monday', 'wednesday']),
+                        'has_water_pressure' => true,
+                        'has_cistern' => false,
+                        'type' => 'residencial',
+                        'section_id' => $sections[0],
+                    ]);
 
-                WaterConnection::create([
-                    'customer_id' => $alonsoCustomer->id,
-                    'locality_id' => $smallvilleLocality->id,
-                    'cost_id' => $costs[0],
-                    'created_by' => $users[0],
-                    'name' => 'Casas Javer',
-                    'block' => 'Tecamac',
-                    'street' => 'Calle Principal',
-                    'exterior_number' => '147',
-                    'interior_number' => '89',
-                    'occupants_number' => 2,
-                    'water_days' => json_encode(['tuesday', 'thursday']),
-                    'has_water_pressure' => true,
-                    'has_cistern' => true,
-                    'type' => 'residencial',
-                    'section_id' => $sections[0],
-                ]);
+                    WaterConnection::create([
+                        'customer_id' => $alonsoCustomer->id,
+                        'locality_id' => $smallvilleLocality->id,
+                        'cost_id' => $costs[0],
+                        'created_by' => $users[0],
+                        'name' => 'Casas Javer',
+                        'block' => 'Tecamac',
+                        'street' => 'Calle Principal',
+                        'exterior_number' => '147',
+                        'interior_number' => '89',
+                        'occupants_number' => 2,
+                        'water_days' => json_encode(['tuesday', 'thursday']),
+                        'has_water_pressure' => true,
+                        'has_cistern' => true,
+                        'type' => 'residencial',
+                        'section_id' => $sections[0],
+                    ]);
+                }
             }
         }
     }

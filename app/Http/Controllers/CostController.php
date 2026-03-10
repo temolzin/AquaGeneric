@@ -12,15 +12,20 @@ class CostController extends Controller
 {
     public function index()
     {
-        $authUser = auth()->user();
-        $costs = Cost::where(function ($q) use ($authUser) {
-                $q->where('locality_id', $authUser->locality_id)
-                    ->orWhereNull('locality_id');
-            })
-            ->with('creator')
+        $query = Cost::with('creator')
             ->orderByRaw('locality_id IS NULL DESC')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->orderBy('created_at', 'desc');
+        
+        if (request()->has('search') && request('search') != '') {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('category', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('price', 'like', "%{$search}%");
+            });
+        }
+        
+        $costs = $query->paginate(10)->appends(request()->query());
         
         return view('costs.index', compact('costs'));
     }

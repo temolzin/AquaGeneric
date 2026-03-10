@@ -9,17 +9,27 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Categorías de Inventario</h2>
-                    <div class="row mb-2">
+                    <div class="row">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-column flex-lg-row justify-content-lg-end align-items-lg-center gap-3">
-                                @can('createInventoryCategories')
-                                <button type="button" class="btn btn-success mt-2"
-                                        data-toggle="modal" data-target="#createInventoryCategoryModal" title="Registrar Categoría de Inventario">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-md-inline">Registrar Categoría</span>
-                                    <span class="d-inline d-md-none">Registrar</span>
-                                </button>
-                                @endcan
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('inventoryCategories.index') }}" class="mb-3 mb-lg-3" style="min-width: 300px;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Categoría, Descripción..." value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Categorías">
+                                                <i class="fa fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-column flex-lg-row justify-content-lg-end align-items-lg-center gap-3">
+                                    <button type="button" class="btn btn-success mt-2"
+                                            data-toggle="modal" data-target="#createInventoryCategoryModal" title="Registrar Categoría de Inventario">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Categoría</span>
+                                        <span class="d-inline d-md-none">Registrar</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

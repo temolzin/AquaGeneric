@@ -12,7 +12,6 @@ class CostsTableSeeder extends Seeder
     public function run()
     {
         $localityIds = DB::table('localities')->pluck('id')->toArray();
-
         $costs = [
             [
                 'locality_id' => null,
@@ -50,7 +49,14 @@ class CostsTableSeeder extends Seeder
             $createdBy = $this->getUserForLocality($cost['locality_id']);
             
             if (!$createdBy) {
-                continue;
+                if ($cost['locality_id'] === null) {
+                    $createdBy = DB::table('users')->value('id');
+                    if (!$createdBy) {
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
             }
 
             Cost::updateOrCreate(
@@ -64,6 +70,20 @@ class CostsTableSeeder extends Seeder
                     'created_by' => $createdBy,
                 ]
             );
+        }
+
+        $globalCost = Cost::where('locality_id', null)->first();
+        foreach ($localityIds as $localityId) {
+            $hasCost = Cost::where('locality_id', $localityId)->exists();
+            if (!$hasCost && $globalCost) {
+                Cost::create([
+                    'locality_id' => $localityId,
+                    'category' => $globalCost->category,
+                    'price' => $globalCost->price,
+                    'description' => $globalCost->description,
+                    'created_by' => $globalCost->created_by,
+                ]);
+            }
         }
     }
 

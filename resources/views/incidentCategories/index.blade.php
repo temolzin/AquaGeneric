@@ -9,22 +9,34 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Categoría de Incidencias</h2>
-                    <div class="row mb-2">
+                    <div class="row">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
-                                        data-toggle="modal" data-target="#create" title="Registrar Categoría">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-md-inline">Registrar Categoría</span>
-                                    <span class="d-inline d-md-none">Registrar Categoría</span>
-                                </button>
-                                <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1"
-                                target="_blank" title="Generar Lista"
-                                href="{{ route('report.generateIncidentCategoyListReport') }}">
-                                    <i class="fas fa-file-pdf"></i>
-                                    <span class="d-none d-md-inline">Generar Lista</span>
-                                    <span class="d-inline d-md-none">Generar Lista</span>
-                                </a>
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('incidentCategories.index') }}" class="mb-3 mb-lg-3" style="min-width: 300px;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción..." value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Categorías">
+                                                <i class="fa fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                                    <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
+                                            data-toggle="modal" data-target="#create" title="Registrar Categoría">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Categoría</span>
+                                        <span class="d-inline d-md-none">Registrar Categoría</span>
+                                    </button>
+                                    <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1"
+                                    target="_blank" title="Generar Lista"
+                                    href="{{ route('report.generateIncidentCategoyListReport') }}">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <span class="d-none d-md-inline">Generar Lista</span>
+                                        <span class="d-inline d-md-none">Generar Lista</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
