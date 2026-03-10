@@ -6,6 +6,7 @@ use App\Models\Token;
 use Illuminate\Database\Seeder;
 use App\Models\Locality;
 use App\Models\Membership;
+use App\Models\User;
 use Carbon\Carbon;
 
 class LocalitiesTableSeeder extends Seeder
@@ -56,7 +57,7 @@ class LocalitiesTableSeeder extends Seeder
                     'term_months' => 0,
                     'water_connections_number' => 0,
                     'users_number' => 0,
-                    'created_by' => \App\Models\User::orderBy('id')->value('id'),
+                    'created_by' => User::whereHas('roles', fn($q) => $q->where('name', User::ROLE_SUPERVISOR))->orderBy('id')->value('id'),
                 ]
             );
 

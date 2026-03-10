@@ -122,8 +122,7 @@ class MembershipController extends Controller
         }
         $membership->delete();
 
-        return redirect()->route('memberships.index')
-        ->with('success', 'Membresía eliminada exitosamente.');
+        return redirect()->route('memberships.index') -> mwith('success', 'Membresía eliminada exitosamente.');
     }
 
     public function generateMembershipListReport()
