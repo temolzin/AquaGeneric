@@ -5,20 +5,31 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\User;
 
 class MovementsHistorySeeder extends Seeder
 {
     public function run()
     {
         $modules = [
-            'pagos',
-            'deudas',
-            'costos',
+            'payments',
+            'debts',
+            'costs',
             'general_expenses',
             'general_earnings'
         ];
 
-        $users = DB::table('users')->pluck('id')->toArray();
+        $users = DB::table('users')
+            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->whereIn('roles.name', [
+                User::ROLE_SUPERVISOR,
+                User::ROLE_SECRETARY
+            ])
+            ->distinct()
+            ->pluck('users.id')
+            ->toArray();
+
 
         $records = [];
 
