@@ -23,12 +23,14 @@
                                     </div>
                                 </form>
                                 <div class="d-flex flex-column flex-lg-row justify-content-lg-end align-items-lg-center gap-3">
+                                    @can('createInventoryCategories')
                                     <button type="button" class="btn btn-success mt-2"
                                             data-toggle="modal" data-target="#createInventoryCategoryModal" title="Registrar Categoría de Inventario">
                                         <i class="fa fa-plus"></i>
                                         <span class="d-none d-md-inline">Registrar Categoría</span>
                                         <span class="d-inline d-md-none">Registrar</span>
                                     </button>
+                                    @endcan
                                 </div>
                             </div>
                         </div>

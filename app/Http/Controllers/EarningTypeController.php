@@ -38,7 +38,7 @@ class EarningTypeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 

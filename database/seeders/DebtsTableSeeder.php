@@ -92,15 +92,15 @@ class DebtsTableSeeder extends Seeder
                 $createdBy = $this->getUserForLocality($smallvilleLocality->id);
 
                 if ($createdBy && $alonsoWaterConnections->count() >= 2) {
-                    // Verificar si ya existen deudas para Alonso
-                    $alonsoDebtsCount = DB::table('debts')
-                        ->whereIn('water_connection_id', [$alonsoWaterConnections[0]->id, $alonsoWaterConnections[1]->id])
-                        ->count();
-                    
-                    // Solo crear si no existen deudas
-                    if ($alonsoDebtsCount === 0) {
-                        $alonsoStartDate = Carbon::now()->subMonths(2);
-                        $alonsoEndDate = Carbon::now()->subMonths(1);
+                    $alonsoStartDate = Carbon::now()->subMonths(2);
+                    $alonsoEndDate = Carbon::now()->subMonths(1);
+
+                    $debt1Exists = DB::table('debts')
+                        ->where('water_connection_id', $alonsoWaterConnections[0]->id)
+                        ->where('start_date', $alonsoStartDate->toDateString())
+                        ->exists();
+
+                    if (!$debt1Exists) {
                         DB::table('debts')->insert([
                             'water_connection_id' => $alonsoWaterConnections[0]->id,
                             'locality_id' => $smallvilleLocality->id,
@@ -114,6 +114,14 @@ class DebtsTableSeeder extends Seeder
                             'deleted_at' => null,
                             'created_at' => now(),
                         ]);
+                    }
+
+                    $debt2Exists = DB::table('debts')
+                        ->where('water_connection_id', $alonsoWaterConnections[1]->id)
+                        ->where('start_date', $alonsoEndDate->copy()->addDay()->toDateString())
+                        ->exists();
+
+                    if (!$debt2Exists) {
                         DB::table('debts')->insert([
                             'water_connection_id' => $alonsoWaterConnections[1]->id,
                             'locality_id' => $smallvilleLocality->id,

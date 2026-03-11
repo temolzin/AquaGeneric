@@ -12,7 +12,13 @@ class CostController extends Controller
 {
     public function index()
     {
-        $query = Cost::with('creator')
+        $authUser = auth()->user();
+        $query = Cost::withoutGlobalScope('byUserLocality')
+            ->where(function($q) use ($authUser) {
+                $q->where('locality_id', $authUser->locality_id)
+                  ->orWhereNull('locality_id');
+            })
+            ->with('creator')
             ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc');
         
