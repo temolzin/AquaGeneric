@@ -298,7 +298,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'createInventoryCategories',
             'description' => 'Permite crear Categorías de Inventario.'
-        ])->assignRole([$roleSupervisor]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
         Permission::firstOrCreate([
             'name' => 'editInventoryCategories',
             'description' => 'Permite editar Categorías de Inventario.'

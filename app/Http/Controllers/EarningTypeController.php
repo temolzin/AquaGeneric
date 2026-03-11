@@ -11,11 +11,20 @@ class EarningTypeController extends Controller
 {
     public function index()
     {
-        $earningTypes = EarningType::byUserLocality()
+        $query = EarningType::byUserLocality()
             ->with(['creator', 'locality'])
             ->orderByRaw('locality_id IS NULL DESC')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->orderBy('created_at', 'desc');
+        
+        if (request()->has('search') && request('search') != '') {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+        
+        $earningTypes = $query->paginate(10)->appends(request()->query());
 
         return view('earningTypes.index', compact('earningTypes'));
     }
@@ -29,7 +38,7 @@ class EarningTypeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 

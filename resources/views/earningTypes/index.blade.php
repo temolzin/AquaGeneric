@@ -9,15 +9,27 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Tipos de Ingreso</h2>
-                    <div class="row mb-2">
+                    <div class="row">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
-                                        data-toggle="modal" data-target="#createEarningTypeModal" title="Registrar Tipo de Ingreso">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-md-inline">Registrar Tipo</span>
-                                    <span class="d-inline d-md-none">Tipo</span>
-                                </button>
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('earningTypes.index') }}" class="mb-3 mb-lg-3" style="min-width: 300px;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción..." value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Tipos de Ingreso">
+                                                <i class="fa fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                                    <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
+                                            data-toggle="modal" data-target="#createEarningTypeModal" title="Registrar Tipo de Ingreso">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Tipo</span>
+                                        <span class="d-inline d-md-none">Tipo</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

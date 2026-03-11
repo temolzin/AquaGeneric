@@ -13,11 +13,22 @@ class IncidentStatusController extends Controller
     {
         $authUser = auth()->user();
 
-        $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)
-                    ->orWhereNull('locality_id')
-                    ->orderByRaw('locality_id IS NULL DESC')
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(10);
+        $query = IncidentStatus::where(function($q) use ($authUser) {
+                    $q->where('locality_id', $authUser->locality_id)
+                      ->orWhereNull('locality_id');
+                })
+                ->orderByRaw('locality_id IS NULL DESC')
+                ->orderBy('created_at', 'desc');
+        
+        if (request()->has('search') && request('search') != '') {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('status', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+        
+        $statuses = $query->paginate(10)->appends(request()->query());
 
         return view('incidentStatuses.index', compact('statuses'));
     }

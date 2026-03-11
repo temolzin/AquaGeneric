@@ -11,13 +11,22 @@ class IncidentCategoriesController extends Controller
     public function index()
     {
         $authUser = auth()->user();
-        $categories = IncidentCategory::where(function ($query) use ($authUser) {
+        $query = IncidentCategory::where(function ($query) use ($authUser) {
             $query->where('locality_id', $authUser->locality_id)
                 ->orWhereNull('locality_id');
         })
             ->orderByRaw('locality_id IS NULL DESC')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->orderBy('created_at', 'desc');
+        
+        if (request()->has('search') && request('search') != '') {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+        
+        $categories = $query->paginate(10)->appends(request()->query());
 
         return view('incidentCategories.index', compact('categories'));
     }

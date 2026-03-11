@@ -94,32 +94,48 @@ class DebtsTableSeeder extends Seeder
                 if ($createdBy && $alonsoWaterConnections->count() >= 2) {
                     $alonsoStartDate = Carbon::now()->subMonths(2);
                     $alonsoEndDate = Carbon::now()->subMonths(1);
-                    DB::table('debts')->insert([
-                        'water_connection_id' => $alonsoWaterConnections[0]->id,
-                        'locality_id' => $smallvilleLocality->id,
-                        'created_by' => $createdBy,
-                        'start_date' => $alonsoStartDate,
-                        'end_date' => $alonsoEndDate,
-                        'amount' => 500.00,
-                        'debt_current' => 250.00,
-                        'status' => 'partial',
-                        'note' => 'Deuda del mes anterior',
-                        'deleted_at' => null,
-                        'created_at' => now(),
-                    ]);
-                    DB::table('debts')->insert([
-                        'water_connection_id' => $alonsoWaterConnections[1]->id,
-                        'locality_id' => $smallvilleLocality->id,
-                        'created_by' => $createdBy,
-                        'start_date' => $alonsoEndDate->copy()->addDay(),
-                        'end_date' => Carbon::now(),
-                        'amount' => 350.00,
-                        'debt_current' => 175.00,
-                        'status' => 'partial',
-                        'note' => 'Deuda actual',
-                        'deleted_at' => null,
-                        'created_at' => now(),
-                    ]);
+
+                    $debt1Exists = DB::table('debts')
+                        ->where('water_connection_id', $alonsoWaterConnections[0]->id)
+                        ->where('start_date', $alonsoStartDate->toDateString())
+                        ->exists();
+
+                    if (!$debt1Exists) {
+                        DB::table('debts')->insert([
+                            'water_connection_id' => $alonsoWaterConnections[0]->id,
+                            'locality_id' => $smallvilleLocality->id,
+                            'created_by' => $createdBy,
+                            'start_date' => $alonsoStartDate,
+                            'end_date' => $alonsoEndDate,
+                            'amount' => 500.00,
+                            'debt_current' => 250.00,
+                            'status' => 'partial',
+                            'note' => 'Deuda del mes anterior',
+                            'deleted_at' => null,
+                            'created_at' => now(),
+                        ]);
+                    }
+
+                    $debt2Exists = DB::table('debts')
+                        ->where('water_connection_id', $alonsoWaterConnections[1]->id)
+                        ->where('start_date', $alonsoEndDate->copy()->addDay()->toDateString())
+                        ->exists();
+
+                    if (!$debt2Exists) {
+                        DB::table('debts')->insert([
+                            'water_connection_id' => $alonsoWaterConnections[1]->id,
+                            'locality_id' => $smallvilleLocality->id,
+                            'created_by' => $createdBy,
+                            'start_date' => $alonsoEndDate->copy()->addDay(),
+                            'end_date' => Carbon::now(),
+                            'amount' => 350.00,
+                            'debt_current' => 175.00,
+                            'status' => 'partial',
+                            'note' => 'Deuda actual',
+                            'deleted_at' => null,
+                            'created_at' => now(),
+                        ]);
+                    }
                 }
             }
         }

@@ -44,8 +44,10 @@ class Cost extends Model
     {
         $user = auth()->user();
         if ($user && $user->locality_id) {
-            return $query->where('locality_id', $user->locality_id)
-                         ->orWhereNull('locality_id');
+            return $query->where(function($q) use ($user) {
+                $q->where('locality_id', $user->locality_id)
+                  ->orWhereNull('locality_id');
+            });
         }
         return $query;
     }

@@ -34,6 +34,7 @@ class RoleController extends Controller
             'Customerdebt' => 'Deudas del cliente',
             'Customernotice' => 'Avisos en el usuario de Cliente',
             'Customerfaultreport' => 'Reporte de fallas en el usuario de Cliente',
+            'Customercard' => 'Información del cliente',
             'Inventory' => 'Inventario',
             'Updateinventory' => 'Editar Inventario',
             'Membership' => 'Membresías',
@@ -41,6 +42,9 @@ class RoleController extends Controller
             'Expensetype' => 'Tipos de gastos',
             'Section' => 'Secciones',
             'Inventorycategorie' => 'Categoría de Inventario',
+            'Earningtype' => 'Tipos de ingresos',
+            'Generalearning' => 'Ingresos generales',
+            'Graficsearningsannual' => 'Gráficas de ingresos',
         ];
     }
 
