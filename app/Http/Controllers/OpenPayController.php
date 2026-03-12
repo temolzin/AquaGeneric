@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Customer;
+use App\Models\CustomerCard;
 use App\Models\Debt;
 use App\Models\Locality;
 use App\Models\OpenPayLog;
+use App\Models\OpenPayWebhookVerification;
 use App\Services\OpenPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +22,7 @@ class OpenPayController extends Controller
         if ($locality->hasOpenPayEnabled()) {
             return OpenPayService::forLocality($locality);
         }
-        
+
         return OpenPayService::global();
     }
 
@@ -96,9 +98,7 @@ class OpenPayController extends Controller
             ];
 
             if ($useSavedCard) {
-                $savedCard = \App\Models\CustomerCard::where('openpay_card_id', $request->saved_card_id)
-                    ->where('customer_id', $debt->customer->id ?? null)
-                    ->first();
+                $savedCard = CustomerCard::where('openpay_card_id', $request->saved_card_id)->where('customer_id', $debt->customer->id ?? null)->first();
 
                 if (!$savedCard) {
                     DB::rollBack();
@@ -238,7 +238,7 @@ class OpenPayController extends Controller
 
             if ($type === 'verification') {
                 $verificationCode = $data['verification_code'] ?? null;
-                
+
                 Log::info('OpenPay webhook verification received', [
                     'verification_code' => $verificationCode,
                     'event_date' => $data['event_date'] ?? null,
@@ -246,7 +246,7 @@ class OpenPayController extends Controller
                 ]);
 
                 if ($verificationCode) {
-                    \App\Models\OpenPayWebhookVerification::create([
+                    OpenPayWebhookVerification::create([
                         'verification_code' => $verificationCode,
                         'openpay_event_id' => $data['id'] ?? null,
                         'event_date' => isset($data['event_date']) ? \Carbon\Carbon::parse($data['event_date']) : now(),
@@ -276,17 +276,18 @@ class OpenPayController extends Controller
             }
 
             $locality = $payment->locality;
-            if ($locality && $locality->hasOpenPayEnabled()) {
-                if (!OpenPayService::verifyWebhookForLocality($locality, $request)) {
-                    Log::warning('Webhook OpenPay no autorizado para localidad: ' . $locality->id);
-                    return response()->json(['error' => 'Unauthorized'], 401);
-                }
-            } else {
-                $globalService = OpenPayService::global();
-                if (!$globalService->verifyWebhook($request)) {
-                    Log::warning('Webhook OpenPay no autorizado (global)');
-                    return response()->json(['error' => 'Unauthorized'], 401);
-                }
+            $hasLocalityOpenPay = $locality && $locality->hasOpenPayEnabled();
+            
+            $isAuthorized = $hasLocalityOpenPay
+                ? OpenPayService::verifyWebhookForLocality($locality, $request)
+                : OpenPayService::global()->verifyWebhook($request);
+
+            if (!$isAuthorized) {
+                $logMessage = $hasLocalityOpenPay
+                    ? 'Webhook OpenPay no autorizado para localidad: ' . $locality->id
+                    : 'Webhook OpenPay no autorizado (global)';
+                Log::warning($logMessage);
+                return response()->json(['error' => 'Unauthorized'], 401);
             }
 
             switch ($type) {
@@ -301,12 +302,7 @@ class OpenPayController extends Controller
 
                     $debt = $payment->debt;
                     $debt->debt_current = max(0, $debt->debt_current - $payment->amount);
-
-                    if ($debt->debt_current <= 0) {
-                        $debt->status = 'pending';
-                    } else {
-                        $debt->status = 'partial';
-                    }
+                    $debt->status = $debt->debt_current <= 0 ? 'pending' : 'partial';
                     $debt->save();
                     break;
 
@@ -319,12 +315,7 @@ class OpenPayController extends Controller
 
                     $debt = $payment->debt;
                     $debt->debt_current = max(0, $debt->debt_current - $payment->amount);
-
-                    if ($debt->debt_current <= 0) {
-                        $debt->status = 'pending';
-                    } else {
-                        $debt->status = 'partial';
-                    }
+                    $debt->status = $debt->debt_current <= 0 ? 'pending' : 'partial';
                     $debt->save();
                     break;
 
@@ -375,7 +366,7 @@ class OpenPayController extends Controller
             }
 
             $locality = $payment->locality;
-            $openPayService = ($locality && $locality->hasOpenPayEnabled()) 
+            $openPayService = ($locality && $locality->hasOpenPayEnabled())
                 ? OpenPayService::forLocality($locality)
                 : OpenPayService::global();
 
@@ -399,12 +390,7 @@ class OpenPayController extends Controller
             $debt = $payment->debt;
             $refundAmount = $request->amount ?? $payment->amount;
             $debt->debt_current += $refundAmount;
-
-            if ($debt->debt_current >= $debt->amount) {
-                $debt->status = 'pending';
-            } else {
-                $debt->status = 'partial';
-            }
+            $debt->status = $debt->debt_current >= $debt->amount ? 'pending' : 'partial';
             $debt->save();
 
             DB::commit();

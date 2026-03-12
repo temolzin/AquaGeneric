@@ -18,8 +18,11 @@
                                 <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createLocality">
                                     <i class="fa fa-plus"></i> Registrar Localidad
                                 </button>
-                                <a type="button" class="btn btn-secondary" target="_blank" title="Localities" href="#">
+                                <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Localities" href="#">
                                     <i class="fas fa-map"></i> Generar Lista
+                                </a>
+                                <a type="button" class="btn btn-info" href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank" title="Ver guía de registro">
+                                    <i class="fas fa-file-pdf"></i> Guía OpenPay
                                 </a>
                             </div>
                         </div>

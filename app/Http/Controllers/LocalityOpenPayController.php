@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Locality;
 use App\Models\OpenPayWebhookVerification;
+use App\Services\OpenPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Crypt;
@@ -71,24 +72,24 @@ class LocalityOpenPayController extends Controller
         }
 
         try {
-            $service = \App\Services\OpenPayService::forLocality($locality);
+            $service = OpenPayService::forLocality($locality);
             
             $result = $service->testCredentials();
             
-            if ($result['success']) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Conexión exitosa con OpenPay.',
-                    'merchant_id' => $service->getMerchantId(),
-                    'sandbox' => $service->isSandbox(),
-                    'details' => $result['details'] ?? null,
-                ]);
-            } else {
+            if (!$result['success']) {
                 return response()->json([
                     'success' => false,
                     'message' => $result['message'] ?? 'Error desconocido al conectar con OpenPay.',
                 ]);
             }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Conexión exitosa con OpenPay.',
+                'merchant_id' => $service->getMerchantId(),
+                'sandbox' => $service->isSandbox(),
+                'details' => $result['details'] ?? null,
+            ]);
 
         } catch (\Exception $e) {
             return response()->json([

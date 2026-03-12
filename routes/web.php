@@ -297,19 +297,14 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     });
 
     Route::prefix('openpay')->name('openpay.')->group(function () {
-        Route::post('/process', [OpenPayController::class, 'processPayment'])
-            ->name('process');
-        Route::post('/refund/{paymentId}', [OpenPayController::class, 'refund'])
-            ->name('refund');
+        Route::post('/process', [OpenPayController::class, 'processPayment'])->name('process');
+        Route::post('/refund/{paymentId}', [OpenPayController::class, 'refund'])->name('refund');
     });
 });
 
 Route::prefix('openpay')->name('openpay.')->group(function () {
-    Route::match(['get', 'post'], '/webhook/verify', [OpenPayController::class, 'verifyWebhook'])
-        ->name('webhook.verify');
-
-    Route::post('/webhook', [OpenPayController::class, 'webhook'])
-        ->name('webhook');
+    Route::match(['get', 'post'], '/webhook/verify', [OpenPayController::class, 'verifyWebhook'])->name('webhook.verify');
+    Route::post('/webhook', [OpenPayController::class, 'webhook'])->name('webhook');
 });
 
 Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');

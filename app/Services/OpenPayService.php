@@ -24,19 +24,11 @@ class OpenPayService
     {
         $this->localityId = $localityId;
         
-        if ($credentials) {
-            $this->merchantId = $credentials['merchant_id'];
-            $privateKey = $credentials['private_key'];
-            $this->sandbox = $credentials['sandbox'] ?? true;
-            $this->webhookUser = $credentials['webhook_user'] ?? null;
-            $this->webhookPassword = $credentials['webhook_password'] ?? null;
-        } else {
-            $this->merchantId = config('openpay.merchant_id');
-            $privateKey = config('openpay.private_key');
-            $this->sandbox = config('openpay.sandbox');
-            $this->webhookUser = config('openpay.webhook_user');
-            $this->webhookPassword = config('openpay.webhook_password');
-        }
+        $this->merchantId = $credentials['merchant_id'] ?? config('openpay.merchant_id');
+        $privateKey = $credentials['private_key'] ?? config('openpay.private_key');
+        $this->sandbox = $credentials['sandbox'] ?? config('openpay.sandbox', true);
+        $this->webhookUser = $credentials['webhook_user'] ?? config('openpay.webhook_user');
+        $this->webhookPassword = $credentials['webhook_password'] ?? config('openpay.webhook_password');
         
         $country = strtoupper(config('openpay.country', 'MX'));
 
