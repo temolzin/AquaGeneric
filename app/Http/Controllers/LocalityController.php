@@ -109,10 +109,12 @@ class LocalityController extends Controller
     public function generateToken(Request $request)
     {
         $request->validate([
+            'idLocality' => 'required|exists:localities,id',
             'membership_id' => 'required|exists:memberships,id',
         ]);
 
-        $locality = Locality::findOrFail($request->input('idLocality'));
+        
+        $locality = Locality::find($request->input('idLocality'));
         
         $locality->update([
             'membership_id' => $request->input('membership_id'),

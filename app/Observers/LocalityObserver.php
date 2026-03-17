@@ -8,7 +8,7 @@ class LocalityObserver
 {
     public function updated(Locality $locality)
     {
-        if ($locality->isDirty(['membership_id', 'membership_assigned_at'])) {
+        if ($locality->wasChanged(['membership_id', 'membership_assigned_at'])) {
             if ($locality->membership && $locality->membership_assigned_at) {
                 $locality->generateMembershipToken();
             }

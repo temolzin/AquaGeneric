@@ -106,11 +106,8 @@ class Locality extends Model implements HasMedia
 
         $token = Crypt::encrypt($tokenData);
         
-        DB::table('localities')
-            ->where('id', $this->id)
-            ->update(['token' => $token]);
-        
         $this->token = $token;
+        $this->saveQuietly();
 
         return $token;
     }
