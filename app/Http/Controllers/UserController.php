@@ -46,6 +46,11 @@ class UserController extends Controller
                 return redirect()->back()->with('error', 'La localidad no tiene una membresía asignada. Por favor, contacte al administrador.');
             }
 
+            $subscriptionStatus = $locality->getSubscriptionStatus();
+            if ($subscriptionStatus !== Locality::SUBSCRIPTION_ACTIVE) {
+                return redirect()->back()->with('error', 'La membresía de esta localidad está ' . strtolower($subscriptionStatus) . '. No se pueden registrar nuevos usuarios.');
+            }
+
             $currentUsersCount = User::where('locality_id', $request->locality_id)->count();
 
             if ($currentUsersCount >= $locality->membership->users_number) {

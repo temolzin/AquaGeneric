@@ -10,6 +10,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Exception;
 
@@ -78,8 +79,40 @@ class Locality extends Model implements HasMedia
             
             return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
         } catch (Exception $e) {
-            return self::SUBSCRIPTION_NONE;return self::SUBSCRIPTION_NONE;
+            return self::SUBSCRIPTION_NONE;
         }
+    }
+
+    public function generateMembershipToken()
+    {
+        if (!$this->membership || !$this->membership_assigned_at) {
+            return null;
+        }
+
+        $startDate = Carbon::parse($this->membership_assigned_at)->startOfDay();
+        $endDate = $startDate->copy()->addMonths($this->membership->term_months)->endOfDay();
+
+        $data = [
+            'idLocality' => $this->id,
+            'startDate' => $startDate->toDateString(),
+            'endDate' => $endDate->toDateString(),
+        ];
+
+        $hmac = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
+        $tokenData = [
+            'data' => $data,
+            'hmac' => $hmac
+        ];
+
+        $token = Crypt::encrypt($tokenData);
+        
+        DB::table('localities')
+            ->where('id', $this->id)
+            ->update(['token' => $token]);
+        
+        $this->token = $token;
+
+        return $token;
     }
 
     public function registerMediaCollections(): void

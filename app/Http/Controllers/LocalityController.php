@@ -109,30 +109,18 @@ class LocalityController extends Controller
     public function generateToken(Request $request)
     {
         $request->validate([
-            'startDate' => 'required|date',
             'membership_id' => 'required|exists:memberships,id',
         ]);
 
-        $id = $request->input('idLocality');
-        $startDate = $request->input('startDate');
-        $membershipId = $request->input('membership_id');
-
-        $locality = Locality::findOrFail($id);
+        $locality = Locality::findOrFail($request->input('idLocality'));
         
         $locality->update([
-            'membership_id' => $membershipId,
+            'membership_id' => $request->input('membership_id'),
             'membership_assigned_at' => now()
         ]);
 
-        $membership = Membership::find($membershipId);
-        $endDate = \Carbon\Carbon::parse($startDate)->addMonths($membership->term_months);
-
-        $token = Token::generateTokenForLocality($id, $startDate, $endDate->toDateString());
-
         return redirect()->route('localities.index')
-            ->with('createdToken', $token)
-            ->with('localityName', $locality->name)
-            ->with('success', 'Token generado y membresía asignada correctamente.');
+            ->with('success', 'Membresía y token asignados correctamente.');
     }
 
     public function updatePdfBackground(Request $request, $id)
