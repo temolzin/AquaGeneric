@@ -343,12 +343,34 @@
     <script type="text/javascript" src="https://openpay.s3.amazonaws.com/openpay-data.v1.min.js"></script>
     <script>
         var openpayDeviceSessionId = null;
+        @if(isset($locality) && $locality && $locality->hasOpenPayEnabled())
+        var openpayEnabled = true;
+        @else
+        var openpayEnabled = false;
+        @endif
+        
         $(document).ready(function () {
-            OpenPay.setId('{{ config("openpay.merchant_id") }}');
-            OpenPay.setApiKey('{{ config("openpay.public_key") }}');
-            OpenPay.setSandboxMode({{ config("openpay.sandbox") ? 'true' : 'false' }});
+            @if(isset($locality) && $locality && $locality->hasOpenPayEnabled())
+            OpenPay.setId('{{ $locality->openpay_merchant_id }}');
+            OpenPay.setApiKey('{{ $locality->openpay_public_key }}');
+            OpenPay.setSandboxMode({{ $locality->openpay_sandbox ? 'true' : 'false' }});
+            @else
+            OpenPay.setId('');
+            OpenPay.setApiKey('');
+            OpenPay.setSandboxMode(true);
+            @endif
 
-            $('#addCardModal').on('show.bs.modal', function () {
+            $('#addCardModal').on('show.bs.modal', function (e) {
+                if (!openpayEnabled) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'No disponible',
+                        text: 'El registro de tarjetas no está habilitado para tu localidad. Por favor contacta al administrador.',
+                        confirmButtonText: 'Entendido'
+                    });
+                    return false;
+                }
                 openpayDeviceSessionId = OpenPay.deviceData.setup("add-card-form", "deviceIdHiddenFieldName");
                 resetAddCardForm();
             });

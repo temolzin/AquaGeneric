@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Customer;
+use App\Models\CustomerCard;
 use App\Models\Debt;
+use App\Models\Locality;
 use App\Models\OpenPayLog;
+use App\Models\OpenPayWebhookVerification;
 use App\Services\OpenPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,11 +17,13 @@ use Illuminate\Support\Facades\Validator;
 
 class OpenPayController extends Controller
 {
-    protected $openPayService;
-
-    public function __construct(OpenPayService $openPayService)
+    protected function getOpenPayServiceForLocality(Locality $locality): OpenPayService
     {
-        $this->openPayService = $openPayService;
+        if ($locality->hasOpenPayEnabled()) {
+            return OpenPayService::forLocality($locality);
+        }
+
+        return OpenPayService::global();
     }
 
     public function processPayment(Request $request)
@@ -52,7 +57,26 @@ class OpenPayController extends Controller
 
         DB::beginTransaction();
         try {
-            $debt = Debt::with(['customer', 'payments', 'waterConnection'])->findOrFail($request->debt_id);
+            $debt = Debt::with(['customer', 'payments', 'waterConnection', 'locality'])->findOrFail($request->debt_id);
+
+            $locality = $debt->locality;
+            if (!$locality) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No se pudo identificar la localidad para procesar el pago.',
+                ], 400);
+            }
+
+            if (!$locality->hasOpenPayEnabled()) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Esta localidad no tiene configurado el pago en línea con OpenPay.',
+                ], 400);
+            }
+
+            $openPayService = $this->getOpenPayServiceForLocality($locality);
 
             $remainingAmount = $debt->remaining_amount;
 
@@ -64,7 +88,7 @@ class OpenPayController extends Controller
                 ], 400);
             }
 
-            $orderId = 'DEBT-' . $debt->id . '-' . time();
+            $orderId = 'DEBT-' . $debt->id . '-LOC-' . $locality->id . '-' . time();
 
             $customerData = [
                 'name' => $debt->customer->name ?? 'Cliente',
@@ -74,9 +98,7 @@ class OpenPayController extends Controller
             ];
 
             if ($useSavedCard) {
-                $savedCard = \App\Models\CustomerCard::where('openpay_card_id', $request->saved_card_id)
-                    ->where('customer_id', $debt->customer->id ?? null)
-                    ->first();
+                $savedCard = CustomerCard::where('openpay_card_id', $request->saved_card_id)->where('customer_id', $debt->customer->id ?? null)->first();
 
                 if (!$savedCard) {
                     DB::rollBack();
@@ -94,7 +116,7 @@ class OpenPayController extends Controller
                     ], 400);
                 }
 
-                $result = $this->openPayService->chargeWithCardId(
+                $result = $openPayService->chargeWithCardId(
                     $savedCard->openpay_card_id,
                     $request->cvv2,
                     $request->amount,
@@ -106,7 +128,7 @@ class OpenPayController extends Controller
             }
 
             if (!$useSavedCard) {
-                $result = $this->openPayService->chargeWithToken(
+                $result = $openPayService->chargeWithToken(
                     $request->token_id,
                     $request->amount,
                     "Pago de deuda #{$debt->id} - {$debt->customer->name} {$debt->customer->last_name}",
@@ -209,27 +231,63 @@ class OpenPayController extends Controller
 
     public function webhook(Request $request)
     {
-        if (!$this->openPayService->verifyWebhook($request)) {
-            Log::warning('Webhook OpenPay no autorizado');
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
         $data = $request->all();
 
         try {
             $type = $data['type'] ?? null;
+
+            if ($type === 'verification') {
+                $verificationCode = $data['verification_code'] ?? null;
+
+                Log::info('OpenPay webhook verification received', [
+                    'verification_code' => $verificationCode,
+                    'event_date' => $data['event_date'] ?? null,
+                    'id' => $data['id'] ?? null,
+                ]);
+
+                if ($verificationCode) {
+                    OpenPayWebhookVerification::create([
+                        'verification_code' => $verificationCode,
+                        'openpay_event_id' => $data['id'] ?? null,
+                        'event_date' => isset($data['event_date']) ? \Carbon\Carbon::parse($data['event_date']) : now(),
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
+                    ]);
+
+                    return response($verificationCode, 200)
+                        ->header('Content-Type', 'text/plain');
+                }
+
+                return response()->json(['error' => 'No verification code provided'], 400);
+            }
+
             $transaction = $data['transaction'] ?? null;
 
             if (!$transaction || !isset($transaction['id'])) {
-                Log::error('Webhook sin datos de transacción válidos');
+                Log::error('Webhook sin datos de transacción válidos', ['data' => $data]);
                 return response()->json(['error' => 'Invalid data'], 400);
             }
 
-            $payment = Payment::where('openpay_transaction_id', $transaction['id'])->first();
+            $payment = Payment::with('locality')->where('openpay_transaction_id', $transaction['id'])->first();
 
             if (!$payment) {
                 Log::warning('Pago no encontrado para transacción: ' . $transaction['id']);
                 return response()->json(['status' => 'payment not found'], 404);
+            }
+
+            $locality = $payment->locality;
+            $hasLocalityOpenPay = $locality && $locality->hasOpenPayEnabled();
+            
+            $isAuthorized = $hasLocalityOpenPay
+                ? OpenPayService::verifyWebhookForLocality($locality, $request)
+                : OpenPayService::global()->verifyWebhook($request);
+
+            if (!$isAuthorized) {
+                $logMessage = $hasLocalityOpenPay
+                    ? 'Webhook OpenPay no autorizado para localidad: ' . $locality->id
+                    : 'Webhook OpenPay no autorizado (global)';
+                Log::warning($logMessage);
+                return response()->json(['error' => 'Unauthorized'], 401);
             }
 
             switch ($type) {
@@ -244,12 +302,7 @@ class OpenPayController extends Controller
 
                     $debt = $payment->debt;
                     $debt->debt_current = max(0, $debt->debt_current - $payment->amount);
-
-                    if ($debt->debt_current <= 0) {
-                        $debt->status = 'pending';
-                    } else {
-                        $debt->status = 'partial';
-                    }
+                    $debt->status = $debt->debt_current <= 0 ? 'pending' : 'partial';
                     $debt->save();
                     break;
 
@@ -262,12 +315,7 @@ class OpenPayController extends Controller
 
                     $debt = $payment->debt;
                     $debt->debt_current = max(0, $debt->debt_current - $payment->amount);
-
-                    if ($debt->debt_current <= 0) {
-                        $debt->status = 'pending';
-                    } else {
-                        $debt->status = 'partial';
-                    }
+                    $debt->status = $debt->debt_current <= 0 ? 'pending' : 'partial';
                     $debt->save();
                     break;
 
@@ -301,7 +349,7 @@ class OpenPayController extends Controller
 
         DB::beginTransaction();
         try {
-            $payment = Payment::findOrFail($paymentId);
+            $payment = Payment::with('locality')->findOrFail($paymentId);
 
             if (!$payment->isOpenPayPayment()) {
                 return response()->json([
@@ -317,7 +365,12 @@ class OpenPayController extends Controller
                 ], 400);
             }
 
-            $result = $this->openPayService->refund(
+            $locality = $payment->locality;
+            $openPayService = ($locality && $locality->hasOpenPayEnabled())
+                ? OpenPayService::forLocality($locality)
+                : OpenPayService::global();
+
+            $result = $openPayService->refund(
                 $payment->openpay_transaction_id,
                 $request->description ?? 'Reembolso de pago',
                 $request->amount
@@ -337,12 +390,7 @@ class OpenPayController extends Controller
             $debt = $payment->debt;
             $refundAmount = $request->amount ?? $payment->amount;
             $debt->debt_current += $refundAmount;
-
-            if ($debt->debt_current >= $debt->amount) {
-                $debt->status = 'pending';
-            } else {
-                $debt->status = 'partial';
-            }
+            $debt->status = $debt->debt_current >= $debt->amount ? 'pending' : 'partial';
             $debt->save();
 
             DB::commit();

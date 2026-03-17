@@ -464,6 +464,12 @@ return [
         'can'  => 'viewLocality'
     ],
     [
+        'text' => 'Verificación Webhooks',
+        'url' => '/openpay/webhook-verifications',
+        'icon' => 'fas fa-fw fa-key',
+        'can'  => 'viewLocality'
+    ],
+    [
         'text' => 'Empleados',
         'url' => '/employees',
         'icon' => 'fas fa-fw fa-users',

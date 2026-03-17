@@ -37,6 +37,7 @@ use App\Http\Controllers\EarningTypeController;
 use App\Http\Controllers\GeneralEarningController;
 use App\Http\Controllers\OpenPayController;
 use App\Http\Controllers\CustomerCardController;
+use App\Http\Controllers\LocalityOpenPayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -134,6 +135,15 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::post('/localities/generateTeoken', [LocalityController::class, 'generateToken'])->name('localities.generateToken');
         Route::post('/localities/{locality}/update-pdf-background', [LocalityController::class, 'updatePdfBackground'])->name('localities.updatePdfBackground');
         Route::get('/reports/movements/generate', [MovementHistoryController::class, 'generatePDF'])->name('reports.generatePdfMovementsHistory');
+        
+        Route::put('/localities/{locality}/openpay', [LocalityOpenPayController::class, 'update'])->name('localities.openpay.update');
+        Route::get('/localities/{locality}/openpay/test', [LocalityOpenPayController::class, 'testConnection'])->name('localities.openpay.test');
+        Route::get('/localities/{locality}/openpay/webhook-info', [LocalityOpenPayController::class, 'getWebhookUrl'])->name('localities.openpay.webhook-info');
+        
+        Route::get('/openpay/webhook-verifications', [LocalityOpenPayController::class, 'webhookVerifications'])->name('openpay.webhook.verifications');
+        Route::get('/openpay/webhook-verifications/api', [LocalityOpenPayController::class, 'webhookVerificationsApi'])->name('openpay.webhook.verifications.api');
+        Route::delete('/openpay/webhook-verifications/{id}', [LocalityOpenPayController::class, 'deleteVerification'])->name('openpay.webhook.verifications.delete');
+        Route::delete('/openpay/webhook-verifications', [LocalityOpenPayController::class, 'clearVerifications'])->name('openpay.webhook.verifications.clear');
     });
 
     Route::group(['middleware' => ['can:viewWaterConnection']], function () {
@@ -287,19 +297,14 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     });
 
     Route::prefix('openpay')->name('openpay.')->group(function () {
-        Route::post('/process', [OpenPayController::class, 'processPayment'])
-            ->name('process');
-        Route::post('/refund/{paymentId}', [OpenPayController::class, 'refund'])
-            ->name('refund');
+        Route::post('/process', [OpenPayController::class, 'processPayment'])->name('process');
+        Route::post('/refund/{paymentId}', [OpenPayController::class, 'refund'])->name('refund');
     });
 });
 
 Route::prefix('openpay')->name('openpay.')->group(function () {
-    Route::match(['get', 'post'], '/webhook/verify', [OpenPayController::class, 'verifyWebhook'])
-        ->name('webhook.verify');
-
-    Route::post('/webhook', [OpenPayController::class, 'webhook'])
-        ->name('webhook');
+    Route::match(['get', 'post'], '/webhook/verify', [OpenPayController::class, 'verifyWebhook'])->name('webhook.verify');
+    Route::post('/webhook', [OpenPayController::class, 'webhook'])->name('webhook');
 });
 
 Route::get('/expiredSubscriptions/expired', [TokenController::class, 'showExpired'])->name('expiredSubscriptions.expired');

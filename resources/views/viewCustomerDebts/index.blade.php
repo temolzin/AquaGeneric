@@ -314,9 +314,17 @@
             }
         });
 
-        OpenPay.setId('{{ config("openpay.merchant_id") }}');
-        OpenPay.setApiKey('{{ config("openpay.public_key") }}');
-        OpenPay.setSandboxMode({{ config("openpay.sandbox") ? 'true' : 'false' }});
+        @if(isset($locality) && $locality && $locality->hasOpenPayEnabled())
+        OpenPay.setId('{{ $locality->openpay_merchant_id }}');
+        OpenPay.setApiKey('{{ $locality->openpay_public_key }}');
+        OpenPay.setSandboxMode({{ $locality->openpay_sandbox ? 'true' : 'false' }});
+        var openpayEnabled = true;
+        @else
+        OpenPay.setId('');
+        OpenPay.setApiKey('');
+        OpenPay.setSandboxMode(true);
+        var openpayEnabled = false;
+        @endif
 
         function loadSavedCards(callback) {
             $.ajax({
@@ -456,6 +464,16 @@
         });
 
         $(document).on('click', '.btn-open-payment', function() {
+            if (!openpayEnabled) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Pago en línea no disponible',
+                    text: 'El pago con tarjeta no está habilitado para tu localidad. Por favor contacta al administrador o utiliza otro método de pago.',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+
             var btn = $(this);
             var debtId = btn.data('debt-id');
             var totalPaid = parseFloat(btn.data('total-paid')) || 0;

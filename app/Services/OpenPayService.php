@@ -6,6 +6,7 @@ use Openpay\Data\Openpay as OpenpayAPI;
 use Openpay\Data\Openpay;
 use App\Models\Payment;
 use App\Models\OpenPayLog;
+use App\Models\Locality;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Exception;
@@ -15,12 +16,20 @@ class OpenPayService
     protected $openpay;
     protected $merchantId;
     protected $sandbox;
+    protected $webhookUser;
+    protected $webhookPassword;
+    protected $localityId;
 
-    public function __construct()
+    public function __construct(?array $credentials = null, ?int $localityId = null)
     {
-        $this->merchantId = config('openpay.merchant_id');
-        $privateKey = config('openpay.private_key');
-        $this->sandbox = config('openpay.sandbox');
+        $this->localityId = $localityId;
+        
+        $this->merchantId = $credentials['merchant_id'] ?? config('openpay.merchant_id');
+        $privateKey = $credentials['private_key'] ?? config('openpay.private_key');
+        $this->sandbox = $credentials['sandbox'] ?? config('openpay.sandbox', true);
+        $this->webhookUser = $credentials['webhook_user'] ?? config('openpay.webhook_user');
+        $this->webhookPassword = $credentials['webhook_password'] ?? config('openpay.webhook_password');
+        
         $country = strtoupper(config('openpay.country', 'MX'));
 
         OpenpayAPI::setCountry($country);
@@ -31,6 +40,20 @@ class OpenPayService
 
         $this->openpay = OpenpayAPI::getInstance($this->merchantId, $privateKey, $country, $clientIp);
         OpenpayAPI::setProductionMode(!$this->sandbox);
+    }
+
+    public static function forLocality(Locality $locality): self
+    {
+        if (!$locality->hasOpenPayEnabled()) {
+            throw new Exception('La localidad no tiene OpenPay configurado o habilitado.');
+        }
+
+        return new self($locality->getOpenPayCredentials(), $locality->id);
+    }
+
+    public static function global(): self
+    {
+        return new self();
     }
 
     protected static function getClientIPv4Static()
@@ -268,8 +291,8 @@ class OpenPayService
 
     public function verifyWebhook($requestData)
     {
-        $expectedUser = config('openpay.webhook_user');
-        $expectedPassword = config('openpay.webhook_password');
+        $expectedUser = $this->webhookUser ?? config('openpay.webhook_user');
+        $expectedPassword = $this->webhookPassword ?? config('openpay.webhook_password');
 
         if (!$expectedUser || !$expectedPassword) {
             return false;
@@ -281,6 +304,78 @@ class OpenPayService
 
         return $_SERVER['PHP_AUTH_USER'] === $expectedUser &&
             $_SERVER['PHP_AUTH_PW'] === $expectedPassword;
+    }
+
+    public static function verifyWebhookForLocality(Locality $locality, $request): bool
+    {
+        if (!$locality->openpay_webhook_user || !$locality->openpay_webhook_password) {
+            return false;
+        }
+
+        if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
+            return false;
+        }
+
+        return $_SERVER['PHP_AUTH_USER'] === $locality->openpay_webhook_user &&
+            $_SERVER['PHP_AUTH_PW'] === $locality->openpay_webhook_password;
+    }
+
+    public function getMerchantId(): ?string
+    {
+        return $this->merchantId;
+    }
+
+    public function isSandbox(): bool
+    {
+        return $this->sandbox;
+    }
+
+    public function testCredentials(): array
+    {
+        try {
+            $searchParams = [
+                'limit' => 1,
+                'offset' => 0,
+            ];
+            
+            $customers = $this->openpay->customers->getList($searchParams);
+            
+            return [
+                'success' => true,
+                'details' => [
+                    'mode' => $this->sandbox ? 'Sandbox (Pruebas)' : 'Producción',
+                    'api_response' => 'OK',
+                ]
+            ];
+            
+        } catch (Exception $e) {
+            $errorMessage = $e->getMessage();
+            $errorCode = method_exists($e, 'getErrorCode') ? $e->getErrorCode() : null;
+            
+            if (stripos($errorMessage, 'auth') !== false || 
+                stripos($errorMessage, 'unauthorized') !== false ||
+                stripos($errorMessage, '401') !== false ||
+                $errorCode === 1001 || $errorCode === 1002) {
+                return [
+                    'success' => false,
+                    'message' => 'Credenciales inválidas: Merchant ID o Private Key incorrectos.',
+                ];
+            }
+            
+            if (stripos($errorMessage, 'connect') !== false || 
+                stripos($errorMessage, 'timeout') !== false ||
+                stripos($errorMessage, 'curl') !== false) {
+                return [
+                    'success' => false,
+                    'message' => 'No se pudo conectar con OpenPay. Verifica tu conexión a internet.',
+                ];
+            }
+            
+            return [
+                'success' => false,
+                'message' => 'Error al conectar con OpenPay: ' . $errorMessage,
+            ];
+        }
     }
 
     public function createCard($tokenId, $deviceSessionId = null)
