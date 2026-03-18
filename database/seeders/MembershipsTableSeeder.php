@@ -52,7 +52,6 @@ class MembershipsTableSeeder extends Seeder
                 'created_at' => $now,
             ];
             
-            // Solo agregar created_by si la columna existe
             if (Schema::hasColumn('memberships', 'created_by') && $adminId) {
                 $data['created_by'] = $adminId;
             }
