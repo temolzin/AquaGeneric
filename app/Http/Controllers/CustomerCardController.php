@@ -93,10 +93,13 @@ class CustomerCardController extends Controller
         }
 
         $lastFour = substr(preg_replace('/[^0-9]/', '', $request->card_number), -4);
+        $expirationMonth = str_pad($request->expiration_month, 2, '0', STR_PAD_LEFT);
+        $expirationYear = str_pad($request->expiration_year, 2, '0', STR_PAD_LEFT);
+
         $duplicate = CustomerCard::where('customer_id', $customer->id)
             ->where('last_four', $lastFour)
-            ->where('expiration_month', $request->expiration_month)
-            ->where('expiration_year', $request->expiration_year)
+            ->where('expiration_month', $expirationMonth)
+            ->where('expiration_year', $expirationYear)
             ->first();
 
         if ($duplicate) {
@@ -130,8 +133,8 @@ class CustomerCardController extends Controller
             'brand' => $result['brand'] ?: $request->brand,
             'last_four' => $result['last_four'] ?: substr(preg_replace('/[^0-9]/', '', $request->card_number), -4),
             'holder_name' => $result['holder_name'] ?: $request->holder_name,
-            'expiration_month' => $result['expiration_month'] ?: $request->expiration_month,
-            'expiration_year' => $result['expiration_year'] ?: $request->expiration_year,
+            'expiration_month' => str_pad($result['expiration_month'] ?? $request->expiration_month, 2, '0', STR_PAD_LEFT),
+            'expiration_year' => str_pad($result['expiration_year'] ?? $request->expiration_year, 2, '0', STR_PAD_LEFT),
             'is_default' => $isDefault,
         ]);
 
