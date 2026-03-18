@@ -89,6 +89,11 @@ class LocalitiesTableSeeder extends Seeder
         Locality::whereNotNull('membership_id')
             ->whereNull('membership_assigned_at')
             ->update(['membership_assigned_at' => now()]);
+
+        // Validar y actualizar membresías expiradas
+        Locality::all()->each(function ($locality) {
+            $locality->validateAndUpdateMembership();
+        });
     }
 
     private function generateTokenData(int $localityId, bool $isExpired = false): string
