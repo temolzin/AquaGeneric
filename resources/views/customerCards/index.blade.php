@@ -482,7 +482,6 @@
                     'add-card-form',
                     function (response) {
                         var currentDeviceSessionId = openpayDeviceSessionId || $('input[name="deviceIdHiddenFieldName"]').val();
-                        $('#addCardModal').modal('hide');
                         showLoading('Guardando tarjeta...');
                         $.ajax({
                             url: '{{ route("customerCards.store") }}',
@@ -499,21 +498,19 @@
                                 brand: $('#add-card-brand').val() || 'unknown'
                             },
                             success: function (data) {
-                                var handlers = {
-                                    success: function() { showSuccess('Tarjeta registrada correctamente', function() { location.reload(); }); },
-                                    duplicate: function() { hideLoading(); toastr.warning(data.error, 'Tarjeta ya registrada', { timeOut: 5000 }); },
-                                    error: function() { hideLoading(); toastr.error(data.error || 'Error al guardar la tarjeta'); }
-                                };
-                                var action = data.success ? 'success' : (data.duplicate ? 'duplicate' : 'error');
-                                handlers[action]();
+                                hideLoading();
+                                showSuccess('Tarjeta registrada correctamente', function() { location.reload(); });
                             },
                             error: function (xhr) {
                                 hideLoading();
                                 var errorMsg = 'Error al guardar la tarjeta';
+
                                 if (xhr.responseJSON && xhr.responseJSON.error) {
                                     errorMsg = xhr.responseJSON.error;
                                 }
-                                toastr.error(errorMsg);
+
+                                showAddCardError(errorMsg);
+                                $('#addCardModal').modal('show');
                             }
                         });
                     },

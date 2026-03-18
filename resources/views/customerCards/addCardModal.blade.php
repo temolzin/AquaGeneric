@@ -30,7 +30,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label><i class="fas fa-tag"></i> Alias (opcional)</label>
+                                <label for="add-alias"><i class="fas fa-tag"></i> Alias (opcional)</label>
                                 <input type="text" class="form-control" id="add-alias" name="alias"
                                     placeholder="Ej: Mi tarjeta personal" maxlength="50">
                                 <small class="text-muted">Un nombre para identificar esta tarjeta</small>
@@ -38,7 +38,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label><i class="fas fa-user"></i> Nombre del titular</label>
+                                <label for="add-holder-name"><i class="fas fa-user"></i> Nombre del titular</label>
                                 <input type="text" class="form-control" id="add-holder-name"
                                     placeholder="Como aparece en la tarjeta" autocomplete="off"
                                     data-openpay-card="holder_name" pattern="[A-Za-z ]+"
@@ -48,7 +48,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label><i class="fas fa-credit-card"></i> Número de tarjeta</label>
+                        <label for="add-card-number"><i class="fas fa-credit-card"></i> Número de tarjeta</label>
                         <input type="text" class="form-control" id="add-card-number"
                             placeholder="•••• •••• •••• ••••" autocomplete="off" data-openpay-card="card_number"
                             maxlength="19" pattern="[0-9]{13,19}" inputmode="numeric"
@@ -58,7 +58,7 @@
                     <div class="row">
                         <div class="col-4">
                             <div class="form-group">
-                                <label>Mes</label>
+                                <label for="add-exp-month">Mes</label>
                                 <select class="form-control" id="add-exp-month" data-openpay-card="expiration_month" required>
                                     <option value="">MM</option>
                                     <option value="01">01</option>
@@ -78,7 +78,7 @@
                         </div>
                         <div class="col-4">
                             <div class="form-group">
-                                <label>Año</label>
+                                <label for="add-exp-year">Año</label>
                                 <input type="text" class="form-control" id="add-exp-year" placeholder="AA"
                                     maxlength="2" pattern="[0-9]{2}" inputmode="numeric"
                                     data-openpay-card="expiration_year" title="2 dígitos del año" required>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="col-4">
                             <div class="form-group">
-                                <label>CVV <i class="fas fa-question-circle text-muted" title="Código de seguridad en el reverso"></i></label>
+                                <label for="add-cvv">CVV <i class="fas fa-question-circle text-muted" title="Código de seguridad en el reverso"></i></label>
                                 <input type="text" class="form-control" id="add-cvv" placeholder="•••" maxlength="4"
                                     pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off"
                                     data-openpay-card="cvv2" title="3 o 4 dígitos numéricos" required>
