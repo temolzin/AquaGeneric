@@ -86,9 +86,7 @@ class CustomerFaultReportController extends Controller
     public function destroy($id)
     {
         $report = FaultReport::where('created_by', Auth::id())->findOrFail($id);
-        $report->delete([
-            'deleted_at' => now(),
-        ]);
+        $report->delete();
         return redirect()->route('customerFaultReports.index')
             ->with('success', 'Reporte de falla eliminado correctamente.');
     }

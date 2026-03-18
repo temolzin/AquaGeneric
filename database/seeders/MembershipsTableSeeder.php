@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\User;
 
 class MembershipsTableSeeder extends Seeder
@@ -14,10 +15,6 @@ class MembershipsTableSeeder extends Seeder
             ->orderBy('id')
             ->value('id')
             ?? User::orderBy('id')->value('id');
-
-        if (!$adminId) {
-            return;
-        }
 
         $memberships = [
             [
@@ -45,30 +42,28 @@ class MembershipsTableSeeder extends Seeder
 
         $now = now();
 
-         $payload = collect($memberships)->map(function ($m) use ($adminId, $now) {
-            return [
+        $payload = collect($memberships)->map(function ($m) use ($adminId, $now) {
+            $data = [
                 'name' => $m['name'],
                 'price' => $m['price'],
                 'term_months' => $m['term_months'],
                 'water_connections_number' => $m['water_connections_number'],
                 'users_number' => $m['users_number'],
-                'created_by' => $adminId,
                 'created_at' => $now,
             ];
+            
+            // Solo agregar created_by si la columna existe
+            if (Schema::hasColumn('memberships', 'created_by') && $adminId) {
+                $data['created_by'] = $adminId;
+            }
+            
+            return $data;
         })->toArray();
 
         DB::table('memberships')->upsert(
             $payload,
             ['name'],
-            ['price', 'term_months', 'water_connections_number', 'users_number']
+            ['price', 'term_months', 'water_connections_number', 'users_number', 'created_by']
         );
-
-        DB::table('memberships')
-            ->where('water_connections_number', 0)
-            ->orWhere('users_number', 0)
-            ->update([
-                'water_connections_number' => 1000,
-                'users_number' => 1,
-            ]);
     }
 }
