@@ -157,6 +157,12 @@
             });
         });
 
+        $('#assignDebtModal').on('shown.bs.modal', function() {
+            $('#assign_debt_category_id').select2({
+                dropdownParent: $('#assignDebtModal')
+            });
+        });
+
         $('#customer_id').on('change', function() {
             var customerId = $(this).val();
 

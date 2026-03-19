@@ -115,6 +115,11 @@
                                                                             @endif
                                                                         </p>
                                                                     </div>
+                                                                    <div class="col-6 col-md-2">
+                                                                        <p><strong>Categoría:</strong>
+                                                                            <span class="badge bg-secondary text-white">{{ $waterConnectionDebt->debtCategory->name ?? 'Servicio de Agua' }}</span>
+                                                                        </p>
+                                                                    </div>
                                                                     <div class="col-12 col-md-2 text-right">
                                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                                             <button type="button" class="btn btn-info btn-sm mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewDebt{{ $waterConnectionDebt->id }}">

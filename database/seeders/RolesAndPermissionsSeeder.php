@@ -26,23 +26,47 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'viewCustomers',
             'description' => 'Permite ver los Clientes.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
         Permission::firstOrCreate([
             'name' => 'viewPayments',
             'description' => 'Permite ver los Pagos.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
         Permission::firstOrCreate([
             'name' => 'viewDebts',
             'description' => 'Permite ver las Deudas.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'viewDebtCategories',
+            'description' => 'Permite ver las Categorías de Deuda.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'viewDebtCategories',
+            'description' => 'Permite ver las Categorías de Deuda.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+
+        Permission::firstOrCreate([
+            'name' => 'createDebtCategories',
+            'description' => 'Permite crear Categorías de Deuda.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+
+        Permission::firstOrCreate([
+            'name' => 'editDebtCategories',
+            'description' => 'Permite editar Categorías de Deuda.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+
+        Permission::firstOrCreate([
+            'name' => 'deleteDebtCategories',
+            'description' => 'Permite eliminar Categorías de Deuda.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+
         Permission::firstOrCreate([
             'name' => 'viewCost',
             'description' => 'Permite ver los Costos.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
         Permission::firstOrCreate([
             'name' => 'viewWaterConnection',
             'description' => 'Permite ver las Tomas de Agua.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
         Permission::firstOrCreate([
             'name' => 'deleteWaterConnection',
             'description' => 'Permite eliminar las Tomas de Agua.'
@@ -106,7 +130,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'viewGeneralExpense',
             'description' => 'Permite ver los Gastos.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat ]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
         Permission::firstOrCreate([
             'name' => 'deleteGeneralExpense',
             'description' => 'Permite eliminar los Gastos.'

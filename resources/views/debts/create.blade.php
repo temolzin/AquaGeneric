@@ -70,6 +70,20 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
+                                            <label for="debt_category_id" class="form-label">Categoría</label>
+                                            <select name="debt_category_id" id="debt_category_id" class="form-control select2" required>
+                                                @if(isset($debtCategories) && $debtCategories->count())
+                                                    @foreach($debtCategories as $cat)
+                                                        <option value="{{ $cat->id }}" {{ old('debt_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                                    @endforeach
+                                                @else
+                                                    <option value="">Sin categorías</option>
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
                                             <label for="note" class="form-label">Observación</label>
                                             <textarea class="form-control" name="note" placeholder="Ingresa una observación">{{ old('note') }}</textarea>
                                         </div>

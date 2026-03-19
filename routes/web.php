@@ -37,6 +37,8 @@ use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\CustomerFaultReportController;
 use App\Http\Controllers\EarningTypeController;
 use App\Http\Controllers\GeneralEarningController;
+use App\Http\Controllers\DebtCategoryController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -129,7 +131,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('localities', LocalityController::class);
         Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
-        Route::put('/localities/{locality}/mailConfiguration',[MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
+        Route::put('/localities/{locality}/mailConfiguration', [MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
         Route::post('/localities/generateTeoken', [LocalityController::class, 'generateToken'])->name('localities.generateToken');
         Route::post('/localities/{locality}/update-pdf-background', [LocalityController::class, 'updatePdfBackground'])->name('localities.updatePdfBackground');
         Route::get('/reports/movements/generate', [MovementHistoryController::class, 'generatePDF'])->name('reports.generatePdfMovementsHistory');
@@ -231,12 +233,12 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/viewCustomerWaterConnections', [WaterConnectionController::class, 'showCustomerWaterConnections'])->name('viewCustomerWaterConnections.index');
     });
 
-    Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
+    Route::group(['middleware' => ['can:viewCustomerDebts']], function () {
         Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
     });
 
-    Route::group(['middleware' => ['can:viewCustomerNotices']], function (){
-    Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
+    Route::group(['middleware' => ['can:viewCustomerNotices']], function () {
+        Route::get('customer/notices/{id}/file', [LocalityNoticeController::class, 'downloadAttachment'])->name('customer.notices.file');
     });
 
     Route::group(['middleware' => ['can:viewReportsLists']], function () {
@@ -269,7 +271,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/viewCustomerWaterConnections', [WaterConnectionController::class, 'showCustomerWaterConnections'])->name('viewCustomerWaterConnections.index');
     });
 
-    Route::group(['middleware'=> ['can:viewCustomerDebts']], function() {
+    Route::group(['middleware' => ['can:viewCustomerDebts']], function () {
         Route::get('/viewCustomerDebts', [DebtController::class, 'showCustomerDebts'])->name('viewCustomerDebts.index');
     });
 
@@ -281,6 +283,10 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewGeneralEarning']], function () {
         Route::get('/generalEarnings', [GeneralEarningController::class, 'index'])->name('generalEarnings.index');
         Route::resource('generalEarnings', GeneralEarningController::class);
+    });
+
+    Route::group(['middleware' => ['can:viewDebtCategories']], function () {
+        Route::resource('/debtCategories', DebtCategoryController::class);
     });
 });
 

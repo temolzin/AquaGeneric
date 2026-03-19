@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreDebtRequest;
 use App\Models\Customer;
 use App\Models\Debt;
-use App\Models\Payment;
-use App\Models\User;
 use App\Models\WaterConnection;
 use App\Models\MovementHistory;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DebtCategory;
+use Carbon\Carbon;
 
 class DebtController extends Controller
 {
@@ -20,224 +20,195 @@ class DebtController extends Controller
         $authUser = auth()->user();
         $localityId = $authUser->locality_id;
 
-        $customers = Customer::where('customers.locality_id', $localityId)
-            ->select('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
-            ->where(function ($query) use ($search) {
-                $query->where('customers.id', 'like', "%{$search}%")
-                    ->orWhere('customers.name', 'like', "%{$search}%")
-                    ->orWhere('customers.last_name', 'like', "%{$search}%")
-                    ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"]);
+        $customers = Customer::where('locality_id', $localityId)
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('id', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+                });
             })
-
-            ->groupBy('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
             ->get();
 
-
-        $waterConnections = WaterConnection::with(['customer'])
+        $waterConnections = WaterConnection::with('customer')
             ->where('locality_id', $localityId)
             ->get();
 
         $debts = Debt::with(['waterConnection.customer', 'creator'])
-        ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
-            $query->where('locality_id', $localityId)
-                ->whereHas('customer', function ($query) use ($search) {
-                    $query->where(function ($query) use ($search) {
-                        $query->where('customers.id', 'like', "%{$search}%")
-                            ->orWhere('customers.name', 'like', "%{$search}%")
-                            ->orWhere('customers.last_name', 'like', "%{$search}%")
-                            ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"]);
-                    });
-                });
-        })
-        ->selectRaw('water_connection_id, debts.created_at, SUM(amount) as total_amount')
-        ->where('status', '!=', 'paid')
-        ->groupBy('water_connection_id', 'debts.created_at')
-        ->orderByDesc('debts.created_at')
-        ->paginate(10);
+            ->whereHas('waterConnection', function ($query) use ($localityId) {
+                $query->where('locality_id', $localityId);
+            })
+            ->where('status', '!=', 'paid')
+            ->orderByDesc('created_at')
+            ->paginate(10);
 
-        $totalDebts = [];
-        foreach ($debts as $debt) {
-            $customerId = $debt->waterConnection->customer_id;
-            if (!isset($totalDebts[$customerId])) {
-                $totalDebts[$customerId] = 0;
-            }
+        $debtCategories = DebtCategory::all();
 
-            $totalDebtAmount = Debt::where('water_connection_id', $debt->water_connection_id)->sum('amount');
-            $totalDebtPaid = Debt::where('water_connection_id', $debt->water_connection_id)->sum('debt_current');
-            $totalDebts[$customerId] = $totalDebtAmount - $totalDebtPaid;
-        }
-
-        return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts'));
+        return view('debts.index', compact(
+            'debts',
+            'customers',
+            'waterConnections',
+            'debtCategories'
+        ));
     }
 
     public function getWaterConnections(Request $request)
     {
         $authUser = auth()->user();
-        $customerId = $request->input('customer_id');
-        $waterConnections = WaterConnection::where('customer_id', $customerId)
-                                            ->where('locality_id', $authUser->locality_id)
-                                            ->get()
-                                            ->map(function ($waterConnection) {
-                                                return [
-                                                    'id' => $waterConnection->id,
-                                                    'name' => $waterConnection->name,
-                                                ];
-                                            });
 
-        return response()->json(['waterConnections' => $waterConnections]);
+        $waterConnections = WaterConnection::where('customer_id', $request->customer_id)
+            ->where('locality_id', $authUser->locality_id)
+            ->get();
+
+        return response()->json([
+            'waterConnections' => $waterConnections->map(fn($wc) => [
+                'id' => $wc->id,
+                'name' => $wc->name
+            ])
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreDebtRequest $request)
     {
         $authUser = auth()->user();
 
-        $waterConnection = WaterConnection::findOrFail($request->water_connection_id);
+        $startDate = Carbon::createFromFormat('Y-m', $request->start_date)->startOfMonth();
+        $endDate = Carbon::createFromFormat('Y-m', $request->end_date)->startOfMonth();
 
-        $startMonth = $request->input('start_date');
-        $endMonth = $request->input('end_date');
+        $periodMonth = $startDate->month;
+        $periodYear = $startDate->year;
 
-        $startDate = new \DateTime($startMonth . '-01');
-        $endDate = (new \DateTime($endMonth . '-01'))->modify('last day of this month');
+        $category = DebtCategory::find($request->debt_category_id)
+            ?? DebtCategory::getDefaultService();
 
-        $existingDebt = Debt::where('water_connection_id', $request->input('water_connection_id'))
-            ->where(function ($query) use ($startDate, $endDate) {
-                $query->where('start_date', '<=', $endDate->format('Y-m-d'))
-                      ->where('end_date', '>=', $startDate->format('Y-m-d'));
-            })
-            ->exists();
-
-        if ($existingDebt) {
-            return response()->json(['error' => 'El cliente ya tiene una deuda en este rango de fechas.'], 400);
+        // Validación centralizada
+        if ($this->debtExists(
+            $request->water_connection_id,
+            $category->id,
+            $periodMonth,
+            $periodYear,
+            $startDate,
+            $endDate
+        )) {
+            return response()->json([
+                'error' => 'Ya existe una deuda para este periodo.'
+            ], 400);
         }
 
         Debt::create([
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'water_connection_id' => $request->water_connection_id,
-            'start_date' => $startDate->format('Y-m-d'),
-            'end_date' => $endDate->format('Y-m-d'),
-            'amount' => $request->input('amount'),
-            'note' => $request->input('note'),
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'amount' => $request->amount,
+            'note' => $request->note,
+            'debt_category_id' => $category->id,
+            'period_month' => $periodMonth,
+            'period_year' => $periodYear,
         ]);
 
-        return response()->json(['success' => 'Deuda creada exitosamente.'], 400);
+        return response()->json([
+            'success' => 'Deuda creada correctamente'
+        ], 201);
     }
 
     public function assignAll(Request $request)
     {
         $authUser = auth()->user();
-        $customers = Customer::with('waterConnections')
+
+        $startDate = Carbon::createFromFormat('Y-m', $request->start_date)->startOfMonth();
+        $endDate = Carbon::createFromFormat('Y-m', $request->end_date)->startOfMonth();
+
+        $periodMonth = $startDate->month;
+        $periodYear = $startDate->year;
+
+        $category = DebtCategory::find($request->debt_category_id)
+            ?? DebtCategory::getDefaultService();
+
+        $customers = Customer::with('waterConnections.cost')
             ->where('locality_id', $authUser->locality_id)
             ->get();
 
-        $startMonth = $request->input('start_date');
-        $endMonth = $request->input('end_date');
-
-        $startDate = new \DateTime($startMonth . '-01');
-        $endDate = (new \DateTime($endMonth . '-01'))->modify('first day of next month')->modify('-1 day');
-
-        $note = $request->note ?? 'Deuda asignada manualmente';
-
-        $allHaveDebt = true;
+        $created = false;
 
         foreach ($customers as $customer) {
-            foreach ($customer->waterConnections as $waterConnection) {
-                $cost = $waterConnection->cost;
+            foreach ($customer->waterConnections as $wc) {
 
-                if (!$cost || !$cost->price) {
-                    continue;
-                }
+                if (!$wc->cost || !$wc->cost->price) continue;
 
-                $existingDebt = Debt::where('water_connection_id', $waterConnection->id)
-                    ->where(function ($query) use ($startDate, $endDate) {
-                        $query->where('start_date', '<=', $endDate->format('Y-m-d'))
-                            ->where('end_date', '>=', $startDate->format('Y-m-d'));
-                    })
-                    ->exists();
+                if ($this->debtExists(
+                    $wc->id,
+                    $category->id,
+                    $periodMonth,
+                    $periodYear,
+                    $startDate,
+                    $endDate
+                )) continue;
 
-                if ($existingDebt) {
-                    continue;
-                }
-
-                $allHaveDebt = false;
                 Debt::create([
                     'locality_id' => $authUser->locality_id,
                     'created_by' => $authUser->id,
-                    'water_connection_id' => $waterConnection->id,
-                    'start_date' => $startDate->format('Y-m-d'),
-                    'end_date' => $endDate->format('Y-m-d'),
-                    'amount' => $cost->price,
-                    'note' => $note,
+                    'water_connection_id' => $wc->id,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'amount' => $wc->cost->price,
+                    'note' => $request->note ?? 'Asignación masiva',
+                    'debt_category_id' => $category->id,
+                    'period_month' => $periodMonth,
+                    'period_year' => $periodYear,
                 ]);
+
+                $created = true;
             }
         }
 
-        if ($allHaveDebt) {
-            return redirect()->back()->with('error', 'Todas las tomas de agua de los clientes ya tienen deudas asignadas para el período especificado.');
+        if (!$created) {
+            return back()->with('error', 'Todas las deudas ya existen para ese periodo.');
         }
 
-        return redirect()->back()->with('success', 'Deudas asignadas exitosamente a todas las tomas de agua de los clientes.');
+        return back()->with('success', 'Deudas asignadas correctamente.');
+    }
+
+    private function debtExists($waterConnectionId, $categoryId, $month, $year, $startDate, $endDate)
+    {
+        $serviceId = DebtCategory::getDefaultService()->id;
+
+        if ($categoryId == $serviceId) {
+            return Debt::where('water_connection_id', $waterConnectionId)
+                ->where('debt_category_id', $categoryId)
+                ->where('period_month', $month)
+                ->where('period_year', $year)
+                ->exists();
+        }
+
+        return Debt::where('water_connection_id', $waterConnectionId)
+            ->where('debt_category_id', $categoryId)
+            ->where('status', '!=', 'paid')
+            ->where(function ($q) use ($startDate, $endDate) {
+                $q->where('start_date', '<=', $endDate)
+                  ->where('end_date', '>=', $startDate);
+            })
+            ->exists();
     }
 
     public function destroy($id, Request $request)
     {
-        $debt = Debt::find($id);
-
-        if (!$debt) {
-            return redirect()->back()->with('error', 'Deuda no encontrada.');
-        }
+        $debt = Debt::findOrFail($id);
 
         $before = $debt->toArray();
         $debt->delete();
 
         MovementHistory::create([
-        'alter_by'     => Auth::user()->id,
-        'module'       => 'deudas',
-        'action'       => 'delete',
-        'record_id'    => $debt->id,
-        'before_data'  => $before,
-        'current_data' => null,
-    ]);
+            'alter_by' => Auth::user()->id,
+            'module' => 'deudas',
+            'action' => 'delete',
+            'record_id' => $id,
+            'before_data' => $before,
+            'current_data' => null,
+        ]);
 
-        return redirect()->back()->with('success', 'Deuda eliminada con éxito.')
-            ->with('modal_id', $request->input('modal_id'));
-    }
-
-    public function showCustomerDebts(Request $request)
-    {
-        $authUser = auth()->user();
-        $customer = $authUser->customer;
-        
-        if (!$customer) {
-            $waterConnections = WaterConnection::where('id', 0)->paginate(10);
-            return view('viewCustomerDebts.index', compact('waterConnections'))
-                ->with('error', 'No se encontró información del cliente.');
-        }
-
-        $search = $request->input('search');
-        $waterConnections = WaterConnection::where('customer_id', $customer->id)
-            ->where('locality_id', $authUser->locality_id)
-            ->whereHas('debts', function($query) {
-                $query->where(function($q) {
-                    $q->where('status', 'pending')
-                    ->orWhere('status', 'partial');
-                });
-            })
-            ->when($search, function($query) use ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('street', 'like', "%{$search}%")
-                    ->orWhere('exterior_number', 'like', "%{$search}%")
-                    ->orWhere('interior_number', 'like', "%{$search}%")
-                    ->orWhere('id', 'like', "%{$search}%");
-                });
-            })
-            ->with(['debts' => function($query) {
-                $query->orderBy('created_at', 'desc');
-            }])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return view('viewCustomerDebts.index', compact('waterConnections'));
+        return back()->with('success', 'Deuda eliminada correctamente.');
     }
 }

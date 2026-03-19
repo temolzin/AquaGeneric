@@ -15,7 +15,7 @@ class Debt extends Model
     public const DASHBOARD_EXPIRING_DAYS = 20;
 
     protected $fillable = [
-        'water_connection_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note'
+        'water_connection_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note', 'debt_category_id'
     ];
 
     protected static function booted()
@@ -37,6 +37,11 @@ class Debt extends Model
     public function waterConnection()
     {
         return $this->belongsTo(WaterConnection::class);
+    }
+
+    public function debtCategory()
+    {
+        return $this->belongsTo(DebtCategory::class, 'debt_category_id');
     }
 
     public function customer()
