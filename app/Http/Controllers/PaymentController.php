@@ -175,6 +175,11 @@ class PaymentController extends Controller
 
     public function update(Request $request, Payment $payment)
     {
+        if ($payment->method === 'openpay') {
+            return redirect()->route('payments.index')
+                ->with('error', 'Los pagos realizados vía OpenPay no pueden ser editados.');
+        }
+
         $debt = $payment->debt;
         $before = $payment->toArray();
 
@@ -220,6 +225,12 @@ class PaymentController extends Controller
     public function destroy($id)
     {
         $payment = Payment::findOrFail($id);
+
+        if ($payment->method === 'openpay') {
+            return redirect()->route('payments.index')
+                ->with('error', 'Los pagos realizados vía OpenPay no pueden ser eliminados.');
+        }
+
         $payment->delete();
 
         if (!$payment) {
