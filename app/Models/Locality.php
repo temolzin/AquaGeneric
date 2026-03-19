@@ -86,7 +86,6 @@ class Locality extends Model implements HasMedia
     public function validateAndUpdateMembership()
     {
         $status = $this->getSubscriptionStatus();
-        
         if ($status === self::SUBSCRIPTION_EXPIRED) {
             $this->membership_id = null;
             $this->membership_assigned_at = null;

@@ -52,12 +52,15 @@ class LocalityController extends Controller
             $locality->addMediaFromRequest('photo')->toMediaCollection('localityGallery');
         }
 
+        $locality->validateAndUpdateMembership();
+
         return redirect()->route('localities.index')->with('success', 'Localidad registrada correctamente.');
     }
 
     public function show($id)
     {
         $locality = Locality::findOrFail($id);
+        $locality->validateAndUpdateMembership();
         return view('localities.show', compact('locality'));
     }
 
@@ -79,6 +82,7 @@ class LocalityController extends Controller
             
             $locality->membership_id = $request->input('membership_id');
             $locality->save();
+            $locality->validateAndUpdateMembership();
 
             return redirect()->route('localities.index')->with('success', 'Localidad actualizada correctamente.');
         }
