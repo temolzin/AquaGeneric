@@ -220,7 +220,12 @@ class InventoryController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'excel_file' => 'required|file|mimes:csv|max:10240' 
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'amount' => 'required|integer|min:0',
+            'inventory_category_id' => 'required|exists:inventory_categories,id',
+            'material' => 'nullable|string|max:50',
+            'dimensions' => 'nullable|string|max:50',
         ]);
 
         try {

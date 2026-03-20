@@ -95,14 +95,19 @@ class LocalityController extends Controller
     public function updateLogo(Request $request, $id){
         $locality = Locality::find($id);
         if ($locality) {
-            
             if ($request->hasFile('photo')) {
+                $request->validate([
+                    'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+                ], [
+                    'photo.image' => 'El archivo debe ser una imagen.',
+                    'photo.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+                    'photo.max' => 'La imagen no puede superar los 5MB.',
+                ]);
                 $locality->clearMediaCollection('localityGallery');
                 $locality->addMediaFromRequest('photo')->toMediaCollection('localityGallery');
             }
             return redirect()->route('localities.index')->with('success', 'Logo de Localidad actualizado correctamente.');
         }
-
         return redirect()->back()->with('error', 'Localidad no encontrada.');
     }
 
@@ -142,6 +147,18 @@ class LocalityController extends Controller
         if (!$locality) {
             return redirect()->back()->with('error', 'Localidad no encontrada.');
         }
+
+        $request->validate([
+            'pdf_background_vertical' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pdf_background_horizontal' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            'pdf_background_vertical.image' => 'El archivo debe ser una imagen.',
+            'pdf_background_vertical.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'pdf_background_vertical.max' => 'La imagen no puede superar los 5MB.',
+            'pdf_background_horizontal.image' => 'El archivo debe ser una imagen.',
+            'pdf_background_horizontal.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'pdf_background_horizontal.max' => 'La imagen no puede superar los 5MB.',
+        ]);
 
         if ($request->hasFile('pdf_background_vertical')) {
             $locality->clearMediaCollection('pdfBackgroundVertical');

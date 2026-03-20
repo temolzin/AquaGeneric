@@ -39,6 +39,13 @@ class GeneralEarningController extends Controller
     {
         $authUser = auth()->user();
 
+        $request->validate([
+            'receipt' => 'nullable|mimes:jpg,jpeg,png,pdf|max:5120',
+        ], [
+            'receipt.mimes' => 'Solo se permiten archivos PDF, JPG, JPEG o PNG.',
+            'receipt.max' => 'El archivo no puede superar los 5MB.',
+        ]);
+
         $generalEarningData = $request->all();
 
         $generalEarningData['earning_date'] = $request->input('earningDate');

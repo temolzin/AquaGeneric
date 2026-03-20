@@ -42,7 +42,10 @@ class LocalityNoticeController extends Controller
             'description' => 'required|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,xlsx,xls|max:10240'
+            'attachment' => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120'
+        ], [
+            'attachment.mimes' => 'Solo se permiten archivos PDF, JPG, JPEG o PNG.',
+            'attachment.max' => 'El archivo no puede superar los 5MB.',
         ]);
 
         $startDate = Carbon::parse($request->start_date)->startOfDay();
