@@ -27,7 +27,8 @@ class Locality extends Model implements HasMedia
         'state',
         'zip_code',
         'membership_id',
-        'membership_assigned_at'
+        'membership_assigned_at',
+        'token'
     ];
 
     public function membership()
@@ -78,7 +79,17 @@ class Locality extends Model implements HasMedia
             
             return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
         } catch (Exception $e) {
-            return self::SUBSCRIPTION_NONE;return self::SUBSCRIPTION_NONE;
+            return self::SUBSCRIPTION_NONE;
+        }
+    }
+
+    public function validateAndUpdateMembership()
+    {
+        $status = $this->getSubscriptionStatus();
+        if ($status === self::SUBSCRIPTION_EXPIRED) {
+            $this->membership_id = null;
+            $this->membership_assigned_at = null;
+            $this->save();
         }
     }
 
