@@ -23,7 +23,6 @@ class InventoryCategorySeeder extends Seeder
                 'color' => color(2),
                 'created_by' => $firstUser,
                 'created_at' => now(),
-                'updated_at' => now(),
             ]
         );
 
@@ -75,7 +74,6 @@ class InventoryCategorySeeder extends Seeder
                         'color' => $category['color'],
                         'created_by' => $users[0],
                         'created_at' => now(),
-                        'updated_at' => now(),
                     ]
                 );
             }

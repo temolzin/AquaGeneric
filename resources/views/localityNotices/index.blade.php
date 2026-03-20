@@ -40,6 +40,7 @@
                                     <table id="notices" class="table table-striped display responsive nowrap" style="width:100%">
                                         <thead>
                                             <tr>
+                                                <th></th>
                                                 <th>ID</th>
                                                 <th>TÍTULO</th>
                                                 <th>FECHA Y HORA DE INICIO</th>
@@ -51,17 +52,14 @@
                                         <tbody>
                                             @if (count($localityNotices) <= 0)
                                                 <tr>
-                                                    <td colspan="6" class="text-center">No hay avisos registrados</td>
+                                                    <td colspan="7" class="text-center">No hay avisos registrados</td>
                                                 </tr>
                                             @else
                                                 @foreach($localityNotices as $notice)
                                                     <tr>
                                                         <td></td>
                                                         <td>{{ $notice->id }}</td>
-                                                        <td>
-                                                            {{ Str::limit($notice->title, 40) }}
-                                                        </td>
-                                                        <td>{{ $notice->locality->name }}</td>
+                                                        <td>{{ Str::limit($notice->title, 40) }}</td>
                                                         <td>{{ $notice->start_date->format('d/m/Y H:i') }}</td>
                                                         <td>{{ $notice->end_date->format('d/m/Y H:i') }}</td>
                                                         <td>
@@ -84,32 +82,32 @@
 
                                                             <span class="badge {{ $badgeClass }} px-1 py-1">
                                                                 {{ $text }}
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <div class="d-flex flex-wrap gap-0">
-                                                                    @can('viewNotice')
-                                                                    <button type="button" class="btn btn-info btn-sm mx-1 mb-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $notice->id }}">
-                                                                        <i class="fas fa-eye"></i>
-                                                                    </button>
-                                                                    @endcan
-                                                                    @can('editNotice')
-                                                                    <button type="button" class="btn btn-warning btn-sm mx-1 mb-1" data-toggle="modal" title="Editar Aviso" data-target="#edit{{ $notice->id }}">
-                                                                        <i class="fas fa-edit"></i>
-                                                                    </button>
-                                                                    @endcan
-                                                                    @can('deleteNotice')
-                                                                    <button type="button" class="btn btn-danger btn-sm mx-1 mb-1" data-toggle="modal" title="Eliminar Aviso" data-target="#delete{{ $notice->id }}">
-                                                                        <i class="fas fa-trash-alt"></i>
-                                                                    </button>
-                                                                    @endcan
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        @include('localityNotices.delete', ['notice' => $notice])
-                                                        @include('localityNotices.edit', ['notice' => $notice])
-                                                        @include('localityNotices.show', ['notice' => $notice])
-                                                    @endforeach
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex flex-wrap gap-0">
+                                                                @can('viewNotice')
+                                                                <button type="button" class="btn btn-info btn-sm mx-1 mb-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $notice->id }}">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                @endcan
+                                                                @can('editNotice')
+                                                                <button type="button" class="btn btn-warning btn-sm mx-1 mb-1" data-toggle="modal" title="Editar Aviso" data-target="#edit{{ $notice->id }}">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                                @endcan
+                                                                @can('deleteNotice')
+                                                                <button type="button" class="btn btn-danger btn-sm mx-1 mb-1" data-toggle="modal" title="Eliminar Aviso" data-target="#delete{{ $notice->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                                @endcan
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    @include('localityNotices.delete', ['notice' => $notice])
+                                                    @include('localityNotices.edit', ['notice' => $notice])
+                                                    @include('localityNotices.show', ['notice' => $notice])
+                                                @endforeach
                                             @endif
                                         </tbody>
                                     </table>
@@ -195,7 +193,6 @@ $(document).ready(function() {
     order: [[1, 'desc']],
 
     columnDefs: [
-
         {
             targets: 0,
             className: 'dtr-control',
@@ -203,21 +200,8 @@ $(document).ready(function() {
             searchable: false,
             responsivePriority: 1
         },
-
         {
-            targets: 2,
-            className: 'all',
-            responsivePriority: 2
-        },
-
-        {
-            targets: [1,3,4,5,6],
-            className: 'min-tablet',
-            responsivePriority: 100
-        },
-
-        {
-            targets: 7,
+            targets: 6,
             className: 'none',
             responsivePriority: 3
         }

@@ -17,16 +17,14 @@ class LocalityNoticesSeeder extends Seeder
     {
         $faker = Faker::create('es_MX');
 
-        $localityIds = DB::table('localities')->pluck('id')->toArray();
+        $localities = DB::table('localities')->get();
 
-        foreach (range(1, 2) as $index) {
-            $locality_id = $faker->randomElement($localityIds);
-
+        foreach ($localities as $locality) {
             $userIds = DB::table('users')
                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                 ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
                 ->where('roles.name', User::ROLE_SUPERVISOR)
-                ->where('users.locality_id', $locality_id)
+                ->where('users.locality_id', $locality->id)
                 ->distinct()
                 ->pluck('users.id')
                 ->toArray();
@@ -68,11 +66,10 @@ class LocalityNoticesSeeder extends Seeder
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'is_active' => $faker->boolean(80),
-                        'locality_id' => $locality_id,
+                        'locality_id' => $locality->id,
                         'created_by' => $faker->randomElement($userIds),
                         'attachment_url' => null,
                         'created_at' => now(),
-                        'updated_at' => now(),
                     ]);
                 }
             }

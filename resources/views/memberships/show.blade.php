@@ -58,7 +58,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Creado Por</label>
-                                        <input type="text" disabled class="form-control" value="{{ $membership->creator->name ?? 'Desconocido' }}" />
+                                        <input type="text" disabled class="form-control" value="{{ ($membership->creator->name ?? '') . ' ' . ($membership->creator->last_name ?? '') }}" />
                                     </div>
                                 </div>
                             </div>

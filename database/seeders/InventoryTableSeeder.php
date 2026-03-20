@@ -105,7 +105,6 @@ class InventoryTableSeeder extends Seeder
                     'material' => $item['material'],
                     'dimensions' => $item['dimensions'],
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
                 ];
             }
         }

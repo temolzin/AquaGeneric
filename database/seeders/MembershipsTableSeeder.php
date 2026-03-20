@@ -54,14 +54,13 @@ class MembershipsTableSeeder extends Seeder
                 'users_number' => $m['users_number'],
                 'created_by' => $adminId,
                 'created_at' => $now,
-                'updated_at' => $now,
             ];
         })->toArray();
 
         DB::table('memberships')->upsert(
             $payload,
             ['name'],
-            ['price', 'term_months', 'water_connections_number', 'users_number', 'updated_at']
+            ['price', 'term_months', 'water_connections_number', 'users_number']
         );
 
         DB::table('memberships')
@@ -70,7 +69,6 @@ class MembershipsTableSeeder extends Seeder
             ->update([
                 'water_connections_number' => 1000,
                 'users_number' => 1,
-                'updated_at' => now(),
             ]);
     }
 }

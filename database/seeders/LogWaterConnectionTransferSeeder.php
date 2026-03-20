@@ -47,7 +47,6 @@ class LogWaterConnectionTransferSeeder extends Seeder
                 'note' => 'Transferencia de prueba generada por seeder.',
                 'created_by' => $faker->randomElement($userIds),
                 'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
     }

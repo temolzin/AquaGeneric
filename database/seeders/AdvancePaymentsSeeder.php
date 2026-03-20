@@ -43,7 +43,6 @@ class AdvancePaymentsSeeder extends Seeder {
                 'note' => "Deuda pagada anticipadamente por $monthsAdvance meses - registro #" . ($index + 1),
                 'deleted_at' => null,
                 'created_at' => $createdAt,
-                'updated_at' => $createdAt,
             ]);
 
             DB::table('payments')->insert([

@@ -50,8 +50,8 @@
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
-                                        <label for="description">Descripción</label>
-                                        <textarea name="description" class="form-control @error('description') is-invalid @enderror" placeholder="Ingrese la descripción del tipo de gasto">{{ old('description', $expenseType->description) }}</textarea>
+                                        <label for="description">Descripción (*)</label>
+                                        <textarea name="description" class="form-control @error('description') is-invalid @enderror" placeholder="Ingrese la descripción del tipo de gasto" required>{{ old('description', $expenseType->description) }}</textarea>
                                         @error('description') <span class="invalid-feedback">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
