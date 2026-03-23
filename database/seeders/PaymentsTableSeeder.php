@@ -19,11 +19,6 @@ class PaymentsTableSeeder extends Seeder
         $faker = Faker::create();
         $payments = [];
         $debtIds = DB::table('debts')->pluck('id');
-        $userIds = DB::table('users')->pluck('id')->toArray();
-
-        $alonsoCustomerId = DB::table('customers')
-            ->where('user_id', 5)
-            ->value('id');
 
         foreach ($debtIds as $debtId) {
             $debt = DB::table('debts')->find($debtId);
@@ -38,32 +33,36 @@ class PaymentsTableSeeder extends Seeder
                 continue;
             }
 
-            ($waterConnection->customer_id == $alonsoCustomerId)
-                ? $this->handleAlonsoPayment($debt, $userIds, $faker, $waterConnection, $payments)
-                : $this->handleRegularPayment($debt, $userIds, $faker, $waterConnection, $payments);
+            $localityUserIds = DB::table('users')
+                ->where('locality_id', $debt->locality_id)
+                ->where('id', '!=', 5)
+                ->whereIn('id', DB::table('model_has_roles')
+                    ->whereIn('role_id', DB::table('roles')
+                        ->whereIn('name', ['Supervisor', 'Secretaria'])
+                        ->pluck('id')
+                    )
+                    ->pluck('model_id')
+                )
+                ->pluck('id')
+                ->toArray();
+
+            $customer = DB::table('customers')->where('id', $waterConnection->customer_id)->first();
+            if ($customer && $customer->user_id) {
+                $localityUserIds = array_diff($localityUserIds, [$customer->user_id]);
+                $localityUserIds = array_values($localityUserIds);
+            }
+
+            if (empty($localityUserIds)) {
+                continue;
+            }
+
+            $this->handlePayment($debt, $localityUserIds, $faker, $waterConnection, $payments);
         }
 
         DB::table('payments')->insert($payments);
     }
 
-    private function handleAlonsoPayment($debt, array $userIds, $faker, $waterConnection, &$payments)
-    {
-        if ($debt->debt_current > 0) {
-            $createdAt = $this->getRandomCreatedAt();
-
-            $payments[] = $this->createPayment(
-                $debt,
-                $userIds,
-                $faker,
-                (int)$debt->debt_current,
-                $createdAt,
-                $createdAt,
-                $waterConnection->customer_id
-            );
-        }
-    }
-
-    private function handleRegularPayment($debt, array $userIds, $faker, $waterConnection, &$payments)
+    private function handlePayment($debt, array $userIds, $faker, $waterConnection, &$payments)
     {
         $remainingDebt = $debt->debt_current;
 
@@ -96,10 +95,16 @@ class PaymentsTableSeeder extends Seeder
 
     private function createPayment($debt, array $userIds, $faker, int $amount, Carbon $createdAt, Carbon $updatedAt, int $customerId): array
     {
+        $createdByUserId = null;
+
+        if (!empty($userIds)) {
+            $createdByUserId = $userIds[array_rand($userIds)];
+        }
+
         return [
             'customer_id' => $customerId,
             'debt_id' => $debt->id,
-            'created_by' => $userIds[array_rand($userIds)],
+            'created_by' => $createdByUserId,
             'amount' => $amount,
             'locality_id' => $debt->locality_id,
             'method' => $faker->randomElement(self::PAYMENTS_METHODS),
