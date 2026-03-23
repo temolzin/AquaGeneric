@@ -60,6 +60,11 @@ class CustomerController extends Controller
             'status' => 'required|string',
             'responsible_name' => 'nullable|string',
             'note' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            'photo.image' => 'El archivo debe ser una imagen.',
+            'photo.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'photo.max' => 'La imagen no puede superar los 5MB.',
         ]);
 
         $customerData = $request->all();

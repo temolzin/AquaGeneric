@@ -34,9 +34,13 @@ class UserController extends Controller
     {
         $request->validate([
             'email' => 'required|email|max:255|unique:users,email',
-            'locality_id' => 'required|exists:localities,id'
+            'locality_id' => 'required|exists:localities,id',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ], [
             'email.unique' => 'Ya existe un usuario con ese correo.',
+            'photo.image' => 'El archivo debe ser una imagen.',
+            'photo.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'photo.max' => 'La imagen no puede superar los 5MB.',
         ]);
 
         try {
