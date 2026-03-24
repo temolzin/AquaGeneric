@@ -83,6 +83,35 @@ class Locality extends Model implements HasMedia
         }
     }
 
+    public function generateMembershipToken()
+    {
+        if (!$this->membership || !$this->membership_assigned_at) {
+            return null;
+        }
+
+        $startDate = Carbon::parse($this->membership_assigned_at)->startOfDay();
+        $endDate = $startDate->copy()->addMonths($this->membership->term_months)->endOfDay();
+
+        $data = [
+            'idLocality' => $this->id,
+            'startDate' => $startDate->toDateString(),
+            'endDate' => $endDate->toDateString(),
+        ];
+
+        $hmac = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
+        $tokenData = [
+            'data' => $data,
+            'hmac' => $hmac
+        ];
+
+        $token = Crypt::encrypt($tokenData);
+        
+        $this->token = $token;
+        $this->saveQuietly();
+
+        return $token;
+    }
+
     public function validateAndUpdateMembership()
     {
         $status = $this->getSubscriptionStatus();

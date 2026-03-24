@@ -14,10 +14,9 @@ class InventoryTableSeeder extends Seeder
         $faker = Faker::create();
 
         $localityIds = DB::table('localities')->pluck('id')->toArray();
-        $userIds = DB::table('users')->pluck('id')->toArray();
 
-        if (empty($localityIds) || empty($userIds)) {
-            throw new \Exception('No hay IDs disponibles en las tablas localities o users.');
+        if (empty($localityIds)) {
+            throw new \Exception('No hay IDs disponibles en la tabla localities.');
         }
 
         DB::table('inventory')->delete();
@@ -38,9 +37,24 @@ class InventoryTableSeeder extends Seeder
 
         foreach ($localityIds as $localityId) {
             $localCategories = $categoryMap[$localityId] ?? [];
-
+            
+            $localUserIds = DB::table('users')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', ['Supervisor', 'Secretaria'])
+                ->where('users.locality_id', $localityId)
+                ->where('users.id', '!=', 5)
+                ->distinct()
+                ->pluck('users.id')
+                ->toArray();
+            
             if (empty($localCategories)) {
                 $this->command->warn("No hay categorías para la localidad ID: {$localityId}");
+                continue;
+            }
+
+            if (empty($localUserIds)) {
+                $this->command->warn("No hay usuarios supervisores/secretarios para la localidad ID: {$localityId}");
                 continue;
             }
 
@@ -97,7 +111,7 @@ class InventoryTableSeeder extends Seeder
 
                 $inventoryData[] = [
                     'locality_id' => $localityId,
-                    'created_by' => $faker->randomElement($userIds),
+                    'created_by' => $faker->randomElement($localUserIds),
                     'name' => $item['name'],
                     'description' => $item['description'],
                     'amount' => $item['amount'],

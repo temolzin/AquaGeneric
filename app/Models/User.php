@@ -29,7 +29,6 @@ class User extends Authenticatable implements HasMedia
      * @var array<int, string>
      */
     protected $fillable=['locality_id','name','last_name','phone','email','password', 'temporary_password'];
-    public $timestamps = false;
 
     /**
      * The attributes that should be hidden for serialization.

@@ -49,6 +49,15 @@ class AdvancePaymentController extends Controller
 
     public function destroy($id)
     {
+        $payment = Payment::findOrFail($id);
+        
+        if ($payment->locality_id !== auth()->user()->locality_id) {
+            return redirect()->back()->with('error', 'No tienes permiso para eliminar este pago.');
+        }
+        
+        $payment->delete();
+        
+        return redirect()->route('advancePayments.index')->with('success', 'Pago adelantado eliminado correctamente.');
     }
 
     private function filterByCustomerName($query, string $name)
