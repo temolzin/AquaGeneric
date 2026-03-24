@@ -28,7 +28,8 @@ class Locality extends Model implements HasMedia
         'state',
         'zip_code',
         'membership_id',
-        'membership_assigned_at'
+        'membership_assigned_at',
+        'token'
     ];
 
     public function membership()
@@ -87,7 +88,6 @@ class Locality extends Model implements HasMedia
     {
         if (!$this->membership || !$this->membership_assigned_at) {
             return null;
-        }
 
         $startDate = Carbon::parse($this->membership_assigned_at)->startOfDay();
         $endDate = $startDate->copy()->addMonths($this->membership->term_months)->endOfDay();

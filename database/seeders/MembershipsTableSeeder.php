@@ -13,8 +13,11 @@ class MembershipsTableSeeder extends Seeder
     {
         $adminId = User::whereHas('roles', fn($q) => $q->where('name', 'Admin'))
             ->orderBy('id')
-            ->value('id')
-            ?? User::orderBy('id')->value('id');
+            ->value('id');
+
+        if (is_null($adminId)) {
+            $adminId = User::orderBy('id')->value('id');
+        }
 
         $memberships = [
             [

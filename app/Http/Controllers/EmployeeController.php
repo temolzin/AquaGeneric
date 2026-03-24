@@ -48,6 +48,11 @@ class EmployeeController extends Controller
             'phoneNumber' => 'nullable|string',
             'salary' => 'required',
             'rol'=>'required|string',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            'photo.image' => 'El archivo debe ser una imagen.',
+            'photo.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'photo.max' => 'La imagen no puede superar los 5MB.',
         ]);
 
         $employeeData = [
