@@ -122,7 +122,6 @@ class LocalityController extends Controller
             'membership_id' => 'required|exists:memberships,id',
         ]);
 
-        
         $locality = Locality::find($request->input('idLocality'));
         
         $locality->update([
@@ -130,8 +129,12 @@ class LocalityController extends Controller
             'membership_assigned_at' => now()
         ]);
 
+        $locality->refresh();
+
         return redirect()->route('localities.index')
-            ->with('success', 'Membresía y token asignados correctamente.');
+            ->with('success', 'Membresía y token asignados correctamente.')
+            ->with('createdToken', $locality->token)
+            ->with('localityName', $locality->name);
     }
 
     public function updatePdfBackground(Request $request, $id)

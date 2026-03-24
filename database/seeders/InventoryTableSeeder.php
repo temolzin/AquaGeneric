@@ -48,8 +48,13 @@ class InventoryTableSeeder extends Seeder
                 ->pluck('users.id')
                 ->toArray();
             
-            if (empty($localCategories) || empty($localUserIds)) {
+            if (empty($localCategories)) {
                 $this->command->warn("No hay categorías para la localidad ID: {$localityId}");
+                continue;
+            }
+
+            if (empty($localUserIds)) {
+                $this->command->warn("No hay usuarios supervisores/secretarios para la localidad ID: {$localityId}");
                 continue;
             }
 
