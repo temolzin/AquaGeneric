@@ -113,16 +113,18 @@
                                                                 <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $payment->id }}">
                                                                     <i class="fas fa-eye"></i>
                                                                 </button>
-                                                                @can('editPayment')
-                                                                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#editPayment{{$payment->id}}">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </button>
-                                                                @endcan
-                                                                @can('deletePayment')
-                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $payment->id }}">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                                @endcan
+                                                                @if($payment->method !== 'openpay')
+                                                                    @can('editPayment')
+                                                                    <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#editPayment{{$payment->id}}">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </button>
+                                                                    @endcan
+                                                                    @can('deletePayment')
+                                                                    <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $payment->id }}">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </button>
+                                                                    @endcan
+                                                                @endif
                                                                 <a type="button" class="btn btn-block bg-gradient-secondary mr-2" target="_blank" title="Generar Recibo"
                                                                     href="{{ route('reports.receiptPayment', Crypt::encrypt($payment->id)) }}">
                                                                     <i class="fas fa-file-invoice"></i>
