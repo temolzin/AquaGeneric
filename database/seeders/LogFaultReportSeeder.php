@@ -12,7 +12,7 @@ class LogFaultReportSeeder extends Seeder
         LogFaultReport::create([
             'fault_report_id' => 1,
             'locality_id' => 1,
-            'created_by' => 1,
+            'created_by' => 5, 
             'status' => LogFaultReport::STATUS_PENDING,
             'description' => 'Primer registro de log (pendiente)'
         ]);
@@ -20,14 +20,14 @@ class LogFaultReportSeeder extends Seeder
         LogFaultReport::create([
             'fault_report_id' => 1,
             'locality_id' => 1,
-            'created_by' => 1,
+            'created_by' => 5,
             'status' => LogFaultReport::STATUS_IN_REVIEW,
         ]);
 
         LogFaultReport::create([
             'fault_report_id' => 1,
             'locality_id' => 1,
-            'created_by' => 1,
+            'created_by' => 5, 
             'status' => LogFaultReport::STATUS_COMPLETED,
             'description' => 'Registro finalizado correctamente.'
         ]);
