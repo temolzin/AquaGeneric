@@ -22,7 +22,6 @@ class LogFaultReportSeeder extends Seeder
             'locality_id' => 1,
             'created_by' => 1,
             'status' => LogFaultReport::STATUS_IN_REVIEW,
-            // description omitido
         ]);
 
         LogFaultReport::create([
