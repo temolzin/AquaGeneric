@@ -21,6 +21,48 @@ class DebtsTableSeeder extends Seeder
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
 
+        $alonso = DB::table('customers')->where('user_id', 5)->first();
+        if ($alonso) {
+            $waterConnections = DB::table('water_connections')
+                ->where('customer_id', $alonso->id)
+                ->limit(2)
+                ->get();
+
+            foreach ($waterConnections as $waterConnection) {
+                $createdBy = $this->getUserForLocality($waterConnection->locality_id);
+                if (!$createdBy) {
+                    continue;
+                }
+
+                $debtStartDate = $faker->dateTimeBetween($startDate, $endDate);
+                $debtDuration = $faker->numberBetween(1, 12);
+                $debtEndDate = Carbon::instance($debtStartDate)->addMonths($debtDuration);
+
+                if ($debtEndDate > $endDate) {
+                    $debtEndDate = $endDate;
+                }
+
+                $amount = rand(self::MIN_AMOUNT, self::MAX_AMOUNT);
+                $paymentAmount = rand(0, $amount);
+                $debtCurrent = $amount - $paymentAmount;
+                $status = $this->determineDebtStatus($paymentAmount, $debtCurrent);
+
+                DB::table('debts')->insert([
+                    'water_connection_id' => $waterConnection->id,
+                    'locality_id' => $waterConnection->locality_id,
+                    'created_by' => $createdBy,
+                    'start_date' => $debtStartDate,
+                    'end_date' => $debtEndDate,
+                    'amount' => $amount,
+                    'debt_current' => $debtCurrent,
+                    'status' => $status,
+                    'note' => 'Deuda generada de prueba para Alonso',
+                    'deleted_at' => null,
+                    'created_at' => now(),
+                ]);
+            }
+        }
+
         $customers = DB::table('customers')
             ->whereNotIn('user_id', [1, 5])
             ->orWhereNull('user_id')
@@ -78,7 +120,7 @@ class DebtsTableSeeder extends Seeder
         }
     }
 
-    private function getUserForLocality(int $localityId): ?int
+    private function getUserForLocality(int $localityId): int
     {
         $userIds = DB::table('users')
             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
@@ -89,7 +131,8 @@ class DebtsTableSeeder extends Seeder
             ->distinct()
             ->pluck('users.id')
             ->toArray();
-        return !empty($userIds) ? $userIds[array_rand($userIds)] : null;
+
+        return !empty($userIds) ? $userIds[array_rand($userIds)] : 1;
     }
 
     private function determineDebtStatus(int $paymentAmount, int $debtCurrent): string

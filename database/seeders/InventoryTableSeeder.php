@@ -49,12 +49,10 @@ class InventoryTableSeeder extends Seeder
                 ->toArray();
             
             if (empty($localCategories)) {
-                $this->command->warn("No hay categorías para la localidad ID: {$localityId}");
                 continue;
             }
 
             if (empty($localUserIds)) {
-                $this->command->warn("No hay usuarios supervisores/secretarios para la localidad ID: {$localityId}");
                 continue;
             }
 
