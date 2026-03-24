@@ -78,21 +78,23 @@ class CostsTableSeeder extends Seeder
         }
     }
 
-    private function getUserForLocality(?int $localityId): ?int
+    private function getUserForLocality(?int $localityId): int
     {
         if ($localityId === null) {
-            return DB::table('users')
+            $userId = DB::table('users')
                 ->where('email', 'jose@gmail.com')
                 ->value('id');
+            return $userId ?? 1;
         }
 
-        return DB::table('users')
+        $userId = DB::table('users')
             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
             ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
             ->where('users.locality_id', $localityId)
             ->distinct()
             ->value('users.id');
+        return $userId ?? 1;
     }
 }
 

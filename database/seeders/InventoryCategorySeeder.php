@@ -63,6 +63,17 @@ class InventoryCategorySeeder extends Seeder
         ];
 
         foreach ($localities as $localityId) {
+        
+            $localityAdmin = DB::table('users')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
+                ->where('users.locality_id', $localityId)
+                ->distinct()
+                ->value('users.id');
+            
+            $createdBy = $localityAdmin ?? 1;
+            
             foreach ($baseCategories as $category) {
                 InventoryCategory::updateOrCreate(
                     [
@@ -72,7 +83,7 @@ class InventoryCategorySeeder extends Seeder
                     [
                         'description' => $category['description'],
                         'color' => $category['color'],
-                        'created_by' => $users[0],
+                        'created_by' => $createdBy,
                         'created_at' => now(),
                     ]
                 );

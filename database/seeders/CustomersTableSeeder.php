@@ -34,6 +34,10 @@ class CustomersTableSeeder extends Seeder
                 ->pluck('users.id')
                 ->toArray();
 
+            if (empty($userIds)) {
+                $userIds = [1];
+            }
+
             $status = $faker->boolean;
             $responsibleName = $status ? null : $faker->name;
 

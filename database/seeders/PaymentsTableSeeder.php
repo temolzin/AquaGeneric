@@ -18,9 +18,26 @@ class PaymentsTableSeeder extends Seeder
     {
         $faker = Faker::create();
         $payments = [];
+        
+        $alonsoPaymentCount = DB::table('payments')
+            ->join('water_connections', 'payments.customer_id', '=', 'water_connections.customer_id')
+            ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
+            ->where('customers.user_id', 5)
+            ->count();
+        
+        if ($alonsoPaymentCount >= 2) {
+            return;
+        }
+        
         $debtIds = DB::table('debts')->pluck('id');
+        $paymentsAdded = 0;
 
         foreach ($debtIds as $debtId) {
+
+            if ($paymentsAdded >= 2) {
+                break;
+            }
+            
             $debt = DB::table('debts')->find($debtId);
 
             if (!$debt) {
@@ -30,6 +47,12 @@ class PaymentsTableSeeder extends Seeder
             $waterConnection = DB::table('water_connections')->where('id', $debt->water_connection_id)->first();
 
             if (!$waterConnection) {
+                continue;
+            }
+
+            $customer = DB::table('customers')->where('id', $waterConnection->customer_id)->first();
+            
+            if (!$customer || $customer->user_id != 5) {
                 continue;
             }
 
@@ -46,17 +69,25 @@ class PaymentsTableSeeder extends Seeder
                 ->pluck('id')
                 ->toArray();
 
-            $customer = DB::table('customers')->where('id', $waterConnection->customer_id)->first();
-            if ($customer && $customer->user_id) {
-                $localityUserIds = array_diff($localityUserIds, [$customer->user_id]);
-                $localityUserIds = array_values($localityUserIds);
-            }
-
             if (empty($localityUserIds)) {
-                continue;
+                $localityUserIds = [1];
             }
 
-            $this->handlePayment($debt, $localityUserIds, $faker, $waterConnection, $payments);
+            $amount = $debt->debt_current > 0 ? $debt->debt_current : $debt->amount;
+
+            $createdAt = $this->getRandomCreatedAt();
+
+            $payments[] = $this->createPayment(
+                $debt,
+                $localityUserIds,
+                $faker,
+                $amount,
+                $createdAt,
+                $createdAt,
+                $waterConnection->customer_id
+            );
+            
+            $paymentsAdded++;
         }
 
         DB::table('payments')->insert($payments);

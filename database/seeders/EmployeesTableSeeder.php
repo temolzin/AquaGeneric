@@ -32,6 +32,10 @@ class EmployeesTableSeeder extends Seeder
                 ->pluck('users.id')
                 ->toArray();
 
+            if (empty($userIds)) {
+                $userIds = [1];
+            }
+
             $roles = ['Administrador', 'Recepcionista','Encargado','Seguridad'];
         
             DB::table('employees')->insert([
