@@ -52,12 +52,15 @@ class LocalityController extends Controller
             $locality->addMediaFromRequest('photo')->toMediaCollection('localityGallery');
         }
 
+        $locality->validateAndUpdateMembership();
+
         return redirect()->route('localities.index')->with('success', 'Localidad registrada correctamente.');
     }
 
     public function show($id)
     {
         $locality = Locality::findOrFail($id);
+        $locality->validateAndUpdateMembership();
         return view('localities.show', compact('locality'));
     }
 
@@ -79,6 +82,7 @@ class LocalityController extends Controller
             
             $locality->membership_id = $request->input('membership_id');
             $locality->save();
+            $locality->validateAndUpdateMembership();
 
             return redirect()->route('localities.index')->with('success', 'Localidad actualizada correctamente.');
         }
@@ -114,30 +118,23 @@ class LocalityController extends Controller
     public function generateToken(Request $request)
     {
         $request->validate([
-            'startDate' => 'required|date',
+            'idLocality' => 'required|exists:localities,id',
             'membership_id' => 'required|exists:memberships,id',
         ]);
 
-        $id = $request->input('idLocality');
-        $startDate = $request->input('startDate');
-        $membershipId = $request->input('membership_id');
-
-        $locality = Locality::findOrFail($id);
+        $locality = Locality::find($request->input('idLocality'));
         
         $locality->update([
-            'membership_id' => $membershipId,
+            'membership_id' => $request->input('membership_id'),
             'membership_assigned_at' => now()
         ]);
 
-        $membership = Membership::find($membershipId);
-        $endDate = \Carbon\Carbon::parse($startDate)->addMonths($membership->term_months);
-
-        $token = Token::generateTokenForLocality($id, $startDate, $endDate->toDateString());
+        $locality->refresh();
 
         return redirect()->route('localities.index')
-            ->with('createdToken', $token)
-            ->with('localityName', $locality->name)
-            ->with('success', 'Token generado y membresía asignada correctamente.');
+            ->with('success', 'Membresía y token asignados correctamente.')
+            ->with('createdToken', $locality->token)
+            ->with('localityName', $locality->name);
     }
 
     public function updatePdfBackground(Request $request, $id)

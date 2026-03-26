@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Locality;
+use App\Observers\LocalityObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         require_once app_path('Helpers/ColorHelper.php');
+        
+        Locality::observe(LocalityObserver::class);
     }
 }
