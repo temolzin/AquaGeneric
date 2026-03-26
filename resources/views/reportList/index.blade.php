@@ -302,10 +302,6 @@
 
         $('.modal').on('shown.bs.modal', function() {
             $(this).find('[autofocus]').focus();
-        }).on('hidden.bs.modal', function() {
-            $(document.body).addClass('modal-open');
-            $(this).attr('aria-hidden', 'false').removeAttr('inert');
-            $(document).off('focusin.modal');
         });
     });
 </script>
