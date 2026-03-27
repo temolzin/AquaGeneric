@@ -127,18 +127,26 @@
     }
 
     .expandable-list {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        display: block !important;
+        column-count: 2 !important;
+        column-gap: 20px;
         margin-top: 30px;
     }
 
     .expandable-card {
+        display: inline-block !important;
+        width: 100%;
+        break-inside: avoid !important;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         overflow: hidden;
         background: white;
         border: 1px solid #e0e0e0;
+        margin-bottom: 20px;
+    }
+
+    .collapse:not(.show) {
+        display: none !important;
     }
 
     .expandable-card[data-color="blue"] .expandable-header        { background-color: var(--color-blue); }
@@ -233,7 +241,7 @@
 
     @media (max-width: 768px) {
         .expandable-list {
-            grid-template-columns: 1fr;
+            column-count: 1 !important;
         }
 
         .button-group-uniform {
@@ -302,6 +310,10 @@
 
         $('.modal').on('shown.bs.modal', function() {
             $(this).find('[autofocus]').focus();
+        }).on('hidden.bs.modal', function() {
+            $(document.body).addClass('modal-open');
+            $(this).attr('aria-hidden', 'false').removeAttr('inert');
+            $(document).off('focusin.modal');
         });
     });
 </script>
