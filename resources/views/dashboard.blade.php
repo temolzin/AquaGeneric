@@ -3,6 +3,7 @@
 @section('title', config('adminlte.title') . ' | Panel')
 
 @section('content')
+    @php $hasRange = request('start_date') && request('end_date'); @endphp
     <section class="content">
         <div class="right_col" role="main">
             <div class="col-md-12 col-sm-12 ">
@@ -88,7 +89,7 @@
                             <div class="col-lg-4 col-xs-6">
                                 <div class="small-box bg-info">
                                     <div class="inner">
-                                        <h3>{{ $data['customersByLocality'] }}</h3>
+                                        <h3 class="{{ !$hasRange ? 'text-danger' : '' }}">{{ $hasRange ? $data['customersByLocality'] : 'N/A' }}</h3>
                                         <p>Total de Clientes</p>
                                     </div>
                                     <div class="icon">
@@ -100,7 +101,7 @@
                             <div class="col-lg-4 col-xs-6">
                                 <div class="small-box bg-green">
                                     <div class="inner">
-                                        <h3>{{ $data['customersWithoutDebts'] }}</h3>
+                                        <h3 class="{{ !$hasRange ? 'text-danger' : '' }}">{{ $hasRange ? $data['customersWithoutDebts'] : 'N/A' }}</h3>
                                         <p>Clientes al Día</p>
                                     </div>
                                     <div class="icon">
@@ -112,7 +113,7 @@
                             <div class="col-lg-4 col-xs-6">
                                 <div class="small-box bg-red">
                                     <div class="inner">
-                                        <h3>{{ $data['customersWithDebts'] }}</h3>
+                                        <h3 class="{{ !$hasRange ? 'text-danger' : '' }}">{{ $hasRange ? $data['customersWithDebts'] : 'N/A' }}</h3>
                                         <p>Clientes con Deudas</p>
                                     </div>
                                     <div class="icon">
@@ -178,7 +179,7 @@
                             <div class="col-lg-6 col-xs-12">
                                 <div class="small-box bg-danger">
                                     <div class="inner">
-                                        <h3>${{ number_format($totalOwed, 2) }}</h3>
+                                        <h3 class="{{ !$hasRange ? 'text-danger' : '' }}">{{ $hasRange ? '$' . number_format($totalOwed, 2) : 'N/A' }}</h3>
                                         <p>Total Adeudado</p>
                                     </div>
                                     <div class="icon">
