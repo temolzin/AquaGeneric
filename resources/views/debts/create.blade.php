@@ -5,12 +5,14 @@
                 <div class="card-header">
                     <div class="d-sm-flex align-items-center justify-content-between">
                         <h4 class="card-title">Agregar Deuda <small> &nbsp;(*) Campos requeridos</small></h4>
-                        <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal"
+                            aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('debts.store') }}" method="post" enctype="multipart/form-data" id="createDebtForm">
+                <form action="{{ route('debts.store') }}" method="post" enctype="multipart/form-data"
+                    id="createDebtForm">
                     @csrf
                     <div class="card-body">
                         <div class="card">
@@ -27,11 +29,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="customer_id" class="form-label">Seleccionar Cliente(*)</label>
-                                            <select class="form-control select2" name="customer_id" id="customer_id" required>
+                                            <select class="form-control select2" name="customer_id" id="customer_id"
+                                                required>
                                                 <option value="">Selecciona un cliente</option>
-                                                @foreach($customers as $customer)
+                                                @foreach ($customers as $customer)
                                                     <option value="{{ $customer->id }}">
-                                                        {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
+                                                        {{ $customer->id }} - {{ $customer->name }}
+                                                        {{ $customer->last_name }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -39,8 +43,10 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="water_connection_id" class="form-label">Seleccionar Toma(*)</label>
-                                            <select class="form-control select2" name="water_connection_id" id="water_connection_id" required>
+                                            <label for="water_connection_id" class="form-label">Seleccionar
+                                                Toma(*)</label>
+                                            <select class="form-control select2" name="water_connection_id"
+                                                id="water_connection_id" required>
                                                 <option value="">Selecciona una toma</option>
                                             </select>
                                         </div>
@@ -48,13 +54,15 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="start_date" class="form-label">Fecha de Inicio(*)</label>
-                                            <input type="month" class="form-control" name="start_date" value="{{ old('start_date') }}" required />
+                                            <input type="month" class="form-control" name="start_date"
+                                                value="{{ old('start_date') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="end_date" class="form-label">Fecha de Fin(*)</label>
-                                            <input type="month" class="form-control" name="end_date" value="{{ old('end_date') }}" required />
+                                            <input type="month" class="form-control" name="end_date"
+                                                value="{{ old('end_date') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -62,19 +70,25 @@
                                             <label for="amount" class="form-label">Monto(*)</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
+                                                    <span class="input-group-text"><i
+                                                            class="fa fa-dollar-sign"></i></span>
                                                 </div>
-                                                <input type="number" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
+                                                <input type="number" class="form-control" name="amount"
+                                                    placeholder="Ingresa el monto" value="{{ old('amount') }}"
+                                                    required />
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="debt_category_id" class="form-label">Categoría</label>
-                                            <select name="debt_category_id" id="debt_category_id" class="form-control select2" required>
-                                                @if(isset($debtCategories) && $debtCategories->count())
-                                                    @foreach($debtCategories as $cat)
-                                                        <option value="{{ $cat->id }}" {{ old('debt_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                            <select name="debt_category_id" id="debt_category_id"
+                                                class="form-control select2" required>
+                                                @if (isset($debtCategories) && $debtCategories->count())
+                                                    @foreach ($debtCategories as $cat)
+                                                        <option value="{{ $cat->id }}"
+                                                            {{ old('debt_category_id') == $cat->id ? 'selected' : '' }}>
+                                                            {{ $cat->name }}</option>
                                                     @endforeach
                                                 @else
                                                     <option value="">Sin categorías</option>
@@ -105,7 +119,7 @@
 </style>
 
 <script>
-    document.getElementById('createDebtForm').addEventListener('submit', async function (e) {
+    document.getElementById('createDebtForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
         try {
@@ -114,23 +128,52 @@
                 body: new FormData(this),
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
                 }
             });
 
             const data = await response.json();
 
+            // 🔥 Detectar errores reales (status HTTP)
+            if (!response.ok) {
+                let message = 'Ocurrió un error';
+
+                if (data.errors) {
+                    // Laravel validation errors
+                    message = Object.values(data.errors).flat().join('\n');
+                } else if (data.error) {
+                    message = data.error;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: message,
+                    confirmButtonText: 'Aceptar'
+                });
+
+                return;
+            }
+
+            // ✅ Éxito real
             Swal.fire({
-                icon: data.error ? 'error' : 'success',
-                title: data.error ? 'Error' : 'Éxito',
-                text: data.error || data.success,
+                icon: 'success',
+                title: 'Éxito',
+                text: data.success,
                 confirmButtonText: 'Aceptar'
             }).then(() => {
-                if (data.success) window.location.href = "{{ route('debts.index') }}";
+                window.location.href = "{{ route('debts.index') }}";
             });
 
         } catch (error) {
             console.error('Error:', error);
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error inesperado',
+                text: 'Algo falló en la solicitud',
+            });
         }
     });
 </script>

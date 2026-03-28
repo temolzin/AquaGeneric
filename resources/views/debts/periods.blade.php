@@ -24,15 +24,20 @@
                     </div>
                     <div class="form-group">
                         <label for="debt_category_id">Categoría</label>
-                        <select name="debt_category_id" id="assign_debt_category_id" class="form-control select2" required>
-                            @if(isset($debtCategories) && $debtCategories->count())
-                                @foreach($debtCategories as $cat)
-                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                @endforeach
-                            @else
-                                <option value="">Servicio de Agua</option>
-                            @endif
-                        </select>
+                        @php
+                            $serviceCat = null;
+                            if (isset($debtCategories)) {
+                                $serviceCat = $debtCategories->firstWhere('name', 'Servicio de Agua');
+                            }
+                        @endphp
+
+                        @if($serviceCat)
+                            <input type="hidden" name="debt_category_id" value="{{ $serviceCat->id }}">
+                            <input type="text" class="form-control" value="{{ $serviceCat->name }}" disabled>
+                        @else
+                            <input type="hidden" name="debt_category_id" value="">
+                            <input type="text" class="form-control" value="Servicio de Agua" disabled>
+                        @endif
                     </div>
                 </div>
                 <div class="modal-footer">

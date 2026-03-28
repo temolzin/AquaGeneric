@@ -43,14 +43,12 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
-
                     <div class="x_content">
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="card-box table-responsive">
                                     <table id="categories" class="table table-striped display responsive nowrap"
                                         style="width:100%">
-
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -59,7 +57,6 @@
                                                 <th>OPCIONES</th>
                                             </tr>
                                         </thead>
-
                                         <tbody>
                                             @if ($debtCategories->count() <= 0)
                                                 <tr>
@@ -85,34 +82,29 @@
                                                                         <i class="fas fa-eye"></i>
                                                                     </button>
                                                                 @endcan
-
+                                                                @php
+                                                                    $isService = strtolower($category->name) === strtolower('Servicio de Agua');
+                                                                @endphp
                                                                 @can('editDebtCategories')
-                                                                    <button class="btn btn-warning btn-lg mr-2"
-                                                                        data-toggle="modal"
-                                                                        data-target="#edit{{ $category->id }}">
-                                                                        <i class="fas fa-edit"></i>
-                                                                    </button>
+                                                                    @if(!$isService)
+                                                                        <button class="btn btn-warning btn-lg mr-2"
+                                                                            data-toggle="modal"
+                                                                            data-target="#edit{{ $category->id }}">
+                                                                            <i class="fas fa-edit"></i>
+                                                                        </button>
+                                                                    @endif
                                                                 @endcan
 
                                                                 @can('deleteDebtCategories')
-                                                                    <form
-                                                                        action="{{ route('debtCategories.destroy', $category->id) }}"
-                                                                        method="POST" style="display:inline-block">
-                                                                        @csrf
-                                                                        @method('DELETE')
-
-                                                                        <button class="btn btn-danger btn-lg">
+                                                                    @if(!$isService)
+                                                                        <button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#delete{{ $category->id }}">
                                                                             <i class="fas fa-trash-alt"></i>
                                                                         </button>
-                                                                    </form>
+                                                                    @endif
                                                                 @endcan
-
                                                             </div>
-
                                                         </td>
-
                                                     </tr>
-
                                                     @include('debtCategories.show')
                                                     @include('debtCategories.edit')
                                                     @include('debtCategories.delete')

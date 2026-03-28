@@ -7,13 +7,14 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
 use App\Models\User;
+use App\Models\DebtCategory;
 
 class DebtsTableSeeder extends Seeder
 {
     private const DEBT_COUNT = 100;
     private const MIN_AMOUNT = 100;
     private const MAX_AMOUNT = 1000;
-    private const DEBT_STATUSES = ['pending','partial','paid'];
+    private const DEBT_STATUSES = ['pending', 'partial', 'paid'];
 
     public function run()
     {
@@ -21,33 +22,75 @@ class DebtsTableSeeder extends Seeder
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
 
+        // 🔥 1. Asegurar categorías por localidad
+        $localities = DB::table('localities')->pluck('id');
+
+        foreach ($localities as $localityId) {
+
+            // Servicio de Agua (obligatoria)
+            DebtCategory::firstOrCreate(
+                [
+                    'name' => 'Servicio de Agua',
+                    'locality_id' => $localityId,
+                ],
+                [
+                    'description' => 'Pago de servicio de agua',
+                    'color' => 'bg-primary',
+                    'created_by' => 1,
+                ]
+            );
+
+            // Otras categorías de ejemplo
+            $extraCategories = [
+                ['name' => 'Mantenimiento', 'color' => 'bg-warning'],
+                ['name' => 'Multa', 'color' => 'bg-danger'],
+                ['name' => 'Recargo', 'color' => 'bg-secondary'],
+            ];
+
+            foreach ($extraCategories as $cat) {
+                DebtCategory::firstOrCreate(
+                    [
+                        'name' => $cat['name'],
+                        'locality_id' => $localityId,
+                    ],
+                    [
+                        'description' => 'Categoría ' . $cat['name'],
+                        'color' => $cat['color'],
+                        'created_by' => 1,
+                    ]
+                );
+            }
+        }
+
+        // 🔥 2. Obtener clientes
         $customers = DB::table('customers')
             ->whereNotIn('user_id', [1, 5])
             ->orWhereNull('user_id')
             ->get();
 
         $debtCount = 0;
+
         foreach ($customers as $customer) {
-            if ($debtCount >= self::DEBT_COUNT) {
-                break;
-            }
+            if ($debtCount >= self::DEBT_COUNT) break;
 
             $waterConnections = DB::table('water_connections')
                 ->where('customer_id', $customer->id)
                 ->get();
 
             foreach ($waterConnections as $waterConnection) {
-                if ($debtCount >= self::DEBT_COUNT) {
-                    break;
-                }
+                if ($debtCount >= self::DEBT_COUNT) break;
 
-                $createdBy = $this->getUserForLocality($waterConnection->locality_id);
-                if (!$createdBy) {
-                    continue;
-                }
+                $createdBy = $this->getUserForLocality($waterConnection->locality_id) ?? 1;
+
+                // 🔥 Categorías por localidad (correcto)
+                $categories = DebtCategory::where('locality_id', $waterConnection->locality_id)->get();
+
+                if ($categories->isEmpty()) continue;
+
+                $selectedCategory = $categories->random();
 
                 $debtStartDate = $faker->dateTimeBetween($startDate, $endDate);
-                $debtDuration = $faker->numberBetween(1, 12);
+                $debtDuration = $faker->numberBetween(1, 3);
                 $debtEndDate = Carbon::instance($debtStartDate)->addMonths($debtDuration);
 
                 if ($debtEndDate > $endDate) {
@@ -68,15 +111,20 @@ class DebtsTableSeeder extends Seeder
                     'amount' => $amount,
                     'debt_current' => $debtCurrent,
                     'status' => $status,
-                    'note' => 'Deuda generada de prueba #' . ($debtCount + 1),
+                    'note' => 'Deuda generada #' . ($debtCount + 1),
+                    'debt_category_id' => $selectedCategory->id,
+                    'period_month' => Carbon::instance($debtStartDate)->month,
+                    'period_year' => Carbon::instance($debtStartDate)->year,
                     'deleted_at' => null,
                     'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
                 $debtCount++;
             }
         }
 
+        // 🔥 3. Caso especial (Alonso)
         $alonsoCustomerId = DB::table('customers')
             ->where('user_id', 5)
             ->value('id');
@@ -87,55 +135,39 @@ class DebtsTableSeeder extends Seeder
                 ->orderBy('id', 'asc')
                 ->get();
 
-            $smallvilleLocality = DB::table('localities')->where('name', 'Smallville')->first();
-            if ($smallvilleLocality) {
-                $createdBy = $this->getUserForLocality($smallvilleLocality->id);
+            $smallvilleLocality = DB::table('localities')
+                ->where('name', 'Smallville')
+                ->first();
 
-                if ($createdBy && $alonsoWaterConnections->count() >= 2) {
-                    $alonsoStartDate = Carbon::now()->subMonths(2);
-                    $alonsoEndDate = Carbon::now()->subMonths(1);
+            if ($smallvilleLocality && $alonsoWaterConnections->count() >= 1) {
 
-                    $debt1Exists = DB::table('debts')
-                        ->where('water_connection_id', $alonsoWaterConnections[0]->id)
-                        ->where('start_date', $alonsoStartDate->toDateString())
-                        ->exists();
+                $createdBy = $this->getUserForLocality($smallvilleLocality->id) ?? 1;
 
-                    if (!$debt1Exists) {
-                        DB::table('debts')->insert([
-                            'water_connection_id' => $alonsoWaterConnections[0]->id,
-                            'locality_id' => $smallvilleLocality->id,
-                            'created_by' => $createdBy,
-                            'start_date' => $alonsoStartDate,
-                            'end_date' => $alonsoEndDate,
-                            'amount' => 500.00,
-                            'debt_current' => 250.00,
-                            'status' => 'partial',
-                            'note' => 'Deuda del mes anterior',
-                            'deleted_at' => null,
-                            'created_at' => now(),
-                        ]);
-                    }
+                $categories = DebtCategory::where('locality_id', $smallvilleLocality->id)->get();
 
-                    $debt2Exists = DB::table('debts')
-                        ->where('water_connection_id', $alonsoWaterConnections[1]->id)
-                        ->where('start_date', $alonsoEndDate->copy()->addDay()->toDateString())
-                        ->exists();
+                if (!$categories->isEmpty()) {
+                    $selectedCategory = $categories->random();
 
-                    if (!$debt2Exists) {
-                        DB::table('debts')->insert([
-                            'water_connection_id' => $alonsoWaterConnections[1]->id,
-                            'locality_id' => $smallvilleLocality->id,
-                            'created_by' => $createdBy,
-                            'start_date' => $alonsoEndDate->copy()->addDay(),
-                            'end_date' => Carbon::now(),
-                            'amount' => 350.00,
-                            'debt_current' => 175.00,
-                            'status' => 'partial',
-                            'note' => 'Deuda actual',
-                            'deleted_at' => null,
-                            'created_at' => now(),
-                        ]);
-                    }
+                    $alonsoStartDate = Carbon::now()->subMonths(2)->startOfMonth();
+                    $alonsoEndDate = Carbon::now()->subMonths(1)->endOfMonth();
+
+                    DB::table('debts')->insert([
+                        'water_connection_id' => $alonsoWaterConnections[0]->id,
+                        'locality_id' => $smallvilleLocality->id,
+                        'created_by' => $createdBy,
+                        'start_date' => $alonsoStartDate,
+                        'end_date' => $alonsoEndDate,
+                        'amount' => 500.00,
+                        'debt_current' => 250.00,
+                        'status' => 'partial',
+                        'note' => 'Deuda del mes anterior',
+                        'debt_category_id' => $selectedCategory->id,
+                        'period_month' => $alonsoStartDate->month,
+                        'period_year' => $alonsoStartDate->year,
+                        'deleted_at' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
                 }
             }
         }
@@ -152,17 +184,14 @@ class DebtsTableSeeder extends Seeder
             ->distinct()
             ->pluck('users.id')
             ->toArray();
+
         return !empty($userIds) ? $userIds[array_rand($userIds)] : null;
     }
 
     private function determineDebtStatus(int $paymentAmount, int $debtCurrent): string
     {
-        if ($paymentAmount === 0) {
-            return self::DEBT_STATUSES[0];
-        } elseif ($debtCurrent > 0) {
-            return self::DEBT_STATUSES[1];
-        } else {
-            return self::DEBT_STATUSES[2];
-        }
+        if ($paymentAmount === 0) return self::DEBT_STATUSES[0];
+        if ($debtCurrent > 0) return self::DEBT_STATUSES[1];
+        return self::DEBT_STATUSES[2];
     }
 }

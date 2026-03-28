@@ -16,9 +16,18 @@ class AddDebtCategoryIdToDebtsTable extends Migration
     {
         $default = DB::table('debt_categories')->where('name', 'Servicio de Agua')->first();
         if (!$default) {
+            // find a user with Supervisor or Secretaria role
+            $createdBy = DB::table('users')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', ['Supervisor', 'Secretaria'])
+                ->value('users.id');
+
+            // If no user with the required roles exists yet, insert category with null created_by (column is nullable)
             $defaultId = DB::table('debt_categories')->insertGetId([
                 'name' => 'Servicio de Agua',
                 'description' => 'Categoría por defecto para Servicio de Agua',
+                'created_by' => $createdBy,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

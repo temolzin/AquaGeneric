@@ -18,9 +18,8 @@ class DebtController extends Controller
     {
         $search = $request->input('search');
         $authUser = auth()->user();
-        $localityId = $authUser->locality_id;
 
-        $customers = Customer::where('locality_id', $localityId)
+        $customers = Customer::where('locality_id', $authUser->locality_id)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('id', 'like', "%{$search}%")
@@ -32,18 +31,18 @@ class DebtController extends Controller
             ->get();
 
         $waterConnections = WaterConnection::with('customer')
-            ->where('locality_id', $localityId)
+            ->where('locality_id', $authUser->locality_id)
             ->get();
 
         $debts = Debt::with(['waterConnection.customer', 'creator'])
-            ->whereHas('waterConnection', function ($query) use ($localityId) {
-                $query->where('locality_id', $localityId);
+            ->whereHas('waterConnection', function ($query) use ($authUser) {
+                $query->where('locality_id', $authUser->locality_id);
             })
             ->where('status', '!=', 'paid')
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        $debtCategories = DebtCategory::all();
+        $debtCategories = DebtCategory::where('locality_id', $authUser->locality_id)->get();
 
         return view('debts.index', compact(
             'debts',
@@ -74,27 +73,10 @@ class DebtController extends Controller
         $authUser = auth()->user();
 
         $startDate = Carbon::createFromFormat('Y-m', $request->start_date)->startOfMonth();
-        $endDate = Carbon::createFromFormat('Y-m', $request->end_date)->startOfMonth();
-
-        $periodMonth = $startDate->month;
-        $periodYear = $startDate->year;
+        $endDate = Carbon::createFromFormat('Y-m', $request->end_date)->endOfMonth();
 
         $category = DebtCategory::find($request->debt_category_id)
             ?? DebtCategory::getDefaultService();
-
-        // Validación centralizada
-        if ($this->debtExists(
-            $request->water_connection_id,
-            $category->id,
-            $periodMonth,
-            $periodYear,
-            $startDate,
-            $endDate
-        )) {
-            return response()->json([
-                'error' => 'Ya existe una deuda para este periodo.'
-            ], 400);
-        }
 
         Debt::create([
             'locality_id' => $authUser->locality_id,
@@ -105,8 +87,8 @@ class DebtController extends Controller
             'amount' => $request->amount,
             'note' => $request->note,
             'debt_category_id' => $category->id,
-            'period_month' => $periodMonth,
-            'period_year' => $periodYear,
+            'period_month' => $startDate->month,
+            'period_year' => $startDate->year,
         ]);
 
         return response()->json([
@@ -114,18 +96,19 @@ class DebtController extends Controller
         ], 201);
     }
 
+
     public function assignAll(Request $request)
     {
         $authUser = auth()->user();
 
         $startDate = Carbon::createFromFormat('Y-m', $request->start_date)->startOfMonth();
-        $endDate = Carbon::createFromFormat('Y-m', $request->end_date)->startOfMonth();
+        $endDate = Carbon::createFromFormat('Y-m', $request->end_date)->endOfMonth();
 
         $periodMonth = $startDate->month;
         $periodYear = $startDate->year;
 
-        $category = DebtCategory::find($request->debt_category_id)
-            ?? DebtCategory::getDefaultService();
+        // assignAll must always use the service category
+        $category = DebtCategory::getDefaultService();
 
         $customers = Customer::with('waterConnections.cost')
             ->where('locality_id', $authUser->locality_id)
@@ -173,22 +156,52 @@ class DebtController extends Controller
 
     private function debtExists($waterConnectionId, $categoryId, $month, $year, $startDate, $endDate)
     {
-        $serviceId = DebtCategory::getDefaultService()->id;
+        $category = DebtCategory::find($categoryId);
 
-        if ($categoryId == $serviceId) {
+        $waterConnection = WaterConnection::find($waterConnectionId);
+        $localityId = $waterConnection->locality_id ?? null;
+
+        $isService = $category && $category->name === 'Servicio de Agua';
+
+        if ($isService) {
+            $ym = sprintf('%04d-%02d', $year, $month);
+
+            if (is_null($localityId)) return false;
+
+            $serviceCategoryIds = DebtCategory::where('name', 'Servicio de Agua')
+                ->where('locality_id', $localityId)
+                ->pluck('id')
+                ->toArray();
+
+            if (empty($serviceCategoryIds)) {
+                return false;
+            }
+
             return Debt::where('water_connection_id', $waterConnectionId)
-                ->where('debt_category_id', $categoryId)
-                ->where('period_month', $month)
-                ->where('period_year', $year)
+                ->where('locality_id', $localityId)
+                ->whereIn('debt_category_id', $serviceCategoryIds)
+                ->where(function ($q) use ($month, $year, $ym) {
+                    $q->where(function ($q2) use ($month, $year) {
+                        $q2->where('period_month', $month)
+                            ->where('period_year', $year);
+                    })
+                        ->orWhere(function ($q3) use ($ym) {
+                            $q3->whereNull('period_month')
+                                ->whereRaw("DATE_FORMAT(start_date, '%Y-%m') = ?", [$ym]);
+                        });
+                })
                 ->exists();
         }
 
+        if (is_null($localityId)) return false;
+
         return Debt::where('water_connection_id', $waterConnectionId)
+            ->where('locality_id', $localityId)
             ->where('debt_category_id', $categoryId)
             ->where('status', '!=', 'paid')
             ->where(function ($q) use ($startDate, $endDate) {
-                $q->where('start_date', '<=', $endDate)
-                  ->where('end_date', '>=', $startDate);
+                $q->whereDate('start_date', '<=', $endDate)
+                    ->whereDate('end_date', '>=', $startDate);
             })
             ->exists();
     }
