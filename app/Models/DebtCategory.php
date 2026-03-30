@@ -20,6 +20,8 @@ class DebtCategory extends Model
         'locality_id',
     ];
 
+    public const SERVICE_NAME = 'Servicio de Agua';
+
     public function locality()
     {
         return $this->belongsTo(Locality::class);
@@ -30,38 +32,29 @@ class DebtCategory extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * Obtener o crear la categoría de "Servicio de Agua"
-     * SIEMPRE ligada a una localidad válida.
-     */
-    public static function getDefaultService()
+    public static function getDefaultService(int $localityId, ?int $userId = null): self
     {
-        $user = auth()->user();
-
-        // 🔴 Protección crítica: evitar categorías globales accidentales
-        if (!$user || !$user->locality_id) {
-            throw new \Exception('No se puede determinar la localidad para la categoría de servicio.');
-        }
-
-        $attributes = [
-            'name' => 'Servicio de Agua',
-            'locality_id' => $user->locality_id,
-        ];
-
-        $values = [
-            'description' => 'Categoría por defecto para servicio de agua',
-            'color' => 'bg-primary',
-            'created_by' => $user->id,
-        ];
-
-        return self::firstOrCreate($attributes, $values);
+        return self::firstOrCreate(
+            [
+                'name' => self::SERVICE_NAME,
+                'locality_id' => $localityId,
+            ],
+            [
+                'description' => 'Categoría por defecto para servicio de agua',
+                'color' => 'bg-primary',
+                'created_by' => $userId,
+            ]
+        );
     }
 
-    /**
-     * Helper opcional para identificar si es categoría de servicio
-     */
+    public static function resolveCategory(?int $categoryId, int $localityId, ?int $userId = null): self
+    {
+        return self::find($categoryId)
+            ?? self::getDefaultService($localityId, $userId);
+    }
+
     public function isService(): bool
     {
-        return strtolower(trim($this->name)) === 'servicio de agua';
+        return strcasecmp(trim($this->name), self::SERVICE_NAME) === 0;
     }
 }

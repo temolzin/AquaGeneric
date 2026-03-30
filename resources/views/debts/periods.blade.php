@@ -30,7 +30,6 @@
                                 $serviceCat = $debtCategories->firstWhere('name', 'Servicio de Agua');
                             }
                         @endphp
-
                         @if($serviceCat)
                             <input type="hidden" name="debt_category_id" value="{{ $serviceCat->id }}">
                             <input type="text" class="form-control" value="{{ $serviceCat->name }}" disabled>

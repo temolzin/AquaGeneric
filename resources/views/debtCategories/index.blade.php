@@ -12,7 +12,6 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                    <!-- Buscador -->
                                     <form method="GET" action="{{ route('debtCategories.index') }}" class="mb-3 mb-lg-0"
                                         style="min-width: 300px;">
                                         <div class="input-group">
@@ -20,7 +19,7 @@
                                                 placeholder="Buscar categoría" value="{{ request('search') }}">
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-primary">
-                                                    Buscar
+                                                    <i class="fa fa-search"></i> Buscar
                                                 </button>
                                             </div>
                                         </div>
@@ -69,7 +68,10 @@
                                                     <tr>
                                                         <td>{{ $category->id }}</td>
                                                         <td>
-                                                            <span class="badge {{ $category->color ?? 'bg-secondary' }} text-white px-3 py-2"> {{ $category->name }} </span>
+                                                            <span
+                                                                class="badge {{ $category->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                                {{ $category->name }}
+                                                            </span>
                                                         </td>
                                                         <td>
                                                             {{ Str::limit($category->description, 50) }}
@@ -83,10 +85,12 @@
                                                                     </button>
                                                                 @endcan
                                                                 @php
-                                                                    $isService = strtolower($category->name) === strtolower('Servicio de Agua');
+                                                                    $isService =
+                                                                        strtolower($category->name) ===
+                                                                        strtolower('Servicio de Agua');
                                                                 @endphp
                                                                 @can('editDebtCategories')
-                                                                    @if(!$isService)
+                                                                    @if (!$isService)
                                                                         <button class="btn btn-warning btn-lg mr-2"
                                                                             data-toggle="modal"
                                                                             data-target="#edit{{ $category->id }}">
@@ -94,10 +98,11 @@
                                                                         </button>
                                                                     @endif
                                                                 @endcan
-
                                                                 @can('deleteDebtCategories')
-                                                                    @if(!$isService)
-                                                                        <button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#delete{{ $category->id }}">
+                                                                    @if (!$isService)
+                                                                        <button class="btn btn-danger btn-lg"
+                                                                            data-toggle="modal"
+                                                                            data-target="#delete{{ $category->id }}">
                                                                             <i class="fas fa-trash-alt"></i>
                                                                         </button>
                                                                     @endif
@@ -113,7 +118,6 @@
                                         </tbody>
                                     </table>
                                     @include('debtCategories.create')
-
                                     <div class="d-flex justify-content-center">
                                         {!! $debtCategories->links('pagination::bootstrap-4') !!}
                                     </div>

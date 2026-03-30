@@ -28,15 +28,10 @@ class DebtCategorySeeder extends Seeder
                 'color' => 'bg-danger',
             ],
         ];
-
         $createdBy = $this->getDefaultUserId();
-
-        // 🔥 Obtener todas las localidades
         $localities = DB::table('localities')->pluck('id');
-
         foreach ($localities as $localityId) {
             foreach ($categoryConfigs as $categoryConfig) {
-
                 DebtCategory::updateOrCreate(
                     [
                         'name' => $categoryConfig['name'],

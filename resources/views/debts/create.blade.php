@@ -116,64 +116,56 @@
     </div>
 </div>
 
-</style>
-
 <script>
-    document.getElementById('createDebtForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        try {
-            const response = await fetch(this.action, {
-                method: 'POST',
-                body: new FormData(this),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                        'content')
-                }
-            });
-
-            const data = await response.json();
-
-            // 🔥 Detectar errores reales (status HTTP)
-            if (!response.ok) {
-                let message = 'Ocurrió un error';
-
-                if (data.errors) {
-                    // Laravel validation errors
-                    message = Object.values(data.errors).flat().join('\n');
-                } else if (data.error) {
-                    message = data.error;
-                }
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: message,
-                    confirmButtonText: 'Aceptar'
-                });
-
-                return;
-            }
-
-            // ✅ Éxito real
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('createDebtForm');
+        const resolveErrorMessage = (data) =>
+            data?.errors ?
+            Object.values(data.errors).flat().join('\n') :
+            data?.error || 'Ocurrió un error';
+        const showAlert = (icon, title, text) =>
             Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: data.success,
+                icon,
+                title,
+                text,
                 confirmButtonText: 'Aceptar'
-            }).then(() => {
-                window.location.href = "{{ route('debts.index') }}";
             });
-
-        } catch (error) {
-            console.error('Error:', error);
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Error inesperado',
-                text: 'Algo falló en la solicitud',
-            });
-        }
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: new FormData(this),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document
+                            .querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content')
+                    }
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    return showAlert(
+                        'error',
+                        'Error',
+                        resolveErrorMessage(data)
+                    );
+                }
+                showAlert(
+                    'success',
+                    'Éxito',
+                    data.success || 'Deuda creada correctamente'
+                ).then(() => {
+                    window.location.href = "{{ route('debts.index') }}";
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert(
+                    'error',
+                    'Error inesperado',
+                    'Algo falló en la solicitud'
+                );
+            }
+        });
     });
 </script>

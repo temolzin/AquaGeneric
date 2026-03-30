@@ -31,19 +31,17 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'viewPayments',
             'description' => 'Permite ver los Pagos.'
         ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        
         Permission::firstOrCreate([
             'name' => 'viewDebts',
             'description' => 'Permite ver las Deudas.'
         ])->assignRole([$roleSupervisor, $roleSecretariat]);
-        Permission::firstOrCreate([
-            'name' => 'viewDebtCategories',
-            'description' => 'Permite ver las Categorías de Deuda.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat]);
-        Permission::firstOrCreate([
-            'name' => 'viewDebtCategories',
-            'description' => 'Permite ver las Categorías de Deuda.'
-        ])->assignRole([$roleSupervisor, $roleSecretariat]);
 
+        Permission::firstOrCreate([
+            'name' => 'viewDebtCategories',
+            'description' => 'Permite ver las Categorías de Deuda.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        
         Permission::firstOrCreate([
             'name' => 'createDebtCategories',
             'description' => 'Permite crear Categorías de Deuda.'

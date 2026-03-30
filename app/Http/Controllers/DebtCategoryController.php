@@ -14,10 +14,8 @@ class DebtCategoryController extends Controller
         $authUser = auth()->user();
 
         $debtCategories = DebtCategory::where('locality_id', $authUser->locality_id)
-            ->when($search, function ($query) use ($search) {
-                $query->where('name', 'LIKE', "%$search%");
-            })
-            ->orderBy('created_at', 'desc')
+            ->when($search, fn($q) => $q->where('name', 'LIKE', "%$search%"))
+            ->latest()
             ->paginate(10);
 
         return view('debtCategories.index', compact('debtCategories'));
@@ -32,30 +30,26 @@ class DebtCategoryController extends Controller
                 'required',
                 'max:255',
                 Rule::unique('debt_categories')
-                    ->where(fn($q) => $q->where('locality_id', $user->locality_id)->whereNull('deleted_at'))
+                    ->where(fn($q) =>
+                        $q->where('locality_id', $user->locality_id)
+                          ->whereNull('deleted_at')
+                    )
             ],
             'description' => 'nullable|string',
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 
-        $name = ucfirst(strtolower(trim($request->name)));
-
-        DebtCategory::create([
-            'name' => $name,
+        $category = DebtCategory::create([
+            'name' => $this->normalizeName($request->name),
             'description' => $request->description,
             'color' => color($request->color_index),
             'created_by' => $user->id,
             'locality_id' => $user->locality_id,
         ]);
 
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => 'Categoría creada correctamente'
-            ], 201);
-        }
-
-        return redirect()->route('debtCategories.index')
-            ->with('success', 'Categoría registrada correctamente');
+        return $request->ajax()
+            ? response()->json(['success' => 'Categoría creada correctamente'], 201)
+            : redirect()->route('debtCategories.index')->with('success', 'Categoría registrada correctamente');
     }
 
     public function update(Request $request, $id)
@@ -63,7 +57,7 @@ class DebtCategoryController extends Controller
         $user = auth()->user();
         $category = DebtCategory::findOrFail($id);
 
-        if (strtolower($category->name) === 'servicio de agua') {
+        if ($category->isService()) {
             return back()->with('error', 'No puedes modificar esta categoría.');
         }
 
@@ -73,17 +67,17 @@ class DebtCategoryController extends Controller
                 'max:255',
                 Rule::unique('debt_categories')
                     ->ignore($category->id)
-                    ->where(fn($q) => $q->where('locality_id', $user->locality_id)->whereNull('deleted_at')
+                    ->where(fn($q) =>
+                        $q->where('locality_id', $user->locality_id)
+                          ->whereNull('deleted_at')
                     )
             ],
             'description' => 'nullable|string',
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 
-        $name = ucfirst(strtolower(trim($request->name)));
-
         $category->update([
-            'name' => $name,
+            'name' => $this->normalizeName($request->name),
             'description' => $request->description,
             'color' => color($request->color_index),
         ]);
@@ -96,7 +90,7 @@ class DebtCategoryController extends Controller
     {
         $category = DebtCategory::findOrFail($id);
 
-        if (strtolower($category->name) === 'servicio de agua') {
+        if ($category->isService()) {
             return back()->with('error', 'No puedes eliminar esta categoría.');
         }
 
@@ -104,5 +98,10 @@ class DebtCategoryController extends Controller
 
         return redirect()->route('debtCategories.index')
             ->with('success', 'Categoría eliminada correctamente');
+    }
+
+    private function normalizeName(string $name): string
+    {
+        return ucfirst(strtolower(trim($name)));
     }
 }
