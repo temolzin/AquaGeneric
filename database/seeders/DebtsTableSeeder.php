@@ -34,7 +34,7 @@ class DebtsTableSeeder extends Seeder
                     'created_by' => 1,
                 ]
             );
-        }     
+        }
         $customers = DB::table('customers')
             ->where(function ($q) {
                 $q->whereNotIn('user_id', [1, 5])
@@ -123,7 +123,7 @@ class DebtsTableSeeder extends Seeder
         }
     }
 
-    private function getUserForLocality(int $localityId): ?int
+    private function getUserForLocality(int $localityId): int
     {
         $userIds = DB::table('users')
             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
@@ -134,7 +134,8 @@ class DebtsTableSeeder extends Seeder
             ->distinct()
             ->pluck('users.id')
             ->toArray();
-        return !empty($userIds) ? $userIds[array_rand($userIds)] : null;
+
+        return !empty($userIds) ? $userIds[array_rand($userIds)] : 1;
     }
 
     private function determineDebtStatus(int $paymentAmount, int $debtCurrent): string

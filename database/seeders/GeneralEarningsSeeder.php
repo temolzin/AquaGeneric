@@ -72,10 +72,26 @@ class GeneralEarningsSeeder extends Seeder
         }
 
         foreach ($localities as $locality) {
-            $users = User::where('locality_id', $locality->id)->pluck('id')->toArray();
+            $users = DB::table('users')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
+                ->where('users.locality_id', $locality->id)
+                ->where('users.id', '!=', 5)
+                ->distinct()
+                ->pluck('users.id')
+                ->toArray();
             
             if (empty($users)) {
-                $users = User::pluck('id')->toArray();
+                $users = DB::table('users')
+                    ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                    ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
+                    ->where('users.id', '!=', 5)
+                    ->distinct()
+                    ->pluck('users.id')
+                    ->toArray();
+                    
                 if (empty($users)) {
                     continue;
                 }

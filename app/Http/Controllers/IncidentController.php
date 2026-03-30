@@ -49,6 +49,14 @@ class IncidentController extends Controller
     {
         $authUser = auth()->user();
 
+        $request->validate([
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            'images.*.image' => 'Cada archivo debe ser una imagen.',
+            'images.*.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'images.*.max' => 'Cada imagen no puede superar los 5MB.',
+        ]);
+
         $incidentData = [
             'name' => $request->input('name'),
             'start_date' => $request->input('startDate'),

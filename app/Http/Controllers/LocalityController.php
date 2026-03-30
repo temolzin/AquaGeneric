@@ -52,12 +52,15 @@ class LocalityController extends Controller
             $locality->addMediaFromRequest('photo')->toMediaCollection('localityGallery');
         }
 
+        $locality->validateAndUpdateMembership();
+
         return redirect()->route('localities.index')->with('success', 'Localidad registrada correctamente.');
     }
 
     public function show($id)
     {
         $locality = Locality::findOrFail($id);
+        $locality->validateAndUpdateMembership();
         return view('localities.show', compact('locality'));
     }
 
@@ -79,6 +82,7 @@ class LocalityController extends Controller
             
             $locality->membership_id = $request->input('membership_id');
             $locality->save();
+            $locality->validateAndUpdateMembership();
 
             return redirect()->route('localities.index')->with('success', 'Localidad actualizada correctamente.');
         }
@@ -95,44 +99,42 @@ class LocalityController extends Controller
     public function updateLogo(Request $request, $id){
         $locality = Locality::find($id);
         if ($locality) {
-            
             if ($request->hasFile('photo')) {
+                $request->validate([
+                    'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+                ], [
+                    'photo.image' => 'El archivo debe ser una imagen.',
+                    'photo.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+                    'photo.max' => 'La imagen no puede superar los 5MB.',
+                ]);
                 $locality->clearMediaCollection('localityGallery');
                 $locality->addMediaFromRequest('photo')->toMediaCollection('localityGallery');
             }
             return redirect()->route('localities.index')->with('success', 'Logo de Localidad actualizado correctamente.');
         }
-
         return redirect()->back()->with('error', 'Localidad no encontrada.');
     }
 
     public function generateToken(Request $request)
     {
         $request->validate([
-            'startDate' => 'required|date',
+            'idLocality' => 'required|exists:localities,id',
             'membership_id' => 'required|exists:memberships,id',
         ]);
 
-        $id = $request->input('idLocality');
-        $startDate = $request->input('startDate');
-        $membershipId = $request->input('membership_id');
-
-        $locality = Locality::findOrFail($id);
+        $locality = Locality::find($request->input('idLocality'));
         
         $locality->update([
-            'membership_id' => $membershipId,
+            'membership_id' => $request->input('membership_id'),
             'membership_assigned_at' => now()
         ]);
 
-        $membership = Membership::find($membershipId);
-        $endDate = \Carbon\Carbon::parse($startDate)->addMonths($membership->term_months);
-
-        $token = Token::generateTokenForLocality($id, $startDate, $endDate->toDateString());
+        $locality->refresh();
 
         return redirect()->route('localities.index')
-            ->with('createdToken', $token)
-            ->with('localityName', $locality->name)
-            ->with('success', 'Token generado y membresía asignada correctamente.');
+            ->with('success', 'Membresía y token asignados correctamente.')
+            ->with('createdToken', $locality->token)
+            ->with('localityName', $locality->name);
     }
 
     public function updatePdfBackground(Request $request, $id)
@@ -142,6 +144,18 @@ class LocalityController extends Controller
         if (!$locality) {
             return redirect()->back()->with('error', 'Localidad no encontrada.');
         }
+
+        $request->validate([
+            'pdf_background_vertical' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pdf_background_horizontal' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            'pdf_background_vertical.image' => 'El archivo debe ser una imagen.',
+            'pdf_background_vertical.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'pdf_background_vertical.max' => 'La imagen no puede superar los 5MB.',
+            'pdf_background_horizontal.image' => 'El archivo debe ser una imagen.',
+            'pdf_background_horizontal.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'pdf_background_horizontal.max' => 'La imagen no puede superar los 5MB.',
+        ]);
 
         if ($request->hasFile('pdf_background_vertical')) {
             $locality->clearMediaCollection('pdfBackgroundVertical');

@@ -68,14 +68,15 @@ class IncidentSeeder extends Seeder
         }
     }
 
-    private function getUserForLocality(int $localityId): ?int
+    private function getUserForLocality(int $localityId): int
     {
-        return DB::table('users')
+        $userId = DB::table('users')
             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
             ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
             ->where('users.locality_id', $localityId)
             ->distinct()
             ->value('users.id');
+        return $userId ?? 1;
     }
 }

@@ -22,8 +22,6 @@ class AdvancePaymentsSeeder extends Seeder {
             ->take(self::MAX_RECORDS)
             ->get();
 
-        $userIds = DB::table('users')->pluck('id')->toArray();
-
         foreach ($connections as $index => $connection) {
             $monthsAdvance = 12;
             $createdAt = $today->copy()->subMonths(rand(0, 12))->startOfMonth()->addDays(rand(0, 28));
@@ -31,10 +29,43 @@ class AdvancePaymentsSeeder extends Seeder {
             $endDate = $startDate->copy()->addMonths($monthsAdvance)->subDay();
             $amount = self::COST_PER_MONTH * $monthsAdvance;
 
+            $localityUserIds = DB::table('users')
+                ->where('locality_id', $connection->locality_id)
+                ->where('id', '!=', 5)
+                ->whereIn('id', DB::table('model_has_roles')
+                    ->whereIn('role_id', DB::table('roles')
+                        ->whereIn('name', ['Supervisor', 'Secretaria'])
+                        ->pluck('id')
+                    )
+                    ->pluck('model_id')
+                )
+                ->pluck('id')
+                ->toArray();
+
+            if (empty($localityUserIds)) {
+                $localityUserIds = DB::table('users')
+                    ->where('id', '!=', 5)
+                    ->whereIn('id', DB::table('model_has_roles')
+                        ->whereIn('role_id', DB::table('roles')
+                            ->whereIn('name', ['Supervisor', 'Secretaria'])
+                            ->pluck('id')
+                        )
+                        ->pluck('model_id')
+                    )
+                    ->pluck('id')
+                    ->toArray();
+            }
+
+            if (empty($localityUserIds)) {
+                continue;
+            }
+
+            $userId = $faker->randomElement($localityUserIds);
+
             $debtId = DB::table('debts')->insertGetId([
                 'water_connection_id' => $connection->id,
                 'locality_id' => $connection->locality_id,
-                'created_by' => $faker->randomElement($userIds),
+                'created_by' => $userId,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'amount' => $amount,
@@ -48,7 +79,7 @@ class AdvancePaymentsSeeder extends Seeder {
             DB::table('payments')->insert([
                 'customer_id' => $connection->customer_id,
                 'debt_id' => $debtId,
-                'created_by' => $faker->randomElement($userIds),
+                'created_by' => $userId,
                 'amount' => $amount,
                 'locality_id' => $connection->locality_id,
                 'method' => $faker->randomElement(self::PAYMENTS_METHODS),

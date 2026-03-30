@@ -6,6 +6,7 @@ use App\Models\Token;
 use Illuminate\Database\Seeder;
 use App\Models\Locality;
 use App\Models\Membership;
+use App\Models\User;
 use Carbon\Carbon;
 
 class LocalitiesTableSeeder extends Seeder
@@ -13,7 +14,7 @@ class LocalitiesTableSeeder extends Seeder
     public function run()
     {
         if (Membership::count() === 0) {
-             $this->call(MembershipsTableSeeder::class);
+            $this->call(MembershipsTableSeeder::class);
         }
 
         $localitiesData = [
@@ -44,9 +45,21 @@ class LocalitiesTableSeeder extends Seeder
         ];
 
         $defaultMembershipId = Membership::orderBy('id')->value('id');
+        if (is_null($defaultMembershipId)) {
+            throw new \Exception('No memberships available when seeding localities');
+        }
 
         foreach ($localitiesData as $data) {
-            $membershipId = Membership::where('name', $data['membership_name'])->value('id') ?: $defaultMembershipId;
+            $membership = Membership::firstOrCreate(
+                ['name' => $data['membership_name']],
+                [
+                    'price' => 0,
+                    'term_months' => 0,
+                    'water_connections_number' => 0,
+                    'users_number' => 0,
+                    'created_by' => User::whereHas('roles', fn($q) => $q->where('name', User::ROLE_SUPERVISOR))->orderBy('id')->value('id'),
+                ]
+            );
 
             $locality = Locality::updateOrCreate(
                 ['name' => $data['name']],
@@ -55,7 +68,7 @@ class LocalitiesTableSeeder extends Seeder
                     'municipality' => $data['municipality'],
                     'state' => $data['state'],
                     'zip_code' => $data['zip_code'],
-                    'membership_id' => $membershipId,
+                    'membership_id' => $membership->id,
                 ]
             );
 
@@ -76,6 +89,10 @@ class LocalitiesTableSeeder extends Seeder
         Locality::whereNotNull('membership_id')
             ->whereNull('membership_assigned_at')
             ->update(['membership_assigned_at' => now()]);
+
+        Locality::all()->each(function ($locality) {
+            $locality->validateAndUpdateMembership();
+        });
     }
 
     private function generateTokenData(int $localityId, bool $isExpired = false): string

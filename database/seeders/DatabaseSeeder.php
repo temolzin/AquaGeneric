@@ -43,5 +43,6 @@ class DatabaseSeeder extends Seeder
         $this->call(LogInventorySeeder::class);
         $this->call(LogWaterConnectionTransferSeeder::class);
         $this->call(MovementsHistorySeeder::class);
+        $this->call(LogFaultReportSeeder::class);
     }
 }
