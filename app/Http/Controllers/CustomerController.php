@@ -266,11 +266,33 @@ class CustomerController extends Controller
     public function pdfCustomers()
     {
         $authUser = auth()->user();
+
         $customers = Customer::where('locality_id', $authUser->locality_id)
-            ->with('user')
+            ->with(['user', 'waterConnections'])
+            ->orderBy('id')
             ->get();
-        $pdf = PDF::loadView('reports.pdfCustomers', compact('customers', 'authUser'))
-            ->setPaper('A4', 'landscape');
+
+        $customersPerFirstPage = 26;
+        $customersPerNextPages = 40;
+
+        $firstPageCustomers = $customers->take($customersPerFirstPage);
+        $remainingCustomers = $customers->slice($customersPerFirstPage);
+        $otherPagesCustomers = $remainingCustomers->chunk($customersPerNextPages);
+        $totalCustomers = $customers->count();
+
+        if ($totalCustomers <= $customersPerFirstPage) {
+            $totalPages = 1;
+        } else {
+            $remainingCount = $totalCustomers - $customersPerFirstPage;
+            $totalPages = 1 + ceil($remainingCount / $customersPerNextPages);
+        }
+
+        $pdf = PDF::loadView('reports.pdfCustomers', compact(
+            'authUser',
+            'firstPageCustomers',
+            'otherPagesCustomers',
+            'totalPages'
+        ))->setPaper('A4', 'portrait');
 
         return $pdf->stream('customers.pdf');
     }
