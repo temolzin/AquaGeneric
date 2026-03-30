@@ -30,8 +30,8 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="color">Color (*)</label>
-                                        <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $status->id }}" required>
+                                        <div class="d-flex align-items-center" style="gap: 0;">
+                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $status->id }}" style="flex: 1;" required>
                                                 <option value="">Seleccione un color</option>
                                                 <option value="13" data-color="#e74c3c" {{ $status->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="0"  data-color="#3498db" {{ $status->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
@@ -41,10 +41,8 @@
                                                 <option value="6"  data-color="#1abc9c" {{ $status->color == 'bg-teal' ? 'selected' : '' }}>Turquesa</option>
                                                 <option value="14" data-color="#34495e" {{ $status->color == 'bg-secondary' ? 'selected' : '' }}>Gris oscuro</option>
                                             </select>
-                                            <div class="input-group-append">
                                                 <span class="input-group-text color-preview" id="colorPreview{{ $status->id }}"
-                                                    style="width: 40px; background-color: {{ $status->color ? pdf_color($status->color) : '#6c757d' }};"></span>
-                                            </div>
+                                                    style="width: 45px; height: 45px; padding: 0; background-color: {{ $status->color ? pdf_color($status->color) : '#6c757d' }}; border: 1px solid #ced4da; margin-left: -1px;"></span>
                                         </div>
                                         @error('color_index') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                                     </div>
@@ -71,39 +69,56 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const editModals = document.querySelectorAll('[id^="editIncidentStatus"]');
+        document.querySelectorAll('[id^="colorSelect"]').forEach(el => {
+            const id = el.id.replace('colorSelect', '');
+            const colorSelect = document.getElementById('colorSelect' + id);
+            const colorPreview = document.getElementById('colorPreview' + id);
+
+            const updatePreview = () => {
+                if (!colorSelect || !colorPreview) return;
+                const selected = colorSelect.options[colorSelect.selectedIndex];
+                const color = selected?.dataset.color || '#6c757d';
+                colorPreview.style.backgroundColor = color;
+                colorPreview.style.border = `1px solid ${color}`;
+            };
+
+            if (colorSelect && colorPreview) {
+                $('#colorSelect' + id).on('change', updatePreview);
+                updatePreview();
+            }
+        });
+    });
+
+    $(document).on('shown.bs.modal', '[id^="editIncidentStatus"]', function() {
+        var modalElement = $(this);
+        var dropdownParent = modalElement.find('.modal-body');
         
-        const updatePreview = (select, preview) => {
-            const selected = select.options[select.selectedIndex];
-            const color = selected?.dataset.color || '#6c757d';
-            preview.style.backgroundColor = color;
-            preview.style.border = `1px solid ${color}`;
-        };
-
-        const initializeColorSelect = (modalId) => {
-            const colorSelect = document.getElementById('colorSelect' + modalId);
-            const colorPreview = document.getElementById('colorPreview' + modalId);
-            
-            if (!colorSelect || !colorPreview) return;
-
-            $('#colorSelect' + modalId).select2({
-                theme: 'bootstrap4',
-                width: '100%',
-                placeholder: 'Seleccione un color',
-                allowClear: false,
-                dropdownParent: $('#editIncidentStatus' + modalId)
-            });
-            
-            $('#colorSelect' + modalId).on('change', function() {
-                updatePreview(this, colorPreview);
-            });
-            
-            updatePreview(colorSelect, colorPreview);
-        };
-
-        editModals.forEach(modal => {
-            const modalId = modal.id.replace('editIncidentStatus', '');
-            initializeColorSelect(modalId);
+        modalElement.find('.select2').each(function() {
+            if (!$(this).data('select2')) {
+                $(this).select2({
+                    dropdownParent: dropdownParent,
+                    allowClear: false,
+                    width: '100%'
+                });
+            }
+        });
+        
+        modalElement.on('keydown', function(e) {
+            if ($('.select2-container--open').length && e.keyCode === 27) {
+                e.stopPropagation();
+            }
+        });
+        
+        modalElement.find('[id^="colorSelect"]').each(function() {
+            const id = this.id.replace('colorSelect', '');
+            const colorSelect = document.getElementById('colorSelect' + id);
+            const colorPreview = document.getElementById('colorPreview' + id);
+            if (colorSelect && colorPreview) {
+                const selected = colorSelect.options[colorSelect.selectedIndex];
+                const color = selected?.dataset.color || '#6c757d';
+                colorPreview.style.backgroundColor = color;
+                colorPreview.style.border = `1px solid ${color}`;
+            }
         });
     });
 </script>

@@ -18,9 +18,14 @@ class DashboardExpiringPaidDebtsSeeder extends Seeder
         $faker = Faker::create();
         $today = Carbon::today();
         $limitDate = $today->copy()->addDays(self::DASHBOARD_EXPIRING_DAYS);
-        
+
+        $alonsoCustomerId = DB::table('customers')
+            ->where('user_id', 5)
+            ->value('id') ?? 0;
+
         $customerIdsWithEmail = DB::table('customers')
             ->whereNotNull('email')
+            ->where('id', '!=', $alonsoCustomerId)
             ->pluck('id');
 
         $validConnections = DB::table('water_connections')
@@ -29,9 +34,32 @@ class DashboardExpiringPaidDebtsSeeder extends Seeder
             ->take(20)
             ->get();
 
-        $usersIds = DB::table('users')->pluck('id')->toArray();
-
         foreach ($validConnections as $index => $connection) {
+            $usersIds = DB::table('users')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', ['Supervisor', 'Secretaria'])
+                ->where('users.locality_id', $connection->locality_id)
+                ->where('users.id', '!=', 5)
+                ->distinct()
+                ->pluck('users.id')
+                ->toArray();
+            
+            if (empty($usersIds)) {
+                $usersIds = DB::table('users')
+                    ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                    ->whereIn('roles.name', ['Supervisor', 'Secretaria'])
+                    ->where('users.id', '!=', 5)
+                    ->distinct()
+                    ->pluck('users.id')
+                    ->toArray();
+            }
+            
+            if (empty($usersIds)) {
+                continue;
+            }
+            
             $amount = rand(self::MIN_AMOUNT, self::MAX_AMOUNT);
             $debtStartDate = $today->copy()->subMonths(rand(1, 3));
             $debtEndDate = $faker->dateTimeBetween($today, $limitDate);
@@ -48,7 +76,6 @@ class DashboardExpiringPaidDebtsSeeder extends Seeder
                 'note' => 'Dashboard prueba deuda pagada próxima a vencer #' . ($index + 1),
                 'deleted_at' => null,
                 'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
     }

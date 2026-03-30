@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Lista de Reportes')
 
@@ -61,7 +61,7 @@
                                                                         <span class="{{ $report['label']['d-inline d-md-none'] ?? '' }}"> {{ $report['label']['d-inline d-md-none'] ?? $report['text'] }}</span>
                                                                     </button>
                                                                 @elseif (isset($report['type']) && $report['type'] === 'link')
-                                                                    <a href="{{ $report['url'] }}" 
+                                                                    <a href="{{ $report['url'] }}"
                                                                     target="{{ $report['target'] ?? '_blank' }}"
                                                                     class="{{ $report['button_class'] ?? 'btn btn-secondary' }} report-btn"
                                                                     title="{{ $report['title'] ?? $report['text'] }}">

@@ -58,6 +58,14 @@ class ProfileController extends Controller
 
     public function updateImage(Request $request)
     {
+        $request->validate([
+            'profileImage' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            'profileImage.image' => 'El archivo debe ser una imagen.',
+            'profileImage.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'profileImage.max' => 'La imagen no puede superar los 5MB.',
+        ]);
+
         $user = User::find(Auth::id());
 
         if ($user->getFirstMedia('userGallery')) {

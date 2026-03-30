@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Tipos de Gasto')
 
@@ -11,12 +11,12 @@
                     <h2>Tipos de Gasto</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
+                            <div class="d-flex flex-column flex-lg-row justify-content-lg-end align-items-lg-center gap-3">
+                                <button type="button" class="btn btn-success mt-2"
                                         data-toggle="modal" data-target="#createExpenseTypeModal" title="Registrar Tipo de Gasto">
                                     <i class="fa fa-plus"></i>
                                     <span class="d-none d-md-inline">Registrar Tipo</span>
-                                    <span class="d-inline d-md-none">Tipo</span>
+                                    <span class="d-inline d-md-none">Registrar</span>
                                 </button>
                             </div>
                         </div>
@@ -55,7 +55,7 @@
                                                             <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editExpenseType{{ $expenseType->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" 
+                                                            <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro"
                                                             data-toggle="modal" data-target="#deleteExpenseType{{ $expenseType->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
@@ -93,12 +93,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .color-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }

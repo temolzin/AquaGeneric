@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Mis Reportes de Fallas')
 
@@ -11,7 +11,7 @@
                     <h2>Mis Reportes de Fallas</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                                 <form method="GET" action="{{ route('customerFaultReports.index') }}" class="flex-grow-1 mt-2" style="min-width: 330px; max-width: 30%;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por ID o Título" value="{{ request('search') }}">
@@ -23,11 +23,11 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2" data-toggle='modal' 
+                                <button class="btn btn-success mt-2" data-toggle='modal'
                                     data-target="#createCustomerFaultReports" title="Registrar Reporte">
                                     <i class="fa fa-plus"></i>
                                     <span class="d-none d-md-inline">Registrar Reporte</span>
-                                    <span class="d-inline d-md-none">Registrar Reporte</span>
+                                    <span class="d-inline d-md-none">Registrar</span>
                                 </button>
                             </div>
                         </div>
@@ -97,12 +97,16 @@
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                             @endcan
+                                                            <button type="button" class="btn bg-maroon mr-2" data-toggle="modal" title="Ver Historial del Reporte" data-target="#historyModal{{ $report->id }}">
+                                                                <i class="fas fa-history"></i>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 @include('customerFaultReports.show')
                                                 @include('customerFaultReports.edit')
                                                 @include('customerFaultReports.delete')
+                                                @include('customerFaultReports.historyModal')
                                             @endforeach
                                         @endif
                                     </tbody>

@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Categorías de Inventario')
 
@@ -9,17 +9,29 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Categorías de Inventario</h2>
-                    <div class="row mb-2">
+                    <div class="row">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                @can('createInventoryCategories')
-                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
-                                        data-toggle="modal" data-target="#createInventoryCategoryModal" title="Registrar Categoría de Inventario">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-md-inline">Registrar Categoría</span>
-                                    <span class="d-inline d-md-none">Categoría</span>
-                                </button>
-                                @endcan
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('inventoryCategories.index') }}" class="mb-3 mb-lg-3" style="min-width: 300px;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Categoría, Descripción..." value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Categorías">
+                                                <i class="fa fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-column flex-lg-row justify-content-lg-end align-items-lg-center gap-3">
+                                    @can('createInventoryCategories')
+                                    <button type="button" class="btn btn-success mt-2"
+                                            data-toggle="modal" data-target="#createInventoryCategoryModal" title="Registrar Categoría de Inventario">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Categoría</span>
+                                        <span class="d-inline d-md-none">Registrar</span>
+                                    </button>
+                                    @endcan
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -62,7 +74,7 @@
                                                         </button>
                                                         @endcan
                                                         @can('deleteInventoryCategories')
-                                                        <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" 
+                                                        <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro"
                                                         data-toggle="modal" data-target="#deleteInventoryCategory{{ $category->id }}">
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>
@@ -101,12 +113,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .color-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }
@@ -148,16 +160,8 @@
             });
         }
 
-        $('#createInventoryCategoryModal').on('shown.bs.modal', function() {
-            $('.select2').select2({
-                dropdownParent: $('#createInventoryCategoryModal')
-            });
-        });
-
         $('[id^="editInventoryCategory"]').on('shown.bs.modal', function() {
-            $('.select2').select2({
-                dropdownParent: $(this)
-            });
+            reinitializeSelect2();
         });
     });
 </script>

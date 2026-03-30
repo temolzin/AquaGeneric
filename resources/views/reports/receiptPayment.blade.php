@@ -105,7 +105,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
 
         .signature {
             font-weight: bold;
-            color: white;
+            color: black;
             text-align: center;
             font-size: 12px;
             page-break-before: avoid;
@@ -126,10 +126,27 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             display: inline-block;
         }
 
-        a {
-            font-weight: normal;
-            color: white;
+        .footer_last_page {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+
+        .info_bottom {
+            display: inline-block;
+        }
+
+        .info_bottom a {
+            color: #ffffff;
             text-decoration: none;
+            font-weight: 500;
+        }
+
+        .info_bottom img {
+            vertical-align: middle;
+            margin-left: 4px;
         }
 
         h4 {
@@ -219,12 +236,12 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             _________________________________
             <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
         </div>
-        <footer class="company-info">
-            <a class="text_infoE" href="https://www.rootheim.com/">
-                <strong>AquaControl</strong> powered by <strong>Root Heim Company</strong>
-                <img src="img/rootheim.png" width="18px">
-            </a>
-        </footer>
+        <div class="footer_last_page">
+            <div class="info_bottom">
+                <a href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+                <a href="https://rootheim.com/"> powered by <strong>Root Heim Company</strong></a><img src="img/rootheim.png" width="15px" height="15px">
+            </div>
+        </div>
     </div>
 </body>
 </html>

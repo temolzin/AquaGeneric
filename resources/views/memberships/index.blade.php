@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Membresías')
 
@@ -80,7 +80,7 @@
                                                                 @endcan
                                                                 @can('deleteMemberships')
                                                                     @if($membership->hasDependencies())
-                                                                        <button type="button" class="btn btn-secondary mr-2" 
+                                                                        <button type="button" class="btn btn-secondary mr-2"
                                                                                 data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
                                                                             <i class="fas fa-trash-alt"></i>
                                                                         </button>
@@ -127,10 +127,10 @@
                 info: false,
                 searching: false
             });
-            
+
             var successMessage = "{{ session('success') }}";
             var errorMessage = "{{ session('error') }}";
-            
+
             if (successMessage) {
                 Swal.fire({
                     icon: 'success',
@@ -139,7 +139,7 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
-            
+
             if (errorMessage) {
                 Swal.fire({
                     icon: 'error',
@@ -148,6 +148,17 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
+
+            @if ($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: @json($errors->first()),
+                    confirmButtonText: 'Aceptar'
+                });
+
+                $('#createMembership').modal('show');
+            @endif
         });
     </script>
 @endsection

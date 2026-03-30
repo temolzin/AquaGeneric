@@ -167,7 +167,7 @@ class MovementHistoryController extends Controller
         ];
 
         $moduleNames = [
-            'pagos' => 'Pagos', 'deudas' => 'Deudas', 'costos' => 'Costos', 'general_expenses' => 'Gastos Generales',
+            'pagos' => 'Pagos', 'deudas' => 'Deudas', 'costos' => 'Costos', 'general_expenses' => 'Gastos Generales', 'general_earnings' => 'Ingresos',
         ];
 
         $processedMovements = $movements->map(fn($movement) => $this->processMovementData($movement, $moduleNames));
@@ -216,6 +216,7 @@ class MovementHistoryController extends Controller
             case 'deudas': case 'debts': return 'deudas';
             case 'costos': case 'costs': return 'costos';
             case 'gastos': case 'generalexpenses': case 'general_expenses': return 'general_expenses';
+            case 'ingresos': case 'earnings': case 'general_earnings': return 'general_earnings';
             default: return null;
         }
     }
@@ -297,7 +298,13 @@ class MovementHistoryController extends Controller
 
     private function shouldSkipField($key, $beforeValue, $currentValue)
     {
-        return in_array($key, ['created_at', 'updated_at', 'deleted_at']) || 
+        $skipFields = [
+            'created_at', 'updated_at', 'deleted_at',
+            'id', 'locality_id', 'created_by',
+            'earning_type_id', 'expense_type_id',
+        ];
+        
+        return in_array($key, $skipFields) || 
                $this->isComplexValue($beforeValue) || 
                $this->isComplexValue($currentValue);
     }

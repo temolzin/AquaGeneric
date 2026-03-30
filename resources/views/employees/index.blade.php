@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Empleados')
 
@@ -40,7 +40,7 @@
                                             </div>
                                             <div class="col-6 ps-1">
                                                 <button class="btn btn-info w-100 py-2" data-toggle="modal" data-target="#importData" title="Importar Empleados">
-                                                    <i class="fas fa-file-import"></i> Importar
+                                                    <i class="fas fa-file-import"></i> Importar Empleados
                                                 </button>
                                             </div>
                                             <div class="col-12 mt-2">
@@ -119,7 +119,7 @@
                                                         @include('employees.delete')
                                                         @include('employees.show')
                                                         @include('employees.import-modal')
-                                                        @include('employees.create') 
+                                                        @include('employees.create')
                                                     </tr>
                                                 @endforeach
                                             @endif
@@ -140,7 +140,7 @@
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        $(document).ready(function () 
+        $(document).ready(function ()
         {
             $('#employees').DataTable
             ({
@@ -182,13 +182,6 @@
                     }
                 })
                 .then(function(response) {
-                    $('#importResults').removeClass('d-none');
-                    $('#resultsContent').html(`
-                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
-                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
-                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
-                    `);
-
                     $('#importForm')[0].reset();
                     $('#fileLabel').text('Ningún archivo seleccionado');
                     progressContainer.addClass('d-none');
@@ -196,26 +189,36 @@
                     progressText.text('0%');
                     importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar');
 
-                    if (response.data.failed > 0 && response.data.errors) {
+                    if (response.data.failed === 0) {
+                        $('#importResults').removeClass('d-none');
+                        $('#resultsContent').html(`
+                            <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                            <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                            <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                        `);
+
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
                         $('#importErrors').removeClass('d-none');
-                        let errorsHtml = '<ul>';
+                        let errorsHtml = `
+                            <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                            <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                            <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                            <ul class="mt-2 mb-0">
+                        `;
                         response.data.errors.forEach(error => {
                             errorsHtml += `<li>${error}</li>`;
                         });
                         errorsHtml += '</ul>';
                         $('#errorsContent').html(errorsHtml);
                     }
-
-                    if (response.data.imported > 0) {
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 3000);
-                    }
                 })
                 .catch(function(error) {
                     $('#importErrors').removeClass('d-none');
                     let errorMessage = 'Error al importar el archivo. Verifica el formato.';
-                    
+
                     if (error.response && error.response.data && error.response.data.message) {
                         errorMessage = error.response.data.message;
                     }
@@ -237,7 +240,7 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
-            if (errorMessage) 
+            if (errorMessage)
             {
                 Swal.fire
                 ({

@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Perfil')
 
@@ -16,7 +16,7 @@
     @php
         $usersPercentage = 0;
         $waterPercentage = 0;
-        
+
         if($authUser->locality && $authUser->locality->membership) {
             $usersPercentage = $membershipStats['users_limit'] > 0 ? ($membershipStats['users_count'] / $membershipStats['users_limit']) * 100 : 0;
             $waterPercentage = $membershipStats['water_connections_limit'] > 0 ? ($membershipStats['water_connections_count'] / $membershipStats['water_connections_limit']) * 100 : 0;
@@ -99,7 +99,7 @@
                                             <button type="button" class="btn btn-secondary" id="cancelUpdate">
                                                 Cancelar
                                             </button>
-                                        </div>   
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -138,7 +138,7 @@
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editPassword">
                                             Cambiar contraseña
                                         </button>
-                                    </div>   
+                                    </div>
                                 </div>
                             </div>
                         </div>

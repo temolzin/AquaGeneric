@@ -23,6 +23,13 @@ class WaterConnection extends Model
         static::addGlobalScope(self::SCOPE_NOT_CANCELED, function ($query) {
             $query->where('is_canceled', false);
         });
+
+        static::addGlobalScope('byUserLocality', function ($query) {
+            $user = auth()->user();
+            if ($user && $user->locality_id) {
+                $query->where('water_connections.locality_id', $user->locality_id);
+            }
+        });
     }
 
     protected $fillable = [
@@ -167,5 +174,14 @@ class WaterConnection extends Model
     public function setCancelDescriptionAttribute($value)
     {
         $this->attributes['cancel_description'] = $value;
+    }
+
+    public function scopeByUserLocality($query)
+    {
+        $user = auth()->user();
+        if ($user && $user->locality_id) {
+            return $query->where('locality_id', $user->locality_id);
+        }
+        return $query;
     }
 }

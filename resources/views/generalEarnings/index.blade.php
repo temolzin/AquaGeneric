@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Ingresos')
 
@@ -23,7 +23,7 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2" data-toggle='modal' 
+                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2" data-toggle='modal'
                                     data-target="#createGeneralEarnings" title="Registrar Ingreso">
                                     <i class="fa fa-plus"></i>
                                     <span class="d-none d-md-inline">Registrar Ingreso</span>
@@ -117,12 +117,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .color-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }

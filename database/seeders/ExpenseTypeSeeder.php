@@ -5,22 +5,22 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\ExpenseType;
-use App\Models\Locality;
 use App\Models\User;
 
 class ExpenseTypeSeeder extends Seeder
 {
     public function run()
     {
-        $localities = Locality::pluck('id')->toArray();
-        $users = User::pluck('id')->toArray();
+        $localityIds = DB::table('localities')->pluck('id')->toArray();
 
-        if (empty($localities) || empty($users)) {
-            $this->command->error('No localities or users found. Skipping expense types seeding.');
+        if (empty($localityIds)) {
+            $this->command->error('No localities found. Skipping expense types seeding.');
             return;
         }
 
-        $userId = $users[0];
+        $adminUserId = DB::table('users')
+            ->where('email', 'jose@gmail.com')
+            ->value('id');
 
         ExpenseType::updateOrCreate(
             [
@@ -30,9 +30,8 @@ class ExpenseTypeSeeder extends Seeder
             [
                 'description' => 'Costos operativos y administrativos generales sin asignación a una localidad específica.',
                 'color'       => color(16),
-                'created_by'  => $userId,
+                'created_by'  => $adminUserId,
                 'created_at'  => now(),
-                'updated_at'  => now(),
             ]
         );
 
@@ -64,16 +63,17 @@ class ExpenseTypeSeeder extends Seeder
             ]
         ];
 
-        foreach ($localities as $localityId) {
-            
-            $validUsers = User::where('locality_id', $localityId)
-                ->whereHas('roles', function ($q) {
-                    $q->whereIn('name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY]);
-                })
-                ->pluck('id')
+        foreach ($localityIds as $localityId) {
+            $userIds = DB::table('users')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
+                ->where('users.locality_id', $localityId)
+                ->distinct()
+                ->pluck('users.id')
                 ->toArray();
 
-            if (empty($validUsers)) {
+            if (empty($userIds)) {
                 continue;
             }
 
@@ -86,9 +86,8 @@ class ExpenseTypeSeeder extends Seeder
                     [
                         'description' => $type['description'],
                         'color' => $type['color'],
-                        'created_by' => collect($validUsers)->random(),
+                        'created_by' => collect($userIds)->random(),
                         'created_at' => now(),
-                        'updated_at' => now(),
                     ]
                 );
             }

@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Localidades')
 
@@ -26,7 +26,7 @@
                                 </a>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                     <div class="clearfix"></div>
                 </div>
                 <div class="col-lg-4">
@@ -37,8 +37,8 @@
                             <button type="submit" class="btn btn-primary">Buscar</button>
                         </div>
                     </div>
-                </form> 
-            </div>               
+                </form>
+            </div>
                 <div class="x_content">
                     <div class="row">
                         <div class="col-sm-12">
@@ -79,8 +79,8 @@
                                             <td>{{$locality->state}}</td>
                                             <td>{{$locality->zip_code}}</td>
                                             <td class="text-left align-center">
-                                                <span class="badge 
-                                                    {{ $locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_ACTIVE ? 'badge-success' : 
+                                                <span class="badge
+                                                    {{ $locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_ACTIVE ? 'badge-success' :
                                                     ($locality->getSubscriptionStatus() === Locality::SUBSCRIPTION_EXPIRED ? 'badge-danger' : 'badge-secondary') }}">
                                                     {{ $locality->getSubscriptionStatus() }}
                                                 </span>

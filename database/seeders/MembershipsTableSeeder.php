@@ -4,18 +4,19 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\User;
 
 class MembershipsTableSeeder extends Seeder
 {
     public function run()
     {
-        $admin = User::whereHas('roles', function($q) {
-            $q->where('name', 'Admin');
-        })->first();
+        $adminId = User::whereHas('roles', fn($q) => $q->where('name', 'Admin'))
+            ->orderBy('id')
+            ->value('id');
 
-        if (!$admin) {
-            $admin = User::first();
+        if (is_null($adminId)) {
+            $adminId = User::orderBy('id')->value('id');
         }
 
         $memberships = [
@@ -27,7 +28,7 @@ class MembershipsTableSeeder extends Seeder
                 'users_number' => 1,
             ],
             [
-                'name' => 'Premium Plan - 6 Months', 
+                'name' => 'Premium Plan - 6 Months',
                 'price' => 499.00,
                 'term_months' => 6,
                 'water_connections_number' => 4000,
@@ -42,31 +43,29 @@ class MembershipsTableSeeder extends Seeder
             ]
         ];
 
-        DB::table('memberships')
-            ->where('water_connections_number', 0)
-            ->orWhere('users_number', 0)
-            ->update([
-                'water_connections_number' => 1000,
-                'users_number' => 1,
-                'updated_at' => now(),
-            ]);
+        $now = now();
 
-        foreach ($memberships as $membership) {
-            $existing = DB::table('memberships')
-                ->where('name', $membership['name'])
-                ->first();
+        $payload = collect($memberships)->map(function ($m) use ($adminId, $now) {
+            $data = [
+                'name' => $m['name'],
+                'price' => $m['price'],
+                'term_months' => $m['term_months'],
+                'water_connections_number' => $m['water_connections_number'],
+                'users_number' => $m['users_number'],
+                'created_at' => $now,
+            ];
             
-            if (!$existing) {
-                DB::table('memberships')->insert([
-                    'name' => $membership['name'],
-                    'price' => $membership['price'],
-                    'term_months' => $membership['term_months'],
-                    'water_connections_number' => $membership['water_connections_number'],
-                    'users_number' => $membership['users_number'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+            if (Schema::hasColumn('memberships', 'created_by') && $adminId) {
+                $data['created_by'] = $adminId;
             }
-        }
+            
+            return $data;
+        })->toArray();
+
+        DB::table('memberships')->upsert(
+            $payload,
+            ['name'],
+            ['price', 'term_months', 'water_connections_number', 'users_number', 'created_by']
+        );
     }
 }

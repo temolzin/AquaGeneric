@@ -32,6 +32,10 @@ class EmployeesTableSeeder extends Seeder
                 ->pluck('users.id')
                 ->toArray();
 
+            if (empty($userIds)) {
+                $userIds = [1];
+            }
+
             $roles = ['Administrador', 'Recepcionista','Encargado','Seguridad'];
         
             DB::table('employees')->insert([
@@ -51,7 +55,6 @@ class EmployeesTableSeeder extends Seeder
                 'locality_id' => $locality_id,
                 'created_by' => $faker->randomElement($userIds),
                 'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
     }

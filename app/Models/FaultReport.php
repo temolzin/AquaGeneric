@@ -37,4 +37,9 @@ class FaultReport extends Model implements HasMedia
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function logs()
+    {
+        return $this->hasMany(LogFaultReport::class, 'fault_report_id')->orderBy('created_at', 'desc');
+    }
+
 }

@@ -312,7 +312,7 @@ return [
         'text' => 'Panel',
         'url' => '/dashboard',
         'icon' => 'fas fa-fw fa-home',
-    ], 
+    ],
     [
         'text' => 'Gestión de Pagos',
         'icon' => 'fas fa-fw fa-dollar-sign',
@@ -352,7 +352,7 @@ return [
                 'url' => '/sections',
                 'icon' => 'fas fa-fw fa-th-large',
                 'can'  => 'viewSections'
-            ],   
+            ],
         ],
     ],
     [
@@ -654,6 +654,16 @@ return [
                     'type' => 'css',
                     'asset' => true,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'css/select2/select2.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/select2-init.js',
                 ],
             ],
         ],

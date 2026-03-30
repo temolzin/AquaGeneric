@@ -28,13 +28,14 @@ class Locality extends Model implements HasMedia
         'zip_code',
         'membership_id',
         'membership_assigned_at',
+        'token',
         'openpay_merchant_id',
         'openpay_private_key',
         'openpay_public_key',
         'openpay_webhook_user',
         'openpay_webhook_password',
         'openpay_sandbox',
-        'openpay_enabled',
+        'openpay_enabled'
     ];
 
     protected $casts = [
@@ -132,11 +133,54 @@ class Locality extends Model implements HasMedia
             return self::SUBSCRIPTION_NONE;
         }
 
-        $decrypted = Crypt::decrypt($this->token);
-        $endDate = Carbon::parse($decrypted['data']['endDate'])->startOfDay();
-        $today = now()->startOfDay();
+        try {
+            $tokenValidation = Crypt::decrypt($this->token);
+            $endDate = Carbon::parse($tokenValidation['data']['endDate'])->startOfDay();
+            $today = now()->startOfDay();
+            
+            return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
+        } catch (Exception $e) {
+            return self::SUBSCRIPTION_NONE;
+        }
+    }
 
-        return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
+    public function generateMembershipToken()
+    {
+        if (!$this->membership || !$this->membership_assigned_at) {
+            return null;
+        }
+
+        $startDate = Carbon::parse($this->membership_assigned_at)->startOfDay();
+        $endDate = $startDate->copy()->addMonths($this->membership->term_months)->endOfDay();
+
+        $data = [
+            'idLocality' => $this->id,
+            'startDate' => $startDate->toDateString(),
+            'endDate' => $endDate->toDateString(),
+        ];
+
+        $hmac = hash_hmac('sha256', json_encode($data), env('TOKEN_SECRET_KEY'));
+        $tokenData = [
+            'data' => $data,
+            'hmac' => $hmac
+        ];
+
+        $token = Crypt::encrypt($tokenData);
+        
+        $this->token = $token;
+        $this->saveQuietly();
+
+        return $token;
+    }
+
+    public function validateAndUpdateMembership()
+    {
+        $status = $this->getSubscriptionStatus();
+        if ($status === self::SUBSCRIPTION_EXPIRED) {
+            $this->membership_id = null;
+            $this->membership_assigned_at = null;
+            $this->save();
+        }
     }
 
     public function registerMediaCollections(): void

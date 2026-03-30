@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Clientes')
 
@@ -20,17 +20,19 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <div class="btn-group d-none d-md-flex" role="group" aria-label="Acciones de Cliente">
-                                        <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
-                                            <i class="fa fa-plus"></i> Registrar Cliente
+                                    <div class="d-none d-lg-flex flex-wrap gap-0" role="group" aria-label="Acciones de Cliente">
+                                        <button class="btn btn-success mx-1 my-1" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
+                                            <i class="fa fa-plus"></i>
+                                            <span class="d-none d-md-inline">Registrar Cliente</span>
+                                            <span class="d-inline d-md-none">Registrar</span>
                                         </button>
-                                        <button class="btn bg-purple mr-2" data-toggle='modal' data-target="#importData" title="Importar Datos">
+                                        <button class="btn bg-purple mx-1 my-1" data-toggle='modal' data-target="#importData" title="Importar Datos">
                                             <i class="fas fa-file-import"></i> Importar Datos
                                         </button>
-                                        <a type="button" class="btn btn-secondary me-2" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
+                                        <a type="button" class="btn btn-secondary mx-1 my-1" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista
                                         </a>
-                                        <a type="button" class="btn btn-primary ms-2" style="margin-left: 10px;" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
+                                        <a type="button" class="btn btn-primary mx-1 my-1" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista Resumen
                                         </a>
                                     </div>
@@ -39,7 +41,9 @@
                                             <div class="col-6 pe-1">
                                                 <button class="btn btn-success w-100 py-2" data-toggle='modal'
                                                         data-target="#createCustomer" title="Registrar Cliente">
-                                                        <i class="fa fa-plus"></i> Registrar Cliente
+                                                        <i class="fa fa-plus"></i>
+                                                        <span class="d-none d-md-inline">Registrar Cliente</span>
+                                                        <span class="d-inline d-md-none">Registrar</span>
                                                 </button>
                                             </div>
                                             <div class="col-6 ps-1">
@@ -47,13 +51,13 @@
                                                 <i class="fas fa-file-import"></i> Importar
                                             </button>
                                             </div>
-                                            <div class="col-6 ps-1">
+                                            <div class="col-12 mt-2">
                                                 <a type="button" class="btn btn-secondary w-100 py-2" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
                                                     <i class="fas fa-file-pdf"></i> Generar Lista
                                                 </a>
                                             </div>
-                                            <div class="col-6 ps-1 mt-2">
-                                                <a type="button" class="btn btn-secondary w-100 py-2" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
+                                            <div class="col-12 mt-2">
+                                                <a type="button" class="btn btn-primary w-100 py-2" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
                                                     <i class="fas fa-file-pdf"></i> Generar Lista Resumen
                                                 </a>
                                             </div>
@@ -186,16 +190,16 @@
 
         $('#importForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             var formData = new FormData(this);
             var importButton = $('#importButton');
             var progressContainer = $('#progressContainer');
             var progressBar = $('#progressBar');
             var progressText = $('#progressText');
-            
+
             progressContainer.removeClass('d-none');
             importButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Importando...');
-            
+
             axios.post('{{ route('customers.import') }}', formData, {
                 headers: {'Content-Type': 'multipart/form-data'},
                 onUploadProgress: function(progressEvent) {
@@ -207,44 +211,47 @@
                 }
             })
             .then(function(response) {
-                $('#importResults').removeClass('d-none');
-                $('#resultsContent').html(`
-                    <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
-                    <p><strong>Registros importados:</strong> ${response.data.imported}</p>
-                    <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
-                `);
-                
                 $('#importForm')[0].reset();
                 $('#fileLabel').text('Ningún archivo seleccionado');
                 progressContainer.addClass('d-none');
                 progressBar.css('width', '0%');
                 progressText.text('0%');
                 importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar Datos');
-                
-                if (response.data.failed > 0 && response.data.errors) {
+
+                if (response.data.failed === 0) {
+                    $('#importResults').removeClass('d-none');
+                    $('#resultsContent').html(`
+                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                    `);
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
                     $('#importErrors').removeClass('d-none');
-                    let errorsHtml = '<ul>';
+                    let errorsHtml = `
+                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                        <ul class="mt-2 mb-0">
+                    `;
                     response.data.errors.forEach(error => {
                         errorsHtml += `<li>${error}</li>`;
                     });
                     errorsHtml += '</ul>';
                     $('#errorsContent').html(errorsHtml);
                 }
-                
-                if (response.data.imported > 0) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
-                }
             })
             .catch(function(error) {
                 $('#importErrors').removeClass('d-none');
                 let errorMessage = 'Error al importar el archivo. Verifica el formato.';
-                
+
                 if (error.response && error.response.data && error.response.data.message) {
                     errorMessage = error.response.data.message;
                 }
-                
+
                 $('#errorsContent').html('<p>' + errorMessage + '</p>');
                 progressContainer.addClass('d-none');
                 importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar Datos');
