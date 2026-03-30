@@ -278,14 +278,8 @@ class CustomerController extends Controller
         $firstPageCustomers = $customers->take($customersPerFirstPage);
         $remainingCustomers = $customers->slice($customersPerFirstPage);
         $otherPagesCustomers = $remainingCustomers->chunk($customersPerNextPages);
-        $totalCustomers = $customers->count();
 
-        if ($totalCustomers <= $customersPerFirstPage) {
-            $totalPages = 1;
-        } else {
-            $remainingCount = $totalCustomers - $customersPerFirstPage;
-            $totalPages = 1 + ceil($remainingCount / $customersPerNextPages);
-        }
+        $totalPages = 1 + ceil(max(0, $customers->count() - $customersPerFirstPage) / $customersPerNextPages);
 
         $pdf = PDF::loadView('reports.pdfCustomers', compact(
             'authUser',
