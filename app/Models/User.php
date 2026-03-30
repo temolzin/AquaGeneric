@@ -83,4 +83,24 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasOne(Customer::class);
     }
+    
+     public function adminlte_profile_url()
+    {
+        return route('profile.index');
+    }
+
+    public function adminlte_image()
+    {
+        $media = $this->getFirstMediaUrl('avatar');
+        if ($media) {
+            return $media;
+        }
+        return asset('vendor/adminlte/dist/img/user2-160x160.jpg');
+    }
+
+    public function adminlte_desc()
+    {
+        $roles = $this->getRoleNames();
+        return $roles->isNotEmpty() ? $roles->first() : 'Usuario';
+    }
 }
