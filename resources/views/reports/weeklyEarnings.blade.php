@@ -223,8 +223,10 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                                         $dayEarnings = $week['dailyEarnings'][$dayEnglish] ?? 'N/A';
                                     @endphp
                                     <td class="textcenter">
-                                        @if ($dayEarnings === 'N/A')
-                                            {{ $dayEarnings }}
+                                        @if (!$hasRange)
+                                            <font color="#ff0000"><b>N/A</b></font>
+                                        @elseif ($dayEarnings === 'N/A')
+                                            <font color="#ff0000"><b>N/A</b></font>
                                         @else
                                             ${{ number_format($dayEarnings, 2) }}
                                         @endif
@@ -232,14 +234,26 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                                 @endforeach
                             </tr>
                             <tr>
-                                <td colspan="7" class="totalWeek"><strong>Total de la semana:</strong> ${{ number_format(array_sum(array_filter($week['dailyEarnings'], fn($value) => $value !== 'N/A')), 2) }}</td>
+                                <td colspan="7" class="totalWeek"><strong>Total de la semana:</strong> 
+                                    @if (!$hasRange)
+                                        <font color="#ff0000"><b>N/A</b></font>
+                                    @else
+                                        ${{ number_format(array_sum(array_filter($week['dailyEarnings'], fn($value) => $value !== 'N/A')), 2) }}
+                                    @endif
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             @endforeach
             <div class="totalEarnings">
-                <strong>Total del Periodo: ${{ number_format($totalPeriodEarnings, 2) }}</strong>
+                <strong>Total del Periodo: 
+                    @if (!$hasRange)
+                        <font color="#ff0000"><b>N/A</b></font>
+                    @else
+                        ${{ number_format($totalPeriodEarnings, 2) }}
+                    @endif
+                </strong>
             </div>
         </div>
         <div class="footer">

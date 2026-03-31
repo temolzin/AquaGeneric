@@ -1,5 +1,4 @@
 <div class="modal fade" id="annualEarnings" tabindex="-1" role="dialog" aria-labelledby="annualEarningsLabel" aria-hidden="true">
-    @php $hasRange = request('start_date') && request('end_date'); @endphp
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header modal-header-custom bg-info">
@@ -12,7 +11,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="year" class="form-label">Año(*)</label>
-                        <input type="number" id="year" name="year" class="form-control {{ !$hasRange ? 'is-invalid' : '' }}"  min="2000" max="{{ date('Y') }}" 
+                        <input type="number" id="year" name="year" class="form-control"  min="2000" max="{{ date('Y') }}" 
                                 required placeholder="Ingrese el año ejemplo 2024" value="{{ old('year') }}" />
                     </div>
                 </div>

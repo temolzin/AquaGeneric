@@ -1,5 +1,4 @@
 <div class="modal fade" id="weeklyGains" tabindex="-1" role="dialog" aria-labelledby="weeklyGainsLabel" aria-hidden="true">
-    @php $hasRange = request('start_date') && request('end_date'); @endphp
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header modal-header-custom bg-navy">

@@ -138,6 +138,7 @@ class GeneralExpenseController extends Controller
         $weeks = [];
         $currentStart = $startDate->copy();
         $totalPeriodExpenses = 0;
+        $hasRange = request()->filled(['weekStartDate', 'weekEndDate']);
 
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
@@ -172,7 +173,7 @@ class GeneralExpenseController extends Controller
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyExpenses', compact('authUser', 'weeks', 'totalPeriodExpenses'))
+        $pdf = PDF::loadView('reports.weeklyExpenses', compact('authUser', 'weeks', 'totalPeriodExpenses', 'hasRange'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_expenses_' . now()->format('Ymd') . '.pdf');
@@ -211,6 +212,7 @@ class GeneralExpenseController extends Controller
         $weeks = [];
         $currentStart = $startDate->copy();
         $totalPeriodGains = 0;
+        $hasRange = request()->filled(['weekStartDate', 'weekEndDate']);
 
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
@@ -249,7 +251,7 @@ class GeneralExpenseController extends Controller
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyGains', compact('authUser', 'weeks', 'totalPeriodGains'))
+        $pdf = PDF::loadView('reports.weeklyGains', compact('authUser', 'weeks', 'totalPeriodGains', 'hasRange'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_gains_' . now()->format('Ymd') . '.pdf');

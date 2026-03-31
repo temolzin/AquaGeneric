@@ -3,7 +3,6 @@
 @section('title', config('adminlte.title') . ' | Panel')
 
 @section('content')
-    @php $hasRange = request('start_date') && request('end_date'); @endphp
     <section class="content">
         <div class="right_col" role="main">
             <div class="col-md-12 col-sm-12 ">

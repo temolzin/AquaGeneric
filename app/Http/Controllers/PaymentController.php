@@ -283,6 +283,7 @@ class PaymentController extends Controller
         $weeks = [];
         $currentStart = $startDate->copy();
         $totalPeriodEarnings = 0;
+        $hasRange = request()->filled(['weekStartDate', 'weekEndDate']);
 
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
@@ -328,7 +329,7 @@ class PaymentController extends Controller
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings'))
+        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings', 'hasRange'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_earnings_' . now()->format('Ymd') . '.pdf');

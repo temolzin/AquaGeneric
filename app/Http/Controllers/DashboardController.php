@@ -80,6 +80,8 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $hasRange = request()->filled(['start_date', 'end_date']);
+
         $data = [
             'customersByLocality' => $customersByLocality,
             'customersWithDebts' => $customersWithDebts,
@@ -99,7 +101,8 @@ class DashboardController extends Controller
             'totalDebts',
             'pendingDebts',
             'totalOwed',
-            'notices'
+            'notices',
+            'hasRange'
         ));
     }
 

@@ -66,7 +66,9 @@ class ReportListController extends Controller
 
         $customers = Customer::where('locality_id', auth()->user()->locality_id)->get();
 
-        return view('reportList.index', compact('sections', 'customers'));
+        $hasRange = request()->filled(['start_date', 'end_date']);
+
+        return view('reportList.index', compact('sections', 'customers', 'hasRange'));
     }
 
     private function getReportsForSection($sectionText, $submenu = null)
