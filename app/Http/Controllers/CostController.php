@@ -21,7 +21,7 @@ class CostController extends Controller
             ->with('creator')
             ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc');
-        
+
         if (request()->has('search') && request('search') != '') {
             $search = request('search');
             $query->where(function($q) use ($search) {
@@ -30,9 +30,9 @@ class CostController extends Controller
                     ->orWhere('price', 'like', "%{$search}%");
             });
         }
-        
+
         $costs = $query->paginate(10)->appends(request()->query());
-        
+
         return view('costs.index', compact('costs'));
     }
 
@@ -44,6 +44,12 @@ class CostController extends Controller
     public function store(Request $request)
     {
         $authUser = auth()->user();
+
+        $request->validate([
+            'category' => 'required|string',
+            'price' => 'required|numeric',
+            'description' => 'required|string',
+        ]);
 
         Cost::create(array_merge(
             $request->all(),
@@ -68,6 +74,12 @@ class CostController extends Controller
 
     public function update(Request $request, Cost $cost)
     {
+        $request->validate([
+            'category' => 'required|string',
+            'price' => 'required|numeric',
+            'description' => 'required|string',
+        ]);
+
         $before = $cost->toArray();
         $cost->update($request->all());
         $after = $cost->fresh()->toArray();
@@ -109,8 +121,8 @@ class CostController extends Controller
                     ->orderByRaw('locality_id IS NULL DESC')
                     ->orderBy('created_at', 'desc')
                     ->get();
-        
-        $pdf = PDF::loadView('reports.generateCostListReport', compact('costs', 'authUser'))      
+
+        $pdf = PDF::loadView('reports.generateCostListReport', compact('costs', 'authUser'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('costs.pdf');
