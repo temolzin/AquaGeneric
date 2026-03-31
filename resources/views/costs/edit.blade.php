@@ -41,11 +41,11 @@
                                                 <input type="number" class="form-control" name="price" id="price" placeholder="Ingresa el precio" value="{{ old('price', $cost->price) }}" required />
                                             </div>
                                         </div>
-                                    </div>                                    
+                                    </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="description" class="form-label">Descripción</label>
-                                            <textarea class="form-control" name="description" id="description" placeholder="Ingresa una descripción">{{ old('description', $cost->description) }}</textarea>
+                                            <textarea class="form-control" name="description" id="description" placeholder="Ingresa una descripción" required >{{ old('description', $cost->description) }}</textarea>
                                         </div>
                                     </div>
                                 </div>
