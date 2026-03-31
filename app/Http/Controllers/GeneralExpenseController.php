@@ -136,15 +136,11 @@ class GeneralExpenseController extends Controller
         $endDate = Carbon::parse($request->input('weekEndDate'));
 
         $weeks = [];
-        $currentStart = $startDate->copy();
+        $currentStart = $startDate->copy()->startOfWeek();
         $totalPeriodExpenses = 0;
-        $hasRange = request()->filled(['weekStartDate', 'weekEndDate']);
 
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
-            if ($currentEnd->gt($endDate)) {
-                $currentEnd = $endDate;
-            }
 
             $dailyExpenses = [];
 
@@ -155,25 +151,33 @@ class GeneralExpenseController extends Controller
                         ->whereDate('expense_date', $day->toDateString())
                         ->sum('amount');
                 } else {
-                    $expenses = 'N/A';
+                    $expenses = null;
                 }
 
-                $dailyExpenses[$day->format('l')] = $expenses;
+                $dailyExpenses[] = [
+                    'date' => $day->copy(),
+                    'amount' => $expenses
+                ];
                 $day->addDay();
             }
 
-            $totalPeriodExpenses += array_sum($dailyExpenses);
+            $weekTotal = collect($dailyExpenses)->filter(function($item) use ($startDate, $endDate) {
+                return $item['date']->between($startDate, $endDate) && $item['amount'] !== null;
+            })->sum('amount');
+
+            $totalPeriodExpenses += $weekTotal;
 
             $weeks[] = [
                 'start' => $currentStart->toDateString(),
                 'end' => $currentEnd->toDateString(),
                 'dailyExpenses' => $dailyExpenses,
+                'weekTotal' => $weekTotal
             ];
 
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyExpenses', compact('authUser', 'weeks', 'totalPeriodExpenses', 'hasRange'))
+        $pdf = PDF::loadView('reports.weeklyExpenses', compact('authUser', 'weeks', 'totalPeriodExpenses', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_expenses_' . now()->format('Ymd') . '.pdf');
@@ -210,15 +214,11 @@ class GeneralExpenseController extends Controller
         $endDate = Carbon::parse($request->input('weekEndDate'));
 
         $weeks = [];
-        $currentStart = $startDate->copy();
+        $currentStart = $startDate->copy()->startOfWeek();
         $totalPeriodGains = 0;
-        $hasRange = request()->filled(['weekStartDate', 'weekEndDate']);
 
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
-            if ($currentEnd->gt($endDate)) {
-                $currentEnd = $endDate;
-            }
 
             $dailyGains = [];
 
@@ -233,25 +233,33 @@ class GeneralExpenseController extends Controller
                         ->sum('amount');
                     $gains = $earnings - $expenses;
                 } else {
-                    $gains = 'N/A';
+                    $gains = null;
                 }
 
-                $dailyGains[$day->format('l')] = $gains;
+                $dailyGains[] = [
+                    'date' => $day->copy(),
+                    'amount' => $gains
+                ];
                 $day->addDay();
             }
 
-            $totalPeriodGains += array_sum($dailyGains);
+            $weekTotal = collect($dailyGains)->filter(function($item) use ($startDate, $endDate) {
+                return $item['date']->between($startDate, $endDate) && $item['amount'] !== null;
+            })->sum('amount');
+
+            $totalPeriodGains += $weekTotal;
 
             $weeks[] = [
                 'start' => $currentStart->toDateString(),
                 'end' => $currentEnd->toDateString(),
                 'dailyGains' => $dailyGains,
+                'weekTotal' => $weekTotal
             ];
 
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyGains', compact('authUser', 'weeks', 'totalPeriodGains', 'hasRange'))
+        $pdf = PDF::loadView('reports.weeklyGains', compact('authUser', 'weeks', 'totalPeriodGains', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_gains_' . now()->format('Ymd') . '.pdf');

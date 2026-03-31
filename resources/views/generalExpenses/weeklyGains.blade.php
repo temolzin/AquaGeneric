@@ -11,9 +11,9 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="weekStartDate" class="form-label">Fecha inicio(*)</label>
-                        <input type="date" id="weekStartDate" name="weekStartDate" class="form-control {{ !$hasRange ? 'is-invalid' : '' }}" required placeholder="Ingrese fecha inicio"/>
+                        <input type="date" id="weekStartDate" name="weekStartDate" class="form-control" required placeholder="Ingrese fecha inicio"/>
                         <label for="weekEndDate" class="form-label">Fecha fin(*)</label>
-                        <input type="date" id="weekEndDate" name="weekEndDate" class="form-control {{ !$hasRange ? 'is-invalid' : '' }}" required placeholder="Ingrese fecha fin"/>
+                        <input type="date" id="weekEndDate" name="weekEndDate" class="form-control" required placeholder="Ingrese fecha fin"/>
                     </div>
                 </div>
                 <div class="modal-footer">

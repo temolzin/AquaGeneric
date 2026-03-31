@@ -218,28 +218,19 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         </thead>
                         <tbody id="earningsDetail">
                             <tr>
-                                @foreach ($daysInSpanish as $dayEnglish => $dayName)
-                                    @php
-                                        $dayEarnings = $week['dailyEarnings'][$dayEnglish] ?? 'N/A';
-                                    @endphp
+                                @foreach ($week['dailyEarnings'] as $dayItem)
                                     <td class="textcenter">
-                                        @if (!$hasRange)
-                                            <font color="#ff0000"><b>N/A</b></font>
-                                        @elseif ($dayEarnings === 'N/A')
-                                            <font color="#ff0000"><b>N/A</b></font>
+                                        @if($dayItem['date'] < $startDate || $dayItem['date'] > $endDate)
+                                            --
                                         @else
-                                            ${{ number_format($dayEarnings, 2) }}
+                                            ${{ number_format($dayItem['amount'] ?? 0, 2) }}
                                         @endif
                                     </td>
                                 @endforeach
                             </tr>
                             <tr>
                                 <td colspan="7" class="totalWeek"><strong>Total de la semana:</strong> 
-                                    @if (!$hasRange)
-                                        <font color="#ff0000"><b>N/A</b></font>
-                                    @else
-                                        ${{ number_format(array_sum(array_filter($week['dailyEarnings'], fn($value) => $value !== 'N/A')), 2) }}
-                                    @endif
+                                    ${{ number_format($week['weekTotal'] ?? 0, 2) }}
                                 </td>
                             </tr>
                         </tbody>
@@ -247,12 +238,8 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 </div>
             @endforeach
             <div class="totalEarnings">
-                <strong>Total del Periodo: 
-                    @if (!$hasRange)
-                        <font color="#ff0000"><b>N/A</b></font>
-                    @else
-                        ${{ number_format($totalPeriodEarnings, 2) }}
-                    @endif
+                <strong>Total del Periodo:
+                    ${{ number_format($totalPeriodEarnings, 2) }}
                 </strong>
             </div>
         </div>
