@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\GeneralExpense;
+use App\Models\GeneralEarning;
 use App\Models\ExpenseType;
 use App\Models\Payment;
 use App\Models\MovementHistory;
@@ -45,13 +46,36 @@ class GeneralExpenseController extends Controller
     {
         $authUser = auth()->user();
 
-        $generalExpenseData = $request->all();
+        $request->validate([
+            'concept' => 'required|string',
+            'description' => 'required|string',
+            'amount' => 'required|numeric|min:0.01',
+            'expense_type_id' => 'required|exists:expense_types,id',
+            'expenseDate' => 'required|date',
+            'receipt' => 'required|mimes:jpg,jpeg,png,pdf|max:5120',
+        ], [
+            'concept.required' => 'El concepto es obligatorio.',
+            'description.required' => 'La descripción es obligatoria.',
+            'amount.required' => 'El monto es obligatorio.',
+            'amount.numeric' => 'El monto debe ser un número.',
+            'expense_type_id.required' => 'Debe seleccionar un tipo de gasto.',
+            'expense_type_id.exists' => 'El tipo de gasto seleccionado no existe.',
+            'expenseDate.required' => 'La fecha del gasto es obligatoria.',
+            'expenseDate.date' => 'La fecha del gasto debe ser una fecha válida.',
+            'receipt.required' => 'El comprobante es obligatorio.',
+            'receipt.mimes' => 'Solo se permiten archivos PDF, JPG, JPEG o PNG.',
+            'receipt.max' => 'El archivo no puede superar los 5MB.',
+        ]);
 
-        $generalExpenseData['expense_date'] = $request->input('expenseDate');
-        $generalExpenseData['locality_id'] = $authUser->locality_id;
-        $generalExpenseData['created_by'] = $authUser->id;
-
-        $expense = GeneralExpense::create($generalExpenseData);
+        $expense = GeneralExpense::create([
+            'concept' => $request->input('concept'),
+            'description' => $request->input('description'),
+            'amount' => $request->input('amount'),
+            'expense_type_id' => $request->input('expense_type_id'),
+            'expense_date' => $request->input('expenseDate'),
+            'locality_id' => $authUser->locality_id,
+            'created_by' => $authUser->id,
+        ]);
 
         if ($request->hasFile('receipt')) {
             $file = $request->file('receipt');
@@ -65,7 +89,7 @@ class GeneralExpenseController extends Controller
     {
         $authUser = auth()->user();
 
-        $expenses = GeneralExpense::with(['expenseType', 'creator'])
+        $expense = GeneralExpense::with(['expenseType', 'creator'])
             ->where('locality_id', $authUser->locality_id)
             ->findOrFail($id);
         return view('generalExpenses.show', compact('expense'));
@@ -226,9 +250,13 @@ class GeneralExpenseController extends Controller
                     $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
                         ->whereDate('expense_date', $day->toDateString())
                         ->sum('amount');
-                    $earnings = Payment::where('locality_id', $authUser->locality_id)
+                    $payments = Payment::where('locality_id', $authUser->locality_id)
                         ->whereDate('created_at', $day->toDateString())
                         ->sum('amount');
+                    $generalEarnings = GeneralEarning::where('locality_id', $authUser->locality_id)
+                        ->whereDate('earning_date', $day->toDateString())
+                        ->sum('amount');
+                    $earnings = $payments + $generalEarnings;
                     $gains = $earnings - $expenses;
                 } else {
                     $gains = 'N/A';
@@ -238,7 +266,8 @@ class GeneralExpenseController extends Controller
                 $day->addDay();
             }
 
-            $totalPeriodGains += array_sum($dailyGains);
+            $weekGains = array_sum(array_filter($dailyGains, 'is_numeric'));
+            $totalPeriodGains += $weekGains;
 
             $weeks[] = [
                 'start' => $currentStart->toDateString(),
@@ -271,11 +300,17 @@ class GeneralExpenseController extends Controller
             ->where('locality_id', $authUser->locality_id)
             ->sum('amount');
 
-            $earnings = Payment::whereYear('created_at', $yearGains)
+            $payments = Payment::whereYear('created_at', $yearGains)
             ->whereMonth('created_at', $month)
             ->where('locality_id', $authUser->locality_id)
             ->sum('amount');
 
+            $generalEarnings = GeneralEarning::whereYear('earning_date', $yearGains)
+            ->whereMonth('earning_date', $month)
+            ->where('locality_id', $authUser->locality_id)
+            ->sum('amount');
+
+            $earnings = $payments + $generalEarnings;
             $gains = $earnings - $expenses;
 
             $monthlyEarnings[$month] = $earnings;

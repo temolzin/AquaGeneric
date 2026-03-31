@@ -49,17 +49,14 @@
                                                     <td>{{ $report->title }}</td>
                                                     <td>
                                                         @switch($report->status)
-                                                            @case('Earring')
+                                                            @case('pending')
                                                                 Pendiente
                                                                 @break
-                                                            @case('In process')
-                                                                En proceso
+                                                            @case('in_review')
+                                                                En revisión
                                                                 @break
-                                                            @case('Resolved')
-                                                                Resuelto
-                                                                @break
-                                                            @case('Closed')
-                                                                Cerrado
+                                                            @case('completed')
+                                                                Completado
                                                                 @break
                                                             @default
                                                                 {{ $report->status }}
@@ -76,9 +73,15 @@
                                                             @endcan
 
                                                             @can('editFaultReport')
-                                                            <button type="button" class="btn btn-warning btn-sm mx-1 mb-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $report->id }}">
+                                                            @if($report->status === 'completed')
+                                                            <button type="button" class="btn btn-warning btn-sm mx-1 mb-1" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $report->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
+                                                            @else
+                                                            <button type="button" class="btn btn-secondary btn-sm mx-1 mb-1" title="No editable: cambiar estatus" disabled>
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                            @endif
                                                             @endcan
 
                                                             @can('deleteFaultReport')

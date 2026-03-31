@@ -42,9 +42,9 @@
                                             <label for="statusUpdate" class="form-label">Estado(*)</label>
                                             <select name="statusUpdate" class="form-control select2" required>
                                                 <option value="">Selecciona un estado</option>
-                                                <option value="Earring" {{ $report->status === 'Earring' ? 'selected' : '' }}>Pendiente</option>
-                                                <option value="In process" {{ $report->status === 'In process' ? 'selected' : '' }}>En proceso</option>
-                                                <option value="Resolved" {{ $report->status === 'Resolved' ? 'selected' : '' }}>Resuelto</option>
+                                                <option value="pending" {{ $report->status === 'pending' ? 'selected' : '' }}>Pendiente</option>
+                                                <option value="in_review" {{ $report->status === 'in_review' ? 'selected' : '' }}>En revisión</option>
+                                                <option value="completed" {{ $report->status === 'completed' ? 'selected' : '' }}>Completado</option>
                                                 <option value="Closed" {{ $report->status === 'Closed' ? 'selected' : '' }}>Cerrado</option>
                                             </select>
                                         </div>

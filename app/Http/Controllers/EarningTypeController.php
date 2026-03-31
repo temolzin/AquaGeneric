@@ -90,6 +90,12 @@ class EarningTypeController extends Controller
     public function destroy(EarningType $earningType)
     {
         $this->authorizeLocality($earningType);
+
+        if ($earningType->hasDependencies()) {
+            return redirect()->route('earningTypes.index')
+                ->with('error', 'No se puede eliminar este tipo de ingreso porque tiene ingresos asociados.');
+        }
+
         $earningType->delete();
 
         return redirect()->route('earningTypes.index')

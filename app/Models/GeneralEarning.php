@@ -22,6 +22,12 @@ class GeneralEarning extends Model implements HasMedia
         'earning_date'
     ];
 
+    protected $casts = [
+        'earning_date' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function locality()
     {
         return $this->belongsTo(Locality::class);

@@ -145,17 +145,6 @@
                                 <div class="d-flex justify-content-center">
                                     {!! $localities->links('pagination::bootstrap-4') !!}
                                 </div>
-                                @if (session('createdToken') && session('localityName'))
-                                    @include('localities.generatedTokenModal', [
-                                        'token' => session('createdToken'),
-                                        'localityName' => session('localityName')
-                                    ])
-                                    <script>
-                                        document.addEventListener("DOMContentLoaded", function() {
-                                            $('#generatedTokenModal').modal('show');
-                                        });
-                                    </script>
-                                @endif
                             </div>
                         </div>
                     </div>
@@ -175,10 +164,10 @@
             searching: false
         });
 
-        var successMessage = "{{ session('success') }}";
-        var errorMessage = "{{ session('error') }}";
+        var successMessage = "{{ session('success') }}".trim();
+        var errorMessage = "{{ session('error') }}".trim();
 
-        if (successMessage) {
+        if (successMessage && successMessage.length > 0) {
             Swal.fire({
                 icon: 'success',
                 title: 'Éxito',
@@ -187,7 +176,7 @@
             });
         }
 
-        if (errorMessage) {
+        if (errorMessage && errorMessage.length > 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -195,10 +184,6 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-
-        @if (session('createdToken'))
-        $('#generatedTokenModal').modal('show');
-        @endif
     });
 </script>
 @endsection
