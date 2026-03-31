@@ -50,4 +50,24 @@ class DebtCategory extends Model
             }
         });
     }
+
+    public function debts()
+    {
+        return $this->hasMany(Debt::class, 'debt_category_id');
+    }
+
+    public function hasDependencies()
+    {
+        return $this->debts()->exists();
+    }
+
+    public function locality()
+    {
+        return $this->belongsTo(Locality::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

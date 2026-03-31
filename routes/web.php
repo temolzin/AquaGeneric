@@ -19,6 +19,7 @@ use App\Http\Controllers\WaterConnectionDetailsController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\AdvancePaymentController;
 use App\Http\Controllers\IncidentCategoriesController;
+use App\Http\Controllers\DebtCategoryController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LogIncidentController;
@@ -182,6 +183,10 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewIncidentCategories']], function () {
         Route::resource('incidentCategories', IncidentCategoriesController::class);
         Route::get('/reports/generateIncidentCategoyListReport', [IncidentCategoriesController::class, 'generateIncidentCategoyListReport'])->name('report.generateIncidentCategoyListReport');
+    });
+
+    Route::group(['middleware' => ['can:viewDebtCategories']], function () {
+        Route::resource('debtCategories', DebtCategoryController::class);
     });
 
     Route::group(['middleware' => ['can:viewIncidents']], function () {
