@@ -17,6 +17,22 @@ class DebtsTableSeeder extends Seeder
 
     public function run()
     {
+        // Ensure service category exists for compatibility
+        $service = DB::table('debt_categories')->where('name', 'Servicio de Agua')->first();
+        if (! $service) {
+            $serviceId = DB::table('debt_categories')->insertGetId([
+                'name' => 'Servicio de Agua',
+                'description' => 'Categoría global para Servicio de Agua',
+                'color' => '#007bff',
+                'locality_id' => null,
+                'created_by' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            $serviceId = $service->id;
+        }
+
         $faker = Faker::create();
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
@@ -51,6 +67,7 @@ class DebtsTableSeeder extends Seeder
                     'water_connection_id' => $waterConnection->id,
                     'locality_id' => $waterConnection->locality_id,
                     'created_by' => $createdBy,
+                    'debt_category_id' => $serviceId,
                     'start_date' => $debtStartDate,
                     'end_date' => $debtEndDate,
                     'amount' => $amount,
@@ -105,6 +122,7 @@ class DebtsTableSeeder extends Seeder
                     'water_connection_id' => $waterConnection->id,
                     'locality_id' => $waterConnection->locality_id,
                     'created_by' => $createdBy,
+                    'debt_category_id' => $serviceId,
                     'start_date' => $debtStartDate,
                     'end_date' => $debtEndDate,
                     'amount' => $amount,

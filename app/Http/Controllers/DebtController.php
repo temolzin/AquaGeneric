@@ -8,6 +8,7 @@ use App\Models\Debt;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\WaterConnection;
+use App\Models\DebtCategory;
 use App\Models\MovementHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -90,6 +91,14 @@ class DebtController extends Controller
     public function store(Request $request)
     {
         $authUser = auth()->user();
+        $request->validate([
+            'water_connection_id' => 'required|exists:water_connections,id',
+            'debt_category_id' => 'nullable|exists:debt_categories,id',
+            'start_date' => ['required', 'regex:/^\d{4}-\d{2}$/'],
+            'end_date' => ['required', 'regex:/^\d{4}-\d{2}$/'],
+            'amount' => 'required|numeric|min:0',
+            'note' => 'nullable|string'
+        ]);
 
         $waterConnection = WaterConnection::findOrFail($request->water_connection_id);
 
@@ -99,28 +108,47 @@ class DebtController extends Controller
         $startDate = new \DateTime($startMonth . '-01');
         $endDate = (new \DateTime($endMonth . '-01'))->modify('last day of this month');
 
-        $existingDebt = Debt::where('water_connection_id', $request->input('water_connection_id'))
-            ->where(function ($query) use ($startDate, $endDate) {
-                $query->where('start_date', '<=', $endDate->format('Y-m-d'))
-                      ->where('end_date', '>=', $startDate->format('Y-m-d'));
-            })
-            ->exists();
+        if ($endDate < $startDate) {
+            return response()->json(['error' => 'El rango de fechas es inválido.'], 400);
+        }
+
+        $categoryId = $request->input('debt_category_id') ?? $this->getServiceCategoryId();
+
+        // if category is locality-scoped, ensure it belongs to user's locality
+        $category = DB::table('debt_categories')->where('id', $categoryId)->first();
+        if ($category && $category->locality_id && $category->locality_id !== $authUser->locality_id) {
+            return response()->json(['error' => 'La categoría seleccionada no pertenece a la localidad del usuario.'], 400);
+        }
+
+        // Only SERVICE category must respect period overlap rules
+        $serviceId = $this->getServiceCategoryId();
+        $existingDebt = false;
+        if ($categoryId == $serviceId) {
+            $existingDebt = Debt::where('water_connection_id', $request->input('water_connection_id'))
+                ->where('debt_category_id', $serviceId)
+                ->where(function ($query) use ($startDate, $endDate) {
+                    $query->where('start_date', '<=', $endDate->format('Y-m-d'))
+                          ->where('end_date', '>=', $startDate->format('Y-m-d'));
+                })
+                ->exists();
+        }
 
         if ($existingDebt) {
-            return response()->json(['error' => 'El cliente ya tiene una deuda en este rango de fechas.'], 400);
+            return response()->json(['error' => 'Ya existe una deuda de Servicio de Agua en este rango de fechas para la toma.'], 400);
         }
 
         Debt::create([
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'water_connection_id' => $request->water_connection_id,
+            'debt_category_id' => $categoryId,
             'start_date' => $startDate->format('Y-m-d'),
             'end_date' => $endDate->format('Y-m-d'),
             'amount' => $request->input('amount'),
             'note' => $request->input('note'),
         ]);
 
-        return response()->json(['success' => 'Deuda creada exitosamente.'], 400);
+        return response()->json(['success' => 'Deuda creada exitosamente.']);
     }
 
     public function assignAll(Request $request)
@@ -140,6 +168,8 @@ class DebtController extends Controller
 
         $allHaveDebt = true;
 
+        $serviceId = $this->getServiceCategoryId();
+
         foreach ($customers as $customer) {
             foreach ($customer->waterConnections as $waterConnection) {
                 $cost = $waterConnection->cost;
@@ -148,7 +178,9 @@ class DebtController extends Controller
                     continue;
                 }
 
+                // For Servicio de Agua we must respect period uniqueness
                 $existingDebt = Debt::where('water_connection_id', $waterConnection->id)
+                    ->where('debt_category_id', $serviceId)
                     ->where(function ($query) use ($startDate, $endDate) {
                         $query->where('start_date', '<=', $endDate->format('Y-m-d'))
                             ->where('end_date', '>=', $startDate->format('Y-m-d'));
@@ -164,6 +196,7 @@ class DebtController extends Controller
                     'locality_id' => $authUser->locality_id,
                     'created_by' => $authUser->id,
                     'water_connection_id' => $waterConnection->id,
+                    'debt_category_id' => $serviceId,
                     'start_date' => $startDate->format('Y-m-d'),
                     'end_date' => $endDate->format('Y-m-d'),
                     'amount' => $cost->price,
@@ -239,5 +272,10 @@ class DebtController extends Controller
             ->paginate(10);
 
         return view('viewCustomerDebts.index', compact('waterConnections'));
+    }
+
+    private function getServiceCategoryId(): int
+    {
+        return DebtCategory::serviceId();
     }
 }
