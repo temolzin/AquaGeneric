@@ -221,7 +221,7 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                                 @foreach ($week['dailyGains'] as $dayItem)
                                     <td class="textcenter">
                                         @if($dayItem['date'] < $startDate || $dayItem['date'] > $endDate)
-                                            --
+                                            NA
                                         @else
                                             ${{ number_format($dayItem['amount'] ?? 0, 2) }}
                                         @endif
