@@ -44,14 +44,13 @@
                                             <th>ID</th>
                                             <th>NOMBRE</th>
                                             <th>DESCRIPCIÓN</th>
-                                            <th>COLOR</th>
                                             <th>OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @if (count($categories) <= 0)
                                             <tr>
-                                                <td colspan="5">No hay resultados</td>
+                                                <td colspan="4">No hay resultados</td>
                                             </tr>
                                         @else
                                             @foreach($categories as $category)
@@ -63,7 +62,6 @@
                                                         </span>
                                                     </td>
                                                     <td>{{ $category->description }}</td>
-                                                    <td>{{ $category->color }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $category->id }}">
@@ -116,10 +114,8 @@
             info: false,
             searching: false
         });
-
         var successMessage = "{{ session('success') }}";
         var errorMessage = "{{ session('error') }}";
-
         if (successMessage) {
             Swal.fire({
                 icon: 'success',
@@ -128,7 +124,6 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-
         if (errorMessage) {
             Swal.fire({
                 icon: 'error',
@@ -137,7 +132,6 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-
         $('[id^="edit"]').on('shown.bs.modal', function() {
             reinitializeSelect2();
         });

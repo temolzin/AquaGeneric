@@ -68,7 +68,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="debt_category_id" class="form-label">Categoría(*)</label>
+                                            <select class="form-control select2" name="debt_category_id" id="debt_category_id" required>
+                                                <option value="">Selecciona una categoría</option>
+                                                @foreach($debtCategories as $cat)
+                                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="note" class="form-label">Observación</label>
                                             <textarea class="form-control" name="note" placeholder="Ingresa una observación">{{ old('note') }}</textarea>
@@ -93,7 +104,6 @@
 <script>
     document.getElementById('createDebtForm').addEventListener('submit', async function (e) {
         e.preventDefault();
-
         try {
             const response = await fetch(this.action, {
                 method: 'POST',
@@ -103,9 +113,7 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             });
-
             const data = await response.json();
-
             Swal.fire({
                 icon: data.error ? 'error' : 'success',
                 title: data.error ? 'Error' : 'Éxito',
@@ -114,7 +122,6 @@
             }).then(() => {
                 if (data.success) window.location.href = "{{ route('debts.index') }}";
             });
-
         } catch (error) {
             console.error('Error:', error);
         }

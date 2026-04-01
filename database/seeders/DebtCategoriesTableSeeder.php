@@ -10,43 +10,60 @@ class DebtCategoriesTableSeeder extends Seeder
 {
     public function run()
     {
-        // Ensure global Servicio de Agua exists
-        $service = DB::table('debt_categories')->where('name', DebtCategory::NAME_SERVICE)->first();
-        if (! $service) {
-            DB::table('debt_categories')->insert([
+        DebtCategory::firstOrCreate(
+            [
                 'name' => DebtCategory::NAME_SERVICE,
+                'locality_id' => null
+            ],
+            [
                 'description' => 'Categoría global para Servicio de Agua',
-                'color' => '#007bff',
-                'locality_id' => null,
-                'created_by' => 1,
+                'color' => 'bg-primary',
+                'created_by' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]);
-        }
-
-        // Optional locality-specific categories
-        $localityIds = DB::table('localities')->pluck('id');
-        $localCategories = ['Mantenimiento', 'Multa', 'Recargo'];
-
-        foreach ($localityIds as $localityId) {
-            foreach ($localCategories as $name) {
-                $exists = DB::table('debt_categories')
-                    ->where('name', $name)
-                    ->where('locality_id', $localityId)
-                    ->exists();
-
-                if (! $exists) {
-                    DB::table('debt_categories')->insert([
-                        'name' => $name,
-                        'description' => null,
-                        'color' => null,
-                        'locality_id' => $localityId,
-                        'created_by' => 1,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
+            ]
+        );
+        $localities = DB::table('localities')->get();
+        foreach ($localities as $locality) {
+            DebtCategory::firstOrCreate(
+                [
+                    'name' => 'Mantenimiento',
+                    'locality_id' => $locality->id
+                ],
+                [
+                    'description' => 'Categoría Mantenimiento',
+                    'color' => 'bg-success',
+                    'created_by' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+            DebtCategory::firstOrCreate(
+                [
+                    'name' => 'Multa',
+                    'locality_id' => $locality->id
+                ],
+                [
+                    'description' => 'Categoría Multa',
+                    'color' => 'bg-danger',
+                    'created_by' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+            DebtCategory::firstOrCreate(
+                [
+                    'name' => 'Recargo',
+                    'locality_id' => $locality->id
+                ],
+                [
+                    'description' => 'Categoría Recargo',
+                    'color' => 'bg-warning',
+                    'created_by' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         }
     }
 }

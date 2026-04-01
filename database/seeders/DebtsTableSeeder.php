@@ -17,7 +17,6 @@ class DebtsTableSeeder extends Seeder
 
     public function run()
     {
-        // Ensure service category exists for compatibility
         $service = DB::table('debt_categories')->where('name', 'Servicio de Agua')->first();
         if (! $service) {
             $serviceId = DB::table('debt_categories')->insertGetId([
@@ -25,44 +24,37 @@ class DebtsTableSeeder extends Seeder
                 'description' => 'Categoría global para Servicio de Agua',
                 'color' => '#007bff',
                 'locality_id' => null,
-                'created_by' => 1,
+                'created_by' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         } else {
             $serviceId = $service->id;
         }
-
         $faker = Faker::create();
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
-
         $alonso = DB::table('customers')->where('user_id', 5)->first();
         if ($alonso) {
             $waterConnections = DB::table('water_connections')
                 ->where('customer_id', $alonso->id)
                 ->limit(2)
                 ->get();
-
             foreach ($waterConnections as $waterConnection) {
                 $createdBy = $this->getUserForLocality($waterConnection->locality_id);
                 if (!$createdBy) {
                     continue;
                 }
-
                 $debtStartDate = $faker->dateTimeBetween($startDate, $endDate);
                 $debtDuration = $faker->numberBetween(1, 12);
                 $debtEndDate = Carbon::instance($debtStartDate)->addMonths($debtDuration);
-
                 if ($debtEndDate > $endDate) {
                     $debtEndDate = $endDate;
                 }
-
                 $amount = rand(self::MIN_AMOUNT, self::MAX_AMOUNT);
                 $paymentAmount = rand(0, $amount);
                 $debtCurrent = $amount - $paymentAmount;
                 $status = $this->determineDebtStatus($paymentAmount, $debtCurrent);
-
                 DB::table('debts')->insert([
                     'water_connection_id' => $waterConnection->id,
                     'locality_id' => $waterConnection->locality_id,
@@ -79,45 +71,36 @@ class DebtsTableSeeder extends Seeder
                 ]);
             }
         }
-
         $customers = DB::table('customers')
             ->whereNotIn('user_id', [1, 5])
             ->orWhereNull('user_id')
             ->get();
-
         $debtCount = 0;
         foreach ($customers as $customer) {
             if ($debtCount >= self::DEBT_COUNT) {
                 break;
             }
-
             $waterConnections = DB::table('water_connections')
                 ->where('customer_id', $customer->id)
                 ->get();
-
             foreach ($waterConnections as $waterConnection) {
                 if ($debtCount >= self::DEBT_COUNT) {
                     break;
                 }
-
                 $createdBy = $this->getUserForLocality($waterConnection->locality_id);
                 if (!$createdBy) {
                     continue;
                 }
-
                 $debtStartDate = $faker->dateTimeBetween($startDate, $endDate);
                 $debtDuration = $faker->numberBetween(1, 12);
                 $debtEndDate = Carbon::instance($debtStartDate)->addMonths($debtDuration);
-
                 if ($debtEndDate > $endDate) {
                     $debtEndDate = $endDate;
                 }
-
                 $amount = rand(self::MIN_AMOUNT, self::MAX_AMOUNT);
                 $paymentAmount = rand(0, $amount);
                 $debtCurrent = $amount - $paymentAmount;
                 $status = $this->determineDebtStatus($paymentAmount, $debtCurrent);
-
                 DB::table('debts')->insert([
                     'water_connection_id' => $waterConnection->id,
                     'locality_id' => $waterConnection->locality_id,
@@ -132,7 +115,6 @@ class DebtsTableSeeder extends Seeder
                     'deleted_at' => null,
                     'created_at' => now(),
                 ]);
-
                 $debtCount++;
             }
         }
@@ -149,7 +131,6 @@ class DebtsTableSeeder extends Seeder
             ->distinct()
             ->pluck('users.id')
             ->toArray();
-
         return !empty($userIds) ? $userIds[array_rand($userIds)] : 1;
     }
 

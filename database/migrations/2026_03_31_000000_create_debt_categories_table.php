@@ -36,7 +36,7 @@ class CreateDebtCategoriesTable extends Migration
                 'description' => 'Categoría global para Servicio de Agua',
                 'color' => '#007bff',
                 'locality_id' => null,
-                'created_by' => 1,
+                'created_by' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
