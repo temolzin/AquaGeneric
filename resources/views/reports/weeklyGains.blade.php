@@ -194,6 +194,17 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             <div class="title">
                 <h3>GANANCIAS SEMANALES<h3>
             </div>
+            @php
+                $daysInSpanish = [
+                    'Monday' => 'Lunes',
+                    'Tuesday' => 'Martes',
+                    'Wednesday' => 'Miércoles',
+                    'Thursday' => 'Jueves',
+                    'Friday' => 'Viernes',
+                    'Saturday' => 'Sábado',
+                    'Sunday' => 'Domingo',
+                ];
+            @endphp
             @foreach ($weeks as $week)
                 <div class="weekSection">
                     <p><strong>Semana del {{ \Carbon\Carbon::parse($week['start'])->translatedFormat('j \\d\\e F') }} al {{ \Carbon\Carbon::parse($week['end'])->translatedFormat('j \\d\\e F') }}</strong></p>
