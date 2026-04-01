@@ -239,4 +239,3 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
         </div>
     </body>
 </html>
-

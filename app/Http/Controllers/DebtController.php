@@ -37,7 +37,7 @@ class DebtController extends Controller
             ->where('locality_id', $localityId)
             ->get();
 
-        $debtsQuery = Debt::with(['waterConnection.customer.waterConnections.debts', 'creator'])
+        $debts = Debt::with(['waterConnection.customer', 'creator'])
         ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
             $query->where('locality_id', $localityId)
                 ->whereHas('customer', function ($query) use ($search) {
@@ -49,45 +49,25 @@ class DebtController extends Controller
                     });
                 });
         })
-        ->selectRaw('water_connection_id, debts.id, debts.amount, debts.debt_current, debts.status, debts.created_at')
+        ->selectRaw('water_connection_id, debts.created_at, SUM(amount) as total_amount')
         ->where('status', '!=', 'paid')
+        ->groupBy('water_connection_id', 'debts.created_at')
         ->orderByDesc('debts.created_at')
-        ->get();
+        ->paginate(10);
 
-        $uniqueCustomers = [];
-        $processedDebts = [];
-
-        foreach ($debtsQuery as $debt) {
+        $totalDebts = [];
+        foreach ($debts as $debt) {
             $customerId = $debt->waterConnection->customer_id;
-            
-            if (!in_array($customerId, $uniqueCustomers)) {
-                $uniqueCustomers[] = $customerId;
-                
-                $unpaidDebts = collect($debt->waterConnection->customer->waterConnections)->flatMap(function ($waterConnection) {
-                    return $waterConnection->debts->where('status', '!=', 'paid');
-                });
-
-                $processedDebts[] = (object)[
-                    'original_debt' => $debt,
-                    'total_debt_amount' => $unpaidDebts->sum('amount'),
-                    'total_paid' => $unpaidDebts->sum('debt_current')
-                ];
+            if (!isset($totalDebts[$customerId])) {
+                $totalDebts[$customerId] = 0;
             }
+
+            $totalDebtAmount = Debt::where('water_connection_id', $debt->water_connection_id)->sum('amount');
+            $totalDebtPaid = Debt::where('water_connection_id', $debt->water_connection_id)->sum('debt_current');
+            $totalDebts[$customerId] = $totalDebtAmount - $totalDebtPaid;
         }
 
-        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $currentPageItems = array_slice($processedDebts, ($currentPage - 1) * $perPage, $perPage);
-        
-        $debts = new \Illuminate\Pagination\LengthAwarePaginator(
-            $currentPageItems, 
-            count($processedDebts), 
-            $perPage, 
-            $currentPage, 
-            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), 'query' => $request->query()]
-        );
-
-        return view('debts.index', compact('debts', 'customers', 'waterConnections'));
+        return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts'));
     }
 
     public function getWaterConnections(Request $request)
