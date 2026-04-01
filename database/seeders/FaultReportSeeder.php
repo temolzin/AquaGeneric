@@ -21,7 +21,7 @@ class FaultReportSeeder extends Seeder
             ->distinct()
             ->pluck('users.id')
             ->toArray();
-        $statuses = ['Earring', 'In process', 'Resolved', 'Closed'];
+        $statuses = ['pending', 'in_review', 'completed'];
 
         foreach (range(1, 20) as $i) {
             DB::table('fault_report')->insert([ 

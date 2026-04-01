@@ -32,7 +32,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="startDate" class="form-label">Fecha de Inicio(*)</label>
+                                            <label for="startDate" class="form-label">Fecha de la Incidencia(*)</label>
                                             <input type="date" class="form-control" name="startDate" value="{{ old('startDate') }}" required />
                                         </div>
                                     </div>

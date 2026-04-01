@@ -29,6 +29,10 @@ class IncidentSeeder extends Seeder
                 ->pluck('id')
                 ->toArray();
 
+            if (empty($statusIds) || empty($categoryIds)) {
+                continue;
+            }
+
             $incidents = [
                 [
                     'name' => 'Falla en iluminación',

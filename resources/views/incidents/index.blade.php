@@ -57,7 +57,7 @@
                                                 <th>ID</th>
                                                 <th>INCIDENCIA</th>
                                                 <th>EMPLEADO</th>
-                                                <th>FECHA DE INICIO</th>
+                                                <th>FECHA DE LA INCIDENCIA</th>
                                                 <th>CATEGORIA</th>
                                                 <th>ESTATUS</th>
                                                 <th>OPCIONES</th>

@@ -254,10 +254,17 @@ class PaymentController extends Controller
         $totalEarnings = 0;
 
         for ($month = 1; $month <= 12; $month++) {
-            $earnings = Payment::whereYear('created_at', $year)
+            $payments = Payment::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
                 ->where('locality_id', $authUser->locality_id)
                 ->sum('amount');
+
+            $generalEarnings = GeneralEarning::whereYear('earning_date', $year)
+                ->whereMonth('earning_date', $month)
+                ->where('locality_id', $authUser->locality_id)
+                ->sum('amount');
+
+            $earnings = $payments + $generalEarnings;
 
             $monthlyEarnings[$month] = $earnings;
             $totalEarnings += $earnings;

@@ -80,11 +80,17 @@ class ExpenseTypeController extends Controller
 
     public function destroy(ExpenseType $expenseType)
     {
-    $this->authorizeLocality($expenseType);
-    $expenseType->delete();
+        $this->authorizeLocality($expenseType);
 
-    return redirect()->route('expenseTypes.index')
-        ->with('success', 'Tipo de gasto eliminado exitosamente.');
+        if ($expenseType->generalExpenses()->exists()) {
+            return redirect()->route('expenseTypes.index')
+                ->with('error', 'No se puede eliminar este tipo de gasto porque tiene gastos asociados.');
+        }
+
+        $expenseType->delete();
+
+        return redirect()->route('expenseTypes.index')
+            ->with('success', 'Tipo de gasto eliminado exitosamente.');
     }
 
     private function authorizeLocality(ExpenseType $expenseType)

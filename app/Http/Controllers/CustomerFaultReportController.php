@@ -46,7 +46,7 @@ class CustomerFaultReportController extends Controller
         $report = new FaultReport();
         $report->title = $request->title;
         $report->description = $request->description;
-        $report->status = 'Earring';
+        $report->status = 'pending';
         $report->date_report = now();
         $report->locality_id = Auth::user()->locality_id;
         $report->created_by = Auth::id();
