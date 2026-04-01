@@ -12,7 +12,7 @@
                     <div class="row mb-2">
                         <div class="col-lg-12">
                             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
-                                <form method="GET" action="{{ route('inventory.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
+                                <form method="GET" action="{{ route('inventory.index') }}" class="flex-grow-1 mt-2 col-md-8 px-0" style="min-width: 328px;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por ID, Nombre, Categoría, Material" value="{{ request('search') }}">
                                         <div class="input-group-append">
