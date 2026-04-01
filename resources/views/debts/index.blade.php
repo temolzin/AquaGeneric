@@ -14,9 +14,9 @@
                         @include('debts.periods')
                         <div class="col-lg-12">
                             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center">
-                                <form method="GET" action="{{ route('debts.index') }}" class="flex-grow-1" style="min-width: 330px; max-width: 50%;">
+                                <form method="GET" action="{{ route('debts.index') }}" class="flex-grow-1 col-md-8" style="min-width: 330px;">
                                     <div class="input-group">
-                                        <input type="text" name="search" class="form-control mt-2" placeholder="Buscar por nombre, apellido o ID" value="{{ request('search') }}">
+                                        <input type="text" name="search" class="form-control mt-2" placeholder="Buscar por ID del CLIENTE" value="{{ request('search') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary mt-2" title="Buscar Deuda">Buscar</button>
                                         </div>
@@ -61,38 +61,22 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $shownCustomers = [];
-                                        @endphp
-                                        @forelse ($debts as $debt)
-                                            @if (!in_array($debt->waterConnection->customer_id, $shownCustomers))
-                                                <tr>
-                                                    <td>{{ $debt->waterConnection->customer->id }}</td>
-                                                    <td>{{ $debt->waterConnection->customer->name }} {{ $debt->waterConnection->customer->last_name }}</td>
-                                                    <td>
-                                                        @php
-                                                            $unpaidDebts = collect($debt->waterConnection->customer->waterConnections)->flatMap(function ($waterConnection) {
-                                                                return $waterConnection->debts->where('status', '!=', 'paid');
-                                                            });
-                                                            $totalDebt = $unpaidDebts->sum('amount');
-                                                            $totalPaid = $unpaidDebts->sum('debt_current');
-                                                            $pendingBalance = $totalDebt - $totalPaid;
-                                                        @endphp
-                                                        ${{ number_format($pendingBalance, 2, '.', ',') }}
-                                                    </td>
-                                                    <td>
-                                                        <div class="btn-group" role="group" aria-label="Opciones">
-                                                            <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles"
-                                                                data-target="#viewDebts{{ $debt->waterConnection->customer_id }}"> <i class="fas fa-eye"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                @include('debts.showDebts')
-                                                @php
-                                                    $shownCustomers[] = $debt->waterConnection->customer_id;
-                                                @endphp
-                                            @endif
+                                        @forelse ($debts as $data)
+                                            <tr>
+                                                <td>{{ $data->original_debt->waterConnection->customer->id }}</td>
+                                                <td>{{ $data->original_debt->waterConnection->customer->name }} {{ $data->original_debt->waterConnection->customer->last_name }}</td>
+                                                <td>
+                                                    ${{ number_format($data->total_debt_amount - $data->total_paid, 2, '.', ',') }}
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group" aria-label="Opciones">
+                                                        <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles"
+                                                            data-target="#viewDebts{{ $data->original_debt->waterConnection->customer_id }}"> <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @include('debts.showDebts', ['debt' => $data->original_debt])
                                         @empty
                                             <tr>
                                                 <td colspan="4">No hay deudas registradas.</td>

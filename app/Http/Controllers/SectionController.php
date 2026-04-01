@@ -12,20 +12,21 @@ class SectionController extends Controller
     public function index(Request $request)
     {
         $authUser = auth()->user();
+        $search = trim($request->input('search')); 
+
         $query = Section::where('sections.locality_id', $authUser->locality_id)
             ->orWhereNull('locality_id')
             ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('sections.created_at', 'desc')
-            ->select('sections.*');
+            ->select('sections.*'); 
 
-        if ($request->has('search')) {
-            $search = $request->input('search');
-
+        if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 if (is_numeric($search)) {
-                    $q->where('sections.id', $search);
+                    $q->where('sections.id', '=', (int)$search); 
+                } else {
+                    $q->where('sections.name', 'LIKE', "%{$search}%");
                 }
-                $q->orWhere('sections.name', 'LIKE', "%{$search}%");
             });
         }
 
