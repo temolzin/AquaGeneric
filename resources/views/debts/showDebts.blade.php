@@ -182,11 +182,13 @@
     document.getElementById('searchDebt{{ $debt->waterConnection->customer->id }}').addEventListener('input', function () {
         let searchValue = this.value.toLowerCase();
         let connections = document.querySelectorAll('#viewDebts{{ $debt->waterConnection->customer->id }} .row.no-gutters.align-items-center');
+        
         connections.forEach(function (connection) {
             let connectionId = connection.querySelector('.col-lg-2 input')?.value.toLowerCase() || '';
             let connectionName = connection.querySelector('.col-lg-8 input')?.value.toLowerCase() || '';
             let debtItems = connection.nextElementSibling.querySelectorAll('.debt-item');
             let hasMatch = false;
+            
             debtItems.forEach(function (item) {
                 let id = item.querySelector('.col-md-1 p')?.textContent?.toLowerCase() || '';
                 let amount = item.querySelector('.col-md-2 p')?.textContent?.toLowerCase() || '';
@@ -208,6 +210,7 @@
                     item.style.display = 'none';
                 }
             });
+
             if (hasMatch || connectionId.includes(searchValue) || connectionName.includes(searchValue)) {
                 connection.style.display = '';
                 connection.nextElementSibling.style.display = 'none';
@@ -219,11 +222,13 @@
             }
         });
     });
+
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll('.debt-details').forEach(function (details) {
             details.style.display = 'none';
         });
     });
+    
     document.querySelector('#viewDebts{{ $debt->waterConnection->customer->id }}').addEventListener('click', function(event) {
         const button = event.target.closest('button.toggle-debts');
         if (button) {

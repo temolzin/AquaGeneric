@@ -121,6 +121,7 @@
             $('#' + modalId).modal('show');
         }
     });
+
     $(document).ready(function() {
         $('#debts').DataTable({
             responsive: true,
@@ -128,6 +129,7 @@
             info: false,
             searching: false
         });
+
         var successMessage = "{{ session('success') }}";
         var errorMessage = "{{ session('error') }}";
         if (successMessage) {
@@ -146,11 +148,13 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+        
         $('#createDebt').on('shown.bs.modal', function() {
             $('.select2').select2({
                 dropdownParent: $('#createDebt')
             });
         });
+
         $('#customer_id').on('change', function() {
             var customerId = $(this).val();
             if (customerId) {

@@ -66,10 +66,12 @@
     </div>
 </div>
 
+@section('js')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const colorSelectCategory = document.getElementById('colorSelectCategory');
         const colorPreviewCategory = document.getElementById('colorPreviewCategory');
+
         const updatePreview = () => {
             if (!colorSelectCategory || !colorPreviewCategory) return;
             const selected = colorSelectCategory.options[colorSelectCategory.selectedIndex];
@@ -77,6 +79,7 @@
             colorPreviewCategory.style.backgroundColor = color;
             colorPreviewCategory.style.border = `1px solid ${color}`;
         };
+
         const initializeColorSelect = () => {
             if (!colorSelectCategory || !colorPreviewCategory) return;
             $('#colorSelectCategory').on('change', updatePreview);
@@ -84,6 +87,7 @@
         };
         initializeColorSelect();
     });
+
     $(document).on('shown.bs.modal', '#create', function() {
         var modalElement = $(this);
         var dropdownParent = modalElement.find('.modal-body');
@@ -96,13 +100,16 @@
                 });
             }
         });
+
         modalElement.on('keydown', function(e) {
             if ($('.select2-container--open').length && e.keyCode === 27) {
                 e.stopPropagation();
             }
         });
+
         const colorSelectCategory = document.getElementById('colorSelectCategory');
         const colorPreviewCategory = document.getElementById('colorPreviewCategory');
+
         if (colorSelectCategory && colorPreviewCategory) {
             const selected = colorSelectCategory.options[colorSelectCategory.selectedIndex];
             const color = selected?.dataset.color || '#6c757d';
@@ -111,3 +118,4 @@
         }
     });
 </script>
+@endsection

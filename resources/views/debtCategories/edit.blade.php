@@ -68,8 +68,10 @@
     </div>
 </div>
 
+@section('js')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
         document.querySelectorAll('[id^="colorSelectCategory"]').forEach(el => {
             const id = el.id.replace('colorSelectCategory', '');
             const colorSelect = document.getElementById('colorSelectCategory' + id);
@@ -87,6 +89,7 @@
             }
         });
     });
+
     $(document).on('shown.bs.modal', '[id^="editIncidentCategory"]', function() {
         var modalElement = $(this);
         var dropdownParent = modalElement.find('.modal-body');
@@ -99,15 +102,18 @@
                 });
             }
         });
+
         modalElement.on('keydown', function(e) {
             if ($('.select2-container--open').length && e.keyCode === 27) {
                 e.stopPropagation();
             }
         });
+
         modalElement.find('[id^="colorSelectCategory"]').each(function() {
             const id = this.id.replace('colorSelectCategory', '');
             const colorSelect = document.getElementById('colorSelectCategory' + id);
             const colorPreview = document.getElementById('colorPreviewCategory' + id);
+
             if (colorSelect && colorPreview) {
                 const selected = colorSelect.options[colorSelect.selectedIndex];
                 const color = selected?.dataset.color || '#6c757d';
@@ -117,3 +123,4 @@
         });
     });
 </script>
+@endsection

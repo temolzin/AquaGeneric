@@ -155,9 +155,11 @@ class DebtController extends Controller
         foreach ($customers as $customer) {
             foreach ($customer->waterConnections as $waterConnection) {
                 $cost = $waterConnection->cost;
+
                 if (!$cost || !$cost->price) {
                     continue;
                 }
+
                 $existingDebt = Debt::where('water_connection_id', $waterConnection->id)
                     ->where('debt_category_id', $serviceId)
                     ->where(function ($query) use ($startDate, $endDate) {
@@ -181,6 +183,7 @@ class DebtController extends Controller
                 ]);
             }
         }
+        
         if ($allHaveDebt) {
             return redirect()->back()->with('error', 'Todas las tomas de agua de los clientes ya tienen deudas asignadas para el período especificado.');
         }
@@ -241,6 +244,7 @@ class DebtController extends Controller
             ->paginate(10);
         return view('viewCustomerDebts.index', compact('waterConnections'));
     }
+    
     private function getServiceCategoryId(): int
     {
         return DebtCategory::serviceId();

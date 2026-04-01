@@ -104,6 +104,7 @@
 <script>
     document.getElementById('createDebtForm').addEventListener('submit', async function (e) {
         e.preventDefault();
+
         try {
             const response = await fetch(this.action, {
                 method: 'POST',
@@ -122,6 +123,7 @@
             }).then(() => {
                 if (data.success) window.location.href = "{{ route('debts.index') }}";
             });
+            
         } catch (error) {
             console.error('Error:', error);
         }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\DebtCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
@@ -18,6 +17,7 @@ class DebtCategoryController extends Controller
         $this->middleware('can:editDebtCategories')->only(['update']);
         $this->middleware('can:deleteDebtCategories')->only(['destroy']);
     }
+
     public function index(Request $request)
     {
         $user = auth()->user();
@@ -37,6 +37,7 @@ class DebtCategoryController extends Controller
         $categories = $query->orderBy('name')->paginate(10)->appends($request->query());
         return view('debtCategories.index', compact('categories'));
     }
+
     protected function rules($localityId, $ignoreId = null)
     {
         return [
@@ -54,6 +55,7 @@ class DebtCategoryController extends Controller
             'color_index' => ['required', 'integer', 'min:0', 'max:19'],
         ];
     }
+
     public function store(Request $request)
     {
         $user = auth()->user();
@@ -119,6 +121,7 @@ class DebtCategoryController extends Controller
         }
         return redirect()->back()->with('success', 'Categoría actualizada con éxito.');
     }
+
     public function destroy(Request $request, $id)
     {
         $user = auth()->user();

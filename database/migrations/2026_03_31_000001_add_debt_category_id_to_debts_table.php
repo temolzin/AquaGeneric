@@ -18,27 +18,31 @@ class AddDebtCategoryIdToDebtsTable extends Migration
             $table->unsignedBigInteger('debt_category_id')->nullable()->after('id');
         });
 
-        // ensure global service category exists and backfill existing debts
-        $service = DB::table('debt_categories')->where('name', 'Servicio de Agua')->first();
-        if (! $service) {
-            $serviceId = DB::table('debt_categories')->insertGetId([
-                'name' => 'Servicio de Agua',
-                'description' => 'Categoría global para Servicio de Agua',
-                'color' => '#007bff',
-                'locality_id' => null,
-                'created_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        } else {
-            $serviceId = $service->id;
-        }
+        $serviceId = $this->ensureServiceExists();
 
         DB::table('debts')->whereNull('debt_category_id')->update(['debt_category_id' => $serviceId]);
 
         Schema::table('debts', function (Blueprint $table) {
             $table->foreign('debt_category_id')->references('id')->on('debt_categories')->onDelete('restrict');
         });
+    }
+
+    private function ensureServiceExists(): int
+    {
+        $service = DB::table('debt_categories')->where('name', 'Servicio de Agua')->first();
+        if ($service) {
+            return $service->id;
+        }
+
+        return DB::table('debt_categories')->insertGetId([
+            'name' => 'Servicio de Agua',
+            'description' => 'Categoría global para Servicio de Agua',
+            'color' => '#007bff',
+            'locality_id' => null,
+            'created_by' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     /**

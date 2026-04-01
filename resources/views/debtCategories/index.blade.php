@@ -116,6 +116,7 @@
         });
         var successMessage = "{{ session('success') }}";
         var errorMessage = "{{ session('error') }}";
+
         if (successMessage) {
             Swal.fire({
                 icon: 'success',
@@ -124,6 +125,7 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+        
         if (errorMessage) {
             Swal.fire({
                 icon: 'error',
@@ -132,6 +134,7 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+
         $('[id^="edit"]').on('shown.bs.modal', function() {
             reinitializeSelect2();
         });

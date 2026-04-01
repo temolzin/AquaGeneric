@@ -16,10 +16,12 @@ class DebtCategory extends Model
         'locality_id',
         'created_by',
     ];
+    
     public function isService(): bool
     {
         return $this->name === self::NAME_SERVICE;
     }
+
     public static function serviceId(): int
     {
         $cat = static::withTrashed()->firstOrCreate(
@@ -28,10 +30,12 @@ class DebtCategory extends Model
         );
         return $cat->id;
     }
+
     public static function getDefaultService($localityId = null, $userId = null): int
     {
         return static::serviceId();
     }
+
     protected static function booted()
     {
         parent::booted();
@@ -46,18 +50,22 @@ class DebtCategory extends Model
             }
         });
     }
+
     public function debts()
     {
         return $this->hasMany(Debt::class, 'debt_category_id');
     }
+
     public function hasDependencies()
     {
         return $this->debts()->exists();
     }
+
     public function locality()
     {
         return $this->belongsTo(Locality::class);
     }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

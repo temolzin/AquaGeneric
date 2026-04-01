@@ -7,16 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class CreateDebtCategoriesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('debt_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->text('description')->nullable();
             $table->string('color')->nullable();
             $table->unsignedBigInteger('locality_id')->nullable();
@@ -28,13 +23,16 @@ class CreateDebtCategoriesTable extends Migration
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
         });
 
-        // ensure global "Servicio de Agua" exists
-        $exists = DB::table('debt_categories')->where('name', 'Servicio de Agua')->exists();
+        $exists = DB::table('debt_categories')
+            ->where('name', 'Servicio de Agua')
+            ->whereNull('locality_id')
+            ->exists();
+
         if (! $exists) {
             DB::table('debt_categories')->insert([
                 'name' => 'Servicio de Agua',
                 'description' => 'Categoría global para Servicio de Agua',
-                'color' => '#007bff',
+                'color' => 'bg-primary',
                 'locality_id' => null,
                 'created_by' => null,
                 'created_at' => now(),
@@ -43,11 +41,6 @@ class CreateDebtCategoriesTable extends Migration
         }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('debt_categories');
