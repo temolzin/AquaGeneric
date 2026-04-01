@@ -131,7 +131,7 @@
                                                                 <i class="fas fa-info-circle"></i>
                                                                 </button>
 
-                                                                <button type="button" class="btn"  style="background-color: #0d6efd;  margin-left: 8px;" data-toggle="modal" title="Reactivar toma de agua" data-target="#ReactivateWaterService{{ $connection->id }}">
+                                                                <button type="button" class="btn mr-2"  style="background-color: #0d6efd;  margin-left: 8px;" data-toggle="modal" title="Reactivar toma de agua" data-target="#ReactivateWaterService{{ $connection->id }}">
                                                                 <i class="fas fa-sync-alt"></i>
                                                                 </button>
                                                             @endif

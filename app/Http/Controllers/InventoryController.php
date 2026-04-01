@@ -162,7 +162,7 @@ class InventoryController extends Controller
             ->setPaper('A4', 'portrait');
         return $pdf->stream('inventario.pdf');
     }
-    
+
     public function updateAmount(Request $request)
     {
         $request->validate([
@@ -220,12 +220,7 @@ class InventoryController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'amount' => 'required|integer|min:0',
-            'inventory_category_id' => 'required|exists:inventory_categories,id',
-            'material' => 'nullable|string|max:50',
-            'dimensions' => 'nullable|string|max:50',
+            'excel_file' => 'required|file|mimes:csv,txt',
         ]);
 
         try {
@@ -234,7 +229,7 @@ class InventoryController extends Controller
             $imported = 0;
             $errors = [];
             $authUser = Auth::user();
-    
+
             $content = file_get_contents($file->getPathname());
             $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
 
@@ -243,9 +238,9 @@ class InventoryController extends Controller
                 file_put_contents($file->getPathname(), $convertedContent);
                 $content = $convertedContent;
             }
-    
+
             $handle = fopen($file->getPathname(), 'r');
-    
+
             $headers = fgetcsv($handle);
 
             if ($headers === false || empty($headers)) {
@@ -269,7 +264,7 @@ class InventoryController extends Controller
             unset($header);
 
             $expectedHeaders = ['nombre', 'descripcion_inventario', 'cantidad', 'categoria_inventario', 'descripcion_categoria', 'material', 'dimensiones'];
-    
+
             if (count($headers) !== count($expectedHeaders)) {
                 fclose($handle);
                 return response()->json([
@@ -299,24 +294,24 @@ class InventoryController extends Controller
                     'mismatches' => $headerMismatches
                 ], 400);
             }
-    
+
             while (($rowData = fgetcsv($handle)) !== FALSE) {
                 $processed++;
-        
+
                 if (empty(array_filter($rowData))) {
                     continue;
                 }
-        
+
                 $result = $this->processRowData($rowData, $authUser, $processed);
                 if ($result['success']) {
                     $imported++;
                 } else {
-                    $errors[] = $result['error']; 
+                    $errors[] = $result['error'];
                 }
             }
-    
+
             fclose($handle);
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Importación completada',
@@ -325,7 +320,7 @@ class InventoryController extends Controller
                 'failed' => count($errors),
                 'errors' => $errors
             ]);
-    
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

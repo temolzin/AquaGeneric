@@ -74,10 +74,12 @@
                                                         </button>
                                                         @endcan
                                                         @can('deleteInventoryCategories')
-                                                        <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro"
-                                                        data-toggle="modal" data-target="#deleteInventoryCategory{{ $category->id }}">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
+                                                            <button type="button"
+                                                                class="btn {{ $category->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2"
+                                                                title="{{ $category->hasDependencies() ? 'Eliminación no permitida: esta categoría tiene registros asociados.' : 'Eliminar Registro' }}"
+                                                                {{ $category->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#deleteInventoryCategory' . $category->id }}>
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
                                                         @endcan
                                                         @endif
                                                     </div>

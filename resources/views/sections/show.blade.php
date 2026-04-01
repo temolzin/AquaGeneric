@@ -27,7 +27,7 @@
                                     </div>
                                 </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-14">
                                     <div class="form-group">
                                         <label>Código Postal</label>
                                         <input type="text" disabled class="form-control" value="{{ $section->zip_code }}" />
