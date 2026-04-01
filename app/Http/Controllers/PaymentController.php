@@ -288,14 +288,11 @@ class PaymentController extends Controller
         $endDate = Carbon::parse($request->input('weekEndDate'));
 
         $weeks = [];
-        $currentStart = $startDate->copy();
+        $currentStart = $startDate->copy()->startOfWeek();
         $totalPeriodEarnings = 0;
 
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
-            if ($currentEnd->gt($endDate)) {
-                $currentEnd = $endDate;
-            }
 
             $dailyEarnings = [];
 
@@ -311,31 +308,34 @@ class PaymentController extends Controller
                         ->sum('amount');
 
                     $earnings = $payments + $generalEarnings;
-
-                    if ($earnings == 0) {
-                        $earnings = 'N/A';
-                    }
                 } else {
-                    $earnings = 'N/A';
+                    $earnings = null;
                 }
 
-                $dailyEarnings[$day->format('l')] = $earnings;
+                $dailyEarnings[] = [
+                    'date' => $day->copy(),
+                    'amount' => $earnings
+                ];
                 $day->addDay();
             }
 
-            $weekTotal = array_sum(array_filter($dailyEarnings, 'is_numeric'));
+            $weekTotal = collect($dailyEarnings)->filter(function($item) use ($startDate, $endDate) {
+                return $item['date']->between($startDate, $endDate) && $item['amount'] !== null;
+            })->sum('amount');
+            
             $totalPeriodEarnings += $weekTotal;
 
             $weeks[] = [
                 'start' => $currentStart->toDateString(),
                 'end' => $currentEnd->toDateString(),
                 'dailyEarnings' => $dailyEarnings,
+                'weekTotal' => $weekTotal
             ];
 
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings'))
+        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_earnings_' . now()->format('Ymd') . '.pdf');
