@@ -1,8 +1,8 @@
-<div class="modal fade" id="view{{ $category->id }}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel{{ $category->id }}" aria-hidden="true">
+<div class="modal fade" id="viewDebtCategory{{ $category->id }}" tabindex="-1" role="dialog" aria-labelledby="viewDebtCategoryLabel{{ $category->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="card-info">
-                <div class="card-header">
+                        <div class="card-header">
                     <div class="d-sm-flex align-items-center justify-content-between">
                         <h4 class="card-title">Información de la Categoría de Deuda</h4>
                         <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close">
