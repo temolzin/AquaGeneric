@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('old_customer_id');
             $table->unsignedBigInteger('new_customer_id');
             $table->string('reason', 50)->default('death');
-            $table->date('effective_date')->default(DB::raw('CURRENT_DATE'));
+            $table->date('effective_date')->default(now());
             $table->text('note')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
