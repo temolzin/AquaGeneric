@@ -40,19 +40,35 @@ class GeneralEarningController extends Controller
         $authUser = auth()->user();
 
         $request->validate([
-            'receipt' => 'nullable|mimes:jpg,jpeg,png,pdf|max:5120',
+            'concept' => 'required|string',
+            'description' => 'required|string',
+            'amount' => 'required|numeric|min:0.01',
+            'earning_type_id' => 'required|exists:earning_types,id',
+            'earningDate' => 'required|date',
+            'receipt' => 'required|mimes:jpg,jpeg,png,pdf|max:5120',
         ], [
+            'concept.required' => 'El concepto es obligatorio.',
+            'description.required' => 'La descripción es obligatoria.',
+            'amount.required' => 'El monto es obligatorio.',
+            'amount.numeric' => 'El monto debe ser un número.',
+            'earning_type_id.required' => 'Debe seleccionar un tipo de ingreso.',
+            'earning_type_id.exists' => 'El tipo de ingreso seleccionado no existe.',
+            'earningDate.required' => 'La fecha del ingreso es obligatoria.',
+            'earningDate.date' => 'La fecha del ingreso debe ser una fecha válida.',
+            'receipt.required' => 'El comprobante es obligatorio.',
             'receipt.mimes' => 'Solo se permiten archivos PDF, JPG, JPEG o PNG.',
             'receipt.max' => 'El archivo no puede superar los 5MB.',
         ]);
 
-        $generalEarningData = $request->all();
-
-        $generalEarningData['earning_date'] = $request->input('earningDate');
-        $generalEarningData['locality_id'] = $authUser->locality_id;
-        $generalEarningData['created_by'] = $authUser->id;
-
-        $earning = GeneralEarning::create($generalEarningData);
+        $earning = GeneralEarning::create([
+            'concept' => $request->input('concept'),
+            'description' => $request->input('description'),
+            'amount' => $request->input('amount'),
+            'earning_type_id' => $request->input('earning_type_id'),
+            'earning_date' => $request->input('earningDate'),
+            'locality_id' => $authUser->locality_id,
+            'created_by' => $authUser->id,
+        ]);
 
         if ($request->hasFile('receipt')) {
             $file = $request->file('receipt');

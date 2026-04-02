@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="descriptionText" class="form-label">Comentario</label>
+                                            <label for="descriptionText" class="form-label">Comentario(*)</label>
                                             <textarea class="form-control" name="description" id="descriptionText" placeholder="Agrega un comentario" rows="3"></textarea>
                                         </div>
                                     </div>

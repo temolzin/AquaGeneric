@@ -18,8 +18,11 @@
                                 <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createLocality">
                                     <i class="fa fa-plus"></i> Registrar Localidad
                                 </button>
-                                <a type="button" class="btn btn-secondary" target="_blank" title="Localities" href="#">
+                                <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Localities" href="#">
                                     <i class="fas fa-map"></i> Generar Lista
+                                </a>
+                                <a type="button" class="btn btn-info" href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank" title="Ver guía de registro">
+                                    <i class="fas fa-file-pdf"></i> Guía OpenPay
                                 </a>
                             </div>
                         </div>
@@ -103,6 +106,12 @@
                                                     <button type="button" class="btn bg-navy mr-2" data-toggle="modal" title="Fondo de reporte" data-target="#editPdfBackground{{$locality->id}}">
                                                             <i class="fas fa-fill-drip"></i>
                                                     </button>
+                                                    <button type="button" class="btn {{ $locality->hasOpenPayEnabled() ? 'btn-success' : 'btn-outline-success' }} mr-2" 
+                                                            data-toggle="modal" 
+                                                            title="{{ $locality->hasOpenPayEnabled() ? 'OpenPay configurado' : 'Configurar OpenPay' }}" 
+                                                            data-target="#openpayConfigModal{{$locality->id}}">
+                                                        <i class="fas fa-credit-card"></i>
+                                                    </button>
                                                     @can('deleteLocality')
                                                         @if($locality->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
@@ -136,6 +145,7 @@
                                             @include('localities.editPdfBackground')
                                             @include('localities.tokenModal')
                                             @include('localities.historyModal')
+                                            @include('localities.openpayConfig')
                                         </tr>
                                         @endforeach
                                         @endif
@@ -145,17 +155,6 @@
                                 <div class="d-flex justify-content-center">
                                     {!! $localities->links('pagination::bootstrap-4') !!}
                                 </div>
-                                @if (session('createdToken') && session('localityName'))
-                                    @include('localities.generatedTokenModal', [
-                                        'token' => session('createdToken'),
-                                        'localityName' => session('localityName')
-                                    ])
-                                    <script>
-                                        document.addEventListener("DOMContentLoaded", function() {
-                                            $('#generatedTokenModal').modal('show');
-                                        });
-                                    </script>
-                                @endif
                             </div>
                         </div>
                     </div>
@@ -175,10 +174,10 @@
             searching: false
         });
 
-        var successMessage = "{{ session('success') }}";
-        var errorMessage = "{{ session('error') }}";
+        var successMessage = "{{ session('success') }}".trim();
+        var errorMessage = "{{ session('error') }}".trim();
 
-        if (successMessage) {
+        if (successMessage && successMessage.length > 0) {
             Swal.fire({
                 icon: 'success',
                 title: 'Éxito',
@@ -187,7 +186,7 @@
             });
         }
 
-        if (errorMessage) {
+        if (errorMessage && errorMessage.length > 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -195,10 +194,6 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-
-        @if (session('createdToken'))
-        $('#generatedTokenModal').modal('show');
-        @endif
     });
 </script>
 @endsection

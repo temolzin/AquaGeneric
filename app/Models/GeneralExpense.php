@@ -22,6 +22,12 @@ class GeneralExpense extends Model implements HasMedia
         'expense_date'
     ];
 
+    protected $casts = [
+        'expense_date' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function locality()
     {
         return $this->belongsTo(Locality::class);

@@ -115,15 +115,15 @@
                                                                 @endcan
                                                             </div>
                                                         </td>
-                                                        @include('employees.edit')
-                                                        @include('employees.delete')
-                                                        @include('employees.show')
-                                                        @include('employees.import-modal')
-                                                        @include('employees.create')
                                                     </tr>
+                                                    @include('employees.edit')
+                                                    @include('employees.delete')
+                                                    @include('employees.show')
                                                 @endforeach
                                             @endif
                                         </tbody>
+                                        @include('employees.import-modal')
+                                        @include('employees.create')
                                     </table>
                                     <div class="d-flex justify-content-center">
                                         {!! $employees->links('pagination::bootstrap-4') !!}

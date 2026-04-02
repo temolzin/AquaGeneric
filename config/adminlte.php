@@ -470,6 +470,12 @@ return [
         'can'  => 'viewLocality'
     ],
     [
+        'text' => 'Verificación Webhooks',
+        'url' => '/openpay/webhook-verifications',
+        'icon' => 'fas fa-fw fa-key',
+        'can'  => 'viewLocality'
+    ],
+    [
         'text' => 'Empleados',
         'url' => '/employees',
         'icon' => 'fas fa-fw fa-users',
@@ -497,6 +503,12 @@ return [
         'url' => '/viewCustomerDebts',
         'can'  => 'viewCustomerDebts',
         'icon' => 'fas fa-fw fa-exclamation-circle text-white',
+    ],
+    [
+        'text' => 'Mis Tarjetas',
+        'url' => '/customerCards',
+        'can'  => 'viewCustomerDebts',
+        'icon' => 'fas fa-fw fa-credit-card text-white',
     ],
     [
         'text' => 'Mis Tomas de Agua',

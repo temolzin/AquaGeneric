@@ -28,8 +28,69 @@ class Locality extends Model implements HasMedia
         'zip_code',
         'membership_id',
         'membership_assigned_at',
-        'token'
+        'token',
+        'openpay_merchant_id',
+        'openpay_private_key',
+        'openpay_public_key',
+        'openpay_webhook_user',
+        'openpay_webhook_password',
+        'openpay_sandbox',
+        'openpay_enabled'
     ];
+
+    protected $casts = [
+        'openpay_sandbox' => 'boolean',
+        'openpay_enabled' => 'boolean',
+    ];
+
+    public function setOpenpayPrivateKeyAttribute($value)
+    {
+        $this->attributes['openpay_private_key'] = $value ? Crypt::encryptString($value) : null;
+    }
+
+    public function getOpenpayPrivateKeyAttribute($value)
+    {
+        if (!$value) return null;
+        try {
+            return Crypt::decryptString($value);
+        } catch (Exception $e) {
+            return $value;
+        }
+    }
+
+    public function setOpenpayWebhookPasswordAttribute($value)
+    {
+        $this->attributes['openpay_webhook_password'] = $value ? Crypt::encryptString($value) : null;
+    }
+
+    public function getOpenpayWebhookPasswordAttribute($value)
+    {
+        if (!$value) return null;
+        try {
+            return Crypt::decryptString($value);
+        } catch (Exception $e) {
+            return $value;
+        }
+    }
+    public function hasOpenPayEnabled(): bool
+    {
+        return $this->openpay_enabled 
+            && !empty($this->openpay_merchant_id) 
+            && !empty($this->openpay_private_key) 
+            && !empty($this->openpay_public_key);
+    }
+
+    public function getOpenPayCredentials(): array
+    {
+        return [
+            'merchant_id' => $this->openpay_merchant_id,
+            'private_key' => $this->openpay_private_key,
+            'public_key' => $this->openpay_public_key,
+            'webhook_user' => $this->openpay_webhook_user,
+            'webhook_password' => $this->openpay_webhook_password,
+            'sandbox' => $this->openpay_sandbox,
+        ];
+    }
 
     public function membership()
     {

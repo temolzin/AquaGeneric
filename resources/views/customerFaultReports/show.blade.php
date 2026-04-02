@@ -43,10 +43,9 @@
                                         <label>Estado</label>
                                         <input type="text" disabled class="form-control"
                                             value="@switch($report->status)
-                                                        @case('Earring') Pendiente @break
-                                                        @case('In process') En proceso @break
-                                                        @case('Resolved') Resuelto @break
-                                                        @case('Closed') Cerrado @break
+                                                        @case('pending') Pendiente @break
+                                                        @case('in_review') En revisión @break
+                                                        @case('completed') Completado @break
                                                         @default {{ $report->status }} @break
                                                     @endswitch" />
                                     </div>
@@ -54,7 +53,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Reportado por</label>
-                                        <input type="text" disabled class="form-control" value="{{ $report->creator->name ?? 'Desconocido' }} {{ $faultReport->creator->last_name ?? '' }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $report->creator->name ?? 'Desconocido' }} {{ $report->creator->last_name ?? '' }}" />
                                     </div>
                                 </div>
                             </div>

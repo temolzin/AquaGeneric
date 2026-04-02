@@ -216,7 +216,7 @@ class DebtController extends Controller
         $customer = $authUser->customer;
         if (!$customer) {
             $waterConnections = WaterConnection::where('id', 0)->paginate(10);
-            return view('viewCustomerDebts.index', compact('waterConnections'))
+            return view('viewCustomerDebts.index', compact('waterConnections', 'customer', 'locality'))
                 ->with('error', 'No se encontró información del cliente.');
         }
         $search = $request->input('search');

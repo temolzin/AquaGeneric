@@ -12,7 +12,7 @@
                         <div class="row mb-2">
                             <div class="col-lg-12">
                                 <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
-                                    <form method="GET" action="{{ route('incidents.index') }}" class="flex-grow-1 w-100" style="min-width: 200px;">
+                                    <form method="GET" action="{{ route('incidents.index') }}" class="flex-grow-1 col-md-8 px-0" style="min-width: 200px;">
                                         <div class="d-flex">
                                             <select name="category" class="form-control select2 rounded-start border-end-0 w-100" style="min-width: 200px;">
                                                 <option value="">Filtrar por categoría</option>
@@ -57,7 +57,7 @@
                                                 <th>ID</th>
                                                 <th>INCIDENCIA</th>
                                                 <th>EMPLEADO</th>
-                                                <th>FECHA DE INICIO</th>
+                                                <th>FECHA DE LA INCIDENCIA</th>
                                                 <th>CATEGORIA</th>
                                                 <th>ESTATUS</th>
                                                 <th>OPCIONES</th>

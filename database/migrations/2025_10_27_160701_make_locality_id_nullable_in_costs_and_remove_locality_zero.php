@@ -16,7 +16,7 @@ class MakeLocalityIdNullableInCostsAndRemoveLocalityZero extends Migration
         Locality::where('id', 0)->delete();
     }
 
-   public function down()
+    public function down()
     {
         $locality = Locality::first() ?? throw new \RuntimeException('No hay localidades disponibles para revertir la migración.');
         

@@ -33,7 +33,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="zip_code" class="form-label">Código Postal(*)</label>
-                                        <input type="text" class="form-control" name="zip_code" placeholder="Ingresa el código postal" value="{{ $section->zip_code }}" required />
+                                        <input type="text" class="form-control" name="zip_code" placeholder="Ingresa el código postal" maxlength="5" value="{{ $section->zip_code }}" required />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -102,7 +102,7 @@
     $(document).on('shown.bs.modal', '#edit{{ $section->id }}', function() {
         var modalElement = $(this);
         var dropdownParent = modalElement.find('.modal-body');
-        
+
         modalElement.find('.select2').each(function() {
             if (!$(this).data('select2')) {
                 $(this).select2({
@@ -112,13 +112,13 @@
                 });
             }
         });
-        
+
         modalElement.on('keydown', function(e) {
             if ($('.select2-container--open').length && e.keyCode === 27) {
                 e.stopPropagation();
             }
         });
-        
+
         const select = document.getElementById('colorSelect{{ $section->id }}');
         const preview = document.getElementById('colorPreview{{ $section->id }}');
         if (select && preview) {

@@ -12,7 +12,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                <form method="GET" action="{{ route('inventoryCategories.index') }}" class="mb-3 mb-lg-3" style="min-width: 300px;">
+                                <form method="GET" action="{{ route('inventoryCategories.index') }}" class="mb-3 mb-lg-3 col-md-8 px-0" style="min-width: 300px;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por Categoría, Descripción..." value="{{ request('search') }}">
                                         <div class="input-group-append">
@@ -74,10 +74,12 @@
                                                         </button>
                                                         @endcan
                                                         @can('deleteInventoryCategories')
-                                                        <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro"
-                                                        data-toggle="modal" data-target="#deleteInventoryCategory{{ $category->id }}">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
+                                                            <button type="button"
+                                                                class="btn {{ $category->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2"
+                                                                title="{{ $category->hasDependencies() ? 'Eliminación no permitida: esta categoría tiene registros asociados.' : 'Eliminar Registro' }}"
+                                                                {{ $category->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#deleteInventoryCategory' . $category->id }}>
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
                                                         @endcan
                                                         @endif
                                                     </div>

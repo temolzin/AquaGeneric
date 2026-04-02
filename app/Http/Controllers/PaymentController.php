@@ -180,6 +180,11 @@ class PaymentController extends Controller
 
     public function update(Request $request, Payment $payment)
     {
+        if ($payment->method === 'openpay') {
+            return redirect()->route('payments.index')
+                ->with('error', 'Los pagos realizados vía OpenPay no pueden ser editados.');
+        }
+
         $debt = $payment->debt;
         $before = $payment->toArray();
 
@@ -225,6 +230,12 @@ class PaymentController extends Controller
     public function destroy($id)
     {
         $payment = Payment::findOrFail($id);
+
+        if ($payment->method === 'openpay') {
+            return redirect()->route('payments.index')
+                ->with('error', 'Los pagos realizados vía OpenPay no pueden ser eliminados.');
+        }
+
         $payment->delete();
 
         if (!$payment) {
@@ -254,10 +265,17 @@ class PaymentController extends Controller
         $totalEarnings = 0;
 
         for ($month = 1; $month <= 12; $month++) {
-            $earnings = Payment::whereYear('created_at', $year)
+            $payments = Payment::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
                 ->where('locality_id', $authUser->locality_id)
                 ->sum('amount');
+
+            $generalEarnings = GeneralEarning::whereYear('earning_date', $year)
+                ->whereMonth('earning_date', $month)
+                ->where('locality_id', $authUser->locality_id)
+                ->sum('amount');
+
+            $earnings = $payments + $generalEarnings;
 
             $monthlyEarnings[$month] = $earnings;
             $totalEarnings += $earnings;
@@ -281,14 +299,11 @@ class PaymentController extends Controller
         $endDate = Carbon::parse($request->input('weekEndDate'));
 
         $weeks = [];
-        $currentStart = $startDate->copy();
+        $currentStart = $startDate->copy()->startOfWeek();
         $totalPeriodEarnings = 0;
 
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
-            if ($currentEnd->gt($endDate)) {
-                $currentEnd = $endDate;
-            }
 
             $dailyEarnings = [];
 
@@ -304,31 +319,34 @@ class PaymentController extends Controller
                         ->sum('amount');
 
                     $earnings = $payments + $generalEarnings;
-
-                    if ($earnings == 0) {
-                        $earnings = 'N/A';
-                    }
                 } else {
-                    $earnings = 'N/A';
+                    $earnings = null;
                 }
 
-                $dailyEarnings[$day->format('l')] = $earnings;
+                $dailyEarnings[] = [
+                    'date' => $day->copy(),
+                    'amount' => $earnings
+                ];
                 $day->addDay();
             }
 
-            $weekTotal = array_sum(array_filter($dailyEarnings, 'is_numeric'));
+            $weekTotal = collect($dailyEarnings)->filter(function($item) use ($startDate, $endDate) {
+                return $item['date']->between($startDate, $endDate) && $item['amount'] !== null;
+            })->sum('amount');
+            
             $totalPeriodEarnings += $weekTotal;
 
             $weeks[] = [
                 'start' => $currentStart->toDateString(),
                 'end' => $currentEnd->toDateString(),
                 'dailyEarnings' => $dailyEarnings,
+                'weekTotal' => $weekTotal
             ];
 
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings'))
+        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_earnings_' . now()->format('Ymd') . '.pdf');

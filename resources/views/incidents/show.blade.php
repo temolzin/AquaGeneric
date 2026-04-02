@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label>Fecha de Inicio</label>
+                                        <label>Fecha de la Incidencia</label>
                                         <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}" />
                                     </div>
                                 </div>

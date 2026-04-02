@@ -60,17 +60,14 @@
                                                     <td>{{ $report->title }}</td>
                                                     <td>
                                                         @switch($report->status)
-                                                            @case('Earring')
+                                                            @case('pending')
                                                                 Pendiente
                                                                 @break
-                                                            @case('In process')
-                                                                En proceso
+                                                            @case('in_review')
+                                                                En revisión
                                                                 @break
-                                                            @case('Resolved')
-                                                                Resuelto
-                                                                @break
-                                                            @case('Closed')
-                                                                Cerrado
+                                                            @case('completed')
+                                                                Completado
                                                                 @break
                                                             @default
                                                                 {{ $report->status }}

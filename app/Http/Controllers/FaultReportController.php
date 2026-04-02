@@ -65,6 +65,10 @@ class FaultReportController extends Controller
             return redirect()->back()->with('error', 'Reporte de falla no encontrado.');
         }
 
+        if ($report->status !== 'completed') {
+            return redirect()->back()->with('error', 'Solo se pueden eliminar reportes completados.');
+        }
+
         $report->delete();
 
         return redirect()->route('faultReport.index')->with('success', 'Reporte de falla eliminado correctamente.');

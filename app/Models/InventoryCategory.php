@@ -34,6 +34,16 @@ class InventoryCategory extends Model
         return $this->belongsTo(Locality::class);
     }
 
+    public function inventories()
+    {
+        return $this->hasMany(Inventory::class, 'inventory_category_id');
+    }
+
+    public function hasDependencies()
+    {
+        return $this->inventories()->exists();
+    }
+
     public function scopeByUserLocality($query)
     {
         $user = auth()->user();
