@@ -97,4 +97,66 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.index')->with('success', 'Contraseña actualizada correctamente.');
     }
+
+    public function updateWebhookConfig(Request $request)
+    {
+        $user = Auth::user();
+        $locality = $user->locality;
+
+        // Validar que el usuario tenga rol de Supervisor o Secretaria
+        if (!$user->hasRole(['Supervisor', 'Secretaria'])) {
+            return redirect()->back()->with('error', 'No tienes permiso para gestionar la configuración del webhook.');
+        }
+
+        if (!$locality) {
+            return redirect()->back()->with('error', 'No tienes una localidad asignada.');
+        }
+
+        $request->validate([
+            'openpay_webhook_user' => 'nullable|string|email',
+            'openpay_webhook_password' => 'nullable|string',
+        ]);
+
+        $webhookUser = $request->input('openpay_webhook_user');
+        $webhookPassword = $request->input('openpay_webhook_password');
+
+        // Solo actualizar si se proporciona un valor
+        if (!empty($webhookUser)) {
+            $locality->openpay_webhook_user = $webhookUser;
+        }
+        if (!empty($webhookPassword)) {
+            $locality->openpay_webhook_password = $webhookPassword;
+        }
+
+        $locality->save();
+
+        return redirect()->route('profile.index')->with('success', 'Configuración del webhook actualizada correctamente.');
+    }
+
+    public function testWebhookConnection()
+    {
+        $user = Auth::user();
+        $locality = $user->locality;
+
+        // Validar que el usuario tenga rol de Supervisor o Secretaria
+        if (!$user->hasRole(['Supervisor', 'Secretaria'])) {
+            return response()->json(['success' => false, 'message' => 'No tienes permiso para realizar esta acción.'], 403);
+        }
+
+        if (!$locality) {
+            return response()->json(['success' => false, 'message' => 'No tienes una localidad asignada.'], 400);
+        }
+
+        if (!$locality->openpay_webhook_user || !$locality->openpay_webhook_password) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debes configurar el correo y contraseña de OpenPay primero.'
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Credenciales de webhook validadas correctamente.'
+        ]);
+    }
 }
