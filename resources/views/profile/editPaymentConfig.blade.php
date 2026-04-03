@@ -166,4 +166,55 @@
             }
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const webhookForm = document.getElementById('webhookConfigForm');
+        if (webhookForm) {
+            webhookForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Guardando configuración...',
+                    text: 'Por favor espera mientras guardamos los datos',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: webhookForm.action,
+                    method: 'POST',
+                    data: new FormData(webhookForm),
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Guardado!',
+                            text: 'La configuración del webhook se ha guardado correctamente',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        let message = 'Error al guardar la configuración';
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            message = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: message
+                        });
+                    }
+                });
+            });
+        }
+    });
 </script>

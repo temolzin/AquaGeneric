@@ -347,11 +347,13 @@
 
             if (savedCards.length === 0) {
                 $('#saved-cards-section').hide();
+                $('#use-saved-cards-section').hide();
                 showNewCardForm();
                 return;
             }
 
             $('#saved-cards-section').show();
+            $('#use-saved-cards-section').hide();
             $('#new-card-form-section').hide();
             $('#saved-card-cvv-section').hide();
             $('#card-brands-section').hide();
@@ -360,7 +362,7 @@
                 var defaultBadge = card.is_default ? ' <i class="fas fa-star text-primary" title="Predeterminada"></i>' : '';
                 var selectedClass = (selectedSavedCard && selectedSavedCard.id === card.id) ? ' selected' : '';
                 var html = `
-                    <div class="saved-card-item rounded p-3 mb-2 d-flex align-items-center${selectedClass}" 
+                    <div class="saved-card-item rounded p-3 mb-2 d-flex align-items-center${selectedClass}"
                             data-card-id="${card.id}" data-openpay-card-id="${card.openpay_card_id}" style="cursor: pointer;">
                         <div class="card-brand-icon">
                             <i class="${card.brand_icon}"></i>
@@ -387,6 +389,13 @@
             $('#modal-use-saved-card').val('0');
             $('#modal-saved-card-id').val('');
             selectedSavedCard = null;
+
+            // Mostrar botón "Usar Tarjetas Guardadas" si hay tarjetas guardadas
+            if (savedCards.length > 0) {
+                $('#use-saved-cards-section').show();
+            } else {
+                $('#use-saved-cards-section').hide();
+            }
         }
 
         function isMobileDevice() {
@@ -398,10 +407,13 @@
             selectedSavedCard = card;
             $('#modal-use-saved-card').val('1');
             $('#modal-saved-card-id').val(card.openpay_card_id);
-            
+
+            // Mostrar información de la tarjeta guardada en la sección de CVV
+            $('#saved-card-info-display').text(card.display_name + ' •••• ' + card.last_four);
+
             var amount = parseFloat($('#modal-amount').val()) || 0;
             var maxAmount = parseFloat($('#modal-amount').attr('max')) || 0;
-            
+
             if (isMobileDevice()) {
                 $('#savedCardPayIcon').attr('class', card.brand_icon);
                 $('#savedCardPayName').text(card.display_name);
@@ -414,6 +426,7 @@
                 $('#new-card-form-section').hide();
                 $('#saved-card-cvv-section').show();
                 $('#card-brands-section').hide();
+                $('#use-saved-cards-section').hide();
                 $('#modal-saved-cvv').val('');
                 $('#modal-amount-saved').val(amount.toFixed(2)).attr('max', maxAmount);
             }
@@ -433,6 +446,21 @@
         });
 
         $('#btn-use-new-card').on('click', function() {
+            $('.saved-card-item').removeClass('selected');
+            selectedSavedCard = null;
+            showNewCardForm();
+        });
+
+        $('#btn-use-saved-cards').on('click', function() {
+            $('#new-card-form-section').hide();
+            $('#saved-card-cvv-section').hide();
+            $('#use-saved-cards-section').hide();
+            $('#card-brands-section').hide();
+            $('#saved-cards-section').show();
+            renderSavedCards();
+        });
+
+        $('#btn-use-other-card').on('click', function() {
             $('.saved-card-item').removeClass('selected');
             selectedSavedCard = null;
             showNewCardForm();
