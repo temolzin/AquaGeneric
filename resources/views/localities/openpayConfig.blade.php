@@ -65,7 +65,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="openpay_public_key_{{ $locality->id }}">
-                                                API key pública <span class="text-danger">*</span>
+                                                Llave pública <span class="text-danger">*</span>
                                             </label>
                                             <input  type="text" class="form-control" name="openpay_public_key" id="openpay_public_key_{{ $locality->id }}" value="{{ $locality->openpay_public_key }}" placeholder="Ej: pk_xxxxxxxxxxxxxxxxxx">
                                             <small class="text-muted">Llave pública para el frontend</small>
@@ -74,7 +74,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="openpay_private_key_{{ $locality->id }}">
-                                                Private Key <span class="text-danger">*</span>
+                                                Llave privada <span class="text-danger">*</span>
                                             </label>
                                             <div class="input-group">
                                                 <input  type="password" class="form-control" name="openpay_private_key" id="openpay_private_key_{{ $locality->id }}" placeholder="{{ $locality->openpay_private_key ? '••••••••••••••••' : 'Ej: sk_xxxxxxxxxxxxxxxxxx' }}">
@@ -233,4 +233,59 @@
         }
     });
 }
+
+    if (!window.openpayFormInitialized) {
+        window.openpayFormInitialized = true;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[id^="openpay-config-form-"]').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    Swal.fire({
+                        title: 'Guardando configuración...',
+                        text: 'Por favor espera mientras guardamos los datos',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: form.action,
+                        method: 'POST',
+                        data: new FormData(form),
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Guardado!',
+                                text: 'La configuración de OpenPay se ha guardado correctamente',
+                                confirmButtonText: 'Aceptar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(xhr) {
+                            let message = 'Error al guardar la configuración';
+                            if (xhr.responseJSON?.errors) {
+                                message = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                            }
+                            if (xhr.responseJSON?.message) {
+                                message = xhr.responseJSON.message;
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: message
+                            });
+                        }
+                    });
+                });
+            });
+        });
+    }
 </script>

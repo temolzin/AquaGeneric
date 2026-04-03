@@ -166,18 +166,18 @@
                         <div class="card card-outline card-success mb-4">
                             <div class="card-header py-2 bg-success">
                                 <h6 class="mb-0 text-white"><i class="fas fa-wallet"></i> Confirmar Pago</h6>
-                                <small class="text-white-50" id="saved-card-info-display"></small>
+                                <small class="text-white-80" id="saved-card-info-display"></small>
                             </div>
                             <div class="card-body">
                                 <div class="row justify-content-center">
-                                    <div class="col-md-4">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label><i class="fas fa-lock"></i> CVV</label>
                                             <input type="password" class="form-control form-control-md text-center" id="modal-saved-cvv" placeholder="•••" maxlength="4" pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off" title="3 o 4 dígitos numéricos" style="letter-spacing: 5px; font-weight: 600;">
                                             <small class="text-muted text-center d-block">Código de seguridad</small>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Monto a pagar</label>
                                             <div class="input-group">

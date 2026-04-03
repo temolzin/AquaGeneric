@@ -225,10 +225,16 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         @case('transfer')
                         <strong>Método de pago: </strong>Transferencia
                             @break
+                        @case('openpay')
+                        <strong>Método de pago: </strong>Tarjeta (En línea)
+                            @break
                     @endswitch
                 </p>
+                @if($payment->isOpenPayPayment())
+                    <p><strong>ID de Transacción: </strong>{{ $payment->openpay_transaction_id }}</p>
+                @endif
                 @if($payment->note)
-                <p><strong>Nota: </strong>{{ $payment->note }}</p>
+                    <p><strong>Nota: </strong>{{ $payment->note }}</p>
                 @endif
             </div>
         </div>
