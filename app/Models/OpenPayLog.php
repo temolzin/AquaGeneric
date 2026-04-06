@@ -25,8 +25,11 @@ class OpenPayLog extends Model
         'response_data' => 'array',
     ];
 
+    public $timestamps = false;
+
     public function payment()
     {
         return $this->belongsTo(Payment::class);
     }
 }
+

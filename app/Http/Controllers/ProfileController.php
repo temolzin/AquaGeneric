@@ -103,7 +103,6 @@ class ProfileController extends Controller
         $user = Auth::user();
         $locality = $user->locality;
 
-        // Validar que el usuario tenga rol de Supervisor o Secretaria
         if (!$user->hasRole(['Supervisor', 'Secretaria'])) {
             return redirect()->back()->with('error', 'No tienes permiso para gestionar la configuración del webhook.');
         }
@@ -120,7 +119,6 @@ class ProfileController extends Controller
         $webhookUser = $request->input('openpay_webhook_user');
         $webhookPassword = $request->input('openpay_webhook_password');
 
-        // Solo actualizar si se proporciona un valor
         if (!empty($webhookUser)) {
             $locality->openpay_webhook_user = $webhookUser;
         }
@@ -138,7 +136,6 @@ class ProfileController extends Controller
         $user = Auth::user();
         $locality = $user->locality;
 
-        // Validar que el usuario tenga rol de Supervisor o Secretaria
         if (!$user->hasRole(['Supervisor', 'Secretaria'])) {
             return response()->json(['success' => false, 'message' => 'No tienes permiso para realizar esta acción.'], 403);
         }

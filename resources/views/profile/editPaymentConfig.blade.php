@@ -10,7 +10,6 @@
                 </button>
             </div>
 
-            {{-- Para Supervisor y Secretaria: Solo Webhook --}}
             @if($authUser->hasRole(['Supervisor', 'Secretaria']))
             <form id="webhookConfigForm" action="{{ route('profile.webhook-config.update') }}" method="POST">
                 @csrf
@@ -83,7 +82,6 @@
                 </div>
             </form>
             @else
-                {{-- Para Admin: Información de estado --}}
                 <div class="modal-body">
                     <div class="alert alert-info mb-4">
                         <i class="fas fa-info-circle mr-2"></i>

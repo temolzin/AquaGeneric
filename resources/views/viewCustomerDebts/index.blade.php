@@ -390,7 +390,6 @@
             $('#modal-saved-card-id').val('');
             selectedSavedCard = null;
 
-            // Mostrar botón "Usar Tarjetas Guardadas" si hay tarjetas guardadas
             if (savedCards.length > 0) {
                 $('#use-saved-cards-section').show();
             } else {
@@ -408,7 +407,6 @@
             $('#modal-use-saved-card').val('1');
             $('#modal-saved-card-id').val(card.openpay_card_id);
 
-            // Mostrar información de la tarjeta guardada en la sección de CVV
             $('#saved-card-info-display').text(card.display_name + ' •••• ' + card.last_four);
 
             var amount = parseFloat($('#modal-amount').val()) || 0;
