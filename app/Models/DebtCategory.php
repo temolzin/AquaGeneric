@@ -16,10 +16,12 @@ class DebtCategory extends Model
         'locality_id',
         'created_by',
     ];
+
     public function isService(): bool
     {
         return $this->name === self::NAME_SERVICE;
     }
+    
     public static function serviceId(): int
     {
         $cat = static::withTrashed()->firstOrCreate(

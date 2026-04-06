@@ -13,10 +13,10 @@
                         <div class="col-lg-12">
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
                                 <form method="GET" action="{{ route('debtCategories.index') }}"
-                                      class="mb-3 mb-lg-3" style="min-width: 300px;">
+                                       class="mb-3 mb-lg-3 flex-grow-1" style="max-width: 600px;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control"
-                                               placeholder="Buscar por Nombre, Descripción..."
+                                               placeholder="Buscar por Nombre, Descripción o ID"
                                                value="{{ request('search') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary">

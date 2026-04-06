@@ -22,21 +22,33 @@ class DebtCategoryController extends Controller
     {
         $user = auth()->user();
         $query = DebtCategory::query();
+
         $query->where(function ($q) use ($user) {
             $q->whereNull('locality_id');
+
             if ($user && $user->locality_id) {
                 $q->orWhere('locality_id', $user->locality_id);
             }
         });
+
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
+                if (is_numeric($search)) {
+                    $q->orWhere('id', $search);
+                }
+
+                $q->orWhere('name', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%");
             });
         }
-        $categories = $query->orderBy('name')->paginate(10)->appends($request->query());
+
+        $categories = $query->orderBy('name')
+            ->paginate(10)
+            ->appends($request->query());
+
         return view('debtCategories.index', compact('categories'));
     }
+
 
     protected function rules($localityId, $ignoreId = null)
     {
