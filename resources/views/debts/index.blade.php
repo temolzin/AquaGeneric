@@ -14,9 +14,9 @@
                         @include('debts.periods')
                         <div class="col-lg-12">
                             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center">
-                                <form method="GET" action="{{ route('debts.index') }}" class="flex-grow-1 col-md-8" style="min-width: 330px;">
+                                <form method="GET" action="{{ route('debts.index') }}" class="col-md-5" style="min-width: 330px;">
                                     <div class="input-group">
-                                        <input type="text" name="search" class="form-control mt-2" placeholder="Buscar por ID del CLIENTE" value="{{ request('search') }}">
+                                        <input type="text" name="search" class="form-control mt-2" placeholder="Buscar por ID del cliente" value="{{ request('search') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary mt-2" title="Buscar Deuda">Buscar</button>
                                         </div>
