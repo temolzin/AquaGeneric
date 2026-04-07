@@ -120,6 +120,7 @@ class DebtsTableSeeder extends Seeder
                     'deleted_at' => null,
                     'created_at' => now(),
                 ]);
+                
                 $debtCount++;
             }
         }

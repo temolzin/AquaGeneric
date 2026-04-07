@@ -140,6 +140,7 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+        
         if (errorMessage) {
             Swal.fire({
                 icon: 'error',

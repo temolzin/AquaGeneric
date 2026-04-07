@@ -20,6 +20,7 @@ class DebtController extends Controller
         $search = $request->input('search');
         $authUser = auth()->user();
         $localityId = $authUser->locality_id;
+
         $customers = Customer::where('customers.locality_id', $localityId)
             ->select('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
             ->where(function ($query) use ($search) {
@@ -28,11 +29,14 @@ class DebtController extends Controller
                     ->orWhere('customers.last_name', 'like', "%{$search}%")
                     ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"]);
             })
+
             ->groupBy('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
             ->get();
+
         $waterConnections = WaterConnection::with(['customer'])
             ->where('locality_id', $localityId)
             ->get();
+
         $debts = Debt::with(['waterConnection.customer', 'creator', 'debtCategory'])
             ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
                 $query->where('locality_id', $localityId)
@@ -56,12 +60,13 @@ class DebtController extends Controller
             if (!isset($totalDebts[$customerId])) {
                 $totalDebts[$customerId] = 0;
             }
+
             $totalDebtAmount = Debt::where('water_connection_id', $debt->water_connection_id)->sum('amount');
             $totalDebtPaid = Debt::where('water_connection_id', $debt->water_connection_id)->sum('debt_current');
             $totalDebts[$customerId] = $totalDebtAmount - $totalDebtPaid;
         }
         $user = auth()->user();
-        $debtCategoriesQuery = \App\Models\DebtCategory::query();
+        $debtCategoriesQuery = DebtCategory::query();
         $debtCategoriesQuery->where(function ($q) use ($user) {
             $q->whereNull('locality_id');
             if ($user && $user->locality_id) {
@@ -85,12 +90,14 @@ class DebtController extends Controller
                     'name' => $waterConnection->name,
                 ];
             });
+
         return response()->json(['waterConnections' => $waterConnections]);
     }
 
     public function store(Request $request)
     {
         $authUser = auth()->user();
+
         $request->validate([
             'water_connection_id' => 'required|exists:water_connections,id',
             'debt_category_id' => 'nullable|exists:debt_categories,id',
@@ -99,19 +106,24 @@ class DebtController extends Controller
             'amount' => 'required|numeric|min:0',
             'note' => 'nullable|string'
         ]);
+
         $waterConnection = WaterConnection::findOrFail($request->water_connection_id);
+        
         $startMonth = $request->input('start_date');
         $endMonth = $request->input('end_date');
+
         $startDate = new \DateTime($startMonth . '-01');
         $endDate = (new \DateTime($endMonth . '-01'))->modify('last day of this month');
         if ($endDate < $startDate) {
             return response()->json(['error' => 'El rango de fechas es inválido.'], 400);
         }
+
         $categoryId = $request->input('debt_category_id') ?? DebtCategory::getDefaultService($authUser->locality_id, $authUser->id);
         $category = DB::table('debt_categories')->where('id', $categoryId)->first();
         if ($category && $category->locality_id && $category->locality_id !== $authUser->locality_id) {
             return response()->json(['error' => 'La categoría seleccionada no pertenece a la localidad del usuario.'], 400);
         }
+
         $serviceId = DebtCategory::getDefaultService($authUser->locality_id, $authUser->id);
         $existingDebt = false;
         if ($categoryId == $serviceId) {
@@ -123,9 +135,11 @@ class DebtController extends Controller
                 })
                 ->exists();
         }
+
         if ($existingDebt) {
             return response()->json(['error' => 'Ya existe una deuda de Servicio de Agua en este rango de fechas para la toma.'], 400);
         }
+
         Debt::create([
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
@@ -136,6 +150,7 @@ class DebtController extends Controller
             'amount' => $request->input('amount'),
             'note' => $request->input('note'),
         ]);
+
         return response()->json(['success' => 'Deuda creada exitosamente.']);
     }
 
@@ -145,8 +160,10 @@ class DebtController extends Controller
         $customers = Customer::with('waterConnections')
             ->where('locality_id', $authUser->locality_id)
             ->get();
+
         $startMonth = $request->input('start_date');
         $endMonth = $request->input('end_date');
+
         $startDate = new \DateTime($startMonth . '-01');
         $endDate = (new \DateTime($endMonth . '-01'))->modify('first day of next month')->modify('-1 day');
         $note = $request->note ?? 'Deuda asignada manualmente';
