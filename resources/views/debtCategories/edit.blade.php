@@ -80,7 +80,7 @@
                                     <div class="form-group">
                                         <label for="description">Descripción (*)</label>
                                         <textarea name="description" class="form-control @error('description') is-invalid @enderror"
-                                            placeholder="Ingrese la descripción de la categoría">{{ old('description', $category->description) }}</textarea>
+                                            placeholder="Ingrese la descripción de la categoría" required>{{ old('description', $category->description) }}</textarea>
                                         @error('description')
                                             <span class="invalid-feedback">{{ $message }}</span>
                                         @enderror

@@ -13,7 +13,7 @@
                         <div class="col-lg-12">
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
                                 <form method="GET" action="{{ route('debtCategories.index') }}"
-                                       class="mb-3 mb-lg-3 flex-grow-1" style="max-width: 600px;">
+                                       class="mb-3 mb-lg-3 flex-grow-1" style="max-width: 400px;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control"
                                                placeholder="Buscar por Nombre, Descripción o ID"
@@ -78,9 +78,15 @@
                                                         </button>
                                                         @endcan
                                                         @can('deleteDebtCategories')
-                                                        <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" data-toggle="modal" data-target="#deleteDebtCategory{{ $category->id }}">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
+                                                            @if ($category->hasDependencies())
+                                                                <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen deudas asociadas." disabled>
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @else
+                                                                <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" data-toggle="modal" data-target="#deleteDebtCategory{{ $category->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
                                                         @endcan
                                                         @endif
                                                     </div>

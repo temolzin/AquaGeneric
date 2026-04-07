@@ -62,7 +62,7 @@ class DebtCategoryController extends Controller
                     })
                     ->ignore($ignoreId),
             ],
-            'description' => ['nullable', 'string'],
+            'description' => ['required', 'string'],
             'color_index' => ['required', 'integer', 'min:0', 'max:19'],
         ];
     }
