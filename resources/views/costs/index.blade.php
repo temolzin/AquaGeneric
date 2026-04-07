@@ -79,7 +79,10 @@
                                                             @endcan
                                                             @can('deleteCost')
                                                             @if (!is_null($cost->locality_id))
-                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $cost->id }}">
+                                                                <button type="button"
+                                                                    class="btn {{ $cost->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2"
+                                                                    title="{{ $cost->hasDependencies() ? 'Eliminación no permitida: este costo tiene tomas de agua asociadas.' : 'Eliminar Registro' }}"
+                                                                    {{ $cost->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#delete' . $cost->id }}>
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             @endif

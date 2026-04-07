@@ -98,6 +98,11 @@ class CostController extends Controller
 
     public function destroy(Cost $cost)
     {
+        if ($cost->hasDependencies()) {
+            return redirect()->route('costs.index')
+                ->with('error', 'No se puede eliminar el costo porque tiene tomas de agua asociadas.');
+        }
+
         $before = $cost->toArray();
         $cost->delete();
 
