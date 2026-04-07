@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\WaterConnection;
+
 class Cost extends Model
 {
     use HasFactory,  SoftDeletes;
@@ -38,6 +40,16 @@ class Cost extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function waterConnections()
+    {
+        return $this->hasMany(WaterConnection::class, 'cost_id');
+    }
+
+    public function hasDependencies()
+    {
+        return $this->waterConnections()->exists();
     }
 
     public function scopeByUserLocality($query)

@@ -70,7 +70,11 @@
                                                             <span class="text-danger">Toma sin cliente asignado</span>
                                                         @endif
                                                     </td>
-                                                    <td>${{ $connection->cost->price }}</td>
+                                                   <td>
+                                                        {!! $connection->cost
+                                                            ? '$' . number_format($connection->cost->price, 2)
+                                                            : '<span class="text-danger">Costo no disponible</span>' !!}
+                                                    </td>
                                                     @if ($connection->type === 'residencial')
                                                         <td>Residencial</td>
                                                     @elseif ($connection->type === 'commercial')
