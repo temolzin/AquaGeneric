@@ -49,7 +49,6 @@ class DebtCategoryController extends Controller
         return view('debtCategories.index', compact('categories'));
     }
 
-
     protected function rules($localityId, $ignoreId = null)
     {
         return [
@@ -71,21 +70,28 @@ class DebtCategoryController extends Controller
     public function store(Request $request)
     {
         $user = auth()->user();
+
         if (! $user) {
             return $this->respondError($request, 'Usuario no autenticado', 401);
         }
+
         $localityId = $user->locality_id;
         $name = Str::title(trim($request->input('name')));
+
         if (strcasecmp($name, DebtCategory::NAME_SERVICE) === 0) {
             return $this->respondError($request, 'No se puede crear la categoría "' . DebtCategory::NAME_SERVICE . '".', 422);
         }
+
         $data = $request->only(['description']);
         $data['name'] = $name;
         $data['color_index'] = $request->input('color_index');
+
         $validator = Validator::make($data, $this->rules($localityId));
+
         if ($validator->fails()) {
             return $this->validationError($request, $validator);
         }
+
         $category = DebtCategory::create([
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
@@ -93,67 +99,87 @@ class DebtCategoryController extends Controller
             'locality_id' => $localityId,
             'created_by' => $user->id,
         ]);
+
         if ($request->ajax()) {
             return response()->json(['success' => 'Categoría creada con éxito.', 'category' => $category]);
         }
+
         return redirect()->back()->with('success', 'Categoría creada con éxito.');
     }
 
     public function update(Request $request, $id)
     {
         $user = auth()->user();
+
         if (! $user) {
             return $this->respondError($request, 'Usuario no autenticado', 401);
         }
+
         $category = DebtCategory::findOrFail($id);
         if ($category->isService()) {
             return $this->respondError($request, 'La categoría "' . DebtCategory::NAME_SERVICE . '" no puede editarse.', 403);
         }
+
         if ($category->locality_id !== $user->locality_id) {
             return $this->respondError($request, 'Acceso denegado.', 403);
         }
+
         $name = Str::title(trim($request->input('name')));
         if (strcasecmp($name, DebtCategory::NAME_SERVICE) === 0) {
             return $this->respondError($request, 'No se puede renombrar a "' . DebtCategory::NAME_SERVICE . '".', 422);
         }
+
         $data = $request->only(['description']);
         $data['name'] = $name;
         $data['color_index'] = $request->input('color_index');
+
         $validator = Validator::make($data, $this->rules($user->locality_id, $id));
+
         if ($validator->fails()) {
             return $this->validationError($request, $validator);
         }
+
         $category->update([
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
             'color' => color($data['color_index']),
         ]);
+
         if ($request->ajax()) {
             return response()->json(['success' => 'Categoría actualizada con éxito.', 'category' => $category]);
         }
+
         return redirect()->back()->with('success', 'Categoría actualizada con éxito.');
     }
 
     public function destroy(Request $request, $id)
     {
         $user = auth()->user();
+
         if (! $user) {
             return $this->respondError($request, 'Usuario no autenticado', 401);
         }
+
         $category = DebtCategory::findOrFail($id);
+
         if ($category->isService()) {
             return $this->respondError($request, 'La categoría "' . DebtCategory::NAME_SERVICE . '" no puede eliminarse.', 403);
         }
+
         if ($category->locality_id !== $user->locality_id) {
             return $this->respondError($request, 'Acceso denegado.', 403);
         }
+
         if ($category->hasDependencies()) {
             return $this->respondError($request, 'No se puede eliminar: existen deudas asociadas a esta categoría.', 422);
         }
+
         $category->delete();
+
         if ($request->ajax()) {
             return response()->json(['success' => 'Categoría eliminada con éxito.']);
         }
+        
         return redirect()->back()->with('success', 'Categoría eliminada con éxito.');
     }
 
