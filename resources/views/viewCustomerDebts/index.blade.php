@@ -390,11 +390,7 @@
             $('#modal-saved-card-id').val('');
             selectedSavedCard = null;
 
-            if (savedCards.length > 0) {
-                $('#use-saved-cards-section').show();
-            } else {
-                $('#use-saved-cards-section').hide();
-            }
+            $('#use-saved-cards-section')[savedCards.length > 0 ? 'show' : 'hide']();
         }
 
         function isMobileDevice() {

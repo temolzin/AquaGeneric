@@ -18,7 +18,7 @@ return new class extends Migration
             $table->json('response_data')->nullable();
             $table->text('error_message')->nullable();
             $table->string('ip_address')->nullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp();
 
             $table->index('transaction_id');
             $table->index('payment_id');

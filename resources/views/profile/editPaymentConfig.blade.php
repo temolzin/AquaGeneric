@@ -9,7 +9,6 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-
             @if($authUser->hasRole(['Supervisor', 'Secretaria']))
             <form id="webhookConfigForm" action="{{ route('profile.webhook-config.update') }}" method="POST">
                 @csrf
@@ -19,7 +18,6 @@
                         <i class="fas fa-info-circle mr-2"></i>
                         <strong>Configuración de Webhook:</strong> Configura aquí el correo y contraseña de tu cuenta de OpenPay para recibir notificaciones de pagos.
                     </div>
-
                     <div class="card">
                         <div class="card-header bg-secondary">
                             <h6 class="card-title mb-0">
@@ -87,7 +85,6 @@
                         <i class="fas fa-info-circle mr-2"></i>
                         <strong>Nota:</strong> Los Supervisores y Secretarias configuran el webhook desde sus perfiles.
                     </div>
-
                     <div class="card">
                         <div class="card-header bg-secondary">
                             <h6 class="card-title mb-0">
