@@ -71,7 +71,12 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="email" class="form-label">Correo Electronico(*)</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
+                                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
+                                            @error('email')
+                                                <span class="error invalid-feedback" style="display:block;">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

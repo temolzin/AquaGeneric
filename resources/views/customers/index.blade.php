@@ -278,6 +278,24 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+
+        @if($errors->any())
+            $('#createCustomer').modal('show');
+            
+            var errorMessages = [];
+            @foreach($errors->all() as $error)
+                errorMessages.push("{{ $error }}");
+            @endforeach
+            
+            if (errorMessages.length > 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de Validación',
+                    text: errorMessages.join('\n'),
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        @endif
     });
 
     function generateUserAccessPDF(event, customerId) {

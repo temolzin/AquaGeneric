@@ -434,4 +434,24 @@ class EmployeeController extends Controller
         $salary = str_replace(['$', ',', ' '], '', $salary);
         return floatval($salary);
     }
+
+    public function showEmployeeReportByRole(Request $request)
+    {
+        $authUser = auth()->user();
+        $role = $request->input('role');
+
+        if (empty($role)) {
+            return redirect()->back()->with('error', 'Debe seleccionar un rol');
+        }
+
+        $employees = Employee::where('locality_id', $authUser->locality_id)
+            ->where('rol', $role)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $pdf = PDF::loadView('reports.generateEmployeeReportByRolePdf', compact('employees', 'authUser', 'role'))
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->stream('empleados_' . $role . '.pdf');
+    }
 }

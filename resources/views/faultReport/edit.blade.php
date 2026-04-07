@@ -40,13 +40,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="statusUpdate" class="form-label">Estado(*)</label>
-                                            <select name="statusUpdate" class="form-control select2" required>
-                                                <option value="">Selecciona un estado</option>
-                                                <option value="pending" {{ $report->status === 'pending' ? 'selected' : '' }}>Pendiente</option>
-                                                <option value="in_review" {{ $report->status === 'in_review' ? 'selected' : '' }}>En revisión</option>
-                                                <option value="completed" {{ $report->status === 'completed' ? 'selected' : '' }}>Completado</option>
-                                                <option value="Closed" {{ $report->status === 'Closed' ? 'selected' : '' }}>Cerrado</option>
-                                            </select>
+                                            <input type="text" class="form-control" disabled value="@switch($report->status)
+                                                        @case('pending') Pendiente @break
+                                                        @case('in_review') En revisión @break
+                                                        @case('completed') Completado @break
+                                                        @default {{ $report->status }} @break
+                                                    @endswitch" />
+                                            <input type="hidden" name="statusUpdate" value="{{ $report->status }}" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
