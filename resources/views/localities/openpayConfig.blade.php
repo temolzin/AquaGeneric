@@ -56,7 +56,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="openpay_merchant_id_{{ $locality->id }}">
-                                                Merchant ID <span class="text-danger">*</span>
+                                                ID de Comercio <span class="text-danger">*</span>
                                             </label>
                                             <input  type="text" class="form-control" name="openpay_merchant_id" id="openpay_merchant_id_{{ $locality->id }}" value="{{ $locality->openpay_merchant_id }}" placeholder="Ej: m4xxxxxxxxxxxxxxxxxx">
                                             <small class="text-muted">ID del comercio proporcionado por OpenPay</small>
@@ -65,7 +65,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="openpay_public_key_{{ $locality->id }}">
-                                                Public Key <span class="text-danger">*</span>
+                                                Llave pública <span class="text-danger">*</span>
                                             </label>
                                             <input  type="text" class="form-control" name="openpay_public_key" id="openpay_public_key_{{ $locality->id }}" value="{{ $locality->openpay_public_key }}" placeholder="Ej: pk_xxxxxxxxxxxxxxxxxx">
                                             <small class="text-muted">Llave pública para el frontend</small>
@@ -74,7 +74,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="openpay_private_key_{{ $locality->id }}">
-                                                Private Key <span class="text-danger">*</span>
+                                                Llave privada <span class="text-danger">*</span>
                                             </label>
                                             <div class="input-group">
                                                 <input  type="password" class="form-control" name="openpay_private_key" id="openpay_private_key_{{ $locality->id }}" placeholder="{{ $locality->openpay_private_key ? '••••••••••••••••' : 'Ej: sk_xxxxxxxxxxxxxxxxxx' }}">
@@ -99,24 +99,19 @@
                                 </h6>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="openpay_webhook_user_{{ $locality->id }}">Correo de OpenPay</label>
-                                            <input  type="text" class="form-control" name="openpay_webhook_user" id="openpay_webhook_user_{{ $locality->id }}" value="{{ $locality->openpay_webhook_user }}" placeholder="Correo de OpenPay">
-                                        </div>
+                                @if($locality->openpay_webhook_user && $locality->openpay_webhook_password)
+                                    <div class="alert alert-success mb-0">
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                        <strong>Webhook Configurado</strong>
+                                        <p class="mb-0 mt-2 small">Los Supervisores o Secretarias han configurado el webhook para esta localidad. Si necesitas cambiar estas credenciales, solicita que lo hagan desde sus perfiles.</p>
                                     </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="openpay_webhook_password_{{ $locality->id }}">Contraseña del correo de OpenPay</label>
-                                            <input  type="password" class="form-control" name="openpay_webhook_password" id="openpay_webhook_password_{{ $locality->id }}" value="{{ $locality->openpay_webhook_password }}" placeholder="Contraseña del correo de OpenPay">
-                                        </div>
+                                @else
+                                    <div class="alert alert-warning mb-0">
+                                        <i class="fas fa-exclamation-circle mr-2"></i>
+                                        <strong>Webhook No Configurado</strong>
+                                        <p class="mb-0 mt-2 small">Los Supervisores o Secretarias deben configurar el correo y contraseña de OpenPay desde sus perfiles para activar las notificaciones de webhooks.</p>
                                     </div>
-                                </div>
-                                <small class="text-muted">
-                                    <i class="fas fa-info-circle mr-1"></i>
-                                    Estos datos deben coincidir con la configuración del webhook en tu panel de OpenPay.
-                                </small>
+                                @endif
                             </div>
                         </div>
                         <div class="card">
@@ -142,7 +137,7 @@
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" name="openpay_enabled" id="openpay_enabled_{{ $locality->id }}" value="1" {{ $locality->openpay_enabled ? 'checked' : '' }}>
                                             <label class="custom-control-label" for="openpay_enabled_{{ $locality->id }}">
-                                                <i class="fas fa-toggle-on mr-1"></i> Habilitar pagos en línea
+                                                <i class="fas fa-credit-card mr-1"></i> Habilitar pagos en línea
                                             </label>
                                         </div>
                                         <small class="text-muted d-block mt-1">
@@ -215,8 +210,8 @@
                 title: 'Conexión exitosa',
                 html: `
                     <p>${response.message}</p>
-                    <p class="mb-0"><strong>Merchant ID:</strong> ${response.merchant_id}</p>
-                    <p class="mb-0"><strong>Modo:</strong> ${response.sandbox ? 'Sandbox (Pruebas)' : 'Producción'}</p>
+                    <p class="mb-0"><strong>ID de Comercio:</strong> ${response.merchant_id}</p>
+                    <p class="mb-0"><strong>Modo:</strong> ${response.sandbox ? 'Pruebas' : 'Producción'}</p>
                 `
             } : {
                 icon: 'error',
@@ -238,4 +233,59 @@
         }
     });
 }
+
+    if (!window.openpayFormInitialized) {
+        window.openpayFormInitialized = true;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[id^="openpay-config-form-"]').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    Swal.fire({
+                        title: 'Guardando configuración...',
+                        text: 'Por favor espera mientras guardamos los datos',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: form.action,
+                        method: 'POST',
+                        data: new FormData(form),
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Guardado!',
+                                text: 'La configuración de OpenPay se ha guardado correctamente',
+                                confirmButtonText: 'Aceptar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(xhr) {
+                            let message = 'Error al guardar la configuración';
+                            if (xhr.responseJSON?.errors) {
+                                message = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                            }
+                            if (xhr.responseJSON?.message) {
+                                message = xhr.responseJSON.message;
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: message
+                            });
+                        }
+                    });
+                });
+            });
+        });
+    }
 </script>

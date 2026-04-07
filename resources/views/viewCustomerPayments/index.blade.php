@@ -104,9 +104,9 @@
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
                                                     <a href="{{ route('viewCustomerPayments.receipt', Crypt::encrypt($payment->id)) }}"
-                                                       class="btn btn-info mr-2"
-                                                       target="_blank"
-                                                       title="Descargar Comprobante">
+                                                        class="btn btn-info mr-2"
+                                                        target="_blank"
+                                                        title="Descargar Comprobante">
                                                         <i class="fas fa-receipt"></i>
                                                     </a>
                                                 </div>

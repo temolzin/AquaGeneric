@@ -51,27 +51,13 @@
                             <h6 class="mb-0"><i class="fas fa-wallet"></i> Mis Tarjetas Guardadas</h6>
                         </div>
                         <div class="card-body py-2">
-                            <div id="saved-cards-list" class="mb-2">
+                            <div id="saved-cards-list" class="mb-3">
                             </div>
                             <div class="text-center">
                                 <button type="button" class="btn btn-outline-primary btn-sm" id="btn-use-new-card">
                                     <i class="fas fa-plus"></i> Usar otra tarjeta
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="card-brands-section" class="text-center mb-3">
-                    <div class="row">
-                        <div class="col-12">
-                            <small class="text-muted">Tarjetas de débito</small>
-                            <div><img src="{{ asset('img/cards2.png') }}" alt="Débito" class="img-fluid" style="max-height: 35px;"></div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <small class="text-muted">Tarjetas de crédito</small>
-                            <div><img src="{{ asset('img/cards1.png') }}" alt="Crédito" style="max-height: 35px;"></div>
                         </div>
                     </div>
                 </div>
@@ -83,89 +69,124 @@
                     <input type="hidden" id="modal-saved-card-id" name="saved_card_id">
                     <input type="hidden" id="modal-use-saved-card" name="use_saved_card" value="0">
                     <div id="new-card-form-section">
-                        <div class="alert alert-info py-2 px-3 mb-3">
-                            <i class="fas fa-info-circle"></i>
-                            <small>Esta tarjeta <strong>no será registrada</strong>, solo se usará para este pago.</small>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><i class="fas fa-user"></i> Nombre del titular</label>
-                                    <input type="text" class="form-control" id="modal-holder-name" placeholder="Como aparece en la tarjeta" autocomplete="off" data-openpay-card="holder_name" pattern="[A-Za-z ]+" title="Solo letras sin acentos">
-                                    <small class="text-muted">Solo letras sin acentos</small>
+                        <div class="card card-outline card-info mb-4">
+                            <div class="card-header py-2 bg-info">
+                                <h6 class="mb-0 text-white"><i class="fas fa-credit-card"></i> Datos de la Tarjeta</h6>
+                                <small class="text-white">Información de pago</small>
+                            </div>
+                            <div id="card-brands-section" class="text-center mb-3">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <small class="text-muted">Tarjetas de débito</small>
+                                        <div><img src="{{ asset('img/cards2.png') }}" alt="Débito" class="img-fluid" style="max-height: 35px;"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <small class="text-muted">Tarjetas de crédito</small>
+                                        <div><img src="{{ asset('img/cards1.png') }}" alt="Crédito" style="max-height: 35px;"></div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label><i class="fas fa-credit-card"></i> Número de tarjeta</label>
-                                    <input type="text" class="form-control" id="modal-card-number" placeholder="•••• •••• •••• ••••" autocomplete="off" data-openpay-card="card_number" maxlength="19" pattern="[0-9]{13,19}" inputmode="numeric" title="Entre 13 y 19 dígitos numéricos">
-                                    <div id="modal-card-brand" class="mt-1" style="min-height: 20px;"></div>
+                            <div class="card-body">
+                                <div class="alert alert-info py-2 px-3 mb-3">
+                                    <i class="fas fa-info-circle"></i>
+                                    <small>Esta tarjeta <strong>no será registrada</strong>, solo se usará para este pago.</small>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4 col-md-3">
-                                <div class="form-group">
-                                    <label>Mes</label>
-                                    <select class="form-control" id="modal-exp-month" data-openpay-card="expiration_month">
-                                        <option value="">MM</option>
-                                        <option value="01">01</option>
-                                        <option value="02">02</option>
-                                        <option value="03">03</option>
-                                        <option value="04">04</option>
-                                        <option value="05">05</option>
-                                        <option value="06">06</option>
-                                        <option value="07">07</option>
-                                        <option value="08">08</option>
-                                        <option value="09">09</option>
-                                        <option value="10">10</option>
-                                        <option value="11">11</option>
-                                        <option value="12">12</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-4 col-md-3">
-                                <div class="form-group">
-                                    <label>Año</label>
-                                    <input type="text" class="form-control" id="modal-exp-year" placeholder="AA" maxlength="2" pattern="[0-9]{2}" inputmode="numeric" data-openpay-card="expiration_year" title="2 dígitos del año">
-                                </div>
-                            </div>
-                            <div class="col-4 col-md-3" id="cvv-new-card-container">
-                                <div class="form-group">
-                                    <label>CVV <i class="fas fa-question-circle text-muted" title="Código de seguridad"></i></label>
-                                    <input type="text" class="form-control" id="modal-cvv" placeholder="•••" maxlength="4" pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off" data-openpay-card="cvv2" title="3 o 4 dígitos numéricos">
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <div class="form-group">
-                                    <label>Monto a pagar</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">$</span>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label><i class="fas fa-user"></i> Nombre del titular</label>
+                                            <input type="text" class="form-control" id="modal-holder-name" placeholder="Como aparece en la tarjeta" autocomplete="off" data-openpay-card="holder_name" pattern="[A-Za-z ]+" title="Solo letras sin acentos">
+                                            <small class="text-muted">Solo letras sin acentos</small>
                                         </div>
-                                        <input type="number" class="form-control" id="modal-amount" name="amount" step="1.00" min="1.00" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label><i class="fas fa-credit-card"></i> Número de tarjeta</label>
+                                            <input type="text" class="form-control" id="modal-card-number" placeholder="•••• •••• •••• ••••" autocomplete="off" data-openpay-card="card_number" maxlength="19" pattern="[0-9]{13,19}" inputmode="numeric" title="Entre 13 y 19 dígitos numéricos">
+                                            <div id="modal-card-brand" class="mt-1" style="min-height: 20px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 col-md-3">
+                                        <div class="form-group">
+                                            <label>Mes</label>
+                                            <select class="form-control" id="modal-exp-month" data-openpay-card="expiration_month">
+                                                <option value="">MM</option>
+                                                <option value="01">01</option>
+                                                <option value="02">02</option>
+                                                <option value="03">03</option>
+                                                <option value="04">04</option>
+                                                <option value="05">05</option>
+                                                <option value="06">06</option>
+                                                <option value="07">07</option>
+                                                <option value="08">08</option>
+                                                <option value="09">09</option>
+                                                <option value="10">10</option>
+                                                <option value="11">11</option>
+                                                <option value="12">12</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 col-md-3">
+                                        <div class="form-group">
+                                            <label>Año</label>
+                                            <input type="text" class="form-control" id="modal-exp-year" placeholder="AA" maxlength="2" pattern="[0-9]{2}" inputmode="numeric" data-openpay-card="expiration_year" title="2 dígitos del año">
+                                        </div>
+                                    </div>
+                                    <div class="col-4 col-md-3" id="cvv-new-card-container">
+                                        <div class="form-group">
+                                            <label>CVV <i class="fas fa-question-circle text-muted" title="Código de seguridad"></i></label>
+                                            <input type="text" class="form-control text-center" id="modal-cvv" placeholder="•••" maxlength="4" pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off" data-openpay-card="cvv2" title="3 o 4 dígitos numéricos" style="letter-spacing: 3px;">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <div class="form-group">
+                                            <label>Monto a pagar</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                                <input type="number" class="form-control text-center" id="modal-amount" name="amount" step="1.00" min="1.00" required style="font-weight: 600;">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div id="use-saved-cards-section" class="text-center mt-3 mb-3" style="display: none;">
+                        <button type="button" class="btn btn-outline-success btn-sm" id="btn-use-saved-cards">
+                            <i class="fas fa-credit-card mr-2"></i>Usar Tarjetas Guardadas
+                        </button>
+                    </div>
                     <div id="saved-card-cvv-section" style="display: none;">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label><i class="fas fa-lock"></i> CVV de la tarjeta guardada</label>
-                                    <input type="password" class="form-control form-control-md" id="modal-saved-cvv" placeholder="•••" maxlength="4" pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off" title="3 o 4 dígitos numéricos" style="letter-spacing: 5px; text-align: center;">
-                                    <small class="text-muted">Código de seguridad</small>
-                                </div>
+                        <div class="card card-outline card-success mb-4">
+                            <div class="card-header py-2 bg-success">
+                                <h6 class="mb-0 text-white"><i class="fas fa-wallet"></i> Confirmar Pago</h6>
+                                <small class="text-white-80" id="saved-card-info-display"></small>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label>Monto a pagar</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">$</span>
+                            <div class="card-body">
+                                <div class="row justify-content-center">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label><i class="fas fa-lock"></i> CVV</label>
+                                            <input type="password" class="form-control form-control-md text-center" id="modal-saved-cvv" placeholder="•••" maxlength="4" pattern="[0-9]{3,4}" inputmode="numeric" autocomplete="off" title="3 o 4 dígitos numéricos" style="letter-spacing: 5px; font-weight: 600;">
+                                            <small class="text-muted text-center d-block">Código de seguridad</small>
                                         </div>
-                                        <input type="number" class="form-control" id="modal-amount-saved" name="amount_saved" step="1.00" min="1.00">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Monto a pagar</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                                <input type="number" class="form-control text-center" id="modal-amount-saved" name="amount_saved" step="1.00" min="1.00" style="font-weight: 600;">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

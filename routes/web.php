@@ -74,6 +74,8 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::put('/profile/update', [ProfileController::class, 'profileUpdate'])->name('profile.update');
     Route::post('/profile/editImage', [ProfileController::class, 'updateImage'])->name('profile.update.image');
     Route::put('/profile/updatePassword', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+    Route::put('/profile/webhook-config', [ProfileController::class, 'updateWebhookConfig'])->name('profile.webhook-config.update');
+    Route::get('/profile/webhook-config/test', [ProfileController::class, 'testWebhookConnection'])->name('profile.webhook-config.test');
 
     Route::group(['middleware' => ['can:viewUser']], function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
