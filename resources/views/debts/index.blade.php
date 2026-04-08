@@ -95,7 +95,7 @@
                                             @endif
                                         @empty
                                             <tr>
-                                                <td colspan="4">No hay deudas registradas.</td>
+                                                <td colspan="5">No hay deudas registradas.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -132,7 +132,6 @@
 
         var successMessage = "{{ session('success') }}";
         var errorMessage = "{{ session('error') }}";
-
         if (successMessage) {
             Swal.fire({
                 icon: 'success',
@@ -141,7 +140,7 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-
+        
         if (errorMessage) {
             Swal.fire({
                 icon: 'error',
@@ -150,7 +149,7 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-
+        
         $('#createDebt').on('shown.bs.modal', function() {
             $('.select2').select2({
                 dropdownParent: $('#createDebt')
@@ -159,7 +158,6 @@
 
         $('#customer_id').on('change', function() {
             var customerId = $(this).val();
-
             if (customerId) {
                 $.ajax({
                     url: "{{ route('getWaterConnections') }}",
@@ -169,7 +167,6 @@
                         var waterConnectionSelect = $('#water_connection_id');
                         waterConnectionSelect.empty();
                         waterConnectionSelect.append('<option value="">Selecciona una toma</option>');
-
                         $.each(response.waterConnections, function(index, waterConnection) {
                             waterConnectionSelect.append(
                                 '<option value="' + waterConnection.id + '">' + waterConnection.id + ' - ' + waterConnection.name + '</option>'

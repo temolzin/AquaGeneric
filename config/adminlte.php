@@ -458,6 +458,12 @@ return [
         'can'  => 'viewDebts'
     ],
     [
+        'text' => 'Categorías de Deuda',
+        'url' => '/debtCategories',
+        'icon' => 'fas fa-fw fa-tags',
+        'can' => 'viewDebtCategories'
+    ],
+    [
         'text' => 'Localidades',
         'url' => '/localities',
         'icon' => 'fas fa-fw fa-map-marker-alt',
