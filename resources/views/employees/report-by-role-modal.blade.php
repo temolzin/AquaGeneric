@@ -1,4 +1,3 @@
-<!-- Modal para Reporte de Empleados por Rol -->
 <div class="modal fade" id="reportByRoleModal" tabindex="-1" role="dialog" aria-labelledby="reportByRoleLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
