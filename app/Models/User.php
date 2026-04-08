@@ -91,12 +91,18 @@ class User extends Authenticatable implements HasMedia
 
     public function getAdminlteImageAttribute(): string
     {
-        return $this->getFirstMediaUrl('avatars') ?: asset('img/default-user.png');
+        $media = $this->getFirstMedia('userGallery');
+        
+        if ($media) {
+            return asset('storage/' . $media->id . '/' . $media->file_name);
+        }
+        
+        return asset('img/userDefault.png');
     }
 
     public function adminlte_image(): string
     {
-        return $this->adminlte_image;
+        return $this->getAdminlteImageAttribute();
     }
 
     public function adminlte_desc()

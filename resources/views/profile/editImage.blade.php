@@ -9,18 +9,13 @@
             </div>
             <div class="modal-body">
                 <div class="text-center mb-3">
-                    @if ($authUser->getFirstMediaUrl('userGallery'))
-                        <img id="currentProfileImage" src="{{ $authUser->getFirstMediaUrl('userGallery') }}" style="width: 150px; height: 150px; border-radius: 50%;" alt="Foto actual de {{ $authUser->name }}">
-                    @else
-                        <img id="currentProfileImage" src="{{ asset('img/userDefault.png') }}" style="width: 150px; height: 150px; border-radius: 50%;" alt="Foto actual de {{ $authUser->name }}">
-                    @endif
+                    <img id="currentProfileImage" src="{{ $authUser->adminlte_image() }}" style="width: 150px; height: 150px; border-radius: 50%;" alt="Foto actual de {{ $authUser->name }}">
                 </div>
                 <form action="{{ route('profile.update.image') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="profileImage">Seleccionar Imagen</label>
                         <input type="file" class="form-control" id="profileImage" name="profileImage" accept="image/*" required onchange="previewAndReplaceImage(event)">
-                    </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm({{ $authUser->id }})">Cancelar</button>
@@ -63,7 +58,7 @@
         var form = document.querySelector('form[action="{{ route('profile.update.image') }}"]');
         form.reset();
         var currentProfileImage = document.getElementById('currentProfileImage');
-        var defaultSrc = "{{ $authUser->getFirstMediaUrl('userGallery') ? $authUser->getFirstMediaUrl('userGallery') : asset('img/userDefault.png') }}";
+        var defaultSrc = "{{ $authUser->adminlte_image() }}";
         currentProfileImage.src = defaultSrc;
         var fileInput = document.getElementById('profileImage');
         fileInput.value = '';
