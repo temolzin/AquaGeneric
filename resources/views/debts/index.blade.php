@@ -13,29 +13,29 @@
                         @include('debts.create')
                         @include('debts.periods')
                         <div class="col-lg-12">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center">
-                                <form method="GET" action="{{ route('debts.index') }}" class="flex-grow-1 col-md-8" style="min-width: 330px;">
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('debts.index') }}" class="mb-3 mb-lg-0 col-md-5 px-0" style="min-width: 300px;">
                                     <div class="input-group">
-                                        <input type="text" name="search" class="form-control mt-2" placeholder="Buscar por ID del CLIENTE" value="{{ request('search') }}">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por ID del cliente" value="{{ request('search') }}">
                                         <div class="input-group-append">
-                                            <button type="submit" class="btn btn-primary mt-2" title="Buscar Deuda">Buscar</button>
+                                            <button type="submit" class="btn btn-primary" title="Buscar Deuda">Buscar</button>
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap justify-content-end mb-2">
-                                    <button type="button" class="btn btn-primary mt-2 mx-1 mb-2" data-toggle="modal"
+                                <div class="d-flex flex-wrap justify-content-end mb-2 mt-2 mt-lg-0">
+                                    <button type="button" class="btn btn-primary mx-1" data-toggle="modal"
                                             title="Asignar Deuda a Todos" data-target="#assignDebtModal">
                                         <i class="fa fa-plus"></i>
                                         <span class="d-none d-lg-inline">Asignar Deuda a Todos</span>
                                         <span class="d-inline d-lg-none">Asignar a Todos</span>
                                     </button>
-                                    <button type="button" class="btn btn-success mt-2 mx-1 mb-2" data-toggle="modal"
+                                    <button type="button" class="btn btn-success mx-1" data-toggle="modal"
                                             title="Crear Deuda" data-target="#createDebt">
                                         <i class="fa fa-plus"></i>
                                         <span class="d-none d-lg-inline">Crear Deuda</span>
                                         <span class="d-inline d-lg-none">Crear Deuda</span>
                                     </button>
-                                    <a type="button" class="btn btn-secondary mt-2 mx-1 mb-2" target="_blank"
+                                    <a type="button" class="btn btn-secondary mx-1" target="_blank"
                                     title="Clientes con deudas" href="{{ route('report.with-debts') }}">
                                         <i class="fas fa-file-pdf"></i>
                                         <span class="d-none d-lg-inline">Clientes con deudas</span>

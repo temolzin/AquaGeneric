@@ -33,8 +33,8 @@
                         <div class="card-body box-profile">
                             <div class="text-center">
                                 <div class="profile-pic-container" style="position: relative; display: inline-block;">
-                                    @if ($authUser->getFirstMediaUrl('userGallery'))
-                                        <img class="profile-user-img" style="width: 150px; height: 150px; border-radius: 50%;" src="{{$authUser->getFirstMediaUrl('userGallery') }}" alt="Foto de {{ $authUser->name }}">
+                                      @if ($authUser->adminlte_image())
+                                          <img class="profile-user-img" style="width: 150px; height: 150px; border-radius: 50%;" src="{{ $authUser->adminlte_image() }}" alt="Foto de {{ $authUser->name }}">
                                     @else
                                         <img class="profile-user-img" style="width: 150px; height: 150px; border-radius: 50%;" src="{{ asset('img/userDefault.png') }}">
                                     @endif

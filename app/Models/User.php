@@ -89,13 +89,20 @@ class User extends Authenticatable implements HasMedia
         return route('profile.index');
     }
 
-    public function adminlte_image()
+    public function getAdminlteImageAttribute(): string
     {
-        $media = $this->getFirstMediaUrl('avatar');
+        $media = $this->getFirstMedia('userGallery');
+        
         if ($media) {
-            return $media;
+            return asset('storage/' . $media->id . '/' . $media->file_name);
         }
-        return asset('vendor/adminlte/dist/img/user2-160x160.jpg');
+        
+        return asset('img/userDefault.png');
+    }
+
+    public function adminlte_image(): string
+    {
+        return $this->getAdminlteImageAttribute();
     }
 
     public function adminlte_desc()

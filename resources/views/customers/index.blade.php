@@ -12,7 +12,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                    <form method="GET" action="{{ route('customers.index') }}" class="mb-3 mb-lg-0 col-md-8 px-0" style="min-width: 300px;">
+                                    <form method="GET" action="{{ route('customers.index') }}" class="mb-3 mb-lg-0 col-md-4 px-0" style="min-width: 250px;">
                                         <div class="input-group">
                                             <input type="text" name="search" class="form-control" placeholder="Buscar por nombre, apellido o email" value="{{ request('search') }}">
                                             <div class="input-group-append">
