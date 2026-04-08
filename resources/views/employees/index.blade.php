@@ -27,9 +27,12 @@
                                         <button class="btn btn-info mr-2" data-toggle="modal" data-target="#importData" title="Importar Empleados">
                                             <i class="fas fa-file-import"></i> Importar Empleados
                                         </button>
-                                        <a type="button" class="btn btn-secondary" target="_blank" title="Generar Lista de Empleados" href="{{ route('report.generateEmployeeListReport') }}">
+                                        <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Generar Lista de Empleados" href="{{ route('report.generateEmployeeListReport') }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista
                                         </a>
+                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
+                                            <i class="fas fa-filter"></i> Reporte por Rol
+                                        </button>
                                     </div>
                                     <div class="d-md-none w-100">
                                         <div class="row g-2">
@@ -47,6 +50,11 @@
                                                 <a type="button" class="btn btn-secondary w-100 py-2" target="_blank" title="Generar Lista" href="{{ route('report.generateEmployeeListReport') }}">
                                                     <i class="fas fa-file-pdf"></i> Generar Lista
                                                 </a>
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                <button type="button" class="btn btn-warning w-100 py-2" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
+                                                    <i class="fas fa-filter"></i> Reporte por Rol
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -136,6 +144,7 @@
             </div>
         </div>
     </section>
+    @include('employees.report-by-role-modal')
 @endsection
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -250,6 +259,24 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
+
+            @if($errors->any())
+                $('#createEmployee').modal('show');
+                
+                var errorMessages = [];
+                @foreach($errors->all() as $error)
+                    errorMessages.push("{{ $error }}");
+                @endforeach
+                
+                if (errorMessages.length > 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de Validación',
+                        text: errorMessages.join('\n'),
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            @endif
 
             @if(session('import_errors'))
                 $('#importData').modal('show');

@@ -73,21 +73,27 @@
                                                             @endcan
 
                                                             @can('editFaultReport')
-                                                            @if($report->status === 'completed')
+                                                            @if(auth()->user()->hasRole('customer'))
                                                             <button type="button" class="btn btn-warning btn-sm mx-1 mb-1" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $report->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
                                                             @else
-                                                            <button type="button" class="btn btn-secondary btn-sm mx-1 mb-1" title="No editable: cambiar estatus" disabled>
+                                                            <button type="button" class="btn btn-secondary btn-sm mx-1 mb-1" title="No editable" disabled>
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
                                                             @endif
                                                             @endcan
 
                                                             @can('deleteFaultReport')
-                                                            <button type="button" class="btn btn-secondary btn-sm mx-1 mb-1" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $report->id }}">
+                                                            @if($report->status === 'completed')
+                                                            <button type="button" class="btn btn-danger btn-sm mx-1 mb-1" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $report->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
+                                                            @else
+                                                            <button type="button" class="btn btn-secondary btn-sm mx-1 mb-1" title="Solo se pueden eliminar reportes completados" disabled>
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                            @endif
                                                             @endcan
 
                                                             <button type="button" class="btn bg-purple btn-sm mx-1 mb-1" data-toggle="modal" title="Cambiar Estatus" data-target="#changeStatusModal" data-fault-report-id="{{ $report->id }}" data-fault-report-title="{{ $report->title }}">
