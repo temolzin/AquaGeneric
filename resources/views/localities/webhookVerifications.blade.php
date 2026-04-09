@@ -109,8 +109,8 @@
         </div>
     </div>
 @endsection
-
 @section('css')
+    <link rel="stylesheet" href="{{ asset('css/custom-pagination.css') }}">
     <style>
         .verification-code {
             font-family: 'Courier New', Courier, monospace;
