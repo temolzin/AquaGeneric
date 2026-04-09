@@ -14,7 +14,7 @@
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
                                 <form method="GET" action="{{ route('earningTypes.index') }}" class="mb-3 mb-lg-3" style="min-width: 300px;">
                                     <div class="input-group">
-                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción..." value="{{ request('search') }}">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por ID, Nombre, Descripción..." value="{{ request('search') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary" title="Buscar Tipos de Ingreso">
                                                 <i class="fa fa-search"></i> Buscar
@@ -45,7 +45,7 @@
                                             <th>ID</th>
                                             <th>TIPO DE GASTO</th>
                                             <th>DESCRIPCIÓN</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -81,7 +81,6 @@
                                                     </div>
                                                 </td>
                                             </tr>
-
                                             @include('earningTypes.show')
                                             @include('earningTypes.edit')
                                             @include('earningTypes.delete')
@@ -128,7 +127,28 @@
     $(document).ready(function() {
         $('#earningTypes').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,

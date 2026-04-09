@@ -115,7 +115,15 @@
     $(document).ready(function() {
         $('#costs').DataTable({
                 responsive: true,
-                buttons: ['csv', 'excel', 'print'],
+                buttons:[
+                    {
+                        extend: 'csv',
+                        charset: 'utf-8',
+                        bom: true
+                    },
+                    'excel',
+                    'print'
+                ],
                 dom: 'Bfrtip',
                 paging: false,
                 info: false,

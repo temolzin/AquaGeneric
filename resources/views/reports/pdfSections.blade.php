@@ -110,14 +110,18 @@ $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
                 </tr>
             </thead>
             <tbody>
-                @foreach ($section->waterConnections as $connection)
+                @forelse ($section->waterConnections as $connection)
                     <tr>
                         <td>{{ $connection->name ?? 'Sin nombre' }}</td>
                         <td>{{ $connection->customer->name ?? 'Sin propietario' }} {{ $connection->customer->last_name ?? '' }}</td>
                         <td>{{ ucfirst($connection->type) }}</td>
                         <td>${{ number_format($connection->cost->price ?? 0, 2) }}</td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="4">No hay tomas registradas para esta sección.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

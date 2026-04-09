@@ -50,7 +50,7 @@
                                             <th>COSTO</th>
                                             <th>TIPO</th>
                                             <th>SECCIÓN</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -98,9 +98,15 @@
                                                             @endcan
 
                                                             @can('editWaterConnection')
-                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $connection->id }}">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
+                                                            <span title="{{ $connection->is_canceled ? 'Eliminación no permitida: toma cancelada' : 'Editar Datos' }}">
+                                                                <button type="button"
+                                                                        class="btn {{ $connection->is_canceled ? 'btn-secondary' : 'btn-warning' }} mr-2"
+                                                                        data-toggle="{{ $connection->is_canceled ? '' : 'modal' }}"
+                                                                        data-target="{{ $connection->is_canceled ? '' : '#edit' . $connection->id }}"
+                                                                        {{ $connection->is_canceled ? 'disabled' : '' }}>
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                            </span>
                                                             @endcan
 
                                                             <button type="button" class="btn btn-primary mr-2" data-toggle="modal" title="Detalles / Historial"  data-target="#details{{ $connection->id }}">
@@ -209,16 +215,15 @@
                                                                     </button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <label for="cancelDescription{{ $connection->id }}">Cliente</label>
-                                                                    <select class="form-control select2" name="customer_id" id="customer_id" required>
-                                                                        <option value="">Selecciona un cliente</option>
-                                                                        @foreach($customers as $customer)
-                                                                            @if($customer->user)
-                                                                                <option value="{{ $customer->id }}">
-                                                                                    {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
-                                                                                </option>
-                                                                            @endif
-                                                                        @endforeach
+                                                                    <label for="cancelDescription{{ $connection->id }}">Cliente Original</label>
+                                                                    <select class="form-control select2" name="customer_id" id="customer_id{{ $connection->id }}" required>
+                                                                        @if($connection->customer)
+                                                                            <option value="{{ $connection->customer->id }}" selected>
+                                                                                {{ $connection->customer->id }} - {{ $connection->customer->name }} {{ $connection->customer->last_name }}
+                                                                            </option>
+                                                                        @else
+                                                                            <option value="">No hay cliente asignado</option>
+                                                                        @endif
                                                                     </select>
                                                                 </div>
                                                                 <div class="modal-footer">
@@ -310,7 +315,28 @@
 
         $('#waterConnections').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,
