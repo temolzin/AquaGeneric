@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Section;
 use App\Models\Locality;
+use App\Models\WaterConnection;
 use PDF;
 
 class SectionController extends Controller
