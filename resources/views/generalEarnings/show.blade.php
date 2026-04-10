@@ -52,11 +52,11 @@
                                             <input type="number" disabled class="form-control" value="{{ $earning->amount }}" />
                                         </div>
                                     </div>
-                                </div> 
+                                </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Fecha del ingreso</label>
-                                        <input type="text" disabled class="form-control" value="{{ $earning->earning_date }}" />
+                                        <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($earning->earning_date)->format('Y-m-d') }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">

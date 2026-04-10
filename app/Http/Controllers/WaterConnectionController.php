@@ -35,6 +35,7 @@ class WaterConnectionController extends Controller
                 ->orWhere('water_connections.type', $search)
                 ->orWhere('customers.name', 'LIKE', "%{$search}%")
                 ->orWhere('customers.last_name', 'LIKE', "%{$search}%")
+                ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"])
                 ->orWhere('sections.name', 'LIKE', "%{$search}%");
             });
         }
@@ -105,6 +106,17 @@ class WaterConnectionController extends Controller
     public function update(Request $request, $id)
     {
         $connection = WaterConnection::find($id);
+
+        if (!$connection) {
+            return redirect()->back()->with('error', 'Toma de Agua no encontrada.');
+        }
+
+        if ($connection->is_canceled) {
+            return redirect()
+                ->route('waterConnections.index')
+                ->with('error', 'No se puede editar una toma cancelada.');
+        }
+
         $sections = Section::where('locality_id', $connection->locality_id)
                     ->orWhereNull('locality_id')
                     ->get();

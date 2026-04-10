@@ -22,10 +22,16 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            <button type="submit" class="btn btn-primary rounded-end border-start-0" title="Filtrar por Incidencia ml-1">
+                                            <button type="submit" class="btn btn-primary border-start-0" title="Filtrar por categoría">
                                                 <i class="fas fa-filter d-md-none"></i>
                                                 <span class="d-none d-md-inline">Filtrar</span>
                                             </button>
+                                             @if(request('category'))
+                                                <a href="{{ route('incidents.index') }}" class="btn btn-secondary ml-2" title="Quitar filtro">
+                                                    <i class="fas fa-times d-md-none"></i>
+                                                    <span class="d-none d-md-inline">Limpiar</span>
+                                                </a>
+                                            @endif
                                         </div>
                                     </form>
                                     <div class="d-flex flex-wrap gap-2 justify-content-end w-100 w-lg-auto">
@@ -60,7 +66,7 @@
                                                 <th>FECHA DE LA INCIDENCIA</th>
                                                 <th>CATEGORIA</th>
                                                 <th>ESTATUS</th>
-                                                <th>OPCIONES</th>
+                                                <th class="not-export">OPCIONES</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -154,7 +160,28 @@
     $(document).ready(function() {
         $('#incident').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,
