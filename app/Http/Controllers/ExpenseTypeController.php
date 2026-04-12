@@ -9,15 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class ExpenseTypeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-    $expenseTypes = ExpenseType::byUserLocality()
-        ->with(['creator', 'locality'])
-        ->orderByRaw('locality_id IS NULL DESC')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10); 
+        $query = ExpenseType::byUserLocality()
+            ->with(['creator', 'locality'])
+            ->orderByRaw('locality_id IS NULL DESC')
+            ->orderBy('created_at', 'desc');
 
-    return view('expenseTypes.index', compact('expenseTypes'));
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $expenseTypes = $query->paginate(10)->appends($request->query());
+
+        return view('expenseTypes.index', compact('expenseTypes'));
     }
 
     public function create()
