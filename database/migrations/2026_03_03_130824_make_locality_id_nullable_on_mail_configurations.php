@@ -17,6 +17,9 @@ class MakeLocalityIdNullableOnMailConfigurations extends Migration
 
     public function down()
     {
+        // Update any NULL values before making the column NOT NULL
+        DB::table('mail_configurations')->whereNull('locality_id')->delete();
+
         DB::statement('ALTER TABLE mail_configurations MODIFY locality_id BIGINT UNSIGNED NOT NULL');
     }
 }
