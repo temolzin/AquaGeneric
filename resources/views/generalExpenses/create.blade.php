@@ -56,7 +56,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="expenseDate" class="form-label">Fecha del gasto(*)</label>
-                                            <input type="date" class="form-control" name="expenseDate" value="{{ old('expense_date') }}" required />
+                                            <input type="date" class="form-control" name="expenseDate" value="{{ old('expenseDate') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -79,13 +79,7 @@
     </div>
 </div>
 
-<style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-</style>
+
 
 <script>
     document.getElementById('receipt').addEventListener('change', function (event) {

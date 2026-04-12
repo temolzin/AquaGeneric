@@ -12,7 +12,7 @@
                 </div>
                 <form action="{{ route('employees.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Ingrese los Datos del Empleado</h3>
@@ -71,7 +71,12 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="email" class="form-label">Correo Electronico(*)</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
+                                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="Ingresa correo electronico" value="{{ old('email') }}" required />
+                                            @error('email')
+                                                <span class="error invalid-feedback" style="display:block;">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

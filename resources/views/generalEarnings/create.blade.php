@@ -55,7 +55,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="earningDate" class="form-label">Fecha del ingreso(*)</label>
-                                            <input type="date" class="form-control" name="earningDate" value="{{ old('earning_date') }}" required />
+                                            <input type="date" class="form-control" name="earningDate" value="{{ old('earningDate') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -77,14 +77,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-</style>
 
 <script>
     document.getElementById('receipt').addEventListener('change', function (event) {

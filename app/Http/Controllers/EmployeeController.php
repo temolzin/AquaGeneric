@@ -48,6 +48,11 @@ class EmployeeController extends Controller
             'phoneNumber' => 'nullable|string',
             'salary' => 'required',
             'rol'=>'required|string',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            'photo.image' => 'El archivo debe ser una imagen.',
+            'photo.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'photo.max' => 'La imagen no puede superar los 5MB.',
         ]);
 
         $employeeData = [
@@ -141,6 +146,23 @@ class EmployeeController extends Controller
         return $pdf->stream('employees.pdf');
     }
 
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="plantilla_empleados.csv"',
+    ];
+
+        $content = "\xEF\xBB\xBF";
+
+        $content .= "nombre,apellido,localidad,codigo_postal,estado,manzana,calle,numero_exterior,numero_interior,email,telefono,salario,rol\n";
+
+        $content .= "Jorge,Peralta Gonzalez,México,12345,México,5,Avenida Principal,123,99,jorge.peralta@empresa.com,5551234567,15000.00,Administrativo\n";
+        $content .= "María,López Hernández,Guadalajara,44100,Jalisco,2,Calle Secundaria,456,7,maria.lopez@empresa.com,3339876543,18000.00,Supervisor\n";
+
+        return response($content, 200, $headers);
+    }
+
     public function import(Request $request)
     {
 
@@ -148,7 +170,8 @@ class EmployeeController extends Controller
             'excel_file' => [
                 'required',
                 'file',
-                'mimes:csv,txt'
+                'mimes:csv,txt',
+                'max:10240'
             ]
         ], [
             'excel_file.required' => 'El archivo CSV es requerido.',
@@ -175,9 +198,10 @@ class EmployeeController extends Controller
             $content = file_get_contents($file->getPathname());
             $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
 
-            if ($encoding !== 'UTF-8') {
+            if ($encoding && $encoding !== 'UTF-8') {
                 $convertedContent = mb_convert_encoding($content, 'UTF-8', $encoding);
                 file_put_contents($file->getPathname(), $convertedContent);
+                $content = $convertedContent;
             }
 
             $handle = fopen($file->getPathname(), 'r');
@@ -190,10 +214,21 @@ class EmployeeController extends Controller
             }
 
             $headers = fgetcsv($handle);
+            if (isset($headers[0])) {
+                $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headers[0]);
+                $headers[0] = preg_replace('/^ï»¿/', '', $headers[0]);
+                $headers[0] = ltrim($headers[0], "\0\x0B\xEF\xBB\xBF");
+            }
+
+            foreach ($headers as &$header) {
+                $header = trim($header);
+                $header = preg_replace('/^ï»¿/', '', $header);
+            }
+            unset($header);
 
             $expectedHeaders = ['nombre', 'apellido', 'localidad', 'codigo_postal', 'estado', 'manzana', 'calle', 'numero_exterior', 'numero_interior', 'email', 'telefono', 'salario', 'rol'];
 
-            if ($headers === false || count($headers) !== count($expectedHeaders)) {
+            if (count($headers) !== count($expectedHeaders)) {
                 fclose($handle);
                 return response()->json([
                     'success' => false,
@@ -202,10 +237,11 @@ class EmployeeController extends Controller
             }
 
             $headersMatch = true;
+            $headerMismatches = [];
             foreach ($expectedHeaders as $index => $expectedHeader) {
-                if (!isset($headers[$index]) || trim($headers[$index]) !== $expectedHeader) {
+                if (strtolower(trim($headers[$index] ?? '')) !== strtolower($expectedHeader)) {
                     $headersMatch = false;
-                    break;
+                    $headerMismatches[] = "Columna " . ($index + 1) . ": esperado '{$expectedHeader}', recibido '" . ($headers[$index] ?? 'vacío') . "'";
                 }
             }
 
@@ -213,9 +249,10 @@ class EmployeeController extends Controller
                 fclose($handle);
                 return response()->json([
                     'success' => false,
-                    'message' => 'Formato de archivo incorrecto. Los encabezados no coinciden con la plantilla oficial.',
+                    'message' => 'Los encabezados no coinciden con la plantilla oficial.',
                     'expected_headers' => $expectedHeaders,
-                    'received_headers' => $headers
+                    'received_headers' => $headers,
+                    'mismatches' => $headerMismatches
                 ], 400);
             }
 
@@ -259,6 +296,18 @@ class EmployeeController extends Controller
     private function processEmployeeRowData($rowData, $authUser, $rowNumber)
     {
         try {
+            foreach ($rowData as &$field) {
+                if (is_string($field)) {
+                    if (preg_match('/(Ã.)/u', $field)) {
+                        $field = utf8_decode($field);
+                    }
+
+                    $field = mb_convert_encoding($field, 'UTF-8', 'UTF-8');
+                    $field = @iconv('UTF-8', 'UTF-8//TRANSLIT', $field);
+                }
+            }
+            unset($field);
+
             if (count($rowData) < 13) {
                 return [
                     'success' => false,
@@ -295,7 +344,13 @@ class EmployeeController extends Controller
                 ];
             }
 
-            $email = trim($rowData[9] ?? '');
+            $rawEmail = $rowData[9] ?? '';
+            $email = trim($rawEmail);
+            $email = str_replace(["\xEF\xBB\xBF", "\u{FEFF}"], '', $email);
+            $email = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $email);
+            $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+            $email = strtolower($email);
+
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 return [
                     'success' => false,
@@ -378,5 +433,25 @@ class EmployeeController extends Controller
         $salary = trim($salary);
         $salary = str_replace(['$', ',', ' '], '', $salary);
         return floatval($salary);
+    }
+
+    public function showEmployeeReportByRole(Request $request)
+    {
+        $authUser = auth()->user();
+        $role = $request->input('role');
+
+        if (empty($role)) {
+            return redirect()->back()->with('error', 'Debe seleccionar un rol');
+        }
+
+        $employees = Employee::where('locality_id', $authUser->locality_id)
+            ->where('rol', $role)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $pdf = PDF::loadView('reports.generateEmployeeReportByRolePdf', compact('employees', 'authUser', 'role'))
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->stream('empleados_' . $role . '.pdf');
     }
 }

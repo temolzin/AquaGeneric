@@ -218,28 +218,29 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         </thead>
                         <tbody id="earningsDetail">
                             <tr>
-                                @foreach ($daysInSpanish as $dayEnglish => $dayName)
-                                    @php
-                                        $dayEarnings = $week['dailyEarnings'][$dayEnglish] ?? 'N/A';
-                                    @endphp
+                                @foreach ($week['dailyEarnings'] as $dayItem)
                                     <td class="textcenter">
-                                        @if ($dayEarnings === 'N/A')
-                                            {{ $dayEarnings }}
+                                        @if($dayItem['date'] < $startDate || $dayItem['date'] > $endDate)
+                                            NA
                                         @else
-                                            ${{ number_format($dayEarnings, 2) }}
+                                            ${{ number_format($dayItem['amount'] ?? 0, 2) }}
                                         @endif
                                     </td>
                                 @endforeach
                             </tr>
                             <tr>
-                                <td colspan="7" class="totalWeek"><strong>Total de la semana:</strong> ${{ number_format(array_sum(array_filter($week['dailyEarnings'], fn($value) => $value !== 'N/A')), 2) }}</td>
+                                <td colspan="7" class="totalWeek"><strong>Total de la semana:</strong> 
+                                    ${{ number_format($week['weekTotal'] ?? 0, 2) }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             @endforeach
             <div class="totalEarnings">
-                <strong>Total del Periodo: ${{ number_format($totalPeriodEarnings, 2) }}</strong>
+                <strong>Total del Periodo:
+                    ${{ number_format($totalPeriodEarnings, 2) }}
+                </strong>
             </div>
         </div>
         <div class="footer">

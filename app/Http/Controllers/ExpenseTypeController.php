@@ -9,15 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class ExpenseTypeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-    $expenseTypes = ExpenseType::byUserLocality()
-        ->with(['creator', 'locality'])
-        ->orderByRaw('locality_id IS NULL DESC')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10); 
+        $query = ExpenseType::byUserLocality()
+            ->with(['creator', 'locality'])
+            ->orderByRaw('locality_id IS NULL DESC')
+            ->orderBy('created_at', 'desc');
 
-    return view('expenseTypes.index', compact('expenseTypes'));
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $expenseTypes = $query->paginate(10)->appends($request->query());
+
+        return view('expenseTypes.index', compact('expenseTypes'));
     }
 
     public function create()
@@ -29,7 +38,7 @@ class ExpenseTypeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 
@@ -64,7 +73,7 @@ class ExpenseTypeController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 
@@ -80,11 +89,17 @@ class ExpenseTypeController extends Controller
 
     public function destroy(ExpenseType $expenseType)
     {
-    $this->authorizeLocality($expenseType);
-    $expenseType->delete();
+        $this->authorizeLocality($expenseType);
 
-    return redirect()->route('expenseTypes.index')
-        ->with('success', 'Tipo de gasto eliminado exitosamente.');
+        if ($expenseType->generalExpenses()->exists()) {
+            return redirect()->route('expenseTypes.index')
+                ->with('error', 'No se puede eliminar este tipo de gasto porque tiene gastos asociados.');
+        }
+
+        $expenseType->delete();
+
+        return redirect()->route('expenseTypes.index')
+            ->with('success', 'Tipo de gasto eliminado exitosamente.');
     }
 
     private function authorizeLocality(ExpenseType $expenseType)

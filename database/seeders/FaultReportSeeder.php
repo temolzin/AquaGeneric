@@ -21,7 +21,7 @@ class FaultReportSeeder extends Seeder
             ->distinct()
             ->pluck('users.id')
             ->toArray();
-        $statuses = ['Earring', 'In process', 'Resolved', 'Closed'];
+        $statuses = ['pending', 'in_review', 'completed'];
 
         foreach (range(1, 20) as $i) {
             DB::table('fault_report')->insert([ 
@@ -54,7 +54,6 @@ class FaultReportSeeder extends Seeder
                 'status'        => $faker->randomElement($statuses),
                 'date_report'   => $faker->dateTimeBetween('-6 months', 'now'),
                 'created_at'    => now(),
-                'updated_at'    => now(),
                 'deleted_at'    => null,
             ]);
         }

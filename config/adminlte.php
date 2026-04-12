@@ -312,7 +312,7 @@ return [
         'text' => 'Panel',
         'url' => '/dashboard',
         'icon' => 'fas fa-fw fa-home',
-    ], 
+    ],
     [
         'text' => 'Gestión de Pagos',
         'icon' => 'fas fa-fw fa-dollar-sign',
@@ -352,7 +352,7 @@ return [
                 'url' => '/sections',
                 'icon' => 'fas fa-fw fa-th-large',
                 'can'  => 'viewSections'
-            ],   
+            ],
         ],
     ],
     [
@@ -458,9 +458,21 @@ return [
         'can'  => 'viewDebts'
     ],
     [
+        'text' => 'Categorías de Deuda',
+        'url' => '/debtCategories',
+        'icon' => 'fas fa-fw fa-tags',
+        'can' => 'viewDebtCategories'
+    ],
+    [
         'text' => 'Localidades',
         'url' => '/localities',
         'icon' => 'fas fa-fw fa-map-marker-alt',
+        'can'  => 'viewLocality'
+    ],
+    [
+        'text' => 'Verificación Webhooks',
+        'url' => '/openpay/webhook-verifications',
+        'icon' => 'fas fa-fw fa-key',
         'can'  => 'viewLocality'
     ],
     [
@@ -491,6 +503,12 @@ return [
         'url' => '/viewCustomerDebts',
         'can'  => 'viewCustomerDebts',
         'icon' => 'fas fa-fw fa-exclamation-circle text-white',
+    ],
+    [
+        'text' => 'Mis Tarjetas',
+        'url' => '/customerCards',
+        'can'  => 'viewCustomerDebts',
+        'icon' => 'fas fa-fw fa-credit-card text-white',
     ],
     [
         'text' => 'Mis Tomas de Agua',
@@ -642,6 +660,16 @@ return [
                     'type' => 'css',
                     'asset' => true,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'css/select2/select2.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/select2-init.js',
                 ],
             ],
         ],

@@ -13,6 +13,14 @@
                     @method('PUT')
                     <div class="card-body">
                         <div class="card">
+                            <div class="card-header py-2 bg-secondary">
+                                <h3 class="card-title">Datos del Ingreso</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -38,14 +46,14 @@
                                                 placeholder="Ingresa el monto" value="{{ $earning->amount }}" required />
                                             </div>
                                         </div>
-                                    </div> 
+                                    </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="earning_type_id_update" class="form-label">Tipo(*)</label>
                                             <select id="earning_type_id_update" class="form-control select2" name="earning_type_id_update" required>
                                                 <option value="">Selecciona el tipo de ingreso</option>
                                                 @foreach($earningTypes as $earningType)
-                                                    <option value="{{ $earningType->id }}" 
+                                                    <option value="{{ $earningType->id }}"
                                                         style="color: {{ $earningType->color }};"
                                                         {{ $earning->earning_type_id == $earningType->id ? 'selected' : '' }}>
                                                         {{ $earningType->name }}
@@ -57,7 +65,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="earningDate" class="form-label">Fecha del ingreso(*)</label>
-                                            <input type="date" class="form-control" name="earningDateUpdate" value="{{ $earning->earning_date }}" required />
+                                            <input type="date" class="form-control" name="earningDateUpdate" value="{{ \Carbon\Carbon::parse($earning->earning_date)->format('Y-m-d') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-12">

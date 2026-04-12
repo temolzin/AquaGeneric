@@ -41,7 +41,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Registrado por</label>
-                                        <input type="text" disabled class="form-control" value="{{ $notice->creator->name }}" />
+                                        <input type="text" disabled class="form-control" value="{{ $notice->creator->name }} {{ $notice->creator->last_name }}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">

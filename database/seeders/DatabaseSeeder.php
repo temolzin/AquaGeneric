@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CustomersTableSeeder::class);
         $this->call(SectionsSeeder::class);
         $this->call(WaterConnectionsTableSeeder::class);
+        $this->call(DebtCategoriesTableSeeder::class);
         $this->call(DebtsTableSeeder::class);
         $this->call(PaymentsTableSeeder::class);
         $this->call(DashboardExpiringPaidDebtsSeeder::class);
@@ -40,5 +41,10 @@ class DatabaseSeeder extends Seeder
         $this->call(EarningTypeSeeder::class);
         $this->call(GeneralEarningsSeeder::class);
         $this->call(LogInventorySeeder::class);
+        $this->call(LogWaterConnectionTransferSeeder::class);
+        $this->call(MovementsHistorySeeder::class);
+        $this->call(LogFaultReportSeeder::class);
+        $this->call(CustomerCardsSeeder::class);
+        $this->call(LocalityOpenPaySeeder::class);
     }
 }

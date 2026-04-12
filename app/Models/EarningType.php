@@ -34,11 +34,24 @@ class EarningType extends Model
         return $this->belongsTo(Locality::class);
     }
 
+    public function generalEarnings()
+    {
+        return $this->hasMany(GeneralEarning::class, 'earning_type_id');
+    }
+
+    public function hasDependencies()
+    {
+        return $this->generalEarnings()->exists();
+    }
+
     public function scopeByUserLocality($query)
     {
         $user = auth()->user();
         if ($user && $user->locality_id) {
-            return $query->where('locality_id', $user->locality_id)->orWhereNull('locality_id');
+            return $query->where(function($q) use ($user) {
+                $q->where('locality_id', $user->locality_id)
+                  ->orWhereNull('locality_id');
+            });
         }
         return $query;
     }

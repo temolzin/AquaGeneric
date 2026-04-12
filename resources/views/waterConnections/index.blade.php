@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Tomas')
 
@@ -11,7 +11,7 @@
                     <h2>Tomas</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                                 <form method="GET" action="{{ route('waterConnections.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control"
@@ -25,12 +25,12 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2"
+                                <button class="btn btn-success mt-2 mr-1"
                                         data-toggle='modal' data-target="#createWaterConnections"
                                         title="Registrar Toma">
                                     <i class="fa fa-plus"></i>
-                                    <span class="d-none d-lg-inline">Registrar Toma</span>
-                                    <span class="d-inline d-lg-none">Nueva Toma</span>
+                                    <span class="d-none d-md-inline">Registrar Toma</span>
+                                    <span class="d-inline d-md-none">Registrar</span>
                                 </button>
                             </div>
                         </div>
@@ -49,8 +49,8 @@
                                             <th>PROPIETARIO</th>
                                             <th>COSTO</th>
                                             <th>TIPO</th>
-                                            <th>SECCIÓN</th> 
-                                            <th>OPCIONES</th>
+                                            <th>SECCIÓN</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -70,7 +70,11 @@
                                                             <span class="text-danger">Toma sin cliente asignado</span>
                                                         @endif
                                                     </td>
-                                                    <td>${{ $connection->cost->price }}</td>
+                                                   <td>
+                                                        {!! $connection->cost
+                                                            ? '$' . number_format($connection->cost->price, 2)
+                                                            : '<span class="text-danger">Costo no disponible</span>' !!}
+                                                    </td>
                                                     @if ($connection->type === 'residencial')
                                                         <td>Residencial</td>
                                                     @elseif ($connection->type === 'commercial')
@@ -94,10 +98,30 @@
                                                             @endcan
 
                                                             @can('editWaterConnection')
-                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $connection->id }}">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
+                                                            <span title="{{ $connection->is_canceled ? 'Eliminación no permitida: toma cancelada' : 'Editar Datos' }}">
+                                                                <button type="button"
+                                                                        class="btn {{ $connection->is_canceled ? 'btn-secondary' : 'btn-warning' }} mr-2"
+                                                                        data-toggle="{{ $connection->is_canceled ? '' : 'modal' }}"
+                                                                        data-target="{{ $connection->is_canceled ? '' : '#edit' . $connection->id }}"
+                                                                        {{ $connection->is_canceled ? 'disabled' : '' }}>
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                            </span>
                                                             @endcan
+
+                                                            <button type="button" class="btn btn-primary mr-2" data-toggle="modal" title="Detalles / Historial"  data-target="#details{{ $connection->id }}">
+                                                                <i class="fas fa-history"></i>
+                                                            </button>
+
+                                                            @if(isset($connection->customer_status) && (int)$connection->customer_status === 0)
+                                                                <button type="button"
+                                                                        class="btn btn-dark mr-2"
+                                                                        title="Cambiar propietario (titular fallecido)"
+                                                                        data-toggle="modal"
+                                                                        data-target="#transferOwner{{ $connection->id }}">
+                                                                    <i class="fas fa-exchange-alt"></i>
+                                                                </button>
+                                                            @endif
 
                                                             {{--
                                                             @can('deleteWaterConnection')
@@ -117,7 +141,7 @@
                                                                 <i class="fas fa-info-circle"></i>
                                                                 </button>
 
-                                                                <button type="button" class="btn"  style="background-color: #0d6efd;  margin-left: 8px;" data-toggle="modal" title="Reactivar toma de agua" data-target="#ReactivateWaterService{{ $connection->id }}">
+                                                                <button type="button" class="btn mr-2"  style="background-color: #0d6efd;  margin-left: 8px;" data-toggle="modal" title="Reactivar toma de agua" data-target="#ReactivateWaterService{{ $connection->id }}">
                                                                 <i class="fas fa-sync-alt"></i>
                                                                 </button>
                                                             @endif
@@ -131,6 +155,8 @@
                                                 @include('waterConnections.show')
                                                 @include('waterConnections.edit')
                                                 @include('waterConnections.delete')
+                                                @include('waterConnections.details', ['connection' => $connection])
+                                                @include('waterConnections.transfer', ['connection' => $connection, 'customers' => $customers])
 
                                                 <div class="modal fade" id="cancel{{ $connection->id }}" tabindex="-1" role="dialog" aria-labelledby="cancelLabel{{ $connection->id }}" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
@@ -189,16 +215,15 @@
                                                                     </button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <label for="cancelDescription{{ $connection->id }}">Cliente</label>
-                                                                    <select class="form-control select2" name="customer_id" id="customer_id" required>
-                                                                        <option value="">Selecciona un cliente</option>
-                                                                        @foreach($customers as $customer)
-                                                                            @if($customer->user)
-                                                                                <option value="{{ $customer->id }}">
-                                                                                    {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
-                                                                                </option>
-                                                                            @endif
-                                                                        @endforeach
+                                                                    <label for="cancelDescription{{ $connection->id }}">Cliente Original</label>
+                                                                    <select class="form-control select2" name="customer_id" id="customer_id{{ $connection->id }}" required>
+                                                                        @if($connection->customer)
+                                                                            <option value="{{ $connection->customer->id }}" selected>
+                                                                                {{ $connection->customer->id }} - {{ $connection->customer->name }} {{ $connection->customer->last_name }}
+                                                                            </option>
+                                                                        @else
+                                                                            <option value="">No hay cliente asignado</option>
+                                                                        @endif
                                                                     </select>
                                                                 </div>
                                                                 <div class="modal-footer">
@@ -259,10 +284,10 @@
         var modal = $(this);
         var img = modal.find('#qrImage');
         var downloadBtn = modal.find('#downloadQrBtn');
-        
+
         img.attr('src', '').attr('alt', 'Cargando...');
         downloadBtn.attr('href', '#').hide();
-        
+
         $.ajax({
             url: '/waterConnections/' + id + '/qr-generate',
             method: 'GET',
@@ -290,7 +315,28 @@
 
         $('#waterConnections').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,
@@ -317,29 +363,52 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-    });
 
-    $('#createWaterConnections').on('shown.bs.modal', function() {
-        $('.select2').select2({
-            dropdownParent: $('#createWaterConnections')
+        const loadedHistory = {};
+
+        $('div.modal[id^="details"]').on('shown.bs.modal', function () {
+            const $modal = $(this);
+            const connectionId = $modal.data('connection-id');
+
+            if (loadedHistory[connectionId]) return;
+
+            const $container = $('#historyContent' + connectionId);
+            $container.html('<div class="text-muted">Cargando historial...</div>');
+
+            $.get('/waterConnections/' + connectionId + '/history')
+                .done(function (html) {
+                    $container.html(html);
+                    loadedHistory[connectionId] = true;
+                })
+                .fail(function () {
+                    $container.html('<div class="alert alert-danger mb-0">No se pudo cargar el historial.</div>');
+                });
         });
-    });
 
-    $('[id^="edit"]').on('shown.bs.modal', function() {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
+        const loadedDebts = {};
+
+        $(document).on('click', 'a[id^="debts-tab-"]', function () {
+            const connectionId = $(this).attr('id').replace('debts-tab-', '');
+
+            if (loadedDebts[connectionId]) return;
+
+            const $container = $('#debtsContent' + connectionId);
+            $container.html('<div class="text-muted">Cargando deudas...</div>');
+
+            $.get('/waterConnections/' + connectionId + '/debts')
+                .done(function (html) {
+                    $container.html(html);
+                    loadedDebts[connectionId] = true;
+                })
+                .fail(function () {
+                    $container.html('<div class="alert alert-danger mb-0">No se pudieron cargar las deudas.</div>');
+                });
         });
     });
 
     @if(session('debtError'))
         $('#debtErrorModal').modal('show');
     @endif
-    
-    $(document).on('shown.bs.modal', '.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
 </script>
 
 <div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">

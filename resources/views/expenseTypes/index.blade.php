@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Tipos de Gasto')
 
@@ -11,13 +11,25 @@
                     <h2>Tipos de Gasto</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
-                                        data-toggle="modal" data-target="#createExpenseTypeModal" title="Registrar Tipo de Gasto">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-md-inline">Registrar Tipo</span>
-                                    <span class="d-inline d-md-none">Tipo</span>
-                                </button>
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('expenseTypes.index') }}" class="mb-3 mb-lg-0 col-md-9 px-0" style="min-width: 300px;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción..." value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Tipo de Gasto">
+                                                <i class="fa fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-wrap justify-content-md-end justify-content-start flex-grow-1 mt-2 mt-lg-0">
+                                    <button type="button" class="btn btn-success"
+                                            data-toggle="modal" data-target="#createExpenseTypeModal" title="Registrar Tipo de Gasto">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Tipo</span>
+                                        <span class="d-inline d-md-none">Tipo</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -33,7 +45,7 @@
                                             <th>ID</th>
                                             <th>TIPO DE GASTO</th>
                                             <th>DESCRIPCIÓN</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -55,10 +67,16 @@
                                                             <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#editExpenseType{{ $expenseType->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" 
-                                                            data-toggle="modal" data-target="#deleteExpenseType{{ $expenseType->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
+                                                            @if ($expenseType->hasDependencies())
+                                                                <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen gastos asociados." disabled>
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @else
+                                                                <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro"
+                                                                data-toggle="modal" data-target="#deleteExpenseType{{ $expenseType->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
                                                         @endif
                                                     </div>
                                                 </td>
@@ -93,12 +111,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .color-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }
@@ -110,7 +128,28 @@
     $(document).ready(function() {
         $('#expenseTypes').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,

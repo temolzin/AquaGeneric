@@ -120,6 +120,22 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite ver las Categorías de Incidentes.'
         ])->assignRole([$roleSupervisor, $roleSecretariat]);
         Permission::firstOrCreate([
+            'name' => 'viewDebtCategories',
+            'description' => 'Permite ver las Categorías de Deudas.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'createDebtCategories',
+            'description' => 'Permite crear Categorías de Deudas.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'editDebtCategories',
+            'description' => 'Permite editar Categorías de Deudas.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'deleteDebtCategories',
+            'description' => 'Permite eliminar Categorías de Deudas.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
             'name' => 'editIncidentCategories',
             'description' => 'Permite editar Categorías de Incidentes.'
         ])->assignRole($roleSupervisor);
@@ -298,7 +314,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::firstOrCreate([
             'name' => 'createInventoryCategories',
             'description' => 'Permite crear Categorías de Inventario.'
-        ])->assignRole([$roleSupervisor]);
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
         Permission::firstOrCreate([
             'name' => 'editInventoryCategories',
             'description' => 'Permite editar Categorías de Inventario.'

@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Pagos')
 
@@ -45,26 +45,26 @@
                                 </form>
                             </div>
                             <div class="col-12">
-                                <div class="d-flex flex-wrap gap-2 mb-2">
-                                    <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1" data-toggle="modal"
+                                <div class="d-flex flex-wrap mb-2">
+                                    <button type="button" class="btn btn-success mt-2 mx-1 mb-2" data-toggle="modal"
                                         data-target="#createPayment" title="Registrar Pago">
                                         <i class="fa fa-plus"></i>
                                         <span class="d-none d-md-inline">Registrar Pago</span>
                                         <span class="d-inline d-md-none">Registrar Pago</span>
                                     </button>
-                                    <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1" target="_blank"
+                                    <a type="button" class="btn btn-secondary mt-2 mx-1 mb-2" target="_blank"
                                         href="{{ route('report.current-customers') }}" title="Clientes al Día">
                                         <i class="fas fa-file-pdf"></i>
                                         <span class="d-none d-md-inline">Clientes al Día</span>
                                         <span class="d-inline d-md-none">Clientes al Día</span>
                                     </a>
-                                    <button type="button" class="btn bg-maroon flex-grow-1 flex-md-grow-0 ml-1 mt-2 mr-2" data-toggle="modal"
+                                    <button type="button" class="btn bg-maroon mt-2 mx-1 mb-2" data-toggle="modal"
                                         data-target="#clientPayments" title="Pagos por Cliente">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span class="d-none d-md-inline">Pagos por Cliente</span>
                                         <span class="d-inline d-md-none">Por Cliente</span>
                                     </button>
-                                    <button type="button" class="btn bg-purple flex-grow-1 flex-md-grow-0 mt-2 ml-1" data-toggle="modal"
+                                    <button type="button" class="btn bg-purple mt-2 mx-1 mb-2" data-toggle="modal"
                                         data-target="#waterConnectionPayments" title="Pagos por Toma">
                                         <i class="fas fa-fw fa-water"></i>
                                         <span class="d-none d-md-inline">Pagos por Toma</span>
@@ -113,16 +113,18 @@
                                                                 <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $payment->id }}">
                                                                     <i class="fas fa-eye"></i>
                                                                 </button>
-                                                                @can('editPayment')
-                                                                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#editPayment{{$payment->id}}">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </button>
-                                                                @endcan
-                                                                @can('deletePayment')
-                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $payment->id }}">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                                @endcan
+                                                                @if($payment->method !== 'openpay')
+                                                                    @can('editPayment')
+                                                                    <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#editPayment{{$payment->id}}">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </button>
+                                                                    @endcan
+                                                                    @can('deletePayment')
+                                                                    <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $payment->id }}">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </button>
+                                                                    @endcan
+                                                                @endif
                                                                 <a type="button" class="btn btn-block bg-gradient-secondary mr-2" target="_blank" title="Generar Recibo"
                                                                     href="{{ route('reports.receiptPayment', Crypt::encrypt($payment->id)) }}">
                                                                     <i class="fas fa-file-invoice"></i>

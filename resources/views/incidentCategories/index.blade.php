@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Categorías de Incidencia')
 
@@ -9,22 +9,34 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Categoría de Incidencias</h2>
-                    <div class="row mb-2">
+                    <div class="row">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
-                                        data-toggle="modal" data-target="#create" title="Registrar Categoría">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-md-inline">Registrar Categoría</span>
-                                    <span class="d-inline d-md-none">Registrar Categoría</span>
-                                </button>
-                                <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1"
-                                target="_blank" title="Generar Lista"
-                                href="{{ route('report.generateIncidentCategoyListReport') }}">
-                                    <i class="fas fa-file-pdf"></i>
-                                    <span class="d-none d-md-inline">Generar Lista</span>
-                                    <span class="d-inline d-md-none">Generar Lista</span>
-                                </a>
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('incidentCategories.index') }}" class="mb-3 mb-lg-3 col-md-8 px-0" style="min-width: 300px;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción..." value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Categorías">
+                                                <i class="fa fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                                    <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
+                                            data-toggle="modal" data-target="#create" title="Registrar Categoría">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Categoría</span>
+                                        <span class="d-inline d-md-none">Registrar Categoría</span>
+                                    </button>
+                                    <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1"
+                                    target="_blank" title="Generar Lista"
+                                    href="{{ route('report.generateIncidentCategoyListReport') }}">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <span class="d-none d-md-inline">Generar Lista</span>
+                                        <span class="d-inline d-md-none">Generar Lista</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -40,7 +52,7 @@
                                             <th>ID</th>
                                             <th>NOMBRE</th>
                                             <th>DESCRIPCIÓN</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -109,12 +121,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .status-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .status-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }
@@ -126,7 +138,28 @@
     $(document).ready(function() {
         $('#incidentCategories').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,
@@ -154,16 +187,8 @@
             });
         }
 
-        $('#create').on('shown.bs.modal', function() {
-            $('.select2').select2({
-                dropdownParent: $('#create')
-            });
-        });
-
         $('[id^="edit"]').on('shown.bs.modal', function() {
-            $('.select2').select2({
-                dropdownParent: $(this)
-            });
+            reinitializeSelect2();
         });
     });
 </script>

@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Perfil')
 
@@ -16,7 +16,7 @@
     @php
         $usersPercentage = 0;
         $waterPercentage = 0;
-        
+
         if($authUser->locality && $authUser->locality->membership) {
             $usersPercentage = $membershipStats['users_limit'] > 0 ? ($membershipStats['users_count'] / $membershipStats['users_limit']) * 100 : 0;
             $waterPercentage = $membershipStats['water_connections_limit'] > 0 ? ($membershipStats['water_connections_count'] / $membershipStats['water_connections_limit']) * 100 : 0;
@@ -33,8 +33,8 @@
                         <div class="card-body box-profile">
                             <div class="text-center">
                                 <div class="profile-pic-container" style="position: relative; display: inline-block;">
-                                    @if ($authUser->getFirstMediaUrl('userGallery'))
-                                        <img class="profile-user-img" style="width: 150px; height: 150px; border-radius: 50%;" src="{{$authUser->getFirstMediaUrl('userGallery') }}" alt="Foto de {{ $authUser->name }}">
+                                      @if ($authUser->adminlte_image())
+                                          <img class="profile-user-img" style="width: 150px; height: 150px; border-radius: 50%;" src="{{ $authUser->adminlte_image() }}" alt="Foto de {{ $authUser->name }}">
                                     @else
                                         <img class="profile-user-img" style="width: 150px; height: 150px; border-radius: 50%;" src="{{ asset('img/userDefault.png') }}">
                                     @endif
@@ -99,7 +99,7 @@
                                             <button type="button" class="btn btn-secondary" id="cancelUpdate">
                                                 Cancelar
                                             </button>
-                                        </div>   
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -138,7 +138,12 @@
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editPassword">
                                             Cambiar contraseña
                                         </button>
-                                    </div>   
+                                        @if($authUser->hasRole(['Supervisor', 'Secretaria', 'Admin']))
+                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#editPaymentConfig">
+                                            <i class="fas fa-credit-card mr-1"></i>Configurar Pagos
+                                        </button>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -266,6 +271,7 @@
     </section>
     @include('profile.editImage')
     @include('profile.editPassword')
+    @include('profile.editPaymentConfig')
 @endsection
 
 @section('js')

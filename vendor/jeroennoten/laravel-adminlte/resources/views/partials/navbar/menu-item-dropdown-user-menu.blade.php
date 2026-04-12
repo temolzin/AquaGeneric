@@ -15,8 +15,8 @@
 
     {{-- User menu toggler --}}
     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-        @if (Auth::user()->getFirstMediaUrl('userGallery'))
-            <img src="{{ Auth::user()->getFirstMediaUrl('userGallery') }}"
+        @if (Auth::user()->adminlte_image())
+            <img src="{{ Auth::user()->adminlte_image() }}"
             alt="Foto de {{ Auth::user()->name }}" width="20px" height="20px" style="border-radius: 50%">
         @else
             <img src="{{ asset('img/userDefault.png') }}" width="20px" height="20px" style="border-radius: 50%">
@@ -33,8 +33,8 @@
         @if(!View::hasSection('usermenu_header') && config('adminlte.usermenu_header'))
             <li class="user-header {{ config('adminlte.usermenu_header_class', 'bg-primary') }}
                 @if(!config('adminlte.usermenu_image')) h-auto @endif">
-                @if (Auth::user()->getFirstMediaUrl('userGallery'))
-                    <img src="{{ Auth::user()->getFirstMediaUrl('userGallery') }}"
+                @if (Auth::user()->adminlte_image())
+                    <img src="{{ Auth::user()->adminlte_image() }}"
                     alt="Foto de {{ Auth::user()->name }}" style="border-radius: 50%">
                 @else
                 <img src="{{ asset('img/userDefault.png') }}" style="border-radius: 50%">

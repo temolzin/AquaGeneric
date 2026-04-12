@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Inventario')
 
@@ -12,7 +12,7 @@
                     <div class="row mb-2">
                         <div class="col-lg-12">
                             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
-                                <form method="GET" action="{{ route('inventory.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
+                                <form method="GET" action="{{ route('inventory.index') }}" class="flex-grow-1 mt-2 col-md-8 px-0" style="min-width: 328px;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por ID, Nombre, Categoría, Material" value="{{ request('search') }}">
                                         <div class="input-group-append">
@@ -29,11 +29,14 @@
                                         <span class="d-none d-md-inline">Registrar Componente</span>
                                         <span class="d-inline d-md-none">Nuevo Componente</span>
                                     </button>
-                                    <a class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank" 
-                                    href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}" 
+                                    <a class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank"
+                                    href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}"
                                     title="Generar Lista">
                                         <i class="fas fa-file-pdf"></i> Generar Lista
                                     </a>
+                                    <button class="btn btn bg-purple flex-grow-1 flex-md-grow-0 ml-1 mt-2" data-toggle="modal" data-target="#importData" title="Importar desde CSV">
+                                        <i class="fas fa-file-csv"></i> Importar Datos
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -53,7 +56,7 @@
                                             <th>CATEGORÍA</th>
                                             <th>MATERIAL</th>
                                             <th>DIMENSIONES</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -112,6 +115,7 @@
                                     </tbody>
                                 </table>
                                 @include('inventory.create', ['localities' => $localities, 'users' => $users, 'categories' => $categories])
+                                @include('inventory.import')
                                 <div class="d-flex justify-content-center">
                                     {!! $components->links('pagination::bootstrap-4') !!}
                                 </div>
@@ -131,12 +135,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .color-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }
@@ -144,15 +148,114 @@
 @endsection
 
 @section('js')
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     $(document).ready(function() {
         $('#inventory').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,
             searching: false
+        });
+
+        $('#excel_file').on('change', function() {
+            var fileName = $(this).val().split('\\').pop();
+            $('#fileLabel').text(fileName || 'Ningún archivo seleccionado');
+            $('#importResults').addClass('d-none');
+            $('#importErrors').addClass('d-none');
+        });
+
+        $('#importForm').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            var importButton = $('#importButton');
+            var progressContainer = $('#progressContainer');
+            var progressBar = $('#progressBar');
+            var progressText = $('#progressText');
+
+            progressContainer.removeClass('d-none');
+            importButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Importando...');
+
+            axios.post('{{ route('inventory.import') }}', formData, {
+                headers: {'Content-Type': 'multipart/form-data'},
+                onUploadProgress: function(progressEvent) {
+                    if (progressEvent.lengthComputable) {
+                        var percentComplete = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        progressBar.css('width', percentComplete + '%');
+                        progressText.text(percentComplete + '%');
+                    }
+                }
+            })
+            .then(function(response) {
+                $('#importForm')[0].reset();
+                $('#fileLabel').text('Ningún archivo seleccionado');
+                progressContainer.addClass('d-none');
+                progressBar.css('width', '0%');
+                progressText.text('0%');
+                importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar Datos');
+
+                if (response.data.failed === 0) {
+                    $('#importResults').removeClass('d-none');
+                    $('#resultsContent').html(`
+                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                    `);
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
+                    $('#importErrors').removeClass('d-none');
+                    let errorsHtml = `
+                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                        <ul class="mt-2 mb-0">
+                    `;
+                    response.data.errors.forEach(error => {
+                        errorsHtml += `<li>${error}</li>`;
+                    });
+                    errorsHtml += '</ul>';
+                    $('#errorsContent').html(errorsHtml);
+                }
+            })
+            .catch(function(error) {
+                $('#importErrors').removeClass('d-none');
+                let errorMessage = 'Error al importar el archivo. Verifica el formato.';
+
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                }
+
+                $('#errorsContent').html('<p>' + errorMessage + '</p>');
+                progressContainer.addClass('d-none');
+                importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar Datos');
+            });
         });
 
         var successMessage = "{{ session('success') }}";
@@ -175,24 +278,6 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-    });
-
-    $('#createInventory').on('shown.bs.modal', function() {
-        $('.select2').select2({
-            dropdownParent: $('#createInventory')
-        });
-    });
-
-    $('[id^="edit"]').on('shown.bs.modal', function() {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
-
-    $(document).on('shown.bs.modal', '.modal', function() {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
     });
 </script>
 @endsection

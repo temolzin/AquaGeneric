@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Membresías')
 
@@ -24,11 +24,6 @@
                                         </div>
                                     </form>
                                     <div class="d-flex flex-wrap justify-content-end gap-2 w-100 w-md-auto">
-                                        <button class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-2" data-toggle='modal'
-                                                data-target="#createMembership" title="Registrar Membresía">
-                                            <i class="fa fa-plus"></i>
-                                            <span class="d-none d-md-inline">Registrar Membresía</span>
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -48,7 +43,7 @@
                                                 <th>DURACIÓN</th>
                                                 <th>TOMAS DE AGUA</th>
                                                 <th>USUARIOS</th>
-                                                <th>OPCIONES</th>
+                                                <th class="not-export">OPCIONES</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -80,7 +75,7 @@
                                                                 @endcan
                                                                 @can('deleteMemberships')
                                                                     @if($membership->hasDependencies())
-                                                                        <button type="button" class="btn btn-secondary mr-2" 
+                                                                        <button type="button" class="btn btn-secondary mr-2"
                                                                                 data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
                                                                             <i class="fas fa-trash-alt"></i>
                                                                         </button>
@@ -102,7 +97,6 @@
                                             @endif
                                         </tbody>
                                     </table>
-                                    @include('memberships.create')
                                     <div class="d-flex justify-content-center">
                                         {!! $memberships->links('pagination::bootstrap-4') !!}
                                     </div>
@@ -121,16 +115,37 @@
         $(document).ready(function () {
             $('#memberships').DataTable({
                 responsive: true,
-                buttons: ['csv', 'excel', 'print'],
+                buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
                 dom: 'Bfrtip',
                 paging: false,
                 info: false,
                 searching: false
             });
-            
+
             var successMessage = "{{ session('success') }}";
             var errorMessage = "{{ session('error') }}";
-            
+
             if (successMessage) {
                 Swal.fire({
                     icon: 'success',
@@ -139,7 +154,7 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
-            
+
             if (errorMessage) {
                 Swal.fire({
                     icon: 'error',
@@ -148,6 +163,15 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
+
+            @if ($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: @json($errors->first()),
+                    confirmButtonText: 'Aceptar'
+                });
+            @endif
         });
     </script>
 @endsection

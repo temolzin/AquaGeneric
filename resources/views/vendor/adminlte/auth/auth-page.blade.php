@@ -7,7 +7,8 @@
     <link rel="icon" href="{{ asset('img/logo.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
-    
+    <link rel="stylesheet" href="{{ asset('css/custom-auth.css') }}">
+
     @php
         $authType = $authType ?? 'login';
         $dashboardUrl = View::getSection('dashboard_url') ?? config('adminlte.dashboard_url', 'home');
@@ -41,8 +42,8 @@
             max-width: 780px;
             width: 100%;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 18px; 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.25); 
+            border-radius: 18px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
             overflow: hidden;
             backdrop-filter: blur(10px);
             min-height: 520px;
@@ -51,7 +52,7 @@
         .info-section {
             flex: 1;
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            padding: 35px 30px; 
+            padding: 35px 30px;
             color: white;
             display: flex;
             flex-direction: column;
@@ -77,37 +78,37 @@
         }
 
         .app-title {
-            font-size: 2.1rem; 
+            font-size: 2.1rem;
             font-weight: 800;
-            margin-bottom: 8px; 
+            margin-bottom: 8px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .welcome-title {
-            font-size: 1.5rem; 
+            font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 15px; 
+            margin-bottom: 15px;
             opacity: 0.95;
         }
 
         .app-description {
-            font-size: 0.95rem; 
-            margin-bottom: 30px; 
+            font-size: 0.95rem;
+            margin-bottom: 30px;
             opacity: 0.9;
             line-height: 1.5;
         }
 
         .features-list {
-            margin-top: 25px; 
+            margin-top: 25px;
         }
 
         .feature-item {
             display: flex;
             align-items: center;
-            margin-bottom: 15px; 
-            padding: 12px 15px; 
+            margin-bottom: 15px;
+            padding: 12px 15px;
             background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px; 
+            border-radius: 10px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
@@ -115,13 +116,13 @@
 
         .feature-item:hover {
             background: rgba(255, 255, 255, 0.25);
-            transform: translateX(8px); 
+            transform: translateX(8px);
         }
 
         .feature-checkbox {
-            width: 18px; 
-            height: 18px; 
-            margin-right: 12px; 
+            width: 18px;
+            height: 18px;
+            margin-right: 12px;
             accent-color: #fff;
             cursor: default;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
@@ -129,13 +130,13 @@
 
         .feature-label {
             font-weight: 500;
-            font-size: 0.9rem; 
+            font-size: 0.9rem;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
 
         .login-section {
-            flex: 0 0 380px; 
-            padding: 35px 30px; 
+            flex: 0 0 380px;
+            padding: 35px 30px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -144,32 +145,32 @@
 
         .login-header {
             text-align: center;
-            margin-bottom: 30px; 
+            margin-bottom: 30px;
         }
 
         .login-logo {
-            font-size: 1.9rem; 
+            font-size: 1.9rem;
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 8px; 
+            margin-bottom: 8px;
         }
 
         .login-subtitle {
             color: #64748b;
-            font-size: 0.95rem; 
+            font-size: 0.95rem;
             font-weight: 500;
         }
 
         .form-group {
-            margin-bottom: 20px; 
+            margin-bottom: 20px;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 6px; 
+            margin-bottom: 6px;
             color: #374151;
             font-weight: 600;
-            font-size: 0.85rem; 
+            font-size: 0.85rem;
         }
 
         .input-group {
@@ -178,21 +179,21 @@
 
         .input-icon {
             position: absolute;
-            left: 12px; 
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             color: #6b7280;
             z-index: 2;
-            font-size: 0.9rem; 
+            font-size: 0.9rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 12px 12px 40px; 
+            padding: 12px 12px 12px 40px;
             border: 2px solid #e5e7eb;
-            border-radius: 10px; 
+            border-radius: 10px;
             background: #f9fafb;
-            font-size: 0.9rem; 
+            font-size: 0.9rem;
             transition: all 0.3s ease;
             color: #1f2937;
         }
@@ -206,14 +207,14 @@
 
         .form-control::placeholder {
             color: #9ca3af;
-            font-size: 0.85rem; 
+            font-size: 0.85rem;
         }
 
         .remember-forgot {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 20px 0; 
+            margin: 20px 0;
         }
 
         .custom-checkbox {
@@ -223,14 +224,14 @@
         }
 
         .custom-checkbox input[type="checkbox"] {
-            width: 16px; 
-            height: 16px; 
+            width: 16px;
+            height: 16px;
             border: 2px solid #d1d5db;
             border-radius: 4px;
             background: #fff;
             cursor: pointer;
             position: relative;
-            margin-right: 8px; 
+            margin-right: 8px;
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
@@ -249,21 +250,21 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 10px; 
+            font-size: 10px;
             font-weight: bold;
         }
 
         .checkbox-label {
             color: #374151;
             font-weight: 500;
-            font-size: 0.85rem; 
+            font-size: 0.85rem;
         }
 
         .forgot-link {
             color: #2563eb;
             text-decoration: none;
             font-weight: 500;
-            font-size: 0.85rem; 
+            font-size: 0.85rem;
             transition: color 0.3s ease;
         }
 
@@ -274,25 +275,25 @@
 
         .btn-login {
             width: 100%;
-            padding: 14px; 
+            padding: 14px;
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             border: none;
-            border-radius: 10px; 
+            border-radius: 10px;
             color: white;
-            font-size: 0.95rem; 
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); 
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px; 
+            gap: 8px;
         }
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5); 
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
         }
 
         .btn-login:active {
@@ -301,23 +302,23 @@
 
         .auth-links {
             text-align: center;
-            margin-top: 25px; 
-            padding-top: 20px; 
+            margin-top: 25px;
+            padding-top: 20px;
             border-top: 1px solid #e5e7eb;
         }
 
         .auth-text {
             color: #6b7280;
-            margin-bottom: 8px; 
+            margin-bottom: 8px;
             font-weight: 500;
-            font-size: 0.85rem; 
+            font-size: 0.85rem;
         }
 
         .register-link {
             color: #2563eb;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.9rem; 
+            font-size: 0.9rem;
             transition: color 0.3s ease;
         }
 
@@ -326,41 +327,6 @@
             text-decoration: underline;
         }
 
-        @media (max-width: 768px) {
-            .unified-login-container {
-                flex-direction: column;
-                max-width: 350px; 
-                min-height: auto;
-            }
-            
-            .info-section {
-                padding: 30px 25px; 
-            }
-            
-            .login-section {
-                flex: none;
-                padding: 30px 25px; 
-            }
-            
-            .app-title {
-                font-size: 1.8rem; 
-            }
-            
-            .welcome-title {
-                font-size: 1.3rem; 
-            }
-        }
-
-        @media (max-width: 480px) {
-            .unified-login-container {
-                max-width: 320px;
-                border-radius: 15px;
-            }
-            
-            .info-section, .login-section {
-                padding: 25px 20px;
-            }
-        }
         .logo{
             width: 120px;
             height: 120px;
@@ -373,7 +339,7 @@
 <body class="hold-transition {{ $bodyClasses }}">
 
     <div class="unified-login-container">
-        
+
         <div class="info-section">
             <div class="info-content">
                 <h1 class="app-title">AquaControl</h1>
@@ -381,7 +347,7 @@
                 <p class="app-description">
                     Gestiona tu sistema de agua de manera eficiente y moderna
                 </p>
-                
+
                 <div class="features-list">
                     <div class="feature-item">
                         <input type="checkbox" class="feature-checkbox" id="info-feature1" disabled>

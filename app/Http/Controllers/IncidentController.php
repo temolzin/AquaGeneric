@@ -29,7 +29,7 @@ class IncidentController extends Controller
         $categories = IncidentCategory::where(function ($query) use ($authUser) {
             $query->where('locality_id', $authUser->locality_id)
                   ->orWhereNull('locality_id');
-        })->get();
+        })->latest()->get();
 
         $employees = Employee::where('locality_id', $authUser->locality_id)->get();
         $statuses = IncidentStatus::where('locality_id', $authUser->locality_id)
@@ -48,6 +48,14 @@ class IncidentController extends Controller
     public function store(Request $request)
     {
         $authUser = auth()->user();
+
+        $request->validate([
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            'images.*.image' => 'Cada archivo debe ser una imagen.',
+            'images.*.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'images.*.max' => 'Cada imagen no puede superar los 5MB.',
+        ]);
 
         $incidentData = [
             'name' => $request->input('name'),

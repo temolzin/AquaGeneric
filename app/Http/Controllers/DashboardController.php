@@ -5,6 +5,7 @@ use App\Models\Customer;
 use App\Models\Debt;
 use App\Models\Locality;
 use App\Models\Payment;
+use App\Models\LocalityNotice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -71,9 +72,10 @@ class DashboardController extends Controller
         return $debt->amount - $debt->debt_current;
         });
 
-        $notices = \App\Models\LocalityNotice::with(['creator', 'locality'])
+        $notices = LocalityNotice::with(['creator', 'locality'])
             ->where('locality_id', $authUser->locality_id)
             ->where('is_active', true)
+            ->where('start_date', '<=', now())
             ->where('end_date', '>=', now())
             ->orderBy('created_at', 'desc')
             ->get();

@@ -15,6 +15,14 @@
                     @method('PUT')
                     <div class="card-body">
                         <div class="card">
+                            <div class="card-header py-2 bg-secondary">
+                                <h3 class="card-title">Datos del Reporte</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -32,13 +40,13 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="statusUpdate" class="form-label">Estado(*)</label>
-                                            <select name="statusUpdate" class="form-control select2" required>
-                                                <option value="">Selecciona un estado</option>
-                                                <option value="Earring" {{ $report->status === 'Earring' ? 'selected' : '' }}>Pendiente</option>
-                                                <option value="In process" {{ $report->status === 'In process' ? 'selected' : '' }}>En proceso</option>
-                                                <option value="Resolved" {{ $report->status === 'Resolved' ? 'selected' : '' }}>Resuelto</option>
-                                                <option value="Closed" {{ $report->status === 'Closed' ? 'selected' : '' }}>Cerrado</option>
-                                            </select>
+                                            <input type="text" class="form-control" disabled value="@switch($report->status)
+                                                        @case('pending') Pendiente @break
+                                                        @case('in_review') En revisión @break
+                                                        @case('completed') Completado @break
+                                                        @default {{ $report->status }} @break
+                                                    @endswitch" />
+                                            <input type="hidden" name="statusUpdate" value="{{ $report->status }}" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

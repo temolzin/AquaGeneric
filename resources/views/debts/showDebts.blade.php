@@ -105,6 +105,13 @@
                                                                         <p><strong>Pendiente:</strong> ${{ number_format($pendingDebt, 2) }}</p>
                                                                     </div>
                                                                     <div class="col-6 col-md-2">
+                                                                        <p><strong>Categoría:</strong>
+                                                                            <span class="badge {{ $waterConnectionDebt->debtCategory->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                                                {{ $waterConnectionDebt->debtCategory->name ?? 'Servicio de Agua' }}
+                                                                            </span>
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="col-6 col-md-2">
                                                                         <p><strong>Status:</strong>
                                                                             @if ($waterConnectionDebt->status === 'pending')
                                                                                 <button class="btn btn-danger btn-xs">No pagada</button>
@@ -175,21 +182,19 @@
     document.getElementById('searchDebt{{ $debt->waterConnection->customer->id }}').addEventListener('input', function () {
         let searchValue = this.value.toLowerCase();
         let connections = document.querySelectorAll('#viewDebts{{ $debt->waterConnection->customer->id }} .row.no-gutters.align-items-center');
-
+        
         connections.forEach(function (connection) {
             let connectionId = connection.querySelector('.col-lg-2 input')?.value.toLowerCase() || '';
             let connectionName = connection.querySelector('.col-lg-8 input')?.value.toLowerCase() || '';
-
             let debtItems = connection.nextElementSibling.querySelectorAll('.debt-item');
             let hasMatch = false;
-
+            
             debtItems.forEach(function (item) {
                 let id = item.querySelector('.col-md-1 p')?.textContent?.toLowerCase() || '';
                 let amount = item.querySelector('.col-md-2 p')?.textContent?.toLowerCase() || '';
                 let status = item.querySelector('.col-md-2 p button')?.textContent?.toLowerCase() || '';
                 let startDate = item.querySelector('.col-md-4 p')?.textContent?.toLowerCase() || '';
                 let endDate = item.querySelector('.col-md-4 p + p')?.textContent?.toLowerCase() || '';
-
                 if (
                     id.includes(searchValue) ||
                     amount.includes(searchValue) ||
@@ -223,14 +228,13 @@
             details.style.display = 'none';
         });
     });
-
+    
     document.querySelector('#viewDebts{{ $debt->waterConnection->customer->id }}').addEventListener('click', function(event) {
         const button = event.target.closest('button.toggle-debts');
         if (button) {
             const targetId = button.getAttribute('data-target');
             const details = document.querySelector(targetId);
             const icon = button.querySelector('i');
-
             if (details.style.display === 'none') {
                 details.style.display = 'block';
                 icon.classList.remove('fa-chevron-down');

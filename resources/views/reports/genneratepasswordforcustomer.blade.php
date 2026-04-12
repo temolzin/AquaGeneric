@@ -122,8 +122,8 @@
             padding: 10px;
             position: absolute;
             bottom: 5px;
-            left: 20px; 
-            right: 20px; 
+            left: 20px;
+            right: 20px;
         }
 
         .footer-text {
@@ -177,7 +177,7 @@
                 </td>
                 <td class="report_info">
                     <div class="rounded">
-                        <span class="subtitle">Información de Cuenta</span> 
+                        <span class="subtitle">Información de Cuenta</span>
                         <?php
                         setlocale(LC_TIME, 'es_ES.UTF-8', 'es_MX.UTF-8', 'spanish');
                         if (isset($_GET['date']) && !empty($_GET['date'])) {
@@ -186,7 +186,7 @@
                             $fecha = strftime('%e de %B de %Y');
                         }
                         ?>
-                        <p><strong>Fecha: </strong><?php echo $fecha; ?></p> 
+                        <p><strong>Fecha: </strong><?php echo $fecha; ?></p>
                     </div>
                 </td>
             </tr>
@@ -199,8 +199,14 @@
                         <span class="subtitle">Datos Personales del Usuario</span>
                         <table class="client_data">
                             <tr>
-                                <td><label>ID Cliente:</label> <p>{{ $customer->id }}</p></td>
-                                <td><label>Fecha de Registro:</label> <p>{{ $customer->updated_at }}</p></td>
+                                @if(!empty($showCustomerId))
+                                    <td><label>ID Cliente:</label> <p>{{ $customer->id }}</p></td>
+                                    <td><label>Fecha de Registro:</label> <p>{{ $customer->updated_at }}</p></td>
+                                @else
+                                    <td colspan="2">
+                                        <label>Fecha de Registro:</label> <p>{{ $customer->updated_at }}</p>
+                                    </td>
+                                @endif
                             </tr>
                             <tr>
                                 <td><label>Nombre:</label> <p>{{ $user->name }} {{ $user->last_name }}</p></td>
@@ -223,9 +229,9 @@
                         <span class="subtitle">Información Adicional</span>
                         <table class="client_data">
                             <tr>
-                                <td><label>Estado:</label> <p>{{ $customer->state ?? 'N/A' }}</p></td>                            
-                                <td><label>Localidad:</label> <p>{{ $customer->locality ?? 'N/A' }}</p></td>      
-                                {{-- <td><label>Localidad:</label> <p>{{ $customer->locality->name ?? 'N/A' }}</p></td> --}}                      
+                                <td><label>Estado:</label> <p>{{ $customer->state ?? 'N/A' }}</p></td>
+                                <td><label>Localidad:</label> <p>{{ $customer->locality ?? 'N/A' }}</p></td>
+                                {{-- <td><label>Localidad:</label> <p>{{ $customer->locality->name ?? 'N/A' }}</p></td> --}}
                             </tr>
                             <tr>
                                 <td><label>Calle:</label> <p>{{ $customer->street ?? 'N/A' }}</p></td>
@@ -237,7 +243,7 @@
             </tr>
         </table>
     </div>
-    
+
     <div class="footer_info">
         <a class="footer-text" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
         <a class="footer-text" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>

@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Costos')
 
@@ -9,21 +9,33 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Costos</h2>
-                    <div class="row mb-2">
+                    <div class="row">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-wrap gap-2 justify-content-end">
-                                <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-1" data-toggle="modal"
-                                    data-target="#create" title="Registrar Costo">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-md-inline">Registrar Costo</span>
-                                    <span class="d-inline d-md-none">Registrar Costo</span>
-                                </button>
-                                <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-1" target="_blank"
-                                    title="Generar Lista" href="{{ route('report.generateCostListReport') }}">
-                                    <i class="fas fa-file-pdf"></i>
-                                    <span class="d-none d-md-inline">Generar Lista</span>
-                                    <span class="d-inline d-md-none">Generar Lista</span>
-                                </a>
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('costs.index') }}" class="mb-3 mb-lg-3 col-md-8 px-0" style="min-width: 300px;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Categoría, Precio..." value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Costos">
+                                                <i class="fa fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-1" data-toggle="modal"
+                                        data-target="#create" title="Registrar Costo">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Costo</span>
+                                        <span class="d-inline d-md-none">Registrar Costo</span>
+                                    </button>
+                                    <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-1" target="_blank"
+                                        title="Generar Lista" href="{{ route('report.generateCostListReport') }}">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <span class="d-none d-md-inline">Generar Lista</span>
+                                        <span class="d-inline d-md-none">Generar Lista</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -67,7 +79,10 @@
                                                             @endcan
                                                             @can('deleteCost')
                                                             @if (!is_null($cost->locality_id))
-                                                                <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $cost->id }}">
+                                                                <button type="button"
+                                                                    class="btn {{ $cost->hasDependencies() ? 'btn-secondary' : 'btn-danger' }} mr-2"
+                                                                    title="{{ $cost->hasDependencies() ? 'Eliminación no permitida: este costo tiene tomas de agua asociadas.' : 'Eliminar Registro' }}"
+                                                                    {{ $cost->hasDependencies() ? 'disabled' : 'data-toggle=modal data-target=#delete' . $cost->id }}>
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             @endif
@@ -100,7 +115,15 @@
     $(document).ready(function() {
         $('#costs').DataTable({
                 responsive: true,
-                buttons: ['csv', 'excel', 'print'],
+                buttons:[
+                    {
+                        extend: 'csv',
+                        charset: 'utf-8',
+                        bom: true
+                    },
+                    'excel',
+                    'print'
+                ],
                 dom: 'Bfrtip',
                 paging: false,
                 info: false,

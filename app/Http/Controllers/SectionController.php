@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Section;
 use App\Models\Locality;
+use App\Models\WaterConnection;
 use PDF;
 
 class SectionController extends Controller
@@ -12,20 +13,24 @@ class SectionController extends Controller
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = Section::where('sections.locality_id', $authUser->locality_id)
-            ->orWhereNull('locality_id')
-            ->orderByRaw('locality_id IS NULL DESC')
+
+        $query = Section::where(function($q) use ($authUser) {
+                $q->where('sections.locality_id', $authUser->locality_id)
+                  ->orWhereNull('sections.locality_id');
+            })
+            ->orderByRaw('sections.locality_id IS NULL DESC')
             ->orderBy('sections.created_at', 'desc')
             ->select('sections.*');
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->input('search');
 
             $query->where(function ($q) use ($search) {
                 if (is_numeric($search)) {
                     $q->where('sections.id', $search);
+                } else {
+                    $q->where('sections.name', 'LIKE', "%{$search}%");
                 }
-                $q->orWhere('sections.name', 'LIKE', "%{$search}%");
             });
         }
 
@@ -45,7 +50,7 @@ class SectionController extends Controller
         ]);
 
         Section::create([
-            'locality_id' => $authUser->locality_id, 
+            'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'name' => $request->name,
             'zip_code' => $request->zip_code,
@@ -112,23 +117,31 @@ class SectionController extends Controller
     public function pdfSections(Request $request)
     {
         $authUser = auth()->user();
-        $sectionId = $request->input('section_id'); 
-    
+        $sectionId = $request->input('section_id');
+
         if (!$sectionId) {
             return redirect()->back()->with('error', 'Debe seleccionar una sección.');
         }
-    
+
         $section = Section::where('id', $sectionId)
-            ->where('locality_id', $authUser->locality_id) 
-            ->orWhereNull('locality_id')
-            ->with(['waterConnections.customer', 'waterConnections.cost', 'locality']) 
+            ->where(function ($query) use ($authUser) {
+                $query->where('locality_id', $authUser->locality_id)
+                    ->orWhereNull('locality_id');
+            })
+            ->with([
+                'waterConnections' => function ($query) {
+                    $query->withoutGlobalScope(\App\Models\WaterConnection::SCOPE_NOT_CANCELED)
+                        ->with(['customer', 'cost']);
+                },
+                'locality'
+            ])
             ->firstOrFail();
-    
+
         $pdf = PDF::loadView('reports.pdfSections', compact('section', 'authUser'))
             ->setPaper('A4', 'portrait');
 
         $fileName = 'Tomas_de_agua_de_la_' . str_replace(' ', '_', $section->name) . '.pdf';
-        
+
         return $pdf->stream($fileName);
     }
 }

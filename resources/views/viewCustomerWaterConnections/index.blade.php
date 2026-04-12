@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Mis Tomas de Agua')
 
@@ -38,7 +38,7 @@
                                             <th>NOMBRE</th>
                                             <th>COSTO</th>
                                             <th>TIPO</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,7 +67,7 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
-                                                    <button type="button" class="btn btn-info mr-2" data-toggle="modal" 
+                                                    <button type="button" class="btn btn-info mr-2" data-toggle="modal"
                                                             title="Ver Detalles" data-target="#view{{ $connection->id }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
@@ -110,7 +110,28 @@
     $(document).ready(function() {
         $('#waterConnections').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,

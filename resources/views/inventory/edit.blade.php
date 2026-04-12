@@ -15,6 +15,14 @@
                     @method('PUT')
                     <div class="card-body">
                         <div class="card">
+                            <div class="card-header py-2 bg-secondary">
+                                <h3 class="card-title">Datos del Inventario</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -73,15 +81,3 @@
         </div>
     </div>
 </div>
-
-<style>
-    .select2-container .select2-selection--single {
-        height: 40px;
-        display: flex;
-        align-items: center;
-    }
-    
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 38px;
-    }
-</style>

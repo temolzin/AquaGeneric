@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\WaterConnection;
+
 class Cost extends Model
 {
     use HasFactory,  SoftDeletes;
@@ -17,6 +19,18 @@ class Cost extends Model
         'description',
     ];
 
+    protected static function booted()
+    {
+        parent::booted();
+
+        static::addGlobalScope('byUserLocality', function ($query) {
+            $user = auth()->user();
+            if ($user && $user->locality_id) {
+                $query->where('costs.locality_id', $user->locality_id)
+                      ->orWhereNull('costs.locality_id');
+            }
+        });
+    }
 
     public function locality()
     {
@@ -26,5 +40,27 @@ class Cost extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function waterConnections()
+    {
+        return $this->hasMany(WaterConnection::class, 'cost_id');
+    }
+
+    public function hasDependencies()
+    {
+        return $this->waterConnections()->exists();
+    }
+
+    public function scopeByUserLocality($query)
+    {
+        $user = auth()->user();
+        if ($user && $user->locality_id) {
+            return $query->where(function($q) use ($user) {
+                $q->where('locality_id', $user->locality_id)
+                  ->orWhereNull('locality_id');
+            });
+        }
+        return $query;
     }
 }

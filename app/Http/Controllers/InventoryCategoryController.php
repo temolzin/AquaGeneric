@@ -11,12 +11,20 @@ class InventoryCategoryController extends Controller
 {
     public function index()
     {
-        $inventoryCategories = InventoryCategory::byUserLocality()
+        $query = InventoryCategory::byUserLocality()
             ->with(['creator', 'locality'])
-            ->orWhereNull('locality_id')
             ->orderByRaw('locality_id IS NULL DESC')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10); 
+            ->orderBy('created_at', 'desc');
+
+        if (request()->has('search') && request('search') != '') {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $inventoryCategories = $query->paginate(10)->appends(request()->query());
 
         return view('inventoryCategories.index', compact('inventoryCategories'));
     }
@@ -30,7 +38,7 @@ class InventoryCategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 
@@ -61,7 +69,7 @@ class InventoryCategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'color_index' => 'required|integer|min:0|max:19',
         ]);
 
@@ -77,6 +85,11 @@ class InventoryCategoryController extends Controller
 
     public function destroy(InventoryCategory $inventoryCategory)
     {
+         if ($inventoryCategory->hasDependencies()) {
+            return redirect()->route('inventoryCategories.index')
+                ->with('error', 'No se puede eliminar la categoría porque tiene registros asociados.');
+        }
+
         $inventoryCategory->delete();
 
         return redirect()->route('inventoryCategories.index')

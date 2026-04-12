@@ -29,7 +29,6 @@ class User extends Authenticatable implements HasMedia
      * @var array<int, string>
      */
     protected $fillable=['locality_id','name','last_name','phone','email','password', 'temporary_password'];
-    public $timestamps = false;
 
     /**
      * The attributes that should be hidden for serialization.
@@ -83,5 +82,32 @@ class User extends Authenticatable implements HasMedia
     public function customer(): HasOne
     {
         return $this->hasOne(Customer::class);
+    }
+    
+     public function adminlte_profile_url()
+    {
+        return route('profile.index');
+    }
+
+    public function getAdminlteImageAttribute(): string
+    {
+        $media = $this->getFirstMedia('userGallery');
+        
+        if ($media) {
+            return asset('storage/' . $media->id . '/' . $media->file_name);
+        }
+        
+        return asset('img/userDefault.png');
+    }
+
+    public function adminlte_image(): string
+    {
+        return $this->getAdminlteImageAttribute();
+    }
+
+    public function adminlte_desc()
+    {
+        $roles = $this->getRoleNames();
+        return $roles->isNotEmpty() ? $roles->first() : 'Usuario';
     }
 }

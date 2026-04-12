@@ -23,6 +23,13 @@ class WaterConnection extends Model
         static::addGlobalScope(self::SCOPE_NOT_CANCELED, function ($query) {
             $query->where('is_canceled', false);
         });
+
+        static::addGlobalScope('byUserLocality', function ($query) {
+            $user = auth()->user();
+            if ($user && $user->locality_id) {
+                $query->where('water_connections.locality_id', $user->locality_id);
+            }
+        });
     }
 
     protected $fillable = [
@@ -56,7 +63,7 @@ class WaterConnection extends Model
 
     public function cost()
     {
-        return $this->belongsTo(Cost::class);
+        return $this->belongsTo(Cost::class)->withTrashed();
     }
 
     public function section()
@@ -77,7 +84,7 @@ class WaterConnection extends Model
     public function getStatusCalculatedAttribute()
     {
         $today = Carbon::today();
-        
+
         $debts = $this->debts()->withSum('payments', 'amount')->get();
 
         $hasUnpaidDebt = false;
@@ -85,12 +92,12 @@ class WaterConnection extends Model
 
         foreach ($debts as $debt) {
             $pendingAmount = $debt->amount - $debt->payments_sum_amount;
-            
+
             if ($pendingAmount > 0) {
                 $hasUnpaidDebt = true;
             }
-            
-            if ($debt->status === Debt::STATUS_PAID && 
+
+            if ($debt->status === Debt::STATUS_PAID &&
                 Carbon::parse($debt->start_date)->gt($today)) {
                 $hasFuturePaid = true;
             }
@@ -120,37 +127,37 @@ class WaterConnection extends Model
             self::VIEW_STATUS_CANCELED => 'background-color: #6c757d; color: white;',
         ][$this->getStatusCalculatedAttribute()] ?? '';
     }
-    
+
     public function hasDebt()
     {
         $debts = $this->debts()->withSum('payments', 'amount')->get();
-        
+
         foreach ($debts as $debt) {
             $pendingAmount = $debt->amount - $debt->payments_sum_amount;
             if ($pendingAmount > 0) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     public function getPendingBalance()
     {
         $totalPending = 0;
-        
+
         $unpaidDebts = $this->debts()
             ->withSum('payments', 'amount')
             ->get();
-        
+
         foreach ($unpaidDebts as $debt) {
             $pendingAmount = $debt->amount - $debt->payments_sum_amount;
-            
+
             if ($pendingAmount > 0) {
                 $totalPending += $pendingAmount;
             }
         }
-        
+
         return $totalPending;
     }
 
@@ -163,9 +170,18 @@ class WaterConnection extends Model
     {
         return $this->attributes['cancel_description'];
     }
-    
+
     public function setCancelDescriptionAttribute($value)
     {
         $this->attributes['cancel_description'] = $value;
+    }
+
+    public function scopeByUserLocality($query)
+    {
+        $user = auth()->user();
+        if ($user && $user->locality_id) {
+            return $query->where('locality_id', $user->locality_id);
+        }
+        return $query;
     }
 }

@@ -14,6 +14,14 @@
                 @method('PUT')
                 <div class="card-body">
                     <div class="card">
+                        <div class="card-header py-2 bg-secondary">
+                            <h3 class="card-title">Datos de la Sección</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-12">
@@ -25,14 +33,14 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="zip_code" class="form-label">Código Postal(*)</label>
-                                        <input type="text" class="form-control" name="zip_code" placeholder="Ingresa el código postal" value="{{ $section->zip_code }}" required />
+                                        <input type="text" class="form-control" name="zip_code" placeholder="Ingresa el código postal" maxlength="5" value="{{ $section->zip_code }}" required />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="color" class="form-label">Color(*)</label>
-                                        <div class="input-group">
-                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $section->id }}" required>
+                                        <div class="d-flex align-items-center" style="gap: 0;">
+                                            <select name="color_index" class="form-control select2" id="colorSelect{{ $section->id }}" style="flex: 1;" required>
                                                 <option value="">Selecciona un color</option>
                                                 <option value="13" data-color="#e74c3c" {{ $section->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
                                                 <option value="0"  data-color="#3498db" {{ $section->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
@@ -43,8 +51,7 @@
                                                 <option value="14" data-color="#34495e" {{ $section->color == 'bg-secondary' ? 'selected' : '' }}>Gris oscuro</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <span class="input-group-text" id="colorPreview{{ $section->id }}" style="width: 40px; background-color: {{ $section->color ? pdf_color($section->color) : '#f8f9fa' }}; border: 1px solid {{ $section->color ? pdf_color($section->color) : '#ccc' }};">
-                                                </span>
+                                                <span class="input-group-text" id="colorPreview{{ $section->id }}" style="width: 45px; height: 45px; background-color: {{ $section->color ? pdf_color($section->color) : '#f8f9fa' }}; padding: 0; border: 1px solid {{ $section->color ? pdf_color($section->color) : '#ccc' }};"></span>
                                             </div>
                                         </div>
                                         @error('color_index') <small class="text-danger">{{ $message }}</small> @enderror
@@ -71,15 +78,6 @@
     .modal-content {
         padding-bottom: 0.2rem;
     }
-    .modal-footer {
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
-    }
-    .select2-container .select2-selection--single {
-        height: 36px; 
-        display: flex;
-        align-items: center;
-    }
 </style>
 
 <script>
@@ -87,33 +85,47 @@
         const select = document.getElementById('colorSelect{{ $section->id }}');
         const preview = document.getElementById('colorPreview{{ $section->id }}');
 
+        const updatePreview = () => {
+            if (!select || !preview) return;
+            const selected = select.options[select.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            preview.style.backgroundColor = color;
+            preview.style.border = `1px solid ${color}`;
+        };
+
         if (select && preview) {
-            $('#colorSelect{{ $section->id }}').select2({
-                theme: 'bootstrap4',
-                width: '100%',
-                placeholder: 'Selecciona un color',
-                allowClear: false,
-                dropdownParent: $('#edit{{ $section->id }}')
-            });
-
-            const updatePreview = () => {
-                const selected = select.options[select.selectedIndex];
-                const color = selected?.dataset.color;
-                if (color) {
-                    preview.style.backgroundColor = color;
-                    preview.style.border = '1px solid ' + color;
-                } else {
-                    preview.style.backgroundColor = '#f8f9fa';
-                    preview.style.border = '1px solid #ccc';
-                }
-            };
-
             $('#colorSelect{{ $section->id }}').on('change', updatePreview);
             updatePreview();
+        }
+    });
 
-            $('#edit{{ $section->id }}').on('shown.bs.modal', function () {
-                updatePreview();
-            });
+    $(document).on('shown.bs.modal', '#edit{{ $section->id }}', function() {
+        var modalElement = $(this);
+        var dropdownParent = modalElement.find('.modal-body');
+
+        modalElement.find('.select2').each(function() {
+            if (!$(this).data('select2')) {
+                $(this).select2({
+                    dropdownParent: dropdownParent,
+                    allowClear: false,
+                    width: '100%'
+                });
+            }
+        });
+
+        modalElement.on('keydown', function(e) {
+            if ($('.select2-container--open').length && e.keyCode === 27) {
+                e.stopPropagation();
+            }
+        });
+
+        const select = document.getElementById('colorSelect{{ $section->id }}');
+        const preview = document.getElementById('colorPreview{{ $section->id }}');
+        if (select && preview) {
+            const selected = select.options[select.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
+            preview.style.backgroundColor = color;
+            preview.style.border = `1px solid ${color}`;
         }
     });
 </script>

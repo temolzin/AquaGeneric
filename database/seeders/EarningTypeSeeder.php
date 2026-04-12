@@ -3,23 +3,24 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use App\Models\EarningType;
-use App\Models\Locality;
 use App\Models\User;
 
 class EarningTypeSeeder extends Seeder
 {
     public function run()
     {
-        $localities = Locality::pluck('id')->toArray();
-        $users = User::pluck('id')->toArray();
+        $localityIds = DB::table('localities')->pluck('id')->toArray();
 
-        if (empty($localities) || empty($users)) {
-            $this->command->error('No localities or users found. Skipping earning types seeding.');
+        if (empty($localityIds)) {
+            $this->command->error('No localities found. Skipping earning types seeding.');
             return;
         }
 
-        $userId = $users[0];
+        $adminUserId = DB::table('users')
+            ->where('email', 'jose@gmail.com')
+            ->value('id');
 
         EarningType::updateOrCreate(
             [
@@ -29,9 +30,8 @@ class EarningTypeSeeder extends Seeder
             [
                 'description' => 'Ingreso operativos y administrativos generales sin asignación a una localidad específica.',
                 'color' => color(16),
-                'created_by' => $userId,
+                'created_by' => $adminUserId,
                 'created_at' => now(),
-                'updated_at' => now(),
             ]
         );
 
@@ -78,7 +78,20 @@ class EarningTypeSeeder extends Seeder
             ]
         ];
 
-        foreach ($localities as $localityId) {
+        foreach ($localityIds as $localityId) {
+            $userIds = DB::table('users')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
+                ->where('users.locality_id', $localityId)
+                ->distinct()
+                ->pluck('users.id')
+                ->toArray();
+
+            if (empty($userIds)) {
+                continue;
+            }
+
             foreach ($baseTypes as $type) {
                 EarningType::updateOrCreate(
                     [
@@ -88,7 +101,7 @@ class EarningTypeSeeder extends Seeder
                     [
                         'description' => $type['description'],
                         'color' => $type['color'],
-                        'created_by' => $userId,
+                        'created_by' => collect($userIds)->random(),
                         'created_at' => now(),
                     ]
                 );

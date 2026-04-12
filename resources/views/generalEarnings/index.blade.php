@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Ingresos')
 
@@ -23,7 +23,7 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2" data-toggle='modal' 
+                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2" data-toggle='modal'
                                     data-target="#createGeneralEarnings" title="Registrar Ingreso">
                                     <i class="fa fa-plus"></i>
                                     <span class="d-none d-md-inline">Registrar Ingreso</span>
@@ -45,7 +45,7 @@
                                             <th>CONCEPTO</th>
                                             <th>TIPO</th>
                                             <th>COSTO</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -117,12 +117,12 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .color-badge:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
+
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
     }
@@ -134,7 +134,28 @@
     $(document).ready(function() {
         $('#generalEarnings').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,

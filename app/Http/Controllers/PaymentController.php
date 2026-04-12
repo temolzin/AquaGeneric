@@ -70,7 +70,12 @@ class PaymentController extends Controller
         }
 
         $payments = $query->paginate(10);
-        $customers = Customer::with('user')->where('locality_id', $authUser->locality_id)->get();
+        $customers = Customer::with('user')
+            ->where('locality_id', $authUser->locality_id)
+            ->whereHas('waterConnections.debts', function ($q) {
+                $q->whereIn('status', [Debt::STATUS_PENDING, Debt::STATUS_PARTIAL]);
+            })
+            ->get();
 
         return view('payments.index', compact('payments', 'customers'));
     }
@@ -175,6 +180,11 @@ class PaymentController extends Controller
 
     public function update(Request $request, Payment $payment)
     {
+        if ($payment->method === 'openpay') {
+            return redirect()->route('payments.index')
+                ->with('error', 'Los pagos realizados vía OpenPay no pueden ser editados.');
+        }
+
         $debt = $payment->debt;
         $before = $payment->toArray();
 
@@ -220,6 +230,12 @@ class PaymentController extends Controller
     public function destroy($id)
     {
         $payment = Payment::findOrFail($id);
+
+        if ($payment->method === 'openpay') {
+            return redirect()->route('payments.index')
+                ->with('error', 'Los pagos realizados vía OpenPay no pueden ser eliminados.');
+        }
+
         $payment->delete();
 
         if (!$payment) {
@@ -249,10 +265,17 @@ class PaymentController extends Controller
         $totalEarnings = 0;
 
         for ($month = 1; $month <= 12; $month++) {
-            $earnings = Payment::whereYear('created_at', $year)
+            $payments = Payment::whereYear('created_at', $year)
                 ->whereMonth('created_at', $month)
                 ->where('locality_id', $authUser->locality_id)
                 ->sum('amount');
+
+            $generalEarnings = GeneralEarning::whereYear('earning_date', $year)
+                ->whereMonth('earning_date', $month)
+                ->where('locality_id', $authUser->locality_id)
+                ->sum('amount');
+
+            $earnings = $payments + $generalEarnings;
 
             $monthlyEarnings[$month] = $earnings;
             $totalEarnings += $earnings;
@@ -276,14 +299,11 @@ class PaymentController extends Controller
         $endDate = Carbon::parse($request->input('weekEndDate'));
 
         $weeks = [];
-        $currentStart = $startDate->copy();
+        $currentStart = $startDate->copy()->startOfWeek();
         $totalPeriodEarnings = 0;
 
         while ($currentStart->lte($endDate)) {
             $currentEnd = $currentStart->copy()->endOfWeek();
-            if ($currentEnd->gt($endDate)) {
-                $currentEnd = $endDate;
-            }
 
             $dailyEarnings = [];
 
@@ -299,31 +319,34 @@ class PaymentController extends Controller
                         ->sum('amount');
 
                     $earnings = $payments + $generalEarnings;
-
-                    if ($earnings == 0) {
-                        $earnings = 'N/A';
-                    }
                 } else {
-                    $earnings = 'N/A';
+                    $earnings = null;
                 }
 
-                $dailyEarnings[$day->format('l')] = $earnings;
+                $dailyEarnings[] = [
+                    'date' => $day->copy(),
+                    'amount' => $earnings
+                ];
                 $day->addDay();
             }
 
-            $weekTotal = array_sum(array_filter($dailyEarnings, 'is_numeric'));
+            $weekTotal = collect($dailyEarnings)->filter(function($item) use ($startDate, $endDate) {
+                return $item['date']->between($startDate, $endDate) && $item['amount'] !== null;
+            })->sum('amount');
+            
             $totalPeriodEarnings += $weekTotal;
 
             $weeks[] = [
                 'start' => $currentStart->toDateString(),
                 'end' => $currentEnd->toDateString(),
                 'dailyEarnings' => $dailyEarnings,
+                'weekTotal' => $weekTotal
             ];
 
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings'))
+        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_earnings_' . now()->format('Ymd') . '.pdf');
@@ -439,32 +462,41 @@ class PaymentController extends Controller
             ->whereDate('created_at', $today)
             ->get();
 
+        $earnings = GeneralEarning::where('locality_id', $authUser->locality_id)
+            ->whereDate('earning_date', $today)
+            ->get();
+
         $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
             ->whereDate('expense_date', $today)
             ->get();
 
         $totalPayments = $payments->sum('amount');
+        $totalEarnings = $earnings->sum('amount');
+        $totalIncome = $totalPayments + $totalEarnings;
         $totalExpenses = $expenses->sum('amount');
         $totalCash = $payments->where('method', 'cash')->sum('amount');
         $totalCard = $payments->where('method', 'card')->sum('amount');
         $totalTransfer = $payments->where('method', 'transfer')->sum('amount');
-        $finalAmount = $totalPayments - $totalExpenses;
+        $finalAmount = $totalIncome - $totalExpenses;
 
         $latestClosure = (object) [
             'opened_at' => now()->startOfDay(),
             'closed_at' => now()->endOfDay(),
             'initial_amount' => 0,
             'final_amount' => $finalAmount,
-            'total_sales' => $totalPayments,
+            'total_sales' => $totalIncome,
             'total_expenses' => $totalExpenses,
         ];
 
         $pdf = PDF::loadView('reports.pdfCashClosures', [
             'closures' => collect([$latestClosure]),
             'payments' => $payments,
+            'earnings' => $earnings,
             'expenses' => $expenses,
             'authUser' => $authUser,
             'totalPayments' => $totalPayments,
+            'totalEarnings' => $totalEarnings,
+            'totalIncome' => $totalIncome,
             'totalExpenses' => $totalExpenses,
             'totalCash' => $totalCash,
             'totalCard' => $totalCard,

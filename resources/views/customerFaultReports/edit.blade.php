@@ -34,9 +34,9 @@
                                         <label>Estado</label>
                                             <input type="text" disabled class="form-control"
                                                 value="@switch($report->status)
-                                                            @case('Earring') Pendiente @break
-                                                            @case('In process') En proceso @break
-                                                            @case('Resolved') Resuelto @break
+                                                            @case('pending') Pendiente @break
+                                                            @case('in_review') En revisión @break
+                                                            @case('completed') Completado @break
                                                             @case('Closed') Cerrado @break
                                                             @default {{ $report->status }} @break
                                                         @endswitch" />

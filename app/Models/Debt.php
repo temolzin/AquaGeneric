@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Debt extends Model
 {
-    use HasFactory , SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     public const STATUS_PENDING = 'pending';
     public const STATUS_PARTIAL = 'partial';
@@ -15,8 +16,31 @@ class Debt extends Model
     public const DASHBOARD_EXPIRING_DAYS = 20;
 
     protected $fillable = [
-        'water_connection_id', 'locality_id', 'created_by', 'start_date', 'end_date', 'amount', 'note'
+        'water_connection_id',
+        'locality_id',
+        'created_by',
+        'start_date',
+        'end_date',
+        'amount',
+        'note',
+        'debt_category_id'
     ];
+
+    protected static function booted()
+    {
+        parent::booted();
+
+        static::addGlobalScope('byUserLocality', function ($query) {
+            $user = auth()->user();
+            if ($user && $user->locality_id) {
+                $query->where('debts.locality_id', $user->locality_id);
+            }
+        });
+
+        static::deleting(function ($debt) {
+            $debt->payments()->delete();
+        });
+    }
 
     public function waterConnection()
     {
@@ -25,12 +49,14 @@ class Debt extends Model
 
     public function customer()
     {
-        return $this->hasOneThrough(Customer::class, WaterConnection::class, 'id', 'id', 'water_connection_id', 'customer_id');
-    }
-
-    public function hasDependencies()
-    {
-        return $this->payments()->exists();
+        return $this->hasOneThrough(
+            Customer::class,
+            WaterConnection::class,
+            'id',
+            'id',
+            'water_connection_id',
+            'customer_id'
+        );
     }
 
     public function locality()
@@ -48,12 +74,36 @@ class Debt extends Model
         return $this->hasMany(Payment::class, 'debt_id');
     }
 
-    protected static function boot()
+    public function debtCategory()
     {
-        parent::boot();
+        return $this->belongsTo(DebtCategory::class, 'debt_category_id');
+    }
 
-        static::deleting(function ($debt) {
-            $debt->payments()->delete();
-        });
+    public function scopeByUserLocality($query)
+    {
+        $user = auth()->user();
+
+        if ($user && $user->locality_id) {
+            return $query->where('locality_id', $user->locality_id);
+        }
+
+        return $query;
+    }
+
+    public function hasDependencies()
+    {
+        return $this->payments()->exists();
+    }
+
+    public function getRemainingAmountAttribute()
+    {
+        $paid = $this->debt_current ?? $this->payments()->sum('amount') ?? 0;
+        return max(0, $this->amount - $paid);
+    }
+
+    public function isPaid()
+    {
+        $paid = $this->debt_current ?? $this->payments()->sum('amount') ?? 0;
+        return $paid >= $this->amount;
     }
 }

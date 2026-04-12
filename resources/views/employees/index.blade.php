@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Empleados')
 
@@ -27,9 +27,12 @@
                                         <button class="btn btn-info mr-2" data-toggle="modal" data-target="#importData" title="Importar Empleados">
                                             <i class="fas fa-file-import"></i> Importar Empleados
                                         </button>
-                                        <a type="button" class="btn btn-secondary" target="_blank" title="Generar Lista de Empleados" href="{{ route('report.generateEmployeeListReport') }}">
+                                        <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Generar Lista de Empleados" href="{{ route('report.generateEmployeeListReport') }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista
                                         </a>
+                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
+                                            <i class="fas fa-filter"></i> Reporte por Rol
+                                        </button>
                                     </div>
                                     <div class="d-md-none w-100">
                                         <div class="row g-2">
@@ -40,13 +43,18 @@
                                             </div>
                                             <div class="col-6 ps-1">
                                                 <button class="btn btn-info w-100 py-2" data-toggle="modal" data-target="#importData" title="Importar Empleados">
-                                                    <i class="fas fa-file-import"></i> Importar
+                                                    <i class="fas fa-file-import"></i> Importar Empleados
                                                 </button>
                                             </div>
                                             <div class="col-12 mt-2">
                                                 <a type="button" class="btn btn-secondary w-100 py-2" target="_blank" title="Generar Lista" href="{{ route('report.generateEmployeeListReport') }}">
                                                     <i class="fas fa-file-pdf"></i> Generar Lista
                                                 </a>
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                <button type="button" class="btn btn-warning w-100 py-2" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
+                                                    <i class="fas fa-filter"></i> Reporte por Rol
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -64,10 +72,10 @@
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
-                                                <th>FOTO</th>
+                                                <th class="not-export">FOTO</th>
                                                 <th>NOMBRE</th>
                                                 <th>DIRECCION</th>
-                                                <th>OPCIONES</th>
+                                                <th class="not-export">OPCIONES</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -95,19 +103,18 @@
                                                         <td>{{$employee->state}}, {{$employee->locality}}</td>
                                                         <td>
                                                             <div class="btn-group" role="group" aria-label="Opciones">
-                                                                <button type="button" class="btn btn-info btn-lg mr-2" data-toggle="modal"
+                                                                <button type="button" class="btn btn-info mr-2" data-toggle="modal"
                                                                     title="Ver Detalles" data-target="#view{{$employee->id}}">
                                                                     <i class="fas fa-eye"></i>
                                                                 </button>
                                                                 @can('editEmployee')
-                                                                <button type="button" class="btn btn-warning btn-lg mr-2"
+                                                                <button type="button" class="btn btn-warning mr-2"
                                                                     data-toggle="modal" title="Editar Datos"
                                                                     data-target="#edit{{$employee->id}}">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
                                                                 @endcan
                                                                 @can('deleteEmployee')
-                                                                <button type="button" class="btn btn-danger btn-lg mr-2"
                                                                     data-toggle="modal" title="Eliminar Registro"
                                                                     data-target="#delete{{$employee->id}}">
                                                                     <i class="fas fa-trash-alt"></i>
@@ -115,15 +122,15 @@
                                                                 @endcan
                                                             </div>
                                                         </td>
-                                                        @include('employees.edit')
-                                                        @include('employees.delete')
-                                                        @include('employees.show')
-                                                        @include('employees.import-modal')
-                                                        @include('employees.create') 
                                                     </tr>
+                                                    @include('employees.edit')
+                                                    @include('employees.delete')
+                                                    @include('employees.show')
                                                 @endforeach
                                             @endif
                                         </tbody>
+                                        @include('employees.import-modal')
+                                        @include('employees.create')
                                     </table>
                                     <div class="d-flex justify-content-center">
                                         {!! $employees->links('pagination::bootstrap-4') !!}
@@ -136,16 +143,38 @@
             </div>
         </div>
     </section>
+    @include('employees.report-by-role-modal')
 @endsection
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        $(document).ready(function () 
+        $(document).ready(function ()
         {
             $('#employees').DataTable
             ({
                 responsive: true,
-                buttons: ['csv', 'excel', 'print'],
+                buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
                 dom: 'Bfrtip',
                 paging: false,
                 info: false,
@@ -182,13 +211,6 @@
                     }
                 })
                 .then(function(response) {
-                    $('#importResults').removeClass('d-none');
-                    $('#resultsContent').html(`
-                        <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
-                        <p><strong>Registros importados:</strong> ${response.data.imported}</p>
-                        <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
-                    `);
-
                     $('#importForm')[0].reset();
                     $('#fileLabel').text('Ningún archivo seleccionado');
                     progressContainer.addClass('d-none');
@@ -196,26 +218,36 @@
                     progressText.text('0%');
                     importButton.prop('disabled', false).html('<i class="fas fa-file-import"></i> Importar');
 
-                    if (response.data.failed > 0 && response.data.errors) {
+                    if (response.data.failed === 0) {
+                        $('#importResults').removeClass('d-none');
+                        $('#resultsContent').html(`
+                            <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                            <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                            <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                        `);
+
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
                         $('#importErrors').removeClass('d-none');
-                        let errorsHtml = '<ul>';
+                        let errorsHtml = `
+                            <p><strong>Registros procesados:</strong> ${response.data.processed}</p>
+                            <p><strong>Registros importados:</strong> ${response.data.imported}</p>
+                            <p><strong>Registros con errores:</strong> ${response.data.failed}</p>
+                            <ul class="mt-2 mb-0">
+                        `;
                         response.data.errors.forEach(error => {
                             errorsHtml += `<li>${error}</li>`;
                         });
                         errorsHtml += '</ul>';
                         $('#errorsContent').html(errorsHtml);
                     }
-
-                    if (response.data.imported > 0) {
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 3000);
-                    }
                 })
                 .catch(function(error) {
                     $('#importErrors').removeClass('d-none');
                     let errorMessage = 'Error al importar el archivo. Verifica el formato.';
-                    
+
                     if (error.response && error.response.data && error.response.data.message) {
                         errorMessage = error.response.data.message;
                     }
@@ -237,7 +269,7 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
-            if (errorMessage) 
+            if (errorMessage)
             {
                 Swal.fire
                 ({
@@ -247,6 +279,24 @@
                     confirmButtonText: 'Aceptar'
                 });
             }
+
+            @if($errors->any())
+                $('#createEmployee').modal('show');
+                
+                var errorMessages = [];
+                @foreach($errors->all() as $error)
+                    errorMessages.push("{{ $error }}");
+                @endforeach
+                
+                if (errorMessages.length > 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de Validación',
+                        text: errorMessages.join('\n'),
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            @endif
 
             @if(session('import_errors'))
                 $('#importData').modal('show');

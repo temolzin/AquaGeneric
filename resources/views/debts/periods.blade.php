@@ -19,6 +19,10 @@
                         <input type="month" name="end_date" class="form-control" required>
                     </div>
                     <div class="form-group">
+                        <label for="assign_category">Categoría</label>
+                        <input type="text" id="assign_category" class="form-control" value="{{ \App\Models\DebtCategory::NAME_SERVICE }}" disabled>
+                    </div>
+                    <div class="form-group">
                         <label for="note">Nota</label>
                         <textarea name="note" class="form-control" rows="3" placeholder="Ingresa una nota para la deuda"></textarea>
                     </div>

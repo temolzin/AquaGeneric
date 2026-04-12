@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Reporte')
 
@@ -39,32 +39,24 @@
                                             <th>TÍTULO</th>
                                             <th>ESTADO</th>
                                             <th>FECHA DEL REPORTE</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(count($reports) <= 0)
-                                            <tr>
-                                                <td colspan="6">No hay resultados</td>
-                                            </tr>
-                                        @else
-                                            @foreach($reports as $report)
+                                        @forelse($reports as $report)
                                                 <tr>
                                                     <td>{{ $report->id }}</td>
                                                     <td>{{ $report->title }}</td>
                                                     <td>
                                                         @switch($report->status)
-                                                            @case('Earring')
+                                                            @case('pending')
                                                                 Pendiente
                                                                 @break
-                                                            @case('In process')
-                                                                En proceso
+                                                            @case('in_review')
+                                                                En revisión
                                                                 @break
-                                                            @case('Resolved')
-                                                                Resuelto
-                                                                @break
-                                                            @case('Closed')
-                                                                Cerrado
+                                                            @case('completed')
+                                                                Completado
                                                                 @break
                                                             @default
                                                                 {{ $report->status }}
@@ -73,32 +65,56 @@
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($report->date_report)->format('d/m/Y') }}</td>
                                                     <td>
-                                                        <div class="btn-group" role="group">
+                                                        <div class="d-flex flex-wrap gap-0">
                                                             @can('viewFaultReport')
-                                                            <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $report->id }}">
+                                                            <button type="button" class="btn btn-info btn-sm mx-1 mb-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $report->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
                                                             @endcan
 
                                                             @can('editFaultReport')
-                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $report->id }}">
+                                                            @if(auth()->user()->hasRole('customer'))
+                                                            <button type="button" class="btn btn-warning btn-sm mx-1 mb-1" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $report->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
+                                                            @else
+                                                            <button type="button" class="btn btn-secondary btn-sm mx-1 mb-1" title="No editable" disabled>
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                            @endif
                                                             @endcan
 
                                                             @can('deleteFaultReport')
-                                                            <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $report->id }}" disabled>
+                                                            @if($report->status === 'completed')
+                                                            <button type="button" class="btn btn-danger btn-sm mx-1 mb-1" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{ $report->id }}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
+                                                            @else
+                                                            <button type="button" class="btn btn-secondary btn-sm mx-1 mb-1" title="Solo se pueden eliminar reportes completados" disabled>
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                            @endif
                                                             @endcan
+
+                                                            <button type="button" class="btn bg-purple btn-sm mx-1 mb-1" data-toggle="modal" title="Cambiar Estatus" data-target="#changeStatusModal" data-fault-report-id="{{ $report->id }}" data-fault-report-title="{{ $report->title }}">
+                                                                <i class="fas fa-exchange-alt"></i>
+                                                            </button>
+
+                                                            <button type="button" class="btn bg-maroon btn-sm mx-1 mb-1" data-toggle="modal" title="Historial de Reporte" data-target="#historyModal{{ $report->id }}">
+                                                                <i class="fas fa-history"></i>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 @include('faultReport.show')
                                                 @include('faultReport.edit')
                                                 @include('faultReport.delete')
-                                            @endforeach
-                                        @endif
+                                                @include('faultReport.historyModal')
+                                        @empty
+                                            <tr>
+                                                <td colspan="6">No hay resultados</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                                 <div class="d-flex justify-content-center">
@@ -112,6 +128,7 @@
             </div>
         </div>
     </div>
+    @include('faultReport.changeStatusModal')
 </section>
 @endsection
 
@@ -120,7 +137,28 @@
     $(document).ready(function () {
         $('#faultReports').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,
@@ -147,6 +185,49 @@
                 confirmButtonText: 'Aceptar'
             });
         }
+
+        $('#changeStatusModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var faultReportId = button.data('fault-report-id');
+            var faultReportTitle = button.data('fault-report-title');
+
+            var modal = $(this);
+            modal.find('#faultReportId').val(faultReportId);
+            modal.find('#faultReportTitleDisplay').text(faultReportTitle);
+            modal.find('#statusSelect').val('');
+            modal.find('#descriptionText').val('');
+        });
+
+        $('#changeStatusForm').on('submit', function(e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var formData = form.serialize();
+
+            $.ajax({
+                url: "{{ route('faultReport.updateStatus') }}",
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    Swal.fire({
+                        icon: response.success ? 'success' : 'error',
+                        title: response.success ? 'Éxito' : 'Error',
+                        text: response.message,
+                        confirmButtonText: 'Aceptar'
+                    }).then(function() {
+                        if (response.success) location.reload();
+                    });
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al actualizar el estatus',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+        });
     });
 </script>
 @endsection

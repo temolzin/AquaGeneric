@@ -39,6 +39,11 @@ class ExpenseType extends Model
         return $this->hasMany(GeneralExpense::class);
     }
 
+    public function hasDependencies()
+    {
+        return $this->generalExpenses()->exists();
+    }
+
     public function scopeByUserLocality($query)
     {
         $user = auth()->user();

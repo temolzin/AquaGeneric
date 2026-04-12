@@ -58,6 +58,14 @@ class ProfileController extends Controller
 
     public function updateImage(Request $request)
     {
+        $request->validate([
+            'profileImage' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            'profileImage.image' => 'El archivo debe ser una imagen.',
+            'profileImage.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'profileImage.max' => 'La imagen no puede superar los 5MB.',
+        ]);
+
         $user = User::find(Auth::id());
 
         if ($user->getFirstMedia('userGallery')) {
@@ -88,5 +96,64 @@ class ProfileController extends Controller
         $user->save();
 
         return redirect()->route('profile.index')->with('success', 'Contraseña actualizada correctamente.');
+    }
+
+    public function updateWebhookConfig(Request $request)
+    {
+        $user = Auth::user();
+        $locality = $user->locality;
+
+        if (!$user->hasRole(['Supervisor', 'Secretaria'])) {
+            return redirect()->back()->with('error', 'No tienes permiso para gestionar la configuración del webhook.');
+        }
+
+        if (!$locality) {
+            return redirect()->back()->with('error', 'No tienes una localidad asignada.');
+        }
+
+        $request->validate([
+            'openpay_webhook_user' => 'nullable|string|email',
+            'openpay_webhook_password' => 'nullable|string',
+        ]);
+
+        $webhookUser = $request->input('openpay_webhook_user');
+        $webhookPassword = $request->input('openpay_webhook_password');
+
+        if (!empty($webhookUser)) {
+            $locality->openpay_webhook_user = $webhookUser;
+        }
+        if (!empty($webhookPassword)) {
+            $locality->openpay_webhook_password = $webhookPassword;
+        }
+
+        $locality->save();
+
+        return redirect()->route('profile.index')->with('success', 'Configuración del webhook actualizada correctamente.');
+    }
+
+    public function testWebhookConnection()
+    {
+        $user = Auth::user();
+        $locality = $user->locality;
+
+        if (!$user->hasRole(['Supervisor', 'Secretaria'])) {
+            return response()->json(['success' => false, 'message' => 'No tienes permiso para realizar esta acción.'], 403);
+        }
+
+        if (!$locality) {
+            return response()->json(['success' => false, 'message' => 'No tienes una localidad asignada.'], 400);
+        }
+
+        if (!$locality->openpay_webhook_user || !$locality->openpay_webhook_password) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debes configurar el correo y contraseña de OpenPay primero.'
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Credenciales de webhook validadas correctamente.'
+        ]);
     }
 }

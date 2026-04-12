@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Mis Pagos')
 
@@ -26,8 +26,16 @@
                                     <button type="button" class="btn bg-purple mr-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
                                         <i class="fas fa-chart-bar"></i> Reporte Trimestral
                                     </button>
-                                    <button type="button" class="btn btn-success me-2" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
+                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
                                         <i class="fas fa-chart-line"></i> Reporte Anual
+                                    </button>
+                                </div>
+                                <div class="d-flex d-md-none w-100 mt-2" role="group" aria-label="Reportes de Pagos (Móvil)">
+                                    <button type="button" class="btn bg-purple flex-fill mr-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
+                                            <i class="fas fa-chart-bar"></i> Trimestral
+                                        </button>
+                                        <button type="button" class="btn btn-success flex-fill" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
+                                            <i class="fas fa-chart-line"></i> Anual
                                     </button>
                                 </div>
                             </div>
@@ -48,7 +56,7 @@
                                             <th>HORA</th>
                                             <th>MONTO</th>
                                             <th>MÉTODO</th>
-                                            <th>RECIBO</th>
+                                            <th class="not-export">RECIBO</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -86,18 +94,19 @@
                                                 @php
                                                     $methodLabels = [
                                                         'cash' => 'Efectivo',
-                                                        'transfer' => 'Transferencia', 
-                                                        'card' => 'Tarjeta'
+                                                        'transfer' => 'Transferencia',
+                                                        'card' => 'Tarjeta',
+                                                        'openpay' => 'Tarjeta (En línea)'
                                                     ];
                                                 @endphp
                                                 <span>{{ $methodLabels[$payment->method] ?? $payment->method }}</span>
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group" aria-label="Opciones">
-                                                    <a href="{{ route('viewCustomerPayments.receipt', Crypt::encrypt($payment->id)) }}" 
-                                                       class="btn btn-info mr-2" 
-                                                       target="_blank"
-                                                       title="Descargar Comprobante">
+                                                    <a href="{{ route('viewCustomerPayments.receipt', Crypt::encrypt($payment->id)) }}"
+                                                        class="btn btn-info mr-2"
+                                                        target="_blank"
+                                                        title="Descargar Comprobante">
                                                         <i class="fas fa-receipt"></i>
                                                     </a>
                                                 </div>
@@ -107,7 +116,7 @@
                                     </tbody>
                                 </table>
                                 @endif
-                                
+
                                 @if($payments->total() > $payments->perPage())
                                 <div class="d-flex justify-content-center mt-3">
                                     {!! $payments->links('pagination::bootstrap-4') !!}
@@ -121,9 +130,9 @@
         </div>
     </div>
 </section>
-@endsection
 @include('viewCustomerPayments.quarterly-report')
 @include('viewCustomerPayments.annualReportTemplate')
+@endsection
 
 @section('js')
 <script>
@@ -131,12 +140,33 @@
         @if($payments->count() > 0)
         $('#myPayments').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,
             searching: false,
-            order: [[1, 'desc']] 
+            order: [[1, 'desc']]
         });
         @endif
 
@@ -172,7 +202,7 @@
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
         let currentQuarter;
-        
+
         switch (true) {
             case (currentMonth >= 1 && currentMonth <= 3):
                 currentQuarter = 1;

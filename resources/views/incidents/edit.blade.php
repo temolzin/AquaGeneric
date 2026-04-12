@@ -11,7 +11,7 @@
                 <form action="{{ route('incidents.update', $incident->id) }}" enctype="multipart/form-data" method="post" id="edit-customer-form-{{ $incident->id }}">
                     @csrf
                     @method('PUT')
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Datos de Incidencia</h3>
@@ -31,7 +31,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="startDate" class="form-label">Fecha de Inicio(*)</label>
+                                            <label for="startDate" class="form-label">Fecha de la Incidencia(*)</label>
                                             <input type="date" class="form-control" name="startDateUpdate" value="{{ \Carbon\Carbon::parse($incident->start_date)->format('Y-m-d') }}" required>
                                         </div>
                                     </div>
@@ -99,3 +99,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).on('shown.bs.modal', '#edit{{ $incident->id }}', function() {
+        $(this).find('.select2').each(function() {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+            
+            $(this).select2({
+                allowClear: false,
+                placeholder: 'Selecciona una opción',
+                width: '100%',
+                dropdownParent: $('#edit{{ $incident->id }}')
+            });
+        });
+    });
+</script>

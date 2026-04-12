@@ -1,0 +1,37 @@
+@media (max-width: 767.98px) {
+
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .35rem;
+  }
+
+  .pagination .page-item {
+    margin: 0;
+  }
+
+  .pagination .page-link {
+    padding: .35rem .6rem;
+    line-height: 1.2;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .pagination {
+    justify-content: center;
+  }
+}
+
+.main-header .navbar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.main-header .navbar-nav .user-menu .user-image {
+  float: none;
+  margin: 0;
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+}

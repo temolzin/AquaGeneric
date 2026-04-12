@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.adminlte')
 
 @section('title', config('adminlte.title') . ' | Incidencias')
 
@@ -12,7 +12,7 @@
                         <div class="row mb-2">
                             <div class="col-lg-12">
                                 <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
-                                    <form method="GET" action="{{ route('incidents.index') }}" class="flex-grow-1 w-100" style="min-width: 200px;">
+                                    <form method="GET" action="{{ route('incidents.index') }}" class="flex-grow-1 col-md-8 px-0" style="min-width: 200px;">
                                         <div class="d-flex">
                                             <select name="category" class="form-control select2 rounded-start border-end-0 w-100" style="min-width: 200px;">
                                                 <option value="">Filtrar por categoría</option>
@@ -22,10 +22,16 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            <button type="submit" class="btn btn-primary rounded-end border-start-0" title="Filtrar por Incidencia ml-1">
+                                            <button type="submit" class="btn btn-primary border-start-0" title="Filtrar por categoría">
                                                 <i class="fas fa-filter d-md-none"></i>
                                                 <span class="d-none d-md-inline">Filtrar</span>
                                             </button>
+                                             @if(request('category'))
+                                                <a href="{{ route('incidents.index') }}" class="btn btn-secondary ml-2" title="Quitar filtro">
+                                                    <i class="fas fa-times d-md-none"></i>
+                                                    <span class="d-none d-md-inline">Limpiar</span>
+                                                </a>
+                                            @endif
                                         </div>
                                     </form>
                                     <div class="d-flex flex-wrap gap-2 justify-content-end w-100 w-lg-auto">
@@ -57,10 +63,10 @@
                                                 <th>ID</th>
                                                 <th>INCIDENCIA</th>
                                                 <th>EMPLEADO</th>
-                                                <th>FECHA DE INICIO</th>
+                                                <th>FECHA DE LA INCIDENCIA</th>
                                                 <th>CATEGORIA</th>
                                                 <th>ESTATUS</th>
-                                                <th>OPCIONES</th>
+                                                <th class="not-export">OPCIONES</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -75,7 +81,7 @@
                                                         <td>{{ $incident->name }}</td>
                                                         <td>
                                                             @forelse ($incident->responsible_employees as $employee)
-                                                                <img src="{{ $employee->getFirstMediaUrl('employeeGallery') ?: asset('img/userDefault.png') }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}" 
+                                                                <img src="{{ $employee->getFirstMediaUrl('employeeGallery') ?: asset('img/userDefault.png') }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}"
                                                                     class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 3px;">
                                                             @empty
                                                                 <span class="text-muted">Sin asignar</span>
@@ -154,7 +160,28 @@
     $(document).ready(function() {
         $('#incident').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,
@@ -183,12 +210,6 @@
         }
     });
 
-    $(document).on('shown.bs.modal', '.modal', function () {
-        $(this).find('.select2').select2({
-            dropdownParent: $(this)
-        });
-    });
-
     $('#createResponsible').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var incidentId = button.data('incident-id');
@@ -202,12 +223,12 @@
 
     $('#changeStatusForm').on('submit', function(e) {
         e.preventDefault();
-        
+
         var form = $(this);
         var formData = form.serialize();
-        
+
         $.ajax({
-            url: "{{ route('incidents.updateStatus') }}", 
+            url: "{{ route('incidents.updateStatus') }}",
             type: 'POST',
             data: formData,
             success: function(response) {

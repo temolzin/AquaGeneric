@@ -20,7 +20,7 @@
                                         <input type="text" disabled class="form-control" value="{{ $earningType->id }}" />
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-10">
                                     <div class="form-group">
                                         <label>Nombre</label>
                                         <input type="text" disabled class="form-control" value="{{ $earningType->name }}" />
