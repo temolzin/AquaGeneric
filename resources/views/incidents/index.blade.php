@@ -60,13 +60,14 @@
                                                 <th>FECHA DE LA INCIDENCIA</th>
                                                 <th>CATEGORIA</th>
                                                 <th>ESTATUS</th>
+                                                <th>CREADO POR</th>
                                                 <th>OPCIONES</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @if (count($incidents) <= 0)
                                                 <tr>
-                                                    <td colspan="7">No hay incidentes registrados.</td>
+                                                    <td colspan="8">No hay incidentes registrados.</td>
                                                 </tr>
                                             @else
                                                 @foreach ($incidents as $incident)
@@ -104,17 +105,30 @@
                                                             @endphp
                                                         </td>
                                                         <td>
+                                                            @if ($incident->creator)
+                                                                <div style="display: flex; align-items: center; gap: 8px;">
+                                                                    <img src="{{ $incident->creator->getFirstMediaUrl('userImage') ?: asset('img/userDefault.png') }}" alt="Creador" title="{{ $incident->creator->name }} {{ $incident->creator->last_name }}"
+                                                                        class="img-thumbnail" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
+                                                                    <span>{{ $incident->creator->name }} {{ $incident->creator->last_name }}</span>
+                                                                </div>
+                                                            @else
+                                                                <span class="text-muted">Sin especificar</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
                                                             <button type="button" class="btn btn-info btn-sm mr-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $incident->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
 
-                                                            <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $incident->id }}">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
+                                                            @if(!$incident->creator->hasRole('Cliente'))
+                                                                <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $incident->id }}">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
 
-                                                            <button type="button" class="btn bg-red btn-sm mr-1" data-toggle="modal" title="Eliminar Incidencia" data-target="#delete{{ $incident->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
+                                                                <button type="button" class="btn bg-red btn-sm mr-1" data-toggle="modal" title="Eliminar Incidencia" data-target="#delete{{ $incident->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
 
                                                             <button type="button" class="btn bg-purple btn-sm mr-1" data-toggle="modal" title="Cambiar Estatus de Incidencia" data-target="#createResponsible" data-incident-id="{{ $incident->id }}" data-incident-name="{{ $incident->name }}">
                                                                 <i class="fas fa-exchange-alt"></i>

@@ -10,7 +10,6 @@ use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GeneralExpenseController;
-use App\Http\Controllers\FaultReportController;
 use App\Http\Controllers\LocalityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WaterConnectionController;
@@ -35,7 +34,6 @@ use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\MovementHistoryController;
 use App\Http\Controllers\InventoryCategoryController;
-use App\Http\Controllers\CustomerFaultReportController;
 use App\Http\Controllers\EarningTypeController;
 use App\Http\Controllers\GeneralEarningController;
 use App\Http\Controllers\OpenPayController;
@@ -204,8 +202,9 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('debtCategories', DebtCategoryController::class);
     });
 
-    Route::group(['middleware' => ['can:viewIncidents']], function () {
+    Route::group(['middleware' => ['auth']], function () {
         Route::resource('incidents', IncidentController::class);
+        Route::resource('customerIncidents', IncidentController::class);
         Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
         Route::get('/reports/generateIncidentListReport', [IncidentController::class, 'generateIncidentListReport'])->name('report.generateIncidentListReport');
         Route::post('/incidents/update-status', [IncidentController::class, 'updateStatus'])->name('incidents.updateStatus');
@@ -222,17 +221,6 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     Route::group(['middleware' => ['can:viewIncidentStatuses']], function () {
         Route::resource('incidentStatuses', IncidentStatusController::class);
         Route::get('/reports/generateIncidentStatusListReport', [IncidentStatusController::class, 'generateIncidentStatusListReport'])->name('report.generateIncidentStatusListReport');
-    });
-
-    Route::group(['middleware' => ['can:viewFaultReport']], function () {
-        Route::get('/faultReport', [FaultReportController::class, 'index'])->name('faultReport.index');
-        Route::resource('faultReport', FaultReportController::class);
-        Route::post('/faultReport/update-status', [FaultReportController::class, 'updateStatus'])->name('faultReport.updateStatus');
-    });
-
-    Route::group(['middleware' => ['can:viewCustomerFaultReports']], function () {
-        Route::get('/viewMyFaultReports', [CustomerFaultReportController::class, 'index'])->name('customerFaultReports.index');
-        Route::resource('customerFaultReports', CustomerFaultReportController::class);
     });
 
     Route::group(['middleware' => ['can:viewNotice']], function () {

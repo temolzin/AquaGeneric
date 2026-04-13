@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Models\Incident;
 use App\Models\IncidentCategory;
 use App\Models\Employee;
@@ -17,8 +18,12 @@ class IncidentController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Incident::with('incidentCategory', 'getstatusChangeLogs.employee')
-        ->where('locality_id', $authUser->locality_id);
+        $query = Incident::with('incidentCategory', 'getstatusChangeLogs.employee', 'creator');
+
+        $query->when($authUser->hasRole('Cliente'), 
+            fn($q) => $q->where('created_by', $authUser->id),
+            fn($q) => $q->where('locality_id', $authUser->locality_id)
+        );
 
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
@@ -37,7 +42,9 @@ class IncidentController extends Controller
                   ->orderBy('created_at', 'desc')
                   ->get();
 
-        return view('incidents.index', compact('incidents', 'categories', 'employees', 'statuses'));
+        $viewName = Route::current()->getName() === 'customerIncidents.index' ? 'customerIncidents.index' : 'incidents.index';
+        
+        return view($viewName, compact('incidents', 'categories', 'employees', 'statuses'));
     }
 
     public function create()
@@ -57,12 +64,20 @@ class IncidentController extends Controller
             'images.*.max' => 'Cada imagen no puede superar los 5MB.',
         ]);
 
+        $statusId = $request->input('statusUpdate');
+        if ($request->input('isClientReport')) {
+            $pendingStatus = IncidentStatus::where('status', 'Pendiente')
+                ->where('locality_id', $authUser->locality_id)
+                ->first();
+            $statusId = $pendingStatus ? $pendingStatus->id : null;
+        }
+
         $incidentData = [
             'name' => $request->input('name'),
             'start_date' => $request->input('startDate'),
             'description' => $request->input('description'),
             'category_id' => $request->input('category'),
-            'status_id' => $request->input('statusUpdate'),
+            'status_id' => $statusId,
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
         ];
@@ -90,34 +105,46 @@ class IncidentController extends Controller
 
     public function update(Request $request, $id)
     {
+        $authUser = auth()->user();
         $incident = Incident::find($id);
-        if ($incident) {
-            $incident->name = $request->input('nameUpdate');
-            $incident->start_date = $request->input('startDateUpdate');
-            $incident->description = $request->input('descriptionUpdate');
-            $incident->category_id = $request->input('categoryUpdate');
-            $incident->status_id = $request->input('statusUpdate');
 
-            $incident->save();
-
-            if ($request->hasFile('imagesUpdate')) {
-                $incident->clearMediaCollection('incidentImages');
-
-                foreach ($request->file('imagesUpdate') as $image) {
-                    $incident->addMedia($image)->toMediaCollection('incidentImages');
-                }
-            }
-
-            return redirect()->route('incidents.index')->with('success', 'Incidencia actualizada correctamente.');
+        if (!$incident) {
+            return redirect()->back()->with('error', 'Incidencia no encontrada.');
         }
 
-        return redirect()->back()->with('error', 'Incidencia no encontrada.');
+        if (!$incident->canBeEditedBy($authUser)) {
+            return redirect()->back()->with('error', 'No tienes permisos para editar esta incidencia.');
+        }
+
+        $incident->name = $request->input('nameUpdate');
+        $incident->start_date = $request->input('startDateUpdate');
+        $incident->description = $request->input('descriptionUpdate');
+        $incident->category_id = $request->input('categoryUpdate');
+        $incident->status_id = $request->input('statusUpdate');
+
+        $incident->save();
+
+        if ($request->hasFile('imagesUpdate')) {
+            $incident->clearMediaCollection('incidentImages');
+
+            foreach ($request->file('imagesUpdate') as $image) {
+                $incident->addMedia($image)->toMediaCollection('incidentImages');
+            }
+        }
+
+        return redirect()->route('incidents.index')->with('success', 'Incidencia actualizada correctamente.');
     }
 
     public function destroy(Incident $incident)
     {
+        $authUser = auth()->user();
+
+        if (!$incident->canBeEditedBy($authUser)) {
+            return redirect()->back()->with('error', 'No tienes permisos para eliminar esta incidencia.');
+        }
+
         $incident->delete();
-        return redirect()->route('incidents.index')->with('success', 'Incidencia eliminado exitosamente.');
+        return redirect()->route('incidents.index')->with('success', 'Incidencia eliminada exitosamente.');
     }
 
     public function generateIncidentListReport()

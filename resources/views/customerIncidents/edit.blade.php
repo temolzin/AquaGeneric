@@ -8,7 +8,7 @@
                         <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                 </div>
-                <form action="{{ route('incidents.update', $incident->id) }}" enctype="multipart/form-data" method="post" id="edit-customer-form-{{ $incident->id }}">
+                <form action="{{ route('customerIncidents.update', $incident->id) }}" enctype="multipart/form-data" method="post" id="edit-customer-form-{{ $incident->id }}">
                     @csrf
                     @method('PUT')
                     <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
@@ -23,21 +23,21 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="name" class="form-label">Título(*)</label>
-                                            <input type="text" class="form-control" name="nameUpdate" value="{{ $incident->name }}" required>
+                                            <input type="text" class="form-control" name="nameUpdate" value="{{ $incident->name }}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="description" class="form-label">Descripción de la Incidencia(*)</label>
+                                            <textarea class="form-control" name="descriptionUpdate" rows="4" required>{{ $incident->getLatestDescription() }}</textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="startDate" class="form-label">Fecha de la Incidencia(*)</label>
-                                            <input type="date" class="form-control" name="startDateUpdate" value="{{ \Carbon\Carbon::parse($incident->start_date)->format('Y-m-d') }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="categoryUpdate" class="form-label">Categoria(*)</label>
+                                            <label for="categoryUpdate" class="form-label">Categoría(*)</label>
                                             <select class="form-control select2" name="categoryUpdate" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach($categories as $category)
@@ -50,28 +50,29 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="status_id" class="form-label">Estatus(*)</label>
-                                            <select class="form-control select2" name="statusUpdate" required>
-                                                <option value="">Selecciona una opción</option>
-                                                @foreach($statuses as $status)
-                                                    <option value="{{ $status->id }}">
-                                                        {{ $status->status }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            <label for="date_report">Fecha del Reporte</label>
+                                            <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($incident->start_date)->format('d/m/Y') }}" disabled readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="status">Estado</label>
+                                            <input type="text" class="form-control" value="{{ $incident->status->status ?? 'Sin estado' }}" disabled readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label>Creado por</label>
+                                            <input type="text" class="form-control" value="{{ $incident->creator->name }} {{ $incident->creator->last_name ?? '' }}" disabled readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="descriptionUpdate" class="form-label">Descripción(*)</label>
-                                            <textarea class="form-control" name="descriptionUpdate" rows="3" required>{{ $incident->getLatestDescription() }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label for="imagesUpdate" class="form-label">Actualizar Imágenes de Referencia</label>
+                                            <label for="imagesUpdate" class="form-label">Imágenes de referencia <small class="text-muted">(opcional)</small></label>
                                             <input type="file" class="form-control" name="imagesUpdate[]" multiple accept="image/*">
-                                            <small class="form-text text-muted">Puedes seleccionar una o más imágenes para agregar.</small>
+                                            <small class="form-text text-muted mt-1">
+                                                Puedes subir varias imágenes para dar contexto. Formatos permitidos: JPG, PNG.
+                                            </small>
                                         </div>
                                     </div>
                                     <div class="col-lg-12 text-center mt-3">
