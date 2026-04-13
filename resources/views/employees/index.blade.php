@@ -115,6 +115,7 @@
                                                                 </button>
                                                                 @endcan
                                                                 @can('deleteEmployee')
+                                                                <button type="button" class="btn btn-danger mr-2"
                                                                     data-toggle="modal" title="Eliminar Registro"
                                                                     data-target="#delete{{$employee->id}}">
                                                                     <i class="fas fa-trash-alt"></i>
