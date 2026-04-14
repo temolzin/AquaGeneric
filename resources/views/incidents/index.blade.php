@@ -67,7 +67,6 @@
                                                 <th>CATEGORIA</th>
                                                 <th>ESTATUS</th>
                                                 <th>CREADO POR</th>
-                                                <th>OPCIONES</th>
                                                 <th class="not-export">OPCIONES</th>
                                             </tr>
                                         </thead>
