@@ -517,22 +517,16 @@ return [
         'icon' => 'fas fa-fw fa-water text-white',
     ],
     [
-        'text' => 'Mis Reportes de Fallas',
-        'url' => '/viewMyFaultReports',
+        'text' => 'Mis Incidencias',
+        'url' => '/customerIncidents',
         'can' => 'viewCustomerFaultReports',
-        'icon' => 'fa fa-clipboard-list',
+        'icon' => 'fa fa-exclamation-triangle text-white',
     ],
     [
         'text' => 'Avisos',
         'url' => '/localityNotices',
         'can' => 'viewNotice',
         'icon' => 'fas fa-fw fa-bell',
-    ],
-    [
-        'text' => 'Reporte de fallas',
-        'url' => '/faultReport',
-        'icon' => 'fa fa-clipboard-list',
-        'can'  => 'viewFaultReport'
     ],
     [
         'text' => 'Lista de Reportes',

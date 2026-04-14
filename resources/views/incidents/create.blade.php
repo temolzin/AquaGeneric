@@ -26,8 +26,8 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="name" class="form-label">Nombre(*)</label>
-                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="name" placeholder="Ingresa nombre" value="{{ old('name') }}" required />
+                                            <label for="name" class="form-label">Título(*)</label>
+                                            <input type="text" pattern="^(?!\s*$)(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$" class="form-control" name="name" placeholder="Ingresa título" value="{{ old('name') }}" required />
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

@@ -93,4 +93,9 @@ class Incident extends Model implements HasMedia
     {
         return $this->belongsTo(IncidentStatus::class, 'status_id');
     }
+
+    public function canBeEditedBy($user)
+    {
+        return $this->created_by === $user->id;
+    }
 }

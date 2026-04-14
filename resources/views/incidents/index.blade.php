@@ -66,13 +66,14 @@
                                                 <th>FECHA DE LA INCIDENCIA</th>
                                                 <th>CATEGORIA</th>
                                                 <th>ESTATUS</th>
+                                                <th>CREADO POR</th>
                                                 <th class="not-export">OPCIONES</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @if (count($incidents) <= 0)
                                                 <tr>
-                                                    <td colspan="7">No hay incidentes registrados.</td>
+                                                    <td colspan="8">No hay incidentes registrados.</td>
                                                 </tr>
                                             @else
                                                 @foreach ($incidents as $incident)
@@ -95,32 +96,42 @@
                                                         </td>
                                                         <td>
                                                             @php
-                                                                if ($incident->status_id) {
-                                                                    $status = \App\Models\IncidentStatus::find($incident->status_id);
-                                                                    if ($status) {
-                                                                        $statusName = $status->status;
-                                                                        $statusColor = (preg_match('/^#[a-f0-9]{6}$/i', $status->color)) ? $status->color : '#6c757d';
-                                                                        echo '<span class="badge ' . $status->color . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
-                                                                    } else {
-                                                                        echo '<span class="badge badge-secondary">Estatus no encontrado</span>';
-                                                                    }
+                                                                if ($incident->status) {
+                                                                    $statusName = $incident->status->status;
+                                                                    $statusColor = (preg_match('/^#[a-f0-9]{6}$/i', $incident->status->color)) ? $incident->status->color : '#6c757d';
+                                                                    echo '<span class="badge ' . $incident->status->color . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
                                                                 } else {
                                                                     echo '<span class="badge badge-secondary">Pendiente</span>';
                                                                 }
                                                             @endphp
                                                         </td>
                                                         <td>
+                                                            @if ($incident->creator)
+                                                                <div style="display: flex; align-items: center; gap: 8px;">
+                                                                    <img src="{{ $incident->creator->getFirstMediaUrl('userImage') ?: asset('img/userDefault.png') }}" alt="Creador" title="{{ $incident->creator->name }} {{ $incident->creator->last_name }}"
+                                                                        class="img-thumbnail" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
+                                                                    <span>{{ $incident->creator->name }} {{ $incident->creator->last_name }}</span>
+                                                                </div>
+                                                            @else
+                                                                <span class="text-muted">Sin especificar</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
                                                             <button type="button" class="btn btn-info btn-sm mr-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $incident->id }}">
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
 
-                                                            <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $incident->id }}">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
+                                                            @can('editIncidents')
+                                                                <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $incident->id }}">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                            @endcan
 
-                                                            <button type="button" class="btn bg-red btn-sm mr-1" data-toggle="modal" title="Eliminar Incidencia" data-target="#delete{{ $incident->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
+                                                            @can('deleteIncidents')
+                                                                <button type="button" class="btn bg-red btn-sm mr-1" data-toggle="modal" title="Eliminar Incidencia" data-target="#delete{{ $incident->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endcan
 
                                                             <button type="button" class="btn bg-purple btn-sm mr-1" data-toggle="modal" title="Cambiar Estatus de Incidencia" data-target="#createResponsible" data-incident-id="{{ $incident->id }}" data-incident-name="{{ $incident->name }}">
                                                                 <i class="fas fa-exchange-alt"></i>
@@ -210,6 +221,21 @@
         }
     });
 
+    $(document).on('shown.bs.modal', '[id^="edit"]', function() {
+        $(this).find('.select2').each(function() {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+            
+            $(this).select2({
+                allowClear: false,
+                placeholder: 'Selecciona una opción',
+                width: '100%',
+                dropdownParent: $(this).closest('.modal')
+            });
+        });
+    });
+
     $('#createResponsible').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var incidentId = button.data('incident-id');
@@ -219,6 +245,21 @@
         modal.find('#incidentId').val(incidentId);
         modal.find('#incidentNameDisplay').text(incidentName);
         modal.find('#status_id').val('').trigger('change');
+    });
+
+    $(document).on('shown.bs.modal', '[id^="edit"]', function() {
+        $(this).find('.select2').each(function() {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+            
+            $(this).select2({
+                allowClear: false,
+                placeholder: 'Selecciona una opción',
+                width: '100%',
+                dropdownParent: $(this).closest('.modal')
+            });
+        });
     });
 
     $('#changeStatusForm').on('submit', function(e) {

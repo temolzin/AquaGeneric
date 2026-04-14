@@ -98,7 +98,9 @@
                                                                             <th>Monto</th>
                                                                             <th>Pendiente</th>
                                                                             <th>Estatus</th>
-                                                                            <th>Pago en línea</th>
+                                                                            @if($hasOpenPay)
+                                                                                <th>Pago en línea</th>
+                                                                            @endif
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -135,26 +137,28 @@
                                                                                         {{ $statusLabels[$debt->status] ?? $debt->status }}
                                                                                     </span>
                                                                                 </td>
-                                                                                <td>
-                                                                                    @if($debt->status !== 'paid')
-                                                                                        <button type="button" 
-                                                                                            class="btn btn-sm btn-success btn-open-payment"
-                                                                                            data-debt-id="{{ $debt->id }}"
-                                                                                            data-debt-amount="{{ $debt->amount }}"
-                                                                                            data-remaining="{{ $debt->remainingAmount }}"
-                                                                                            data-total-paid="{{ $debt->total_paid }}"
-                                                                                            data-start-date="{{ \Carbon\Carbon::parse($debt->start_date)->format('d/m/Y') }}"
-                                                                                            data-end-date="{{ \Carbon\Carbon::parse($debt->end_date)->format('d/m/Y') }}"
-                                                                                            data-water-connection="{{ $connection->name ?: 'Toma #' . $connection->id }}">
-                                                                                            <i class="fas fa-credit-card"></i> Pagar con Tarjeta
-                                                                                        </button>
-                                                                                    @endif
-                                                                                </td>
+                                                                                @if($hasOpenPay)
+                                                                                    <td>
+                                                                                        @if($debt->status !== 'paid')
+                                                                                            <button type="button" 
+                                                                                                class="btn btn-sm btn-success btn-open-payment"
+                                                                                                data-debt-id="{{ $debt->id }}"
+                                                                                                data-debt-amount="{{ $debt->amount }}"
+                                                                                                data-remaining="{{ $debt->remainingAmount }}"
+                                                                                                data-total-paid="{{ $debt->total_paid }}"
+                                                                                                data-start-date="{{ \Carbon\Carbon::parse($debt->start_date)->format('d/m/Y') }}"
+                                                                                                data-end-date="{{ \Carbon\Carbon::parse($debt->end_date)->format('d/m/Y') }}"
+                                                                                                data-water-connection="{{ $connection->name ?: 'Toma #' . $connection->id }}">
+                                                                                                <i class="fas fa-credit-card"></i> Pagar con Tarjeta
+                                                                                            </button>
+                                                                                        @endif
+                                                                                    </td>
+                                                                                @endif
                                                                             </tr>
                                                                             @endforeach
                                                                         @else
                                                                             <tr>
-                                                                                <td colspan="6" class="text-center text-muted">
+                                                                                <td colspan="{{ $hasOpenPay ? '7' : '6' }}" class="text-center text-muted">
                                                                                     No hay deudas pendientes para esta toma
                                                                                 </td>
                                                                             </tr>

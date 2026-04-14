@@ -231,9 +231,12 @@ class DebtController extends Controller
     {
         $authUser = auth()->user();
         $customer = $authUser->customer;
+        $locality = $authUser->locality;
+        $hasOpenPay = $locality && $locality->hasOpenPayEnabled();
+        
         if (!$customer) {
             $waterConnections = WaterConnection::where('id', 0)->paginate(10);
-            return view('viewCustomerDebts.index', compact('waterConnections', 'customer', 'locality'))
+            return view('viewCustomerDebts.index', compact('waterConnections', 'customer', 'locality', 'hasOpenPay'))
                 ->with('error', 'No se encontró información del cliente.');
         }
         $search = $request->input('search');
@@ -259,7 +262,7 @@ class DebtController extends Controller
             }])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        return view('viewCustomerDebts.index', compact('waterConnections'));
+        return view('viewCustomerDebts.index', compact('waterConnections', 'hasOpenPay', 'locality', 'customer'));
     }
     
     private function getServiceCategoryId(): int
