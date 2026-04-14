@@ -20,7 +20,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <div class="d-flex flex-wrap justify-content-end align-items-center mt-2 mt-md-0" role="group" aria-label="Acciones de Cliente">
+                                    <div class="d-none d-md-flex flex-wrap justify-content-end align-items-center mt-2 mt-md-0">
                                         <button class="btn btn-success mx-1" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
                                             <i class="fa fa-plus"></i>
                                             <span class="d-none d-md-inline">Registrar Cliente</span>
