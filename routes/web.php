@@ -203,7 +203,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('debtCategories', DebtCategoryController::class);
     });
 
-    Route::group(['middleware' => ['auth']], function () {
+    Route::group(['middleware' => ['can:viewIncidents']], function () {
         Route::resource('incidents', IncidentController::class);
         Route::resource('customerIncidents', IncidentController::class)->parameters(['customerIncidents' => 'incident']);
         Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
