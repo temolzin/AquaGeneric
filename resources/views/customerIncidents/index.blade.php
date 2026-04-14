@@ -60,13 +60,8 @@
                                                         <td>{{ $incident->name }}</td>
                                                         <td>
                                                             @php
-                                                                if ($incident->status_id) {
-                                                                    $status = \App\Models\IncidentStatus::find($incident->status_id);
-                                                                    if ($status) {
-                                                                        echo '<span class="badge ' . $status->color . ' text-white" style="color: #fff !important;">' . $status->status . '</span>';
-                                                                    } else {
-                                                                        echo '<span class="badge badge-secondary">Estatus no encontrado</span>';
-                                                                    }
+                                                                if ($incident->status) {
+                                                                    echo '<span class="badge ' . $incident->status->color . ' text-white" style="color: #fff !important;">' . $incident->status->status . '</span>';
                                                                 } else {
                                                                     echo '<span class="badge badge-secondary">Pendiente</span>';
                                                                 }
@@ -113,4 +108,55 @@
             </div>
         </div>
     </section>
+@endsection
+
+@section('js')
+<script>
+    $(document).ready(function() {
+        $('#incident').DataTable({
+            responsive: true,
+            buttons: ['csv', 'excel', 'print'],
+            dom: 'Bfrtip',
+            paging: false,
+            info: false,
+            searching: false
+        });
+
+        var successMessage = "{{ session('success') }}";
+        var errorMessage = "{{ session('error') }}";
+
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: successMessage,
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+
+    $(document).on('shown.bs.modal', '[id^="edit"]', function() {
+        $(this).find('.select2').each(function() {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+            
+            $(this).select2({
+                allowClear: false,
+                placeholder: 'Selecciona una opción',
+                width: '100%',
+                dropdownParent: $(this).closest('.modal')
+            });
+        });
+    });
+</script>
 @endsection

@@ -90,15 +90,10 @@
                                                         </td>
                                                         <td>
                                                             @php
-                                                                if ($incident->status_id) {
-                                                                    $status = \App\Models\IncidentStatus::find($incident->status_id);
-                                                                    if ($status) {
-                                                                        $statusName = $status->status;
-                                                                        $statusColor = (preg_match('/^#[a-f0-9]{6}$/i', $status->color)) ? $status->color : '#6c757d';
-                                                                        echo '<span class="badge ' . $status->color . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
-                                                                    } else {
-                                                                        echo '<span class="badge badge-secondary">Estatus no encontrado</span>';
-                                                                    }
+                                                                if ($incident->status) {
+                                                                    $statusName = $incident->status->status;
+                                                                    $statusColor = (preg_match('/^#[a-f0-9]{6}$/i', $incident->status->color)) ? $incident->status->color : '#6c757d';
+                                                                    echo '<span class="badge ' . $incident->status->color . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
                                                                 } else {
                                                                     echo '<span class="badge badge-secondary">Pendiente</span>';
                                                                 }
@@ -120,15 +115,17 @@
                                                                 <i class="fas fa-eye"></i>
                                                             </button>
 
-                                                            @if(!$incident->creator->hasRole('Cliente'))
+                                                            @can('editIncidents')
                                                                 <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $incident->id }}">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
+                                                            @endcan
 
+                                                            @can('deleteIncidents')
                                                                 <button type="button" class="btn bg-red btn-sm mr-1" data-toggle="modal" title="Eliminar Incidencia" data-target="#delete{{ $incident->id }}">
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
-                                                            @endif
+                                                            @endcan
 
                                                             <button type="button" class="btn bg-purple btn-sm mr-1" data-toggle="modal" title="Cambiar Estatus de Incidencia" data-target="#createResponsible" data-incident-id="{{ $incident->id }}" data-incident-name="{{ $incident->name }}">
                                                                 <i class="fas fa-exchange-alt"></i>
@@ -197,6 +194,21 @@
         }
     });
 
+    $(document).on('shown.bs.modal', '[id^="edit"]', function() {
+        $(this).find('.select2').each(function() {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+            
+            $(this).select2({
+                allowClear: false,
+                placeholder: 'Selecciona una opción',
+                width: '100%',
+                dropdownParent: $(this).closest('.modal')
+            });
+        });
+    });
+
     $('#createResponsible').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var incidentId = button.data('incident-id');
@@ -206,6 +218,21 @@
         modal.find('#incidentId').val(incidentId);
         modal.find('#incidentNameDisplay').text(incidentName);
         modal.find('#status_id').val('').trigger('change');
+    });
+
+    $(document).on('shown.bs.modal', '[id^="edit"]', function() {
+        $(this).find('.select2').each(function() {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+            
+            $(this).select2({
+                allowClear: false,
+                placeholder: 'Selecciona una opción',
+                width: '100%',
+                dropdownParent: $(this).closest('.modal')
+            });
+        });
     });
 
     $('#changeStatusForm').on('submit', function(e) {

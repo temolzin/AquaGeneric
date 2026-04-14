@@ -232,7 +232,7 @@ class DebtController extends Controller
         $authUser = auth()->user();
         $customer = $authUser->customer;
         $locality = $authUser->locality;
-        $hasOpenPay = $locality && $locality->openpay_merchant_id && $locality->openpay_private_key;
+        $hasOpenPay = $locality && $locality->hasOpenPayEnabled();
         
         if (!$customer) {
             $waterConnections = WaterConnection::where('id', 0)->paginate(10);

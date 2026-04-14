@@ -92,7 +92,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm({{ $incident->id }})">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-warning">Actualizar</button>
                     </div>
                 </form>
@@ -100,20 +100,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(document).on('shown.bs.modal', '#edit{{ $incident->id }}', function() {
-        $(this).find('.select2').each(function() {
-            if ($(this).hasClass('select2-hidden-accessible')) {
-                $(this).select2('destroy');
-            }
-            
-            $(this).select2({
-                allowClear: false,
-                placeholder: 'Selecciona una opción',
-                width: '100%',
-                dropdownParent: $('#edit{{ $incident->id }}')
-            });
-        });
-    });
-</script>

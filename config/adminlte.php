@@ -414,7 +414,6 @@ return [
                 'can'  => 'viewIncidentStatuses',
             ],
         ],
-        'can' => 'viewIncidentCategories',
     ],
     [
         'text' => 'Gestion de Inventario',

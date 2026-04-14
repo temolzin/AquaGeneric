@@ -9,6 +9,7 @@ use App\Models\Incident;
 use App\Models\IncidentCategory;
 use App\Models\Employee;
 use App\Models\IncidentStatus;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\LogIncident;
 
@@ -18,9 +19,9 @@ class IncidentController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Incident::with('incidentCategory', 'getstatusChangeLogs.employee', 'creator');
+        $query = Incident::with('incidentCategory', 'status', 'getstatusChangeLogs.employee', 'creator');
 
-        $query->when($authUser->hasRole('Cliente'), 
+        $query->when($authUser->hasRole(User::ROLE_CUSTOMER), 
             fn($q) => $q->where('created_by', $authUser->id),
             fn($q) => $q->where('locality_id', $authUser->locality_id)
         );
@@ -112,15 +113,27 @@ class IncidentController extends Controller
             return redirect()->back()->with('error', 'Incidencia no encontrada.');
         }
 
-        if (!$incident->canBeEditedBy($authUser)) {
-            return redirect()->back()->with('error', 'No tienes permisos para editar esta incidencia.');
+        if ($authUser->hasRole(User::ROLE_CUSTOMER)) {
+            if (!$incident->canBeEditedBy($authUser)) {
+                return redirect()->back()->with('error', 'No tienes permisos para editar esta incidencia.');
+            }
+        } else {
+            if (!$authUser->can('editIncidents')) {
+                return redirect()->back()->with('error', 'No tienes permisos para editar incidencias.');
+            }
         }
 
         $incident->name = $request->input('nameUpdate');
-        $incident->start_date = $request->input('startDateUpdate');
+        
+        if ($request->filled('startDateUpdate')) {
+            $incident->start_date = $request->input('startDateUpdate');
+        }
+        if ($request->filled('statusUpdate')) {
+            $incident->status_id = $request->input('statusUpdate');
+        }
+        
         $incident->description = $request->input('descriptionUpdate');
         $incident->category_id = $request->input('categoryUpdate');
-        $incident->status_id = $request->input('statusUpdate');
 
         $incident->save();
 
@@ -132,19 +145,28 @@ class IncidentController extends Controller
             }
         }
 
-        return redirect()->route('incidents.index')->with('success', 'Incidencia actualizada correctamente.');
+        $redirectRoute = $authUser->hasRole(User::ROLE_CUSTOMER) ? 'customerIncidents.index' : 'incidents.index';
+        return redirect()->route($redirectRoute)->with('success', 'Incidencia actualizada correctamente.');
     }
 
     public function destroy(Incident $incident)
     {
         $authUser = auth()->user();
 
-        if (!$incident->canBeEditedBy($authUser)) {
-            return redirect()->back()->with('error', 'No tienes permisos para eliminar esta incidencia.');
+        if ($authUser->hasRole(User::ROLE_CUSTOMER)) {
+            if (!$incident->canBeEditedBy($authUser)) {
+                return redirect()->back()->with('error', 'No tienes permisos para eliminar esta incidencia.');
+            }
+        } else {
+            if (!$authUser->can('deleteIncidents')) {
+                return redirect()->back()->with('error', 'No tienes permisos para eliminar incidencias.');
+            }
         }
 
         $incident->delete();
-        return redirect()->route('incidents.index')->with('success', 'Incidencia eliminada exitosamente.');
+        
+        $redirectRoute = $authUser->hasRole(User::ROLE_CUSTOMER) ? 'customerIncidents.index' : 'incidents.index';
+        return redirect()->route($redirectRoute)->with('success', 'Incidencia eliminada exitosamente.');
     }
 
     public function generateIncidentListReport()
