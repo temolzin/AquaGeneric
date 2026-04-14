@@ -23,20 +23,38 @@
                                     </div>
                                 </form>
                                 <div class="btn-group d-none d-md-flex" role="group" aria-label="Reportes de Pagos">
-                                    <button type="button" class="btn bg-purple mr-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
-                                        <i class="fas fa-chart-bar"></i> Reporte Trimestral
-                                    </button>
-                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
-                                        <i class="fas fa-chart-line"></i> Reporte Anual
-                                    </button>
+                                    @if($payments->count() > 0)
+                                        <button type="button" class="btn bg-purple mr-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
+                                            <i class="fas fa-chart-bar"></i> Reporte Trimestral
+                                        </button>
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
+                                            <i class="fas fa-chart-line"></i> Reporte Anual
+                                        </button>
+                                    @else
+                                        <button type="button" class="btn btn-secondary mr-2" title="No hay pagos registrados" disabled>
+                                            <i class="fas fa-chart-bar"></i> Reporte Trimestral
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" title="No hay pagos registrados" disabled>
+                                            <i class="fas fa-chart-line"></i> Reporte Anual
+                                        </button>
+                                    @endif
                                 </div>
                                 <div class="d-flex d-md-none w-100 mt-2" role="group" aria-label="Reportes de Pagos (Móvil)">
-                                    <button type="button" class="btn bg-purple flex-fill mr-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
+                                    @if($payments->count() > 0)
+                                        <button type="button" class="btn bg-purple flex-fill mr-2" data-toggle="modal" data-target="#quarterModal" title="Ver Reporte Trimestral">
                                             <i class="fas fa-chart-bar"></i> Trimestral
                                         </button>
                                         <button type="button" class="btn btn-success flex-fill" data-toggle="modal" data-target="#annualModal" title="Ver Reporte Anual">
                                             <i class="fas fa-chart-line"></i> Anual
-                                    </button>
+                                        </button>
+                                    @else
+                                        <button type="button" class="btn btn-secondary flex-fill mr-2" title="No hay pagos registrados" disabled>
+                                            <i class="fas fa-chart-bar"></i> Trimestral
+                                        </button>
+                                        <button type="button" class="btn btn-secondary flex-fill" title="No hay pagos registrados" disabled>
+                                            <i class="fas fa-chart-line"></i> Anual
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
