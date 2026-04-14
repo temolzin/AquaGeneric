@@ -15,15 +15,16 @@ class EarningTypeController extends Controller
             ->with(['creator', 'locality'])
             ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc');
-        
+
         if (request()->has('search') && request('search') != '') {
-            $search = request('search');
+            $search =  trim(request('search'));
             $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
+                $q->where('id', 'LIKE', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%");
             });
         }
-        
+
         $earningTypes = $query->paginate(10)->appends(request()->query());
 
         return view('earningTypes.index', compact('earningTypes'));

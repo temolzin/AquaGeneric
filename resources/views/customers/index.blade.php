@@ -11,8 +11,8 @@
                     <h2>Clientes</h2>
                         <div class="row">
                             <div class="col-lg-12">
-                                <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                    <form method="GET" action="{{ route('customers.index') }}" class="mb-3 mb-lg-0 col-md-4 px-0" style="min-width: 250px;">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                    <form method="GET" action="{{ route('customers.index') }}" class="mb-2 mb-md-0 col-md-4 px-0" style="min-width: 250px;">
                                         <div class="input-group">
                                             <input type="text" name="search" class="form-control" placeholder="Buscar por nombre, apellido o email" value="{{ request('search') }}">
                                             <div class="input-group-append">
@@ -20,14 +20,16 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <div class="d-none d-lg-flex flex-wrap gap-0" role="group" aria-label="Acciones de Cliente">
-                                        <button class="btn btn-success mx-1 my-1" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
+                                    <div class="d-flex flex-wrap justify-content-end align-items-center mt-2 mt-md-0" role="group" aria-label="Acciones de Cliente">
+                                        <button class="btn btn-success mx-1" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
                                             <i class="fa fa-plus"></i>
                                             <span class="d-none d-md-inline">Registrar Cliente</span>
                                             <span class="d-inline d-md-none">Registrar</span>
                                         </button>
-                                        <button class="btn bg-purple mx-1 my-1" data-toggle='modal' data-target="#importData" title="Importar Datos">
-                                            <i class="fas fa-file-import"></i> Importar Datos
+                                        <button class="btn bg-purple mx-1" data-toggle='modal' data-target="#importData" title="Importar Datos">
+                                            <i class="fas fa-file-import"></i>
+                                            <span class="d-none d-md-inline">Importar Datos</span>
+                                            <span class="d-inline d-md-none">Importar</span>
                                         </button>
                                         <a type="button" class="btn btn-secondary mx-1 my-1" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista
@@ -76,10 +78,10 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>FOTO</th>
+                                            <th class="not-export">FOTO</th>
                                             <th>NOMBRE</th>
                                             <th>DIRECCION</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -174,7 +176,28 @@
     $(document).ready(function() {
         $('#customers').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,

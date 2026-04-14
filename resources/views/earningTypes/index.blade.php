@@ -12,9 +12,9 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                <form method="GET" action="{{ route('earningTypes.index') }}" class="mb-3 mb-lg-3" style="min-width: 300px;">
+                                <form method="GET" action="{{ route('earningTypes.index') }}" class="mb-3 mb-lg-0 col-md-6 px-0" style="min-width: 300px;">
                                     <div class="input-group">
-                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción..." value="{{ request('search') }}">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por ID, Nombre, Descripción..." value="{{ request('search') }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-primary" title="Buscar Tipos de Ingreso">
                                                 <i class="fa fa-search"></i> Buscar
@@ -22,8 +22,8 @@
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                    <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
+                                <div class="d-flex flex-wrap justify-content-md-end justify-content-start flex-grow-1 mt-2 mt-lg-0">
+                                    <button type="button" class="btn btn-success"
                                             data-toggle="modal" data-target="#createEarningTypeModal" title="Registrar Tipo de Ingreso">
                                         <i class="fa fa-plus"></i>
                                         <span class="d-none d-md-inline">Registrar Tipo</span>
@@ -45,7 +45,7 @@
                                             <th>ID</th>
                                             <th>TIPO DE GASTO</th>
                                             <th>DESCRIPCIÓN</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -81,7 +81,6 @@
                                                     </div>
                                                 </td>
                                             </tr>
-
                                             @include('earningTypes.show')
                                             @include('earningTypes.edit')
                                             @include('earningTypes.delete')
@@ -128,7 +127,28 @@
     $(document).ready(function() {
         $('#earningTypes').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,

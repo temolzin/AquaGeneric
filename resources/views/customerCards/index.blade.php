@@ -204,6 +204,7 @@
     </div>
 @endsection
 @section('css')
+    <link rel="stylesheet" href="{{ asset('css/custom-pagination.css') }}">
     <style>
         .card-number-dots {
             letter-spacing: 2px;

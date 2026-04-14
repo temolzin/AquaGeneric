@@ -11,13 +11,25 @@
                     <h2>Tipos de Gasto</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-column flex-lg-row justify-content-lg-end align-items-lg-center gap-3">
-                                <button type="button" class="btn btn-success mt-2"
-                                        data-toggle="modal" data-target="#createExpenseTypeModal" title="Registrar Tipo de Gasto">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-md-inline">Registrar Tipo</span>
-                                    <span class="d-inline d-md-none">Registrar</span>
-                                </button>
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('expenseTypes.index') }}" class="mb-3 mb-lg-0 col-md-9 px-0" style="min-width: 300px;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción..." value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Tipo de Gasto">
+                                                <i class="fa fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-wrap justify-content-md-end justify-content-start flex-grow-1 mt-2 mt-lg-0">
+                                    <button type="button" class="btn btn-success"
+                                            data-toggle="modal" data-target="#createExpenseTypeModal" title="Registrar Tipo de Gasto">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Tipo</span>
+                                        <span class="d-inline d-md-none">Tipo</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -33,7 +45,7 @@
                                             <th>ID</th>
                                             <th>TIPO DE GASTO</th>
                                             <th>DESCRIPCIÓN</th>
-                                            <th>OPCIONES</th>
+                                            <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -116,7 +128,28 @@
     $(document).ready(function() {
         $('#expenseTypes').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,

@@ -56,7 +56,7 @@
                                             <th>HORA</th>
                                             <th>MONTO</th>
                                             <th>MÉTODO</th>
-                                            <th>RECIBO</th>
+                                            <th class="not-export">RECIBO</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -94,7 +94,7 @@
                                                 @php
                                                     $methodLabels = [
                                                         'cash' => 'Efectivo',
-                                                        'transfer' => 'Transferencia', 
+                                                        'transfer' => 'Transferencia',
                                                         'card' => 'Tarjeta',
                                                         'openpay' => 'Tarjeta (En línea)'
                                                     ];
@@ -140,7 +140,28 @@
         @if($payments->count() > 0)
         $('#myPayments').DataTable({
             responsive: true,
-            buttons: ['csv', 'excel', 'print'],
+            buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
             dom: 'Bfrtip',
             paging: false,
             info: false,

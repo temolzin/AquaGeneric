@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CustomerController;
@@ -51,9 +52,9 @@ use App\Http\Controllers\LocalityOpenPayController;
 |
 */
 
-Route::get('/', function () {
-    return view('login');
-});
+Route::view('/', 'home')->name('home');
+Route::view('/login', 'login')->name('login');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

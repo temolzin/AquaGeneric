@@ -72,10 +72,10 @@
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
-                                                <th>FOTO</th>
+                                                <th class="not-export">FOTO</th>
                                                 <th>NOMBRE</th>
                                                 <th>DIRECCION</th>
-                                                <th>OPCIONES</th>
+                                                <th class="not-export">OPCIONES</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -103,19 +103,19 @@
                                                         <td>{{$employee->state}}, {{$employee->locality}}</td>
                                                         <td>
                                                             <div class="btn-group" role="group" aria-label="Opciones">
-                                                                <button type="button" class="btn btn-info btn-lg mr-2" data-toggle="modal"
+                                                                <button type="button" class="btn btn-info mr-2" data-toggle="modal"
                                                                     title="Ver Detalles" data-target="#view{{$employee->id}}">
                                                                     <i class="fas fa-eye"></i>
                                                                 </button>
                                                                 @can('editEmployee')
-                                                                <button type="button" class="btn btn-warning btn-lg mr-2"
+                                                                <button type="button" class="btn btn-warning mr-2"
                                                                     data-toggle="modal" title="Editar Datos"
                                                                     data-target="#edit{{$employee->id}}">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
                                                                 @endcan
                                                                 @can('deleteEmployee')
-                                                                <button type="button" class="btn btn-danger btn-lg mr-2"
+                                                                <button type="button" class="btn btn-danger mr-2"
                                                                     data-toggle="modal" title="Eliminar Registro"
                                                                     data-target="#delete{{$employee->id}}">
                                                                     <i class="fas fa-trash-alt"></i>
@@ -154,7 +154,28 @@
             $('#employees').DataTable
             ({
                 responsive: true,
-                buttons: ['csv', 'excel', 'print'],
+                buttons:[
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
                 dom: 'Bfrtip',
                 paging: false,
                 info: false,
