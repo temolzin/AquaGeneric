@@ -3,7 +3,6 @@
 @section('title', 'Inicio')
 
 @section('content')
-
     <header>
         <div class="head_top">
             <div class="header">
@@ -162,9 +161,7 @@
                             <div class="col-md-3">
                                 <div class="Testimonial_box">
                                     <i>
-                                        {{-- Icono o imagen representativa --}}
-                                        <img src="{{ asset('img/customer.jpg') }}"
-                                            alt="">
+                                        <img src="{{ asset('img/customer.jpg') }}" alt="">
                                     </i>
                                 </div>
                             </div>
@@ -235,54 +232,34 @@
                     </div>
                 </div>
             </div>
-            <footer>
-                <div class="footer">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="cont">
-                                    <h3>
-                                        <strong class="multi">AquaControl</strong><br>
-                                        Gestión inteligente del agua
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <ul class="social_icon">
-                                    <ul class="social_icon">
-                                        <li>
-                                            <a href="https://www.facebook.com/rootheimcompany/" target="_blank"
-                                                rel="noopener">
-                                                <i class="fab fa-facebook"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="https://www.instagram.com/rootheimcompany/" target="_blank" rel="noopener">
-                                                <i class="fab fa-instagram"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="https://mx.linkedin.com/company/rootheim" target="_blank"
-                                                rel="noopener">
-                                                <i class="fab fa-linkedin"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </ul>
-                            </div>
-                        </div>
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <div class="cont">
+                        <h3>
+                            <strong class="multi">AquaControl</strong><br>
+                            Gestión inteligente del agua
+                        </h3>
                     </div>
-                    <div class="copyright">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p>
-                                        © {{ date('Y') }} AquaControl. Todos los derechos reservados.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ul class="social_icon">
+                        <li>
+                            <a href="https://www.facebook.com/rootheimcompany/" target="_blank" rel="noopener">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/rootheimcompany/" target="_blank" rel="noopener">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://mx.linkedin.com/company/rootheim" target="_blank" rel="noopener">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="copyright">
+                    <p>© {{ date('Y') }} AquaControl. Todos los derechos reservados.</p>
                 </div>
             </footer>
         <script>
@@ -309,9 +286,9 @@
                 }
             });
         </script>
-        @endsection
+@endsection
 
-        <a href="https://wa.me/{{ env('WHATSAPP_NUMBER') }}?text={{ urlencode(env('WHATSAPP_MESSAGE', 'Hola, estoy interesado en AquaControl. ¿Me pueden ayudar?')) }}"
-            class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat por WhatsApp">
-            <i class="fab fa-whatsapp" aria-hidden="true"></i>
-        </a>
+<a href="https://wa.me/{{ env('WHATSAPP_NUMBER') }}?text={{ urlencode(env('WHATSAPP_MESSAGE', 'Hola, estoy interesado en AquaControl. ¿Me pueden ayudar?')) }}"
+    class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat por WhatsApp">
+    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+</a>
