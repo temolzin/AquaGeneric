@@ -20,6 +20,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\AdvancePaymentController;
 use App\Http\Controllers\IncidentCategoriesController;
 use App\Http\Controllers\DebtCategoryController;
+use App\Http\Controllers\EmployeePositionController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LogIncidentController;
@@ -204,6 +205,11 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('debtCategories', DebtCategoryController::class);
     });
 
+    Route::group(['middleware' => ['can:viewEmployeePositions']], function () {
+        Route::resource('employeePositions', EmployeePositionController::class, ['parameters' => ['employeePosition' => 'employeePosition']]);
+        Route::get('/reports/generateEmployeePositionListReport', [EmployeePositionController::class, 'generateEmployeePositionListReport'])->name('report.generateEmployeePositionListReport');
+    });
+
     Route::group(['middleware' => ['can:viewIncidents']], function () {
         Route::resource('incidents', IncidentController::class);
         Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
@@ -212,7 +218,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     });
 
     Route::group(['middleware' => ['can:viewEmployee']], function () {
-        Route::resource('employees', EmployeeController::class);
+        Route::resource('employees', EmployeeController::class, ['parameters' => ['employee' => 'employee']]);
         Route::get('/reports/generateEmployeeListReport', [EmployeeController::class, 'generateEmployeeListReport'])->name('report.generateEmployeeListReport');
         Route::post('/reports/generateEmployeeReportByRole', [EmployeeController::class, 'showEmployeeReportByRole'])->name('report.showEmployeeReportByRole');
         Route::post('/employees/import', [EmployeeController::class, 'import'])->name('employees.import');

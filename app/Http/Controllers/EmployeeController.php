@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Employee;
+use App\Models\EmployeePosition;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -27,7 +28,8 @@ class EmployeeController extends Controller
         }
 
         $employees = $query->paginate(10);
-        return view('employees.index', compact('employees'));
+        $positions = EmployeePosition::byUserLocality()->get();
+        return view('employees.index', compact('employees', 'positions'));
     }
 
     public function store(Request $request)
@@ -55,6 +57,9 @@ class EmployeeController extends Controller
             'photo.max' => 'La imagen no puede superar los 5MB.',
         ]);
 
+        $position = EmployeePosition::where('name', $request->rol)->first();
+        $positionId = $position ? $position->id : null;
+
         $employeeData = [
             'name'=> $request->name,
             'last_name' => $request -> lastName,
@@ -69,6 +74,7 @@ class EmployeeController extends Controller
             'phone_number'  => $request -> phoneNumber,
             'salary'  => $request -> salary,
             'rol'   => $request -> rol,
+            'position_id' => $positionId,
         ];
         $employeeData['created_by'] = $authUser->id;
         $employeeData['locality_id'] = $authUser->locality_id;
@@ -100,6 +106,8 @@ class EmployeeController extends Controller
             $employee->phone_number = $request->input('phoneNumberUpdate');
             $employee->salary = $request->input('salaryUpdate');
             $employee->rol = $request->input('rolUpdate');
+            $position = EmployeePosition::where('name', $request->input('rolUpdate'))->first();
+            $employee->position_id = $position ? $position->id : null;
 
             $employee->save();
 

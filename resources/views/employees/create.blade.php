@@ -47,12 +47,15 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="rol" class="form-label">Rol(*)</label>
-                                            <select class="form-control" name="rol" id="rol">
-                                                <option selected>Asigna un rol</option>
-                                                <option value="Administrador">Administrador</option>
-                                                <option value="Recepcionista">Recepcionista</option>
-                                                <option value="Encargado">Encargado</option>
-                                                <option value="Seguridad">Seguridad</option>
+                                            <select class="form-control" name="rol" id="rol" required>
+                                                <option selected value="">Asigna un rol</option>
+                                                @forelse($positions as $position)
+                                                    <option value="{{ $position->name }}" {{ old('rol') == $position->name ? 'selected' : '' }}>
+                                                        {{ $position->name }}
+                                                    </option>
+                                                @empty
+                                                    <option disabled>No hay cargos disponibles</option>
+                                                @endforelse
                                             </select>
                                         </div>
                                     </div>
