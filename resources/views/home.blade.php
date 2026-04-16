@@ -3,7 +3,6 @@
 @section('title', 'Inicio')
 
 @section('content')
-
     <header>
         <div class="head_top">
             <div class="header">
@@ -12,13 +11,13 @@
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <nav class="navigation navbar navbar-expand-md navbar-dark">
                                 <button class="navbar-toggler" type="button" data-toggle="collapse"
-                                        data-target="#navbarsExample04" aria-label="Toggle navigation">
-                                        <span class="navbar-toggler-icon" aria-hidden="true">
-                                            <svg viewBox="0 0 30 30" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                                <path d="M4 7h22M4 15h22M4 23h22" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"></path>
-                                            </svg>
-                                        </span>
-                                    </button>
+                                    data-target="#navbarsExample04" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 30 30" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                            <path d="M4 7h22M4 15h22M4 23h22" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"></path>
+                                        </svg>
+                                    </span>
+                                </button>
                                 <div class="collapse navbar-collapse" id="navbarsExample04">
                                     <ul class="navbar-nav mr-auto">
                                         <li class="nav-item active">
@@ -26,6 +25,15 @@
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="#about">Sobre el sistema</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#features">Funcionalidades</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#approach">Enfoque</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#contact">Contacto</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('login') }}">Acceder</a>
@@ -150,7 +158,7 @@
             </div>
             <div class="section">
                 <div class="container">
-                    <div class="Testimonial">
+                    <div class="Testimonial" id="approach">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="titlepage">
@@ -162,9 +170,7 @@
                             <div class="col-md-3">
                                 <div class="Testimonial_box">
                                     <i>
-                                        {{-- Icono o imagen representativa --}}
-                                        <img src="{{ asset('img/customer.jpg') }}"
-                                            alt="">
+                                        <img src="{{ asset('img/customer.jpg') }}" alt="">
                                     </i>
                                 </div>
                             </div>
@@ -172,8 +178,10 @@
                                 <div class="Testimonial_box">
                                     <h4>Transparencia y confianza</h4>
                                     <p>
-                                        El objetivo principal es fortalecer la confianza entre administradores y
-                                        usuarios mediante información clara, accesible y actualizada.
+                                        AquaControl hace más fácil la relación entre usuarios y administración al brindar información clara 
+                                        y siempre disponible sobre pagos, adeudos y estado del servicio. Desde un solo lugar, cada persona 
+                                        puede consultar su situación, reportar inconvenientes y dar seguimiento a sus solicitudes, logrando 
+                                        una comunicación más ágil y una gestión más ordenada y cercana para toda la comunidad.
                                     </p>
                                 </div>
                             </div>
@@ -235,54 +243,34 @@
                     </div>
                 </div>
             </div>
-            <footer>
-                <div class="footer">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="cont">
-                                    <h3>
-                                        <strong class="multi">AquaControl</strong><br>
-                                        Gestión inteligente del agua
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <ul class="social_icon">
-                                    <ul class="social_icon">
-                                        <li>
-                                            <a href="https://www.facebook.com/rootheimcompany/" target="_blank"
-                                                rel="noopener">
-                                                <i class="fab fa-facebook"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="https://www.instagram.com/rootheimcompany/" target="_blank" rel="noopener">
-                                                <i class="fab fa-instagram"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="https://mx.linkedin.com/company/rootheim" target="_blank"
-                                                rel="noopener">
-                                                <i class="fab fa-linkedin"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </ul>
-                            </div>
-                        </div>
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <div class="cont">
+                        <h3>
+                            <strong class="multi">AquaControl</strong><br>
+                            Gestión inteligente del agua
+                        </h3>
                     </div>
-                    <div class="copyright">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p>
-                                        © {{ date('Y') }} AquaControl. Todos los derechos reservados.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ul class="social_icon">
+                        <li>
+                            <a href="https://www.facebook.com/rootheimcompany/" target="_blank" rel="noopener">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/rootheimcompany/" target="_blank" rel="noopener">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://mx.linkedin.com/company/rootheim" target="_blank" rel="noopener">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="copyright">
+                    <p>© {{ date('Y') }} AquaControl. Todos los derechos reservados.</p>
                 </div>
             </footer>
         <script>
@@ -309,9 +297,9 @@
                 }
             });
         </script>
-        @endsection
+@endsection
 
-        <a href="https://wa.me/{{ env('WHATSAPP_NUMBER') }}?text={{ urlencode(env('WHATSAPP_MESSAGE', 'Hola, estoy interesado en AquaControl. ¿Me pueden ayudar?')) }}"
-            class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat por WhatsApp">
-            <i class="fab fa-whatsapp" aria-hidden="true"></i>
-        </a>
+<a href="https://wa.me/{{ env('WHATSAPP_NUMBER') }}?text={{ urlencode(env('WHATSAPP_MESSAGE', 'Hola, estoy interesado en AquaControl. ¿Me pueden ayudar?')) }}"
+    class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat por WhatsApp">
+    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+</a>

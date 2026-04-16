@@ -2,29 +2,161 @@
 
 /*--------------------------------------------------------------------- File Name: responsive.css ---------------------------------------------------------------------*/
 
-
-/*------------------------------------------------------------------- 991px x 768px ---------------------------------------------------------------------*/
+@media (min-width: 1501px) {
+    .text-bg {
+        text-align: center;
+        max-width: 450px;
+        margin-left: 5%;
+        padding: 30px 20px;
+    }
+    .text-bg h1 {
+        font-size: 42px;
+        line-height: 1.3;
+    }
+    .text-bg p {
+        font-size: 16px;
+        line-height: 1.6;
+        padding: 20px 0;
+    }
+    .hero-logo {
+        width: 110px;
+        margin: 0 auto 20px auto;
+    }
+    .text-img {
+        padding-top: 80px;
+    }
+    .Testimonial {
+        padding: 80px 0;
+    }
+    .Testimonial .titlepage h2 {
+        margin-bottom: 20px;
+    }
+    .Testimonial .col-md-3 {
+        display: flex;
+        justify-content: center;
+    }
+    .Testimonial_box img {
+        max-width: 250px;
+    }
+    .Testimonial_box h4 {
+        font-size: 20px;
+    }
+    .Testimonial_box p {
+        font-size: 16px;
+        padding-right: 80px;
+    }
+    .footer-content {
+        padding: 50px 15px 40px 15px;
+    }
+    .cont h3 {
+        font-size: 28px;
+    }
+    .copyright {
+        padding: 25px 0;
+    }
+}
 
 @media (min-width: 1200px) and (max-width: 1500px) {
     .projects::after {
         width: 262px;
     }
+    .text-bg {
+        text-align: center;
+        max-width: 420px;
+        margin-left: 5%;
+        padding: 25px 15px;
+    }
+    .text-bg h1 {
+        font-size: 38px;
+        line-height: 1.2;
+    }
+    .text-bg p {
+        font-size: 15px;
+        line-height: 1.6;
+        padding: 20px 0;
+    }
+    .hero-logo {
+        width: 100px;
+    }
+    .Testimonial {
+        padding: 70px 0;
+    }
+    .Testimonial .titlepage h2 {
+        margin-bottom: 20px;
+    }
+    .Testimonial .col-md-3 {
+        display: flex;
+        justify-content: center;
+    }
+    .Testimonial_box img {
+        max-width: 200px;
+    }
+    .Testimonial_box h4 {
+        font-size: 18px;
+    }
+    .Testimonial_box p {
+        font-size: 15px;
+        padding-right: 60px;
+    }
+    .footer-content {
+        padding: 45px 15px 35px 15px;
+    }
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
-    .testimonial_Carousel .test_box p {
-        font-size: 16px;
-        padding: 29px;
-    }
-    .text-bg h1 {
-        font-size: 36px;
-        line-height: 59px;
-    }
     .projects::after {
         background: transparent;
     }
     .copyright::after {
         background: transparent;
+    }
+    .text-bg {
+        text-align: center;
+        max-width: 380px;
+        margin-left: 5%;
+        padding: 20px 15px;
+    }
+    .text-bg h1 {
+        font-size: 34px;
+        line-height: 1.2;
+    }
+    .text-bg p {
+        font-size: 15px;
+        line-height: 1.6;
+        padding: 18px 0;
+    }
+    .hero-logo {
+        width: 95px;
+        margin: 0 auto 15px auto;
+    }
+    .banner_main {
+        padding: 40px 0 80px 0;
+    }
+    .Testimonial {
+        padding: 60px 0;
+    }
+    .Testimonial .titlepage h2 {
+        margin-bottom: 10px;
+    }
+    .Testimonial .col-md-3 {
+        display: flex;
+        justify-content: center;
+    }
+    .Testimonial_box img {
+        max-width: 180px;
+    }
+    .Testimonial_box h4 {
+        font-size: 17px;
+    }
+    .Testimonial_box p {
+        font-size: 14px;
+        padding-right: 40px;
+    }
+    .cont h3 {
+        font-size: 24px;
+    }
+    .footer-content {
+        padding: 40px 15px 30px 15px;
     }
 }
 
@@ -32,59 +164,135 @@
     .projects::after {
         background: transparent;
     }
-    .copyright::after {
-        background: transparent;
-    }
     .navigation.navbar-dark .navbar-nav .nav-link {
         padding: 0 14px;
     }
-    .text-bg h1 {
-        padding-top: 0px;
-        font-size: 28px;
-        line-height: 38px;
-    }
     .text-bg {
-        padding-right: 108px;
+        text-align: center;
+        max-width: 350px;
+        margin: 0 auto;
+        padding: 20px 15px;
+    }
+    .text-bg h1 {
+        font-size: 28px;
+        line-height: 1.2;
+    }
+    .text-bg p {
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 15px 0;
+    }
+    .hero-logo {
+        width: 90px;
+        margin: 0 auto 15px auto;
     }
     .banner_main {
-        padding: 30px 0 190px 0;
+        padding: 30px 0 60px 0;
     }
+    .Testimonial {
+        padding: 50px 0;
+    }
+    .Testimonial .titlepage h2 {
+        margin-bottom: 20px;
+    }
+    .Testimonial .col-md-3 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    .Testimonial_box {
+        text-align: center;
+    }
+    .Testimonial_box img {
+        max-width: 180px;
+        margin: 0 auto;
+    }
+    .Testimonial_box h4 {
+        font-size: 16px;
+    }
+    .Testimonial_box p {
+        font-size: 14px;
+        padding-right: 0;
+        text-align: center;
+    }
+    .cont h3 {
+        font-size: 22px;
+    }
+    .footer-content {
+        padding: 30px 15px 20px 15px;
+    }
+}
+
+@media (max-width: 575px) {
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
     .head_top {
         background: #0891f8;
     }
-    .mean-container .mean-bar {
-        margin-top: 0px;
+    .text-bg {
+        text-align: center;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 15px 15px;
     }
     .text-bg h1 {
-        font-size: 50px;
+        font-size: 32px;
+        line-height: 1.3;
     }
-    .text-bg {
-        padding-right: 0;
+    .text-bg p {
+        font-size: 15px;
+        line-height: 1.6;
+        padding: 15px 0;
+    }
+    .hero-logo {
+        width: 95px;
+        margin: 0 auto 15px auto;
     }
     .text-img {
-        padding-top: 30px;
+        padding-top: 25px;
     }
-    .main_form {
-        margin: 0;
+    .text-img figure img {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+    .banner_main {
+        padding: 30px 0 60px 0;
     }
     .Testimonial {
         background: #0891f8;
+        padding: 40px 0;
+    }
+    .Testimonial .titlepage h2 {
+        margin-bottom: 20px;
+    }
+    .Testimonial .col-md-3 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
     }
     .Testimonial_box {
-        padding: 20px;
+        text-align: center;
+    }
+    .Testimonial_box img {
+        max-width: 160px;
+        margin: 0 auto;
+    }
+    .Testimonial_box h4 {
+        font-size: 16px;
     }
     .Testimonial_box p {
-        padding-right: 0px;
-    }
-    .Testimonial_box i::after {
-        border: inherit;
+        font-size: 14px;
+        padding-right: 0;
+        text-align: center;
     }
     .cont h3 {
-        font-size: 34px;
-        line-height: 52px;
+        font-size: 24px;
+        line-height: 1.3;
+    }
+    .main_form {
+        margin: 0;
+        padding: 25px 15px;
     }
     .navigation.navbar {
         float: right;
@@ -93,7 +301,7 @@
         width: 100%;
     }
     .navigation .navbar-collapse {
-        background: #fff;
+        background: #fff !important;
         padding: 20px;
         margin-top: 10px;
         position: static;
@@ -103,7 +311,10 @@
     }
     .navigation.navbar-dark .navbar-nav .nav-link {
         padding: 10px 0;
-        color: #000;
+        color: #23262d !important;
+    }
+    .navigation.navbar-dark .navbar-nav .nav-link:hover {
+        color: #1D4ED8 !important;
     }
     .navigation.navbar-dark .navbar-toggler {
         border: inherit;
@@ -122,14 +333,43 @@
     .projects::after {
         background: transparent;
     }
+    .footer-content {
+        padding: 30px 15px 20px 15px;
+    }
     .copyright::after {
-        background: transparent;
+        display: block;
+        width: 180px;
+        height: 130px;
     }
 }
 
 @media (max-width: 575px) {
     .head_top {
         background: #0891f8;
+    }
+    .navigation.navbar {
+        padding: 10px 0;
+    }
+    .navigation .navbar-collapse {
+        background: #fff !important;
+        padding: 15px;
+        margin-top: 10px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        z-index: 10000010;
+    }
+    .navigation.navbar-dark .navbar-nav .nav-link {
+        padding: 12px 0;
+        color: #23262d !important;
+        border-bottom: 1px solid #eee;
+    }
+    .navigation.navbar-dark .navbar-nav .nav-link:hover {
+        color: #1D4ED8 !important;
+    }
+    .navigation.navbar-dark .navbar-nav .nav-link:last-child {
+        border-bottom: none;
     }
     .header {
         padding: 12px 0px 0px 0px;
@@ -139,55 +379,121 @@
         padding-bottom: 6px;
         float: left;
     }
-    .text-bg h1 {
-        font-size: 33px;
-        line-height: 51px;
-    }
     .text-bg {
-        padding-right: 0;
+        text-align: center;
+        padding: 15px 0;
+        margin: 0 auto;
+    }
+    .text-bg h1 {
+        font-size: 26px;
+        line-height: 1.3;
+    }
+    .text-bg p {
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 12px 0;
+    }
+    .hero-logo {
+        width: 80px;
+        margin: 0 auto 15px auto;
+    }
+    .text-bg a {
+        font-size: 13px;
+        padding: 10px 20px;
     }
     .text-img {
-        padding-top: 30px;
+        padding-top: 20px;
     }
-    .titlepage h2 {
-        font-size: 35px;
-        line-height: 50px;
-    }
-    .business .titlepage span {
-        font-size: 23px;
-        line-height: 28px;
+    .text-img figure img {
+        max-width: 220px;
+        margin: 0 auto;
     }
     .banner_main {
-        padding: 50px 0;
+        padding: 20px 0 50px 0;
+    }
+    .titlepage h2 {
+        font-size: 24px;
+        line-height: 1.3;
+    }
+    .titlepage {
+        padding-bottom: 20px;
+    }
+    .business {
+        padding-top: 40px;
+    }
+    .business .titlepage span {
+        font-size: 18px;
+        line-height: 1.3;
+    }
+    .business .business_box p {
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 15px 0;
+    }
+    .projects {
+        padding-top: 40px;
+    }
+    .projects .titlepage span {
+        font-size: 18px;
     }
     .projects::after {
         background: transparent;
     }
+    .projects .projects_box {
+        margin-bottom: 20px;
+    }
+    .projects .projects_box p {
+        padding: 15px 0 10px 0;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    .projects .projects_box h4 {
+        font-size: 16px;
+    }
     .Testimonial {
         background: #0891f8;
+        padding: 30px 15px;
+        margin-top: 40px;
+    }
+    .Testimonial .titlepage h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    .Testimonial .col-md-3 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
     }
     .Testimonial_box {
-        padding: 20px;
+        text-align: center;
+    }
+    .Testimonial_box img {
+        max-width: 140px;
+        margin: 0 auto;
+    }
+    .Testimonial_box h4 {
+        font-size: 15px;
     }
     .Testimonial_box p {
-        padding-right: 0px;
+        font-size: 13px;
+        line-height: 1.5;
+        padding-right: 0;
+        text-align: center;
     }
     .Testimonial_box i::after {
         border: inherit;
     }
-    .cont h3 {
-        font-size: 30px;
-        line-height: 45px;
-    }
-    .multi {
-        font-size: 33px;
-    }
     .main_form {
-        padding: 25px;
+        padding: 20px 15px;
         margin: 0px 0px;
+        border-radius: 20px;
     }
-    .copyright::after {
-        background: transparent;
+    .contact {
+        padding-top: 40px;
+    }
+    .contact .titlepage span {
+        font-size: 14px;
+        line-height: 1.5;
     }
     .navigation.navbar {
         float: right;
@@ -198,7 +504,7 @@
         position: relative;
     }
     .navigation .navbar-collapse {
-        background: #fff;
+        background: #fff !important;
         padding: 20px;
         margin-top: 0;
         position: absolute;
@@ -224,15 +530,15 @@
     }
     .navigation.navbar-dark .navbar-nav .nav-link {
         padding: 10px 0;
-        color: #000;
+        color: #23262d !important;
+    }
+    .navigation.navbar-dark .navbar-nav .nav-link:hover {
+        color: #1D4ED8 !important;
     }
     .navigation.navbar-dark .navbar-toggler {
         float: right;
         margin-right: 2px;
         border: inherit;
-    }
-    .testimonial_box {
-        padding: 0px 19px 40px 20px;
     }
     .navigation.navbar-dark .navbar-toggler-icon {
         background-image: none !important;
@@ -243,12 +549,34 @@
         align-items: center;
         justify-content: center;
     }
-
     .navigation .navbar-toggler-icon svg {
         width: 26px;
         height: 26px;
         display: block;
         stroke: currentColor;
     }
+    .footer-content {
+        padding: 30px 15px 20px 15px;
+    }
+    .cont h3 {
+        font-size: 22px;
+        line-height: 1.3;
+    }
+    .multi {
+        font-size: 24px;
+    }
+    .copyright {
+        padding: 15px 0;
+    }
+    .copyright p {
+        font-size: 13px;
+    }
+    ul.social_icon li a {
+        width: 42px;
+        height: 42px;
+        font-size: 18px;
+    }
+    ul.social_icon li {
+        margin: 0 4px;
+    }
 }
-
