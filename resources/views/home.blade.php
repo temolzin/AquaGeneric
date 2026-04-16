@@ -11,13 +11,13 @@
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <nav class="navigation navbar navbar-expand-md navbar-dark">
                                 <button class="navbar-toggler" type="button" data-toggle="collapse"
-                                        data-target="#navbarsExample04" aria-label="Toggle navigation">
-                                        <span class="navbar-toggler-icon" aria-hidden="true">
-                                            <svg viewBox="0 0 30 30" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                                <path d="M4 7h22M4 15h22M4 23h22" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"></path>
-                                            </svg>
-                                        </span>
-                                    </button>
+                                    data-target="#navbarsExample04" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 30 30" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                            <path d="M4 7h22M4 15h22M4 23h22" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"></path>
+                                        </svg>
+                                    </span>
+                                </button>
                                 <div class="collapse navbar-collapse" id="navbarsExample04">
                                     <ul class="navbar-nav mr-auto">
                                         <li class="nav-item active">
@@ -25,6 +25,15 @@
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="#about">Sobre el sistema</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#features">Funcionalidades</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#approach">Enfoque</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#contact">Contacto</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('login') }}">Acceder</a>
@@ -149,7 +158,7 @@
             </div>
             <div class="section">
                 <div class="container">
-                    <div class="Testimonial">
+                    <div class="Testimonial" id="approach">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="titlepage">
