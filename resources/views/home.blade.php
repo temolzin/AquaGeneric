@@ -178,8 +178,10 @@
                                 <div class="Testimonial_box">
                                     <h4>Transparencia y confianza</h4>
                                     <p>
-                                        El objetivo principal es fortalecer la confianza entre administradores y
-                                        usuarios mediante información clara, accesible y actualizada.
+                                        AquaControl hace más fácil la relación entre usuarios y administración al brindar información clara 
+                                        y siempre disponible sobre pagos, adeudos y estado del servicio. Desde un solo lugar, cada persona 
+                                        puede consultar su situación, reportar inconvenientes y dar seguimiento a sus solicitudes, logrando 
+                                        una comunicación más ágil y una gestión más ordenada y cercana para toda la comunidad.
                                     </p>
                                 </div>
                             </div>
