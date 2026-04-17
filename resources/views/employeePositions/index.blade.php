@@ -1,0 +1,170 @@
+@extends('layouts.adminlte')
+
+@section('title', config('adminlte.title') . ' | Cargos de Empleados')
+
+@section('content')
+<section class="content">
+    <div class="right_col" role="main">
+        <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Cargos de Empleados</h2>
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('employeePositions.index') }}" class="mb-3 mb-lg-0 col-md-9 px-0" style="min-width: 300px;">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción..." value="{{ request('search') }}">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary" title="Buscar Posición">
+                                                <i class="fa fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="d-flex flex-wrap justify-content-md-end justify-content-start flex-grow-1 mt-2 mt-lg-0">
+                                    <button type="button" class="btn btn-success"
+                                            data-toggle="modal" data-target="#createPositionModal" title="Registrar Posición">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-md-inline">Registrar Posición</span>
+                                        <span class="d-inline d-md-none">Posición</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card-box table-responsive">
+                                <table id="positions" class="table table-striped display responsive nowrap" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>POSICIÓN</th>
+                                            <th>DESCRIPCIÓN</th>
+                                            <th class="not-export">OPCIONES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($positions as $position)
+                                            <tr>
+                                                <td>{{ $position->id }}</td>
+                                                <td>
+                                                    <span class="badge {{ $position->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                        {{ $position->name }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ $position->description }}</td>
+                                                <td>
+                                                    <div class="btn-group" role="group" aria-label="Opciones">
+                                                        <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewPosition{{ $position->id }}">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        @if (!is_null($position->locality_id))
+                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $position->id }}">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                            @if ($position->hasDependencies())
+                                                                <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Hay empleados asociados." disabled>
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @else
+                                                                <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro"
+                                                                data-toggle="modal" data-target="#delete{{ $position->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @include('employeePositions.show')
+                                            @include('employeePositions.edit')
+                                            @include('employeePositions.delete')
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">No hay cargos de empleados registrados.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                                @include('employeePositions.create')
+                                <div class="d-flex justify-content-center">
+                                    {!! $positions->links('pagination::bootstrap-4') !!}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endsection
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        $('#positions').DataTable({
+            responsive: true,
+            buttons: [
+                {
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
+                    }
+                }
+            ],
+            dom: 'Bfrtip',
+            paging: false,
+            info: false,
+            searching: false,
+            'language': {
+                'url': '{{ asset("vendor/datatables/es-es.json") }}'
+            }
+        });
+
+        var successMessage = "{{ session('success') }}";
+        var errorMessage = "{{ session('error') }}";
+
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: successMessage,
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        $('[id^="edit"]').on('shown.bs.modal', function() {
+            reinitializeSelect2();
+        });
+    });
+</script>
+@endpush
