@@ -58,8 +58,14 @@
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="form-group">
-                                                <label for="password{{ $locality->id }}">Contraseña(*)</label>
-                                                <input type="text" name="password" class="form-control" id="password{{ $locality->id }}" placeholder="Ingresa la contraseña" value="{{ old('password', $config?->password) }}" required>
+                                                <label for="password{{ $locality->id }}">Contraseña{{ $config ? '' : '(*)' }}</label>
+                                                <input type="password" name="password" class="form-control" id="password{{ $locality->id }}" placeholder="{{ $config ? 'Dejar vacío para conservar la contraseña actual' : 'Ingresa la contraseña' }}"
+                                                    value="{{ old('password') }}" {{ $config ? '' : 'required' }} autocomplete="new-password">
+                                                @if($config)
+                                                    <small class="text-muted">
+                                                        Deja este campo vacío si no deseas cambiar la contraseña actual.
+                                                    </small>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
