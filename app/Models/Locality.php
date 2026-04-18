@@ -35,8 +35,7 @@ class Locality extends Model implements HasMedia
         'openpay_webhook_user',
         'openpay_webhook_password',
         'openpay_sandbox',
-        'openpay_enabled',
-        'last_reminder_sent_at'
+        'openpay_enabled'
     ];
 
     protected $casts = [
