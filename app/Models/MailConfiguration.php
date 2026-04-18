@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class MailConfiguration extends Model
 {
@@ -42,5 +44,27 @@ class MailConfiguration extends Model
             !empty($this->username) &&
             !empty($this->password) &&
             !empty($this->encryption);
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        if (blank($value)) {
+            return;
+        }
+
+        $this->attributes['password'] = Crypt::encryptString($value);
+    }
+
+    public function getPasswordAttribute($value)
+    {
+        if (blank($value)) {
+            return null;
+        }
+
+        try {
+            return Crypt::decryptString($value);
+        } catch (DecryptException $e) {
+            return $value;
+        }
     }
 }

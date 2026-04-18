@@ -35,12 +35,14 @@ class Locality extends Model implements HasMedia
         'openpay_webhook_user',
         'openpay_webhook_password',
         'openpay_sandbox',
-        'openpay_enabled'
+        'openpay_enabled',
+        'last_reminder_sent_at'
     ];
 
     protected $casts = [
         'openpay_sandbox' => 'boolean',
         'openpay_enabled' => 'boolean',
+        'last_reminder_sent_at' => 'datetime',
     ];
 
     public function setOpenpayPrivateKeyAttribute($value)
@@ -74,9 +76,9 @@ class Locality extends Model implements HasMedia
     }
     public function hasOpenPayEnabled(): bool
     {
-        return $this->openpay_enabled 
-            && !empty($this->openpay_merchant_id) 
-            && !empty($this->openpay_private_key) 
+        return $this->openpay_enabled
+            && !empty($this->openpay_merchant_id)
+            && !empty($this->openpay_private_key)
             && !empty($this->openpay_public_key);
     }
 
@@ -137,7 +139,7 @@ class Locality extends Model implements HasMedia
             $tokenValidation = Crypt::decrypt($this->token);
             $endDate = Carbon::parse($tokenValidation['data']['endDate'])->startOfDay();
             $today = now()->startOfDay();
-            
+
             return $today->lte($endDate) ? self::SUBSCRIPTION_ACTIVE : self::SUBSCRIPTION_EXPIRED;
         } catch (Exception $e) {
             return self::SUBSCRIPTION_NONE;
@@ -166,7 +168,7 @@ class Locality extends Model implements HasMedia
         ];
 
         $token = Crypt::encrypt($tokenData);
-        
+
         $this->token = $token;
         $this->saveQuietly();
 
