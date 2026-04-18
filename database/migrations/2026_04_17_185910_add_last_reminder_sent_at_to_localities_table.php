@@ -26,7 +26,7 @@ class AddLastReminderSentAtToLocalitiesTable extends Migration
     public function down()
     {
         Schema::table('localities', function (Blueprint $table) {
-            //
+            $table->dropColumn('last_reminder_sent_at');
         });
     }
 }
