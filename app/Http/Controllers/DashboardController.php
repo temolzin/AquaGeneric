@@ -160,7 +160,17 @@ class DashboardController extends Controller
     public function sendEmailsForDebtsExpiringSoon()
     {
         $authUser = Auth::user();
-        $mailConfig = $authUser->locality->mailConfiguration;
+        $locality = $authUser->locality;
+        $mailConfig = $locality?->mailConfiguration;
+
+        if (!$mailConfig || !$mailConfig->isComplete()) {
+            return back()->with('error', 'No hay configuración de correo válida para esta localidad.');
+        }
+
+
+        if ($locality->last_reminder_sent_at && $locality->last_reminder_sent_at->isToday()) {
+            return back()->with('warning', 'Ya se enviaron recordatorios el día de hoy.');
+        }
 
         Config::set('mail.mailers.smtp.host', $mailConfig->host);
         Config::set('mail.mailers.smtp.port', $mailConfig->port);
@@ -185,11 +195,28 @@ class DashboardController extends Controller
 
         } while ($customers->hasMorePages());
 
-        $uniqueCustomers = $allCustomers->unique('customerEmail');
+       $uniqueCustomers = $allCustomers
+            ->filter(function ($customer) {
+                return !empty($customer['customerEmail']);
+            })
+            ->unique('customerEmail')
+            ->values();
 
-        $uniqueCustomers->chunk(50)->each(function ($chunk) use ($authUser) {
+        if ($uniqueCustomers->isEmpty()) {
+            return back()->with('warning', 'No hay clientes con correo válido para enviar recordatorios.');
+        }
+
+        $jobsDispatched = false;
+
+        $uniqueCustomers->chunk(50)->each(function ($chunk) use ($authUser, &$jobsDispatched) {
             dispatch(new SendUpcomingPaymentEmails($chunk, $authUser->id));
+            $jobsDispatched = true;
         });
+
+        if ($jobsDispatched) {
+            $locality->last_reminder_sent_at = now();
+            $locality->save();
+        }
 
         return back()->with('success', 'Los correos están en proceso de envío y pronto llegarán a sus destinatarios.');
     }

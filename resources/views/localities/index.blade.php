@@ -106,9 +106,9 @@
                                                     <button type="button" class="btn bg-navy mr-2" data-toggle="modal" title="Fondo de reporte" data-target="#editPdfBackground{{$locality->id}}">
                                                             <i class="fas fa-fill-drip"></i>
                                                     </button>
-                                                    <button type="button" class="btn {{ $locality->hasOpenPayEnabled() ? 'btn-success' : 'btn-outline-success' }} mr-2" 
-                                                            data-toggle="modal" 
-                                                            title="{{ $locality->hasOpenPayEnabled() ? 'OpenPay configurado' : 'Configurar OpenPay' }}" 
+                                                    <button type="button" class="btn {{ $locality->hasOpenPayEnabled() ? 'btn-success' : 'btn-outline-success' }} mr-2"
+                                                            data-toggle="modal"
+                                                            title="{{ $locality->hasOpenPayEnabled() ? 'OpenPay configurado' : 'Configurar OpenPay' }}"
                                                             data-target="#openpayConfigModal{{$locality->id}}">
                                                         <i class="fas fa-credit-card"></i>
                                                     </button>
@@ -164,7 +164,7 @@
     </div>
 </section>
 @endsection
-@section('js')
+@push('js')
 <script>
     $(document).ready(function() {
         $('#localities').DataTable({
@@ -174,10 +174,10 @@
             searching: false
         });
 
-        var successMessage = "{{ session('success') }}".trim();
-        var errorMessage = "{{ session('error') }}".trim();
+        const successMessage = @json(session('success'));
+        const errorMessage = @json(session('error'));
 
-        if (successMessage && successMessage.length > 0) {
+        if (successMessage) {
             Swal.fire({
                 icon: 'success',
                 title: 'Éxito',
@@ -186,7 +186,7 @@
             });
         }
 
-        if (errorMessage && errorMessage.length > 0) {
+        if (errorMessage) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -196,4 +196,4 @@
         }
     });
 </script>
-@endsection
+@endpush
