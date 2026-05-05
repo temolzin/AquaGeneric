@@ -452,16 +452,22 @@ return [
         'can'  => 'viewCustomers'
     ],
     [
-        'text' => 'Deudas',
-        'url' => '/debts',
+        'text' => 'Gestión de Deudas',
         'icon' => 'fas fa-fw fa-credit-card',
-        'can'  => 'viewDebts'
-    ],
-    [
-        'text' => 'Categorías de Deuda',
-        'url' => '/debtCategories',
-        'icon' => 'fas fa-fw fa-tags',
-        'can' => 'viewDebtCategories'
+        'submenu' => [
+            [
+                'text' => 'Deudas',
+                'url' => '/debts',
+                'icon' => 'fas fa-fw fa-credit-card',
+                'can'  => 'viewDebts'
+            ],
+            [
+                'text' => 'Categorías de Deuda',
+                'url' => '/debtCategories',
+                'icon' => 'fas fa-fw fa-tags',
+                'can' => 'viewDebtCategories'
+            ],
+        ],
     ],
     [
         'text' => 'Localidades',
@@ -476,10 +482,22 @@ return [
         'can'  => 'viewLocality'
     ],
     [
-        'text' => 'Empleados',
-        'url' => '/employees',
+        'text' => 'Gestión de Empleados',
         'icon' => 'fas fa-fw fa-users',
-        'can' => 'viewEmployee'
+        'submenu' => [
+            [
+                'text' => 'Empleados',
+                'url'  => '/employees',
+                'icon' => 'fas fa-fw fa-users',
+                'can'  => 'viewEmployee',
+            ],
+            [
+                'text' => 'Cargos de Empleados',
+                'url'  => '/employeePositions',
+                'icon' => 'fas fa-fw fa-tags',
+                'can'  => 'viewEmployeePositions',
+            ],
+        ],
     ],
     [
         'text' => 'Membresías',

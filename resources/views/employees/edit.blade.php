@@ -60,10 +60,13 @@
                                             <label for="rolUpdate" class="form-label">Rol(*)</label>
                                             <select class="form-control" name="rolUpdate" id="rolUpdate" required>
                                                 <option value="" disabled>Asigna un rol</option>
-                                                <option value="Administrador" {{ $employee->rol == 'Administrador' ? 'selected' : '' }}> Administrador </option>
-                                                <option value="Recepcionista" {{ $employee->rol == 'Recepcionista' ? 'selected' : '' }}> Recepcionista </option>
-                                                <option value="Encargado" {{ $employee->rol == 'Encargado' ? 'selected' : '' }}> Encargado </option>
-                                                <option value="Seguridad" {{ $employee->rol == 'Seguridad' ? 'selected' : '' }}> Seguridad </option>
+                                                @forelse($positions as $position)
+                                                    <option value="{{ $position->name }}" {{ $employee->rol == $position->name ? 'selected' : '' }}>
+                                                        {{ $position->name }}
+                                                    </option>
+                                                @empty
+                                                    <option disabled>No hay cargos disponibles</option>
+                                                @endforelse
                                             </select>
                                         </div>
                                     </div>

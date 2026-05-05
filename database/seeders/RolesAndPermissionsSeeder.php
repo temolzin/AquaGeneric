@@ -172,6 +172,18 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite eliminar a los Empleados.'
         ])->assignRole([$roleSupervisor]);
         Permission::firstOrCreate([
+            'name' => 'viewEmployeePositions',
+            'description' => 'Permite ver los Cargos de Empleados.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
+            'name' => 'editEmployeePositions',
+            'description' => 'Permite editar los Cargos de Empleados.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
+            'name' => 'deleteEmployeePositions',
+            'description' => 'Permite eliminar los Cargos de Empleados.'
+        ])->assignRole([$roleSupervisor]);
+        Permission::firstOrCreate([
             'name' => 'viewIncidentStatuses',
             'description' => 'Permite ver los estatus de una incidencia.'
         ])->assignRole([$roleSupervisor, $roleSecretariat]);

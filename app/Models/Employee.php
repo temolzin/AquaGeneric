@@ -27,6 +27,7 @@ class Employee extends Model implements HasMedia
         'salary',
         'created_by',
         'locality_id',
+        'position_id',
         'rol',
     ];
 
@@ -38,5 +39,10 @@ class Employee extends Model implements HasMedia
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(EmployeePosition::class, 'position_id');
     }
 }
