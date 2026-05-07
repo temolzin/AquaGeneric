@@ -20,9 +20,8 @@ class PaymentsTableSeeder extends Seeder
         $faker = Faker::create();
         $payments = [];
         
-        // Get Alonso user ID by email
         $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
-        $alonsoUserId = $alonsoUser ? $alonsoUser->id : 5; // Fallback to ID 5 for backwards compatibility
+        $alonsoUserId = $alonsoUser ? $alonsoUser->id : 5;
         
         $alonsoPaymentCount = DB::table('payments')
             ->join('water_connections', 'payments.customer_id', '=', 'water_connections.customer_id')
@@ -57,7 +56,6 @@ class PaymentsTableSeeder extends Seeder
 
             $customer = DB::table('customers')->where('id', $waterConnection->customer_id)->first();
             
-            // Get Alonso's user ID via email lookup
             $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
             $alonsoUserId = $alonsoUser ? $alonsoUser->id : 999;
             

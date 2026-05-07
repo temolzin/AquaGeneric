@@ -60,7 +60,7 @@ class UsersTableSeeder extends Seeder
                 'role' =>'Supervisor',
             ],
             [
-                'id' => 999,  // Use a high ID to avoid auto-increment conflicts
+                'id' => 999,
                 'email' => 'alonso@gmail.com',
                 'locality_id' => 1,
                 'name' => 'Alonso',
@@ -71,14 +71,11 @@ class UsersTableSeeder extends Seeder
             ],
         ];
 
-        // Upsert users to ensure they exist with correct data
-        // All users are looked up by email, not ID, so ID changes don't matter
         foreach ($users as $u) {
             try {
                 $existingUser = User::where('email', $u['email'])->first();
                 
                 if ($existingUser) {
-                    // Update existing user
                     $existingUser->update([
                         'name' => $u['name'],
                         'last_name' => $u['last_name'],
@@ -88,7 +85,6 @@ class UsersTableSeeder extends Seeder
                         'updated_at' => $now,
                     ]);
                 } else {
-                    // Create new user with specific ID
                     $newUser = User::create([
                         'id' => $u['id'],
                         'email' => $u['email'],
@@ -106,7 +102,6 @@ class UsersTableSeeder extends Seeder
             }
         }
 
-        // Assign roles
         foreach ($users as $u) {
             $user = User::where('email', $u['email'])->first();
             if ($user) {

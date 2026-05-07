@@ -33,7 +33,6 @@ class DebtsTableSeeder extends Seeder
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
 
-        // Get Alonso customer by email lookup
         $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
         $alonso = $alonsoUser ? DB::table('customers')->where('user_id', $alonsoUser->id)->first() : null;
 

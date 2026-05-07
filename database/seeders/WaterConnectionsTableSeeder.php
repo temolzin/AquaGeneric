@@ -22,7 +22,6 @@ class WaterConnectionsTableSeeder extends Seeder
         $localities = DB::table('localities')->pluck('id')->toArray();
 
         foreach ($localities as $localityId) {
-            // Get Alonso's customer ID to exclude from random generation
             $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
             $alonsoCustomerId = $alonsoUser ? DB::table('customers')->where('user_id', $alonsoUser->id)->value('id') : 0;
             
@@ -105,14 +104,12 @@ class WaterConnectionsTableSeeder extends Seeder
             }
         }
 
-        // Get Alonso user by email and then their customer
         $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
         $alonsoCustomer = $alonsoUser ? DB::table('customers')->where('user_id', $alonsoUser->id)->first() : null;
         $smallvilleLocality = DB::table('localities')->where('name', 'Smallville')->first();
         
         if ($alonsoCustomer && $smallvilleLocality) {
             
-            // Check if the explicit Alonso connections already exist
             $cierraCerrada = DB::table('water_connections')
                 ->where('customer_id', $alonsoCustomer->id)
                 ->where('name', 'Cierra Hermosa')
