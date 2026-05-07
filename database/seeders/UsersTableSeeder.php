@@ -20,6 +20,7 @@ class UsersTableSeeder extends Seeder
 
         $users = [
             [
+                'id' => 1,
                 'email' => 'jose@gmail.com',
                 'locality_id' => null,
                 'name' => 'Jose',
@@ -29,6 +30,7 @@ class UsersTableSeeder extends Seeder
                 'role' => 'Admin',
             ],
             [
+                'id' => 2,
                 'email' => 'eri@gmail.com',
                 'locality_id' => 2,
                 'name' => 'Erika',
@@ -38,6 +40,7 @@ class UsersTableSeeder extends Seeder
                 'role' => 'Secretaria',
             ],
             [
+                'id' => 3,
                 'email' => 'juan@gmail.com',
                 'locality_id' => 1,
                 'name' => 'Juan',
@@ -47,6 +50,7 @@ class UsersTableSeeder extends Seeder
                 'role' => 'Supervisor',
             ],
             [
+                'id' => 4,
                 'email' => 'mario@gmail.com',
                 'locality_id' => 3,
                 'name' => 'Mario',
@@ -56,6 +60,7 @@ class UsersTableSeeder extends Seeder
                 'role' =>'Supervisor',
             ],
             [
+                'id' => 999,  // Use a high ID to avoid auto-increment conflicts
                 'email' => 'alonso@gmail.com',
                 'locality_id' => 1,
                 'name' => 'Alonso',
@@ -66,29 +71,48 @@ class UsersTableSeeder extends Seeder
             ],
         ];
 
-        $payload = collect($users)->map(function ($u) use ($now) {
-            return [
-                'email' => $u['email'],
-                'locality_id' => $u['locality_id'],
-                'name' => $u['name'],
-                'last_name' => $u['last_name'],
-                'phone' => $u['phone'],
-                'password' => Hash::make($u['password']),
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
-        })->toArray();
+        // Upsert users to ensure they exist with correct data
+        // All users are looked up by email, not ID, so ID changes don't matter
+        foreach ($users as $u) {
+            try {
+                $existingUser = User::where('email', $u['email'])->first();
+                
+                if ($existingUser) {
+                    // Update existing user
+                    $existingUser->update([
+                        'name' => $u['name'],
+                        'last_name' => $u['last_name'],
+                        'phone' => $u['phone'],
+                        'password' => Hash::make($u['password']),
+                        'locality_id' => $u['locality_id'],
+                        'updated_at' => $now,
+                    ]);
+                } else {
+                    // Create new user with specific ID
+                    $newUser = User::create([
+                        'id' => $u['id'],
+                        'email' => $u['email'],
+                        'name' => $u['name'],
+                        'last_name' => $u['last_name'],
+                        'phone' => $u['phone'],
+                        'password' => Hash::make($u['password']),
+                        'locality_id' => $u['locality_id'],
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                $this->command->error("  Error with user {$u['email']}: " . $e->getMessage());
+            }
+        }
 
-        DB::table('users')->upsert(
-            $payload,
-            ['email'],
-            ['locality_id', 'name', 'last_name', 'phone', 'updated_at']
-        );
-
-        collect($users)->each(function ($u) {
+        // Assign roles
+        foreach ($users as $u) {
             $user = User::where('email', $u['email'])->first();
-            $user?->syncRoles([$u['role']]);
-        });
+            if ($user) {
+                $user->syncRoles([$u['role']]);
+            }
+        }
     }
 }
 

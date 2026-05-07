@@ -22,10 +22,14 @@ class WaterConnectionsTableSeeder extends Seeder
         $localities = DB::table('localities')->pluck('id')->toArray();
 
         foreach ($localities as $localityId) {
+            // Get Alonso's customer ID to exclude from random generation
+            $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
+            $alonsoCustomerId = $alonsoUser ? DB::table('customers')->where('user_id', $alonsoUser->id)->value('id') : 0;
+            
             $customers = DB::table('customers')
                 ->where('locality_id', $localityId)
                 ->whereNull('deleted_at')
-                ->whereNotIn('id', [DB::table('customers')->where('user_id', 5)->value('id') ?? 0])
+                ->whereNotIn('id', [$alonsoCustomerId])
                 ->pluck('id')
                 ->toArray();
             
@@ -101,16 +105,20 @@ class WaterConnectionsTableSeeder extends Seeder
             }
         }
 
-        $alonsoCustomer = DB::table('customers')->where('user_id', 5)->first();
+        // Get Alonso user by email and then their customer
+        $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
+        $alonsoCustomer = $alonsoUser ? DB::table('customers')->where('user_id', $alonsoUser->id)->first() : null;
         $smallvilleLocality = DB::table('localities')->where('name', 'Smallville')->first();
         
         if ($alonsoCustomer && $smallvilleLocality) {
             
-            $alonsoConnectionCount = DB::table('water_connections')
+            // Check if the explicit Alonso connections already exist
+            $cierraCerrada = DB::table('water_connections')
                 ->where('customer_id', $alonsoCustomer->id)
-                ->count();
+                ->where('name', 'Cierra Hermosa')
+                ->exists();
             
-            if ($alonsoConnectionCount === 0) {
+            if (!$cierraCerrada) {
                 $costs = DB::table('costs')->where('locality_id', $smallvilleLocality->id)->pluck('id')->toArray();
                 
                 if (empty($costs)) {

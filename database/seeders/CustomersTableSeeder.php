@@ -60,7 +60,7 @@ class CustomersTableSeeder extends Seeder
             ]);
         }
 
-        $alonso = User::find(5);
+        $alonso = User::where('email', 'alonso@gmail.com')->first();
         if ($alonso) {
             $locality = Locality::where('name', 'Smallville')->first();
             if ($locality) {

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use App\Models\User;
 
 class PaymentsTableSeeder extends Seeder
 {
@@ -19,10 +20,14 @@ class PaymentsTableSeeder extends Seeder
         $faker = Faker::create();
         $payments = [];
         
+        // Get Alonso user ID by email
+        $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
+        $alonsoUserId = $alonsoUser ? $alonsoUser->id : 5; // Fallback to ID 5 for backwards compatibility
+        
         $alonsoPaymentCount = DB::table('payments')
             ->join('water_connections', 'payments.customer_id', '=', 'water_connections.customer_id')
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
-            ->where('customers.user_id', 5)
+            ->where('customers.user_id', $alonsoUserId)
             ->count();
         
         if ($alonsoPaymentCount >= 2) {
@@ -52,13 +57,17 @@ class PaymentsTableSeeder extends Seeder
 
             $customer = DB::table('customers')->where('id', $waterConnection->customer_id)->first();
             
-            if (!$customer || $customer->user_id != 5) {
+            // Get Alonso's user ID via email lookup
+            $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
+            $alonsoUserId = $alonsoUser ? $alonsoUser->id : 999;
+            
+            if (!$customer || $customer->user_id != $alonsoUserId) {
                 continue;
             }
 
             $localityUserIds = DB::table('users')
                 ->where('locality_id', $debt->locality_id)
-                ->where('id', '!=', 5)
+                ->where('id', '!=', $alonsoUserId)
                 ->whereIn('id', DB::table('model_has_roles')
                     ->whereIn('role_id', DB::table('roles')
                         ->whereIn('name', ['Supervisor', 'Secretaria'])

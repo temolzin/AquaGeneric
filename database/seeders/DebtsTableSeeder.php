@@ -33,7 +33,9 @@ class DebtsTableSeeder extends Seeder
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
 
-        $alonso = DB::table('customers')->where('user_id', 5)->first();
+        // Get Alonso customer by email lookup
+        $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
+        $alonso = $alonsoUser ? DB::table('customers')->where('user_id', $alonsoUser->id)->first() : null;
 
         if ($alonso) {
             $waterConnections = DB::table('water_connections')
