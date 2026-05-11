@@ -30,13 +30,13 @@
                                     <div class="form-group">
                                         <label for="openpay_webhook_user">
                                             Correo de OpenPay <span class="text-danger">*</span>
-                                            @if($authUser->locality->openpay_webhook_user)
+                                            @if(optional($authUser->locality)->openpay_webhook_user)
                                                 <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>Configurado</span>
                                             @endif
                                         </label>
                                         <input type="email" class="form-control" name="openpay_webhook_user" id="openpay_webhook_user" placeholder="tu-email@example.com">
                                         <small class="text-muted">
-                                            {{ $authUser->locality->openpay_webhook_user ? 'Deja en blanco para mantener el correo actual' : 'Ingresa el correo de tu cuenta de OpenPay' }}
+                                            {{ optional($authUser->locality)->openpay_webhook_user ? 'Deja en blanco para mantener el correo actual' : 'Ingresa el correo de tu cuenta de OpenPay' }}
                                         </small>
                                     </div>
                                 </div>
@@ -44,7 +44,7 @@
                                     <div class="form-group">
                                         <label for="openpay_webhook_password">
                                             Contraseña de OpenPay <span class="text-danger">*</span>
-                                            @if($authUser->locality->openpay_webhook_password)
+                                            @if(optional($authUser->locality)->openpay_webhook_password)
                                                 <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>Configurada</span>
                                             @endif
                                         </label>
@@ -57,7 +57,7 @@
                                             </div>
                                         </div>
                                         <small class="text-muted">
-                                            {{ $authUser->locality->openpay_webhook_password ? 'Deja en blanco para mantener la contraseña actual' : 'Ingresa la contraseña de tu cuenta de OpenPay' }}
+                                            {{ optional($authUser->locality)->openpay_webhook_password ? 'Deja en blanco para mantener la contraseña actual' : 'Ingresa la contraseña de tu cuenta de OpenPay' }}
                                         </small>
                                     </div>
                                 </div>
@@ -92,11 +92,17 @@
                             </h6>
                         </div>
                         <div class="card-body">
-                            @if($authUser->locality->openpay_webhook_user && $authUser->locality->openpay_webhook_password)
+                            @if($authUser->locality && optional($authUser->locality)->openpay_webhook_user && optional($authUser->locality)->openpay_webhook_password)
                                 <div class="alert alert-success mb-0">
                                     <i class="fas fa-check-circle mr-2"></i>
                                     <strong>Webhook Configurado</strong>
                                     <p class="mb-0 mt-2 small">Los Supervisores o Secretarias han configurado el webhook para esta localidad. Si necesitas cambiar estas credenciales, solicita que lo hagan desde sus perfiles.</p>
+                                </div>
+                            @elseif(!$authUser->locality)
+                                <div class="alert alert-warning mb-0">
+                                    <i class="fas fa-exclamation-circle mr-2"></i>
+                                    <strong>Sin localidad asignada</strong>
+                                    <p class="mb-0 mt-2 small">Este usuario no tiene una localidad asignada, por lo que no se puede configurar un webhook.</p>
                                 </div>
                             @else
                                 <div class="alert alert-warning mb-0">

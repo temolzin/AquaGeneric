@@ -1,7 +1,9 @@
 @php( $logout_url = View::getSection('logout_url') ?? config('adminlte.logout_url', 'logout') )
 @php( $profile_url = View::getSection('profile_url') ?? config('adminlte.profile_url', 'logout') )
 
-@php ( $profile_url = route('profile.index'))
+@if (config('adminlte.usermenu_profile_url', false))
+    @php( $profile_url = Auth::user()->adminlte_profile_url() )
+@endif
 
 @if (config('adminlte.use_route_url', false))
     @php( $profile_url = $profile_url ? route($profile_url) : '' )
@@ -15,11 +17,10 @@
 
     {{-- User menu toggler --}}
     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-        @if (Auth::user()->adminlte_image())
+        @if(config('adminlte.usermenu_image'))
             <img src="{{ Auth::user()->adminlte_image() }}"
-            alt="Foto de {{ Auth::user()->name }}" width="20px" height="20px" style="border-radius: 50%">
-        @else
-            <img src="{{ asset('img/userDefault.png') }}" width="20px" height="20px" style="border-radius: 50%">
+                 class="user-image img-circle elevation-2"
+                 alt="{{ Auth::user()->name }}">
         @endif
         <span @if(config('adminlte.usermenu_image')) class="d-none d-md-inline" @endif>
             {{ Auth::user()->name }}
@@ -33,16 +34,15 @@
         @if(!View::hasSection('usermenu_header') && config('adminlte.usermenu_header'))
             <li class="user-header {{ config('adminlte.usermenu_header_class', 'bg-primary') }}
                 @if(!config('adminlte.usermenu_image')) h-auto @endif">
-                @if (Auth::user()->adminlte_image())
+                @if(config('adminlte.usermenu_image'))
                     <img src="{{ Auth::user()->adminlte_image() }}"
-                    alt="Foto de {{ Auth::user()->name }}" style="border-radius: 50%">
-                @else
-                <img src="{{ asset('img/userDefault.png') }}" style="border-radius: 50%">
+                         class="img-circle elevation-2"
+                         alt="{{ Auth::user()->name }}">
                 @endif
                 <p class="@if(!config('adminlte.usermenu_image')) mt-0 @endif">
                     {{ Auth::user()->name }}
                     @if(config('adminlte.usermenu_desc'))
-                        <small>{{ Auth::user()->roles->first()->name }}</small>
+                        <small>{{ Auth::user()->adminlte_desc() }}</small>
                     @endif
                 </p>
             </li>
@@ -63,7 +63,7 @@
         {{-- User menu footer --}}
         <li class="user-footer">
             @if($profile_url)
-                <a href="{{ route('profile.index') }}" class="nav-link btn btn-default btn-flat d-inline-block">
+                <a href="{{ $profile_url }}" class="nav-link btn btn-default btn-flat d-inline-block">
                     <i class="fa fa-fw fa-user text-lightblue"></i>
                     {{ __('adminlte::menu.profile') }}
                 </a>
@@ -79,7 +79,7 @@
                 @endif
                 {{ csrf_field() }}
             </form>
-        </li>        
+        </li>
 
     </ul>
 
