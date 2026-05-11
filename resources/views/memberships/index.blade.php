@@ -24,6 +24,12 @@
                                         </div>
                                     </form>
                                     <div class="d-flex flex-wrap justify-content-end gap-2 w-100 w-md-auto">
+                                        @can('createMemberships')
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addMembership">
+                                            <i class="fas fa-plus"></i>
+                                            Agregar Membresía
+                                        </button>
+                                        @endcan
                                     </div>
                                 </div>
                             </div>
@@ -92,6 +98,7 @@
                                                         @include('memberships.edit')
                                                         @include('memberships.delete')
                                                         @include('memberships.show')
+                                                        @include('memberships.add')
                                                     </tr>
                                                 @endforeach
                                             @endif
