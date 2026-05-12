@@ -8,7 +8,7 @@
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-            </div>
+            </div>           
             @if($authUser->hasRole(['Supervisor', 'Secretaria']))
             <form id="webhookConfigForm" action="{{ route('profile.webhook-config.update') }}" method="POST">
                 @csrf
@@ -30,13 +30,14 @@
                                     <div class="form-group">
                                         <label for="openpay_webhook_user">
                                             Correo de OpenPay <span class="text-danger">*</span>
-                                            @if($authUser->locality->openpay_webhook_user)
+                                            {{-- Cambio: Uso de ?-> para evitar error si locality es null --}}
+                                            @if($authUser->locality?->openpay_webhook_user)
                                                 <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>Configurado</span>
                                             @endif
                                         </label>
                                         <input type="email" class="form-control" name="openpay_webhook_user" id="openpay_webhook_user" placeholder="tu-email@example.com">
                                         <small class="text-muted">
-                                            {{ $authUser->locality->openpay_webhook_user ? 'Deja en blanco para mantener el correo actual' : 'Ingresa el correo de tu cuenta de OpenPay' }}
+                                            {{ $authUser->locality?->openpay_webhook_user ? 'Deja en blanco para mantener el correo actual' : 'Ingresa el correo de tu cuenta de OpenPay' }}
                                         </small>
                                     </div>
                                 </div>
@@ -44,7 +45,7 @@
                                     <div class="form-group">
                                         <label for="openpay_webhook_password">
                                             Contraseña de OpenPay <span class="text-danger">*</span>
-                                            @if($authUser->locality->openpay_webhook_password)
+                                            @if($authUser->locality?->openpay_webhook_password)
                                                 <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>Configurada</span>
                                             @endif
                                         </label>
@@ -57,7 +58,7 @@
                                             </div>
                                         </div>
                                         <small class="text-muted">
-                                            {{ $authUser->locality->openpay_webhook_password ? 'Deja en blanco para mantener la contraseña actual' : 'Ingresa la contraseña de tu cuenta de OpenPay' }}
+                                            {{ $authUser->locality?->openpay_webhook_password ? 'Deja en blanco para mantener la contraseña actual' : 'Ingresa la contraseña de tu cuenta de OpenPay' }}
                                         </small>
                                     </div>
                                 </div>
@@ -80,6 +81,7 @@
                 </div>
             </form>
             @else
+                {{-- Bloque para Administradores --}}
                 <div class="modal-body">
                     <div class="alert alert-info mb-4">
                         <i class="fas fa-info-circle mr-2"></i>
@@ -92,17 +94,18 @@
                             </h6>
                         </div>
                         <div class="card-body">
-                            @if($authUser->locality->openpay_webhook_user && $authUser->locality->openpay_webhook_password)
+                            {{-- Cambio: Validación de seguridad para la relación locality --}}
+                            @if($authUser->locality && $authUser->locality->openpay_webhook_user && $authUser->locality->openpay_webhook_password)
                                 <div class="alert alert-success mb-0">
                                     <i class="fas fa-check-circle mr-2"></i>
                                     <strong>Webhook Configurado</strong>
-                                    <p class="mb-0 mt-2 small">Los Supervisores o Secretarias han configurado el webhook para esta localidad. Si necesitas cambiar estas credenciales, solicita que lo hagan desde sus perfiles.</p>
+                                    <p class="mb-0 mt-2 small">Los Supervisores o Secretarias han configurado el webhook para esta localidad.</p>
                                 </div>
                             @else
                                 <div class="alert alert-warning mb-0">
                                     <i class="fas fa-exclamation-circle mr-2"></i>
                                     <strong>Webhook No Configurado</strong>
-                                    <p class="mb-0 mt-2 small">Los Supervisores o Secretarias deben configurar el correo y contraseña de OpenPay desde sus perfiles para activar las notificaciones de webhooks.</p>
+                                    <p class="mb-0 mt-2 small">Los responsables deben configurar las credenciales de OpenPay desde sus perfiles.</p>
                                 </div>
                             @endif
                         </div>

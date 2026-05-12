@@ -3,7 +3,7 @@
 return [
 
     'full_name' => 'Nombre completo',
-    'email' => 'Correo electrónico',
+    'email' => 'Email',
     'password' => 'Contraseña',
     'retype_password' => 'Confirmar la contraseña',
     'remember_me' => 'Recordarme',
@@ -11,10 +11,10 @@ return [
     'register_a_new_membership' => 'Crear una nueva cuenta',
     'i_forgot_my_password' => 'Olvidé mi contraseña',
     'i_already_have_a_membership' => 'Ya tengo una cuenta',
-    'sign_in' => 'Iniciar sesión',
-    'log_out' => 'Cerrar sesión',
+    'sign_in' => 'Acceder',
+    'log_out' => 'Salir',
     'toggle_navigation' => 'Alternar barra de navegación',
-    'login_message' => 'Inicia sesión para acceder',
+    'login_message' => 'Autenticarse para iniciar sesión',
     'register_message' => 'Crear una nueva cuenta',
     'password_reset_message' => 'Restablecer la contraseña',
     'reset_password' => 'Restablecer la contraseña',
