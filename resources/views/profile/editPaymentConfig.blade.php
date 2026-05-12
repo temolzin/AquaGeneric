@@ -29,7 +29,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="openpay_webhook_user">
-                                            Correo de OpenPay <span class="text-danger">*</span>                                           
+                                            Correo de OpenPay <span class="text-danger">*</span>
                                             @if($authUser->locality?->openpay_webhook_user)
                                                 <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>Configurado</span>
                                             @endif
@@ -43,7 +43,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="openpay_webhook_password">
-                                            Contraseña de OpenPay <span class="text-danger">*</span>                                        
+                                            Contraseña de OpenPay <span class="text-danger">*</span>
                                             @if($authUser->locality?->openpay_webhook_password)
                                                 <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>Configurada</span>
                                             @endif
@@ -56,7 +56,7 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <small class="text-muted">                                     
+                                        <small class="text-muted">
                                             {{ $authUser->locality?->openpay_webhook_password ? 'Deja en blanco para mantener la contraseña actual' : 'Ingresa la contraseña de tu cuenta de OpenPay' }}
                                         </small>
                                     </div>
@@ -91,7 +91,7 @@
                                 <i class="fas fa-shield-alt mr-2"></i>Estado del Webhook
                             </h6>
                         </div>
-                        <div class="card-body">                        
+                        <div class="card-body">
                             @if($authUser->locality && $authUser->locality->openpay_webhook_user && $authUser->locality->openpay_webhook_password)
                                 <div class="alert alert-success mb-0">
                                     <i class="fas fa-check-circle mr-2"></i>
