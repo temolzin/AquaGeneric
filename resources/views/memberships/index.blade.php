@@ -105,7 +105,7 @@
                                             @endif
                                         </tbody>
                                     </table>
-                                    @include('memberships.create')
+                                    @include('memberships.view')
                                     <div class="d-flex justify-content-center">
                                         {!! $memberships->links('pagination::bootstrap-4') !!}
                                     </div>
