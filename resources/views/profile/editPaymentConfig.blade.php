@@ -8,7 +8,7 @@
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-            </div>           
+            </div>
             @if($authUser->hasRole(['Supervisor', 'Secretaria']))
             <form id="webhookConfigForm" action="{{ route('profile.webhook-config.update') }}" method="POST">
                 @csrf
@@ -29,7 +29,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="openpay_webhook_user">
-                                            Correo de OpenPay <span class="text-danger">*</span>
+                                            Correo de OpenPay<span class="text-danger">*</span>
                                             @if($authUser->locality?->openpay_webhook_user)
                                                 <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>Configurado</span>
                                             @endif
@@ -45,7 +45,7 @@
                                         <label for="openpay_webhook_password">
                                             Contraseña de OpenPay <span class="text-danger">*</span>
                                             @if($authUser->locality?->openpay_webhook_password)
-                                                <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>Configurada</span>
+                                            <span class="badge badge-success ml-2"><i class="fas fa-check mr-1"></i>Configurada</span>
                                             @endif
                                         </label>
                                         <div class="input-group">
@@ -96,13 +96,13 @@
                                 <div class="alert alert-success mb-0">
                                     <i class="fas fa-check-circle mr-2"></i>
                                     <strong>Webhook Configurado</strong>
-                                    <p class="mb-0 mt-2 small">Los responsables han configurado el webhook para esta localidad.</p>
+                                    <p class="mb-0 mt-2 small">Los Supervisores o Secretarias han configurado el webhook para esta localidad. Si necesitas cambiar estas credenciales, solicita que lo hagan desde sus perfiles.</p>
                                 </div>
                             @else
                                 <div class="alert alert-warning mb-0">
                                     <i class="fas fa-exclamation-circle mr-2"></i>
                                     <strong>Webhook No Configurado</strong>
-                                    <p class="mb-0 mt-2 small">Los responsables deben configurar las credenciales de OpenPay desde sus perfiles.</p>
+                                    <p class="mb-0 mt-2 small">Los Supervisores o Secretarias deben configurar el correo y contraseña de OpenPay desde sus perfiles para activar las notificaciones de webhooks.</p>
                                 </div>
                             @endif
                         </div>
