@@ -24,7 +24,6 @@
                                         </div>
                                     </form>
                                     <div class="d-flex flex-wrap justify-content-end gap-2 w-100 w-md-auto">
-                                        @can('createMemberships')
                                             <button type="button"
                                                     class="btn btn-success"
                                                     data-toggle="modal"
@@ -33,7 +32,6 @@
                                                 <i class="fas fa-plus"></i>
                                                 Agregar Membresía
                                             </button>
-                                        @endcan
                                     </div>
                                 </div>
                             </div>
