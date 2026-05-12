@@ -24,8 +24,10 @@ class FaultReportSeeder extends Seeder
         $statuses = ['pending', 'in_review', 'completed'];
 
         foreach (range(1, 20) as $i) {
+            $createdBy = !empty($userIds) ? $faker->randomElement($userIds) : 1;
+            
             DB::table('fault_report')->insert([ 
-                'created_by'    => $faker->randomElement($userIds),  
+                'created_by'    => $createdBy,  
                 'locality_id'   => $faker->randomElement($localityIds),
                 'title'         => $faker->randomElement([
                     'Fuga en tubería principal',

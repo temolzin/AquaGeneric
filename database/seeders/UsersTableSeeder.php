@@ -59,16 +59,6 @@ class UsersTableSeeder extends Seeder
                 'password' => '12345',
                 'role' =>'Supervisor',
             ],
-            [
-                'id' => 999,
-                'email' => 'alonso@gmail.com',
-                'locality_id' => 1,
-                'name' => 'Alonso',
-                'last_name' => 'Gutiérrez López',
-                'phone' => '5556161351',
-                'password' => '12345',
-                'role' => 'Cliente',
-            ],
         ];
 
         foreach ($users as $u) {

@@ -33,51 +33,9 @@ class DebtsTableSeeder extends Seeder
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
 
-        $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
-        $alonso = $alonsoUser ? DB::table('customers')->where('user_id', $alonsoUser->id)->first() : null;
-
-        if ($alonso) {
-            $waterConnections = DB::table('water_connections')
-                ->where('customer_id', $alonso->id)
-                ->limit(2)
-                ->get();
-
-            foreach ($waterConnections as $waterConnection) {
-                $createdBy = $this->getUserForLocality($waterConnection->locality_id);
-
-                if (empty($createdBy)) continue;
-
-                $debtStartDate = $faker->dateTimeBetween($startDate, $endDate);
-                $debtDuration = $faker->numberBetween(1, 12);
-                $debtEndDate = Carbon::instance($debtStartDate)->addMonths($debtDuration);
-                $debtEndDate = min($debtEndDate, $endDate);
-
-                $amount = rand(self::MIN_AMOUNT, self::MAX_AMOUNT);
-                $paymentAmount = rand(0, $amount);
-                $debtCurrent = $amount - $paymentAmount;
-
-                $status = $this->determineDebtStatus($paymentAmount, $debtCurrent);
-
-                DB::table('debts')->insert([
-                    'water_connection_id' => $waterConnection->id,
-                    'locality_id' => $waterConnection->locality_id,
-                    'created_by' => $createdBy,
-                    'debt_category_id' => $serviceId,
-                    'start_date' => $debtStartDate,
-                    'end_date' => $debtEndDate,
-                    'amount' => $amount,
-                    'debt_current' => $debtCurrent,
-                    'status' => $status,
-                    'note' => 'Deuda generada de prueba para Alonso',
-                    'deleted_at' => null,
-                    'created_at' => now(),
-                ]);
-            }
-        }
-
         $customers = DB::table('customers')
             ->whereNotIn('user_id', [1, 5])
-            ->orWhereNull('user_id')
+            ->whereNull('deleted_at')
             ->get();
 
         $debtCount = 0;

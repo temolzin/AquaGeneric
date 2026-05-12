@@ -22,13 +22,9 @@ class WaterConnectionsTableSeeder extends Seeder
         $localities = DB::table('localities')->pluck('id')->toArray();
 
         foreach ($localities as $localityId) {
-            $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
-            $alonsoCustomerId = $alonsoUser ? DB::table('customers')->where('user_id', $alonsoUser->id)->value('id') : 0;
-            
             $customers = DB::table('customers')
                 ->where('locality_id', $localityId)
                 ->whereNull('deleted_at')
-                ->whereNotIn('id', [$alonsoCustomerId])
                 ->pluck('id')
                 ->toArray();
             
@@ -99,75 +95,6 @@ class WaterConnectionsTableSeeder extends Seeder
                         'has_cistern' => $faker->boolean,
                         'type' => $faker->randomElement(['residencial', 'commercial']),
                         'section_id' => $faker->randomElement($localitySections),
-                    ]);
-                }
-            }
-        }
-
-        $alonsoUser = User::where('email', 'alonso@gmail.com')->first();
-        $alonsoCustomer = $alonsoUser ? DB::table('customers')->where('user_id', $alonsoUser->id)->first() : null;
-        $smallvilleLocality = DB::table('localities')->where('name', 'Smallville')->first();
-        
-        if ($alonsoCustomer && $smallvilleLocality) {
-            
-            $cierraCerrada = DB::table('water_connections')
-                ->where('customer_id', $alonsoCustomer->id)
-                ->where('name', 'Cierra Hermosa')
-                ->exists();
-            
-            if (!$cierraCerrada) {
-                $costs = DB::table('costs')->where('locality_id', $smallvilleLocality->id)->pluck('id')->toArray();
-                
-                if (empty($costs)) {
-                    $allCosts = DB::table('costs')->pluck('id')->toArray();
-                    $costs = !empty($allCosts) ? $allCosts : [];
-                }
-                
-                $users = DB::table('users')
-                    ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                    ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                    ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
-                    ->where('users.locality_id', $smallvilleLocality->id)
-                    ->distinct()
-                    ->pluck('users.id')
-                    ->toArray();
-                $sections = DB::table('sections')->where('locality_id', $smallvilleLocality->id)->pluck('id')->toArray();
-                
-                if (!empty($costs) && !empty($users) && !empty($sections)) {
-                    WaterConnection::create([
-                        'customer_id' => $alonsoCustomer->id,
-                        'locality_id' => $smallvilleLocality->id,
-                        'cost_id' => $costs[0],
-                        'created_by' => $users[0],
-                        'name' => 'Cierra Hermosa',
-                        'block' => 'Tecamac',
-                        'street' => 'Calle Principal',
-                        'exterior_number' => '123',
-                        'interior_number' => 'A',
-                        'occupants_number' => 4,
-                        'water_days' => json_encode(['monday', 'wednesday']),
-                        'has_water_pressure' => true,
-                        'has_cistern' => false,
-                        'type' => 'residencial',
-                        'section_id' => $sections[0],
-                    ]);
-
-                    WaterConnection::create([
-                        'customer_id' => $alonsoCustomer->id,
-                        'locality_id' => $smallvilleLocality->id,
-                        'cost_id' => $costs[0],
-                        'created_by' => $users[0],
-                        'name' => 'Casas Javer',
-                        'block' => 'Tecamac',
-                        'street' => 'Calle Principal',
-                        'exterior_number' => '147',
-                        'interior_number' => '89',
-                        'occupants_number' => 2,
-                        'water_days' => json_encode(['tuesday', 'thursday']),
-                        'has_water_pressure' => true,
-                        'has_cistern' => true,
-                        'type' => 'residencial',
-                        'section_id' => $sections[0],
                     ]);
                 }
             }

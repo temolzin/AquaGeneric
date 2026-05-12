@@ -59,32 +59,5 @@ class CustomersTableSeeder extends Seeder
                 'created_by' => $faker->randomElement($userIds),
             ]);
         }
-
-        $alonso = User::where('email', 'alonso@gmail.com')->first();
-        if ($alonso) {
-            $locality = Locality::where('name', 'Smallville')->first();
-            if ($locality) {
-                Customer::updateOrCreate(
-                    ['user_id' => $alonso->id],
-                    [
-                        'name' => 'Alonso',
-                        'last_name' => 'Gutiérrez López',
-                        'email' => $alonso->email,
-                        'locality' => 'Smallville',
-                        'state' => 'Kansas',
-                        'zip_code' => '66002',
-                        'block' => '1',
-                        'street' => 'Calle Principal',
-                        'exterior_number' => '123',
-                        'interior_number' => '',
-                        'marital_status' => 0,
-                        'status' => 1,
-                        'responsible_name' => null,
-                        'locality_id' => $locality->id,
-                        'created_by' => 1,
-                    ]
-                );
-            }
-        }
     }
 }
