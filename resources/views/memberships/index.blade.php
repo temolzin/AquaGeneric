@@ -98,7 +98,7 @@
                                                         @include('memberships.edit')
                                                         @include('memberships.delete')
                                                         @include('memberships.show')
-                                                        @include('memberships.add')
+                                                        @include('memberships.create')
                                                     </tr>
                                                 @endforeach
                                             @endif
