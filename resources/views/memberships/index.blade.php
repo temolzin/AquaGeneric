@@ -24,6 +24,14 @@
                                         </div>
                                     </form>
                                     <div class="d-flex flex-wrap justify-content-end gap-2 w-100 w-md-auto">
+                                            <button type="button"
+                                                    class="btn btn-success"
+                                                    data-toggle="modal"
+                                                    data-target="#createMembership"
+                                                    style="white-space: nowrap;">
+                                                <i class="fas fa-plus"></i>
+                                                Agregar Membresía
+                                            </button>
                                     </div>
                                 </div>
                             </div>
@@ -97,6 +105,7 @@
                                             @endif
                                         </tbody>
                                     </table>
+                                    @include('memberships.create')
                                     <div class="d-flex justify-content-center">
                                         {!! $memberships->links('pagination::bootstrap-4') !!}
                                     </div>
