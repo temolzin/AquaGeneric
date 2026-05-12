@@ -17,7 +17,7 @@ class FaultReportSeeder extends Seeder
         $userIds = DB::table('users')
         ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->where('roles.name', User::ROLE_CUSTOMER)
+            ->where('roles.name', User::ROLE_SUPERVISOR)
             ->distinct()
             ->pluck('users.id')
             ->toArray();
