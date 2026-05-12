@@ -17,31 +17,61 @@ class PaymentsTableSeeder extends Seeder
 
     public function run()
     {
-        // Pagos para Alonso son creados por AlonsoSeeder
-    }
+        $faker = Faker::create();
+        $payments = [];
+        
+        $debtIds = DB::table('debts')
+            ->join('water_connections', 'debts.water_connection_id', '=', 'water_connections.id')
+            ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
+            ->whereNotIn('customers.user_id', [5])
+            ->pluck('debts.id');
 
-    private function handlePayment($debt, array $userIds, $faker, $waterConnection, &$payments)
-    {
-        $remainingDebt = $debt->debt_current;
+        foreach ($debtIds as $debtId) {
+            $debt = DB::table('debts')->find($debtId);
 
-        while ($remainingDebt > 0) {
-            $amount = ($remainingDebt < self::MIN_AMOUNT)
-                ? $remainingDebt
-                : rand(self::MIN_AMOUNT, min($remainingDebt, $debt->debt_current));
+            if (!$debt) {
+                continue;
+            }
 
-            $remainingDebt -= $amount;
+            $waterConnection = DB::table('water_connections')->where('id', $debt->water_connection_id)->first();
+
+            if (!$waterConnection) {
+                continue;
+            }
+
+            $localityUserIds = DB::table('users')
+                ->where('locality_id', $debt->locality_id)
+                ->whereIn('id', DB::table('model_has_roles')
+                    ->whereIn('role_id', DB::table('roles')
+                        ->whereIn('name', ['Supervisor', 'Secretaria'])
+                        ->pluck('id')
+                    )
+                    ->pluck('model_id')
+                )
+                ->pluck('id')
+                ->toArray();
+
+            if (empty($localityUserIds)) {
+                $localityUserIds = [1];
+            }
+
+            $amount = $debt->debt_current > 0 ? $debt->debt_current : $debt->amount;
 
             $createdAt = $this->getRandomCreatedAt();
 
             $payments[] = $this->createPayment(
                 $debt,
-                $userIds,
+                $localityUserIds,
                 $faker,
                 $amount,
                 $createdAt,
                 $createdAt,
                 $waterConnection->customer_id
             );
+        }
+
+        if (!empty($payments)) {
+            DB::table('payments')->insert($payments);
         }
     }
 

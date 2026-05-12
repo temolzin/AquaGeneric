@@ -35,6 +35,7 @@ class DebtsTableSeeder extends Seeder
 
         $customers = DB::table('customers')
             ->whereNotIn('user_id', [1, 5])
+            ->orWhereNull('user_id')
             ->whereNull('deleted_at')
             ->get();
 
@@ -92,7 +93,7 @@ class DebtsTableSeeder extends Seeder
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
             ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
             ->where('users.locality_id', $localityId)
-            ->whereNotIn('users.id', [1, 5])
+            ->whereNotIn('users.id', [5])
             ->distinct()
             ->pluck('users.id')
             ->toArray();
