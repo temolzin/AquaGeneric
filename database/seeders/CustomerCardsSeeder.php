@@ -10,7 +10,6 @@ class CustomerCardsSeeder extends Seeder
 {
     public function run()
     {
-        // Get customers with user_id (excluding Alonso which is handled by AlonsoSeeder)
         $customers = Customer::whereNotNull('user_id')
             ->where('user_id', '!=', 5)
             ->limit(5)

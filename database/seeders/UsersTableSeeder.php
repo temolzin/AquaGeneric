@@ -65,17 +65,16 @@ class UsersTableSeeder extends Seeder
             try {
                 $existingUser = User::where('email', $u['email'])->first();
                 
-                if ($existingUser) {
-                    $existingUser->update([
+                $existingUser 
+                    ? $existingUser->update([
                         'name' => $u['name'],
                         'last_name' => $u['last_name'],
                         'phone' => $u['phone'],
                         'password' => Hash::make($u['password']),
                         'locality_id' => $u['locality_id'],
                         'updated_at' => $now,
-                    ]);
-                } else {
-                    $newUser = User::create([
+                    ])
+                    : User::create([
                         'id' => $u['id'],
                         'email' => $u['email'],
                         'name' => $u['name'],
@@ -86,7 +85,6 @@ class UsersTableSeeder extends Seeder
                         'created_at' => $now,
                         'updated_at' => $now,
                     ]);
-                }
             } catch (\Exception $e) {
                 $this->command->error("  Error with user {$u['email']}: " . $e->getMessage());
             }
@@ -94,9 +92,7 @@ class UsersTableSeeder extends Seeder
 
         foreach ($users as $u) {
             $user = User::where('email', $u['email'])->first();
-            if ($user) {
-                $user->syncRoles([$u['role']]);
-            }
+            $user?->syncRoles([$u['role']]);
         }
     }
 }

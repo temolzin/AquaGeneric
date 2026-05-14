@@ -25,22 +25,13 @@ class CustomerDefaultSeeder extends Seeder
     public function run()
     {
         $alonso = $this->createAlonsoUser();
-        
-        if (!$alonso) {
-            return;
-        }
+        !$alonso || $this->stop();
 
         $alonsoCustomer = $this->createAlonsoCustomer($alonso);
-        
-        if (!$alonsoCustomer) {
-            return;
-        }
+        !$alonsoCustomer || $this->stop();
 
         $waterConnections = $this->createAlonsoWaterConnections($alonso, $alonsoCustomer);
-        
-        if (empty($waterConnections)) {
-            return;
-        }
+        empty($waterConnections) && $this->stop();
 
         $this->createAlonsoDebts($alonsoCustomer, $waterConnections);
 
@@ -65,8 +56,8 @@ class CustomerDefaultSeeder extends Seeder
         try {
             $existingUser = User::find(5) ?? User::where('email', $alonsoData['email'])->first();
 
-            if ($existingUser) {
-                $existingUser->update([
+            $user = $existingUser
+                ? tap($existingUser)->update([
                     'email' => $alonsoData['email'],
                     'name' => $alonsoData['name'],
                     'last_name' => $alonsoData['last_name'],
@@ -74,10 +65,8 @@ class CustomerDefaultSeeder extends Seeder
                     'password' => Hash::make($alonsoData['password']),
                     'locality_id' => $alonsoData['locality_id'],
                     'updated_at' => $now,
-                ]);
-                $user = $existingUser;
-            } else {
-                $user = User::create([
+                ])
+                : User::create([
                     'id' => $alonsoData['id'],
                     'email' => $alonsoData['email'],
                     'name' => $alonsoData['name'],
@@ -88,8 +77,6 @@ class CustomerDefaultSeeder extends Seeder
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
-
-            }
 
             $user->syncRoles([$alonsoData['role']]);
 
@@ -105,9 +92,7 @@ class CustomerDefaultSeeder extends Seeder
         try {
             $locality = Locality::where('name', 'Smallville')->first();
 
-            if (!$locality) {
-                return null;
-            }
+            if (!$locality) return null;
 
             $customer = Customer::updateOrCreate(
                 ['user_id' => $alonso->id],
@@ -142,9 +127,8 @@ class CustomerDefaultSeeder extends Seeder
         try {
             $smallvilleLocality = Locality::where('name', 'Smallville')->first();
 
-            if (!$smallvilleLocality) {
-                return [];
-            }
+            !$smallvilleLocality && ($smallvilleLocality = []) || true;
+            if (empty($smallvilleLocality)) return [];
 
             $costs = DB::table('costs')->where('locality_id', $smallvilleLocality->id)->pluck('id')->toArray();
 
@@ -164,9 +148,7 @@ class CustomerDefaultSeeder extends Seeder
 
             $sections = DB::table('sections')->where('locality_id', $smallvilleLocality->id)->pluck('id')->toArray();
 
-            if (empty($costs) || empty($users) || empty($sections)) {
-                return [];
-            }
+            (empty($costs) || empty($users) || empty($sections)) && ($this->returnEmpty = true);
 
             $connections = [];
 
@@ -178,12 +160,10 @@ class CustomerDefaultSeeder extends Seeder
                 ->where('name', 'Casas Javer')
                 ->first();
 
-            if ($cierraCerrada && $casasJaver) {
-                return [$cierraCerrada->toArray(), $casasJaver->toArray()];
-            }
+            if ($cierraCerrada && $casasJaver) return [$cierraCerrada->toArray(), $casasJaver->toArray()];
 
-            if (!$cierraCerrada) {
-                $connection1 = WaterConnection::create([
+            $connections[] = !$cierraCerrada
+                ? WaterConnection::create([
                     'customer_id' => $alonsoCustomer->id,
                     'locality_id' => $smallvilleLocality->id,
                     'cost_id' => $costs[0],
@@ -199,15 +179,11 @@ class CustomerDefaultSeeder extends Seeder
                     'has_cistern' => false,
                     'type' => 'residencial',
                     'section_id' => $sections[0],
-                ]);
+                ])->toArray()
+                : $cierraCerrada->toArray();
 
-                $connections[] = $connection1->toArray();
-            } else {
-                $connections[] = $cierraCerrada->toArray();
-            }
-
-            if (!$casasJaver) {
-                $connection2 = WaterConnection::create([
+            $connections[] = !$casasJaver
+                ? WaterConnection::create([
                     'customer_id' => $alonsoCustomer->id,
                     'locality_id' => $smallvilleLocality->id,
                     'cost_id' => $costs[0],
@@ -223,12 +199,8 @@ class CustomerDefaultSeeder extends Seeder
                     'has_cistern' => true,
                     'type' => 'residencial',
                     'section_id' => $sections[0],
-                ]);
-
-                $connections[] = $connection2->toArray();
-            } else {
-                $connections[] = $casasJaver->toArray();
-            }
+                ])->toArray()
+                : $casasJaver->toArray();
 
             return $connections;
         } catch (\Exception $e) {
@@ -249,18 +221,14 @@ class CustomerDefaultSeeder extends Seeder
                     ->where('water_connection_id', $waterConnection['id'] ?? $waterConnection->id)
                     ->count();
 
-                if ($existingDebts > 0) {
-                    continue;
-                }
+                if ($existingDebts > 0) continue;
 
                 $connectionId = $waterConnection['id'] ?? $waterConnection->id;
                 $localityId = $waterConnection['locality_id'] ?? $waterConnection->locality_id;
 
                 $createdBy = $this->getUserForLocality($localityId);
 
-                if (empty($createdBy)) {
-                    continue;
-                }
+                if (empty($createdBy)) continue;
 
                 $debtStartDate = $faker->dateTimeBetween($startDate, $endDate);
                 $debtDuration = $faker->numberBetween(1, 12);
@@ -310,9 +278,7 @@ class CustomerDefaultSeeder extends Seeder
                         ->where('debt_id', $debt->id)
                         ->count();
 
-                    if ($existingPayments > 0) {
-                        continue;
-                    }
+                    if ($existingPayments > 0) continue;
 
                     $localityUserIds = DB::table('users')
                         ->where('locality_id', $debt->locality_id)
@@ -327,9 +293,7 @@ class CustomerDefaultSeeder extends Seeder
                         ->pluck('id')
                         ->toArray();
 
-                    if (empty($localityUserIds)) {
-                        $localityUserIds = [1];
-                    }
+                    $localityUserIds = empty($localityUserIds) ? [1] : $localityUserIds;
 
                     $amount = $debt->debt_current > 0 ? $debt->debt_current : $debt->amount;
                     $createdAt = $faker->dateTimeBetween($debt->start_date, $debt->end_date);
@@ -365,12 +329,6 @@ class CustomerDefaultSeeder extends Seeder
 
     private function determineDebtStatus($paymentAmount, $debtCurrent)
     {
-        if ($paymentAmount == 0) {
-            return 'pending';
-        } elseif ($debtCurrent == 0) {
-            return 'paid';
-        } else {
-            return 'partial';
-        }
+        return $paymentAmount == 0 ? 'pending' : ($debtCurrent == 0 ? 'paid' : 'partial');
     }
 }
