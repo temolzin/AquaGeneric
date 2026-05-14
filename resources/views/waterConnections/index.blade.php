@@ -365,30 +365,11 @@
         }
 
         const loadedHistory = {};
+        const loadedDebts = {};
 
         $('div.modal[id^="details"]').on('shown.bs.modal', function () {
             const $modal = $(this);
             const connectionId = $modal.data('connection-id');
-
-            if (loadedHistory[connectionId]) return;
-
-            const $container = $('#historyContent' + connectionId);
-            $container.html('<div class="text-muted">Cargando historial...</div>');
-
-            $.get('/waterConnections/' + connectionId + '/history')
-                .done(function (html) {
-                    $container.html(html);
-                    loadedHistory[connectionId] = true;
-                })
-                .fail(function () {
-                    $container.html('<div class="alert alert-danger mb-0">No se pudo cargar el historial.</div>');
-                });
-        });
-
-        const loadedDebts = {};
-
-        $(document).on('click', 'a[id^="debts-tab-"]', function () {
-            const connectionId = $(this).attr('id').replace('debts-tab-', '');
 
             if (loadedDebts[connectionId]) return;
 
@@ -402,6 +383,24 @@
                 })
                 .fail(function () {
                     $container.html('<div class="alert alert-danger mb-0">No se pudieron cargar las deudas.</div>');
+                });
+        });
+
+        $(document).on('click', 'a[id^="history-tab-"]', function () {
+            const connectionId = $(this).attr('id').replace('history-tab-', '');
+
+            if (loadedHistory[connectionId]) return;
+
+            const $container = $('#historyContent' + connectionId);
+            $container.html('<div class="text-muted">Cargando historial...</div>');
+
+            $.get('/waterConnections/' + connectionId + '/history')
+                .done(function (html) {
+                    $container.html(html);
+                    loadedHistory[connectionId] = true;
+                })
+                .fail(function () {
+                    $container.html('<div class="alert alert-danger mb-0">No se pudo cargar el historial.</div>');
                 });
         });
     });
