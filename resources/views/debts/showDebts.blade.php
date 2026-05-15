@@ -110,7 +110,7 @@
                                                                                 style="white-space: normal !important; display: inline-block; max-width: 100%; text-align: center;">
                                                                                 {{ $waterConnectionDebt->debtCategory->name ?? 'Servicio de Agua' }}
                                                                             </span>
-                                                                        </p>    
+                                                                        </p>  
                                                                     </div>
                                                                     <div class="col-6 col-md-2">
                                                                         <p class="mb-0"><strong>Status:</strong><br>
