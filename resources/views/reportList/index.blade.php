@@ -68,8 +68,8 @@
                                                                         {!! $report['icon'] ?? '' !!}
                                                                         <span>{{ $report['label'] ?? $report['text'] }}</span>
                                                                     </a>
-                                                                @endif 
-                                                            @endforeach 
+                                                                @endif
+                                                            @endforeach
                                                         </div>
                                                     </div>
                                                 @endif
@@ -89,7 +89,7 @@
             </div>
         </div>
         @include('payments.create')
-        @include('payments.clientPayments') 
+        @include('payments.clientPayments')
         @include('payments.waterConnectionPayments')
         @include('advancePayments.advancePaymentsReportForm')
         @include('advancePayments.paymentHistoryModal')
@@ -241,10 +241,10 @@
         }
     }
 
-@media (max-width: 768px) {
-    .expandable-list {
-        grid-template-columns: 1fr;
-    }
+    @media (max-width: 768px) {
+        .expandable-list {
+            grid-template-columns: 1fr;
+        }
 
 
         .button-group-uniform {
