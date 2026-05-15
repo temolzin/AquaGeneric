@@ -85,40 +85,41 @@
                                             @foreach ($waterConnection->debts as $waterConnectionDebt)
                                                 <div class="debt-item card mb-3 mx-0">
                                                     <div class="card-body">
-                                                        <div class="row">
-                                                            <div class="col-12 col-md-1 mb-2 mb-md-0">
-                                                                <p><strong>ID:</strong> {{ $waterConnectionDebt->id }}</p>
+                                                        <div class="row align-items-center"></div>
+                                                            <div class="col-12 col-md-1">
+                                                                <p class="mb-0"><strong>ID:</strong><br> {{ $waterConnectionDebt->id }}</p>
                                                             </div>
                                                             <div class="col-md-12">
-                                                                <div class="row">
-                                                                    <div class="col-12 col-md-4">
-                                                                        <p><strong>Fecha de Inicio:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
-                                                                        <p><strong>Fecha de Fin:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-12 col-md-3 mb-2 mb-md-0">
+                                                                        <p class="mb-1"><strong>Fecha de Inicio:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
+                                                                        <p class="mb-0"><strong>Fecha de Fin:</strong> {{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</p>
                                                                     </div>
                                                                     <div class="col-6 col-md-2">
-                                                                        <p><strong>Monto:</strong> ${{ number_format($waterConnectionDebt->amount, 2) }}</p>
+                                                                        <p class="mb-0"><strong>Monto:</strong><br> ${{ number_format($waterConnectionDebt->amount, 2) }}</p>
                                                                     </div>
                                                                     @php
                                                                         $pendingDebt = $waterConnectionDebt->amount - $waterConnectionDebt->debt_current;
                                                                     @endphp
                                                                     <div class="col-6 col-md-2">
-                                                                        <p><strong>Pendiente:</strong> ${{ number_format($pendingDebt, 2) }}</p>
+                                                                        <p class="mb-0"><strong>Pendiente:</strong><br> ${{ number_format($pendingDebt, 2) }}</p>
                                                                     </div>
                                                                     <div class="col-6 col-md-2">
-                                                                        <p><strong>Categoría:</strong>
-                                                                            <span class="badge {{ $waterConnectionDebt->debtCategory->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                                        <p class="mb-0"><strong>Categoría:</strong><br>
+                                                                            <span class="badge {{ $waterConnectionDebt->debtCategory->color ?? 'bg-secondary' }} text-white"
+                                                                                style="white-space: normal !important; display: inline-block; max-width: 100%; text-align: center;">
                                                                                 {{ $waterConnectionDebt->debtCategory->name ?? 'Servicio de Agua' }}
                                                                             </span>
-                                                                        </p>
+                                                                        </p>    
                                                                     </div>
                                                                     <div class="col-6 col-md-2">
-                                                                        <p><strong>Status:</strong>
+                                                                        <p class="mb-0"><strong>Status:</strong><br>
                                                                             @if ($waterConnectionDebt->status === 'pending')
-                                                                                <button class="btn btn-danger btn-xs">No pagada</button>
+                                                                                <span class="btn btn-danger btn-xs">No pagada</span>
                                                                             @elseif ($waterConnectionDebt->status === 'partial')
-                                                                                <button class="btn btn-warning btn-xs">Abonada</button>
+                                                                                <span class="btn btn-warning btn-xs">Abonada</span>
                                                                             @elseif ($waterConnectionDebt->status === 'paid')
-                                                                                <button class="btn btn-success btn-xs">Pagada</button>
+                                                                                <span class="btn btn-success btn-xs">Pagada</span>
                                                                             @endif
                                                                         </p>
                                                                     </div>
@@ -161,10 +162,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                </div>
             </div>
         </div>
     </div>

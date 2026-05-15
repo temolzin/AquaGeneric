@@ -31,7 +31,7 @@
                 <div class="x_content">
                     <div class="row">
                         <div class="col-sm-12">
-                            <div class="card-box text-center">
+                            <div class="card-box">
                                 <div id="reportsList" class="expandable-list mt-5 mx-auto">
                                     @if($sections->isEmpty())
                                         <div class="text-center p-4">No hay secciones disponibles</div>
@@ -68,8 +68,8 @@
                                                                         {!! $report['icon'] ?? '' !!}
                                                                         <span>{{ $report['label'] ?? $report['text'] }}</span>
                                                                     </a>
-                                                                @endif
-                                                            @endforeach
+                                                                @endif 
+                                                            @endforeach 
                                                         </div>
                                                     </div>
                                                 @endif
@@ -77,8 +77,10 @@
                                         @endforeach
                                     @endif
                                 </div>
-                                <div class="d-flex justify-content-center mt-5">
-                                    {!! $sections->links('pagination::bootstrap-4') !!}
+                            </div>
+                            <div class="row mt-4 mb-4">
+                                <div class="col-12 d-flex justify-content-center">
+                                    {!! $sections->appends(request()->query())->links('pagination::bootstrap-4') !!}
                                 </div>
                             </div>
                         </div>
@@ -86,9 +88,8 @@
                 </div>
             </div>
         </div>
-
         @include('payments.create')
-        @include('payments.clientPayments')
+        @include('payments.clientPayments') 
         @include('payments.waterConnectionPayments')
         @include('advancePayments.advancePaymentsReportForm')
         @include('advancePayments.paymentHistoryModal')
@@ -127,14 +128,15 @@
     }
 
     .expandable-list {
-        display: block !important;
-        column-count: 2 !important;
-        column-gap: 20px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
         margin-top: 30px;
+        width: 100%;
     }
 
     .expandable-card {
-        display: inline-block !important;
+        display: block;
         width: 100%;
         break-inside: avoid !important;
         border-radius: 8px;
@@ -212,7 +214,7 @@
         align-items: center;
         justify-content: center;
         gap: 6px;
-        transition: all 0.25 0.25s ease;
+        transition: all 0.25s ease;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         white-space: normal !important;
         line-height: 1.3;
@@ -239,10 +241,11 @@
         }
     }
 
-    @media (max-width: 768px) {
-        .expandable-list {
-            column-count: 1 !important;
-        }
+@media (max-width: 768px) {
+    .expandable-list {
+        grid-template-columns: 1fr;
+    }
+
 
         .button-group-uniform {
             grid-template-columns: repeat(2, 1fr);
@@ -258,6 +261,14 @@
         .button-group-uniform {
             grid-template-columns: 1fr;
         }
+    }
+    .pagination {
+        display: flex !important;
+        padding-left: 0;
+        list-style: none;
+    }
+    .page-item {
+        display: inline !important;
     }
 </style>
 @endsection
