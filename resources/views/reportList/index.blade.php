@@ -88,6 +88,7 @@
                 </div>
             </div>
         </div>
+        
         @include('payments.create')
         @include('payments.clientPayments')
         @include('payments.waterConnectionPayments')
