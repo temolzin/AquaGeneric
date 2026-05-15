@@ -146,19 +146,17 @@ class ReportListController extends Controller
                 $reports = [];
                 break;
 
-            case 'Gestion de Inventario':
-                $reports = [
-                    [
-                        'text' => 'Inventario',
-                        'url' => '/reports/pdfInventory',
-                        'type' => 'pdf'
-                    ],
-                ];
-                break;
-
             case 'Gestión de Tomas de Agua':
                 $reports = [
                     ['text' => 'Lista de Costos', 'url' => '/reports/generateCostListReport', 'type' => 'pdf'],
+                ];
+                break;
+
+                case 'Gestion de Inventario':
+                $reports = [
+                    [
+                        'text' => 'Inventario','url' => '/reports/pdfInventory','type' => 'pdf'
+                    ],
                 ];
                 break;
 
