@@ -234,10 +234,10 @@
                                     <div class="col-md-12">
                                         <textarea class="textarea" name="message" placeholder="Mensaje" required>{{ old('message') }}</textarea>
                                     </div>
-                                    <div class="col-md-8 col-sm-12 d-flex justify-content-center align-items-center" style="margin-bottom: 15px;">
+                                    <div class="col-12 d-flex justify-content-center align-items-center" style="margin-bottom: 15px;">
                                         <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                                     </div>
-                                    <div class="col-md-4 col-sm-12 d-flex justify-content-center align-items-center" style="margin-bottom: 15px;">
+                                    <div class="col-12 d-flex justify-content-center align-items-center" style="margin-bottom: 15px;">
                                         <button type="submit" class="send_btn">Enviar mensaje</button>
                                     </div>
                                 </div>
