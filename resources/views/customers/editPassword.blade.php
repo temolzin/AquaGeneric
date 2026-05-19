@@ -83,15 +83,17 @@
         var showEye = document.getElementById(showEyeId);
         var hideEye = document.getElementById(hideEyeId);
 
-        if (input.type === "password") {
-            input.type = "text";
-            showEye.classList.add("d-none");
-            hideEye.classList.remove("d-none");
-        } else {
-            input.type = "password";
-            showEye.classList.remove("d-none");
-            hideEye.classList.add("d-none");
-        }
+        input.type === "password"
+            ? (
+                input.type = "text",
+                showEye.classList.add("d-none"),
+                hideEye.classList.remove("d-none")
+            )
+            : (
+                input.type = "password",
+                showEye.classList.remove("d-none"),
+                hideEye.classList.add("d-none")
+            );
     }
 
     function clearInputs(userId) {
