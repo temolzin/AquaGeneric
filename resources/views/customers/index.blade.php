@@ -131,6 +131,17 @@
                                                             <i class="fas fa-key"></i>
                                                         </button>
                                                     @endif
+                                                    @if ($customer->user)
+                                                        <button type="button"
+                                                                class="btn btn-dark mr-2"
+                                                                title="Editar Contraseña"
+                                                                data-toggle="modal"
+                                                                data-target="#editPassword{{$customer->user->id}}">
+                                                            <i class="fas fa-user-lock"></i>
+                                                        </button>
+
+                                                        @include('users.editPassword', ['user' => $customer->user])
+                                                    @endif
                                                     @can('deleteCustomer')
                                                         @if($customer->hasDependencies())
                                                             <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
