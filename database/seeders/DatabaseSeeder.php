@@ -47,6 +47,6 @@ class DatabaseSeeder extends Seeder
         $this->call(LogFaultReportSeeder::class);
         $this->call(CustomerCardsSeeder::class);
         $this->call(LocalityOpenPaySeeder::class);
-        $this->call(CustomerDefaultSeeder::class);
+        //$this->call(CustomerDefaultSeeder::class);
     }
 }
