@@ -23,7 +23,6 @@ class PaymentsTableSeeder extends Seeder
         $debtIds = DB::table('debts')
             ->join('water_connections', 'debts.water_connection_id', '=', 'water_connections.id')
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
-            ->whereNotIn('customers.user_id', [5])
             ->pluck('debts.id');
 
         foreach ($debtIds as $debtId) {
