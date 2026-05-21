@@ -13,9 +13,9 @@
         extend: {
           colors: {
             aqua: {
-              dark: '#1d4ed8',  /* azul vibrante claro */
-              blue: '#60a5fa',  /* azul muy claro y vibrante */
-              light: '#f4f7f9'  /* fondo suave */
+              dark: '#1d4ed8',
+              blue: '#60a5fa',
+              light: '#f4f7f9'
             }
           }
         }
@@ -28,8 +28,8 @@
         <div class="w-auto h-40 mb-4 flex items-center justify-center">
             <img src="{{ asset('img/logo.png') }}" alt="logo aquacontrol" class="h-full object-contain">
         </div>
-        <span class="text-2xl font-bold text-slate-900 tracking-tight">AquaControl</span>
-        <span class="mt-4 text-5xl font-extrabold tracking-tight text-slate-700">429</span>
+        <span class="mt-4 text-4xl font-bold text-slate-600 tracking-tight">AquaControl</span>
+        <span class="mt-4 text-4xl font-extrabold tracking-tight text-slate-500">429</span>
         <h1 class="mt-2 text-3xl font-extrabold tracking-wider text-aqua-dark sm:text-4xl uppercase">
             límite excedido
         </h1>
