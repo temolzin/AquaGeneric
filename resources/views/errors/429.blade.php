@@ -44,7 +44,7 @@
             </a>
             <a href="{{ url()->current() }}"
                 class="w-56 rounded-full bg-aqua-dark py-3 px-6 text-sm font-bold text-white shadow-md hover:bg-opacity-90 transition-all uppercase tracking-wider text-center">
-                reintentar
+                Reintentar
             </a>
         </div>
     </div>
