@@ -66,13 +66,12 @@
                                         <tr>
                                             <td scope="row">{{$locality->id}}</td>
                                             <td>
-                                                @if ($locality->getFirstMediaUrl('localityGallery'))
-                                                <img src="{{$locality->getFirstMediaUrl('localityGallery') }}" alt="Foto de {{$locality->name}}"
-                                                style="width: 50px; height: 50px; border-radius: 50%;">
-                                            @else
-                                                <img src="{{ asset('img/localityDefault.png') }}"
-                                                style="width: 50px; height: 50px; border-radius: 50%;">
-                                            @endif
+                                                @php
+                                                    $localityPhoto = $locality->getFirstMedia('localityGallery');
+                                                    $localityPhotoUrl = $localityPhoto ? asset('storage/' . $localityPhoto->id . '/' . $localityPhoto->file_name) . '?t=' . (optional($locality->updated_at)->timestamp ?? now()->timestamp) : asset('img/localityDefault.png');
+                                                @endphp
+                                                <img src="{{ $localityPhotoUrl }}" alt="Foto de {{$locality->name}}"
+                                                    style="width: 50px; height: 50px; border-radius: 50%;">
                                             </td>
                                             <td>{{$locality->name}}</td>
                                             <td>{{$locality->municipality}}</td>

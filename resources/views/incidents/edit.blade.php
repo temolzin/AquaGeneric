@@ -79,7 +79,10 @@
                                             <label>Imágenes actuales:</label>
                                             <div>
                                                 @foreach($incident->getMedia('incidentImages') as $media)
-                                                    <img src="{{ $media->getUrl() }}" alt="Imagen incidencia" class="img-thumbnail m-1" style="max-width: 100px;">
+                                                    @php
+                                                        $mediaUrl = asset('storage/' . $media->id . '/' . $media->file_name) . '?v=' . time();
+                                                    @endphp
+                                                    <img src="{{ $mediaUrl }}" alt="Imagen incidencia" class="img-thumbnail m-1" style="max-width: 100px;">
                                                 @endforeach
                                             </div>
                                         @else
