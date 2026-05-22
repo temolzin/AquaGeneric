@@ -1,13 +1,11 @@
-<div class="modal fade" id="view{{ $incident->id }}" tabindex="-1" role="dialog"
-    aria-labelledby="viewModalLabel{{ $incident->id }}" aria-hidden="true">
+<div class="modal fade" id="view{{ $incident->id }}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel{{ $incident->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="card-info">
                 <div class="card-header">
                     <div class="d-sm-flex align-items-center justify-content-between">
                         <h4 class="card-title">Información del Incidencia</h4>
-                        <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal"
-                            aria-label="Close">
+                        <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -56,17 +54,30 @@
                             <div class="col-lg-12 text-center mt-4">
                                 @if($incident->getMedia('incidentImages')->count())
                                     @foreach ($incident->getMedia('incidentImages') as $media)
-                                        <img
-                                            src="{{ $media->getUrl() }}?v={{ time() }}"
-                                            alt="Imagen incidencia"
-                                            class="img-thumbnail m-1 preview-image"
-                                            style="max-width:150px;cursor:pointer;"
-                                            data-image="{{ $media->getUrl() }}?v={{ time() }}">
+                                        <img src="{{ $media->getUrl() }}" alt="Imagen incidencia" class="img-thumbnail m-1" style="max-width: 150px; cursor:pointer;"
+                                            data-toggle="modal" data-target="#imagePreviewModal{{ $media->id }}">
+                                        <!-- Modal para vista previa -->
+                                        <div class="modal fade" id="imagePreviewModal{{ $media->id }}" tabindex="-1" role="dialog" aria-labelledby="imagePreviewModalLabel{{ $media->id }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-secondary text-white">
+                                                        <h5 class="modal-title" id="imagePreviewModalLabel{{ $media->id }}">Vista previa</h5>
+                                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <img src="{{ $media->getUrl() }}" alt="Imagen incidencia" class="img-fluid rounded" style="max-height: 500px;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endforeach
                                 @else
                                     <p>No hay imágenes disponibles.</p>
                                 @endif
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -77,46 +88,3 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade"
-    id="imagePreviewModal"
-    tabindex="-1"
-    role="dialog"
-    aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-secondary text-white">
-                <h5 class="modal-title">
-                    Vista previa de imagen
-                </h5>
-                <button type="button"
-                    class="close text-white"
-                    data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center">
-                <img
-                    id="previewModalImage"
-                    src=""
-                    alt="Vista previa"
-                    class="img-fluid rounded shadow"
-                    style="max-height: 500px;">
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    $(document).ready(function () {
-        $(document).on('click', '.preview-image', function () {
-            let imageUrl = $(this).data('image');
-            $('#previewModalImage').attr('src', imageUrl);
-            $('#imagePreviewModal').modal('show');
-        });
-        $('#imagePreviewModal').on('hidden.bs.modal', function () {
-            $('#previewModalImage').attr('src', '');
-        });
-    });
-</script>
