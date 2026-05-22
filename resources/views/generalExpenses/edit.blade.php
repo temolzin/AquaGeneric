@@ -72,9 +72,13 @@
                                         <div class="form-group">
                                             <label for="receiptUpdate" class="form-label">Comprobante del gasto (*)</label>
                                             <div class="d-flex align-items-center">
-                                                @if($expense->hasMedia('expenseGallery'))
+                                                @php
+                                                    $receipt = $expense->getFirstMedia('expenseGallery');
+                                                    $receiptUrl = $receipt ? asset('storage/' . $receipt->id . '/' . $receipt->file_name) . '?t=' . (optional($expense->updated_at)->timestamp ?? now()->timestamp) : null;
+                                                @endphp
+                                                @if($receiptUrl)
                                                     <div class="col-lg-6">
-                                                        <a href="{{ $expense->getFirstMediaUrl('expenseGallery') }}" target="_blank" class="btn btn-warning">
+                                                        <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-warning">
                                                             <i class="fas fa-eye"></i> Ver recibo actual
                                                         </a>
                                                     </div>
@@ -82,7 +86,7 @@
                                                     <p class="mt-2 text-danger">No hay recibo actual.</p>
                                                 @endif
                                                 <div class="col-lg-6">
-                                                    <input type="file" class="form-control" name="receiptUpdate" id="receiptUpdate" accept=".jpg,.jpeg,.png,.pdf"/>
+                                                    <input type="file" class="form-control" name="receiptUpdate" id="receiptUpdate{{ $expense->id }}" accept=".jpg,.jpeg,.png,.pdf"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -102,7 +106,7 @@
 </div>
 
 <script>
-    document.getElementById('receiptUpdate').addEventListener('change', function (event) {
+    document.getElementById('receiptUpdate{{ $expense->id }}').addEventListener('change', function (event) {
         const input = event.target;
         const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
         const file = input.files[0];

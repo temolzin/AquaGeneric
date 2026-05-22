@@ -82,7 +82,11 @@
                                                         <td>{{ $incident->name }}</td>
                                                         <td>
                                                             @forelse ($incident->responsible_employees as $employee)
-                                                                <img src="{{ $employee->getFirstMediaUrl('employeeGallery') ?: asset('img/userDefault.png') }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}"
+                                                                @php
+                                                                    $employeePhoto = $employee->getFirstMedia('employeeGallery');
+                                                                    $employeePhotoUrl = $employeePhoto ? asset('storage/' . $employeePhoto->id . '/' . $employeePhoto->file_name) . '?t=' . (optional($employee->updated_at)->timestamp ?? now()->timestamp) : asset('img/userDefault.png');
+                                                                @endphp
+                                                                <img src="{{ $employeePhotoUrl }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}"
                                                                     class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 3px;">
                                                             @empty
                                                                 <span class="text-muted">Sin asignar</span>
@@ -107,8 +111,12 @@
                                                         </td>
                                                         <td>
                                                             @if ($incident->creator)
+                                                                @php
+                                                                    $creatorPhoto = $incident->creator->getFirstMedia('userGallery');
+                                                                    $creatorPhotoUrl = $creatorPhoto ? asset('storage/' . $creatorPhoto->id . '/' . $creatorPhoto->file_name) . '?t=' . (optional($incident->creator->updated_at)->timestamp ?? now()->timestamp) : asset('img/userDefault.png');
+                                                                @endphp
                                                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                                                    <img src="{{ $incident->creator->getFirstMediaUrl('userImage') ?: asset('img/userDefault.png') }}" alt="Creador" title="{{ $incident->creator->name }} {{ $incident->creator->last_name }}"
+                                                                    <img src="{{ $creatorPhotoUrl }}" alt="Creador" title="{{ $incident->creator->name }} {{ $incident->creator->last_name }}"
                                                                         class="img-thumbnail" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
                                                                     <span>{{ $incident->creator->name }} {{ $incident->creator->last_name }}</span>
                                                                 </div>
@@ -220,6 +228,18 @@
             });
         }
     });
+
+        @if(session('success'))
+            (function() {
+                let hasReloaded = false;
+                window.addEventListener('load', function () {
+                    if (!hasReloaded) {
+                        hasReloaded = true;
+                        location.reload();
+                    }
+                });
+            })();
+        @endif
 
     $(document).on('shown.bs.modal', '[id^="edit"]', function() {
         $(this).find('.select2').each(function() {
