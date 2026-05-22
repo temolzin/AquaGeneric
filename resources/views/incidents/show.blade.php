@@ -54,7 +54,7 @@
                             <div class="col-lg-12 text-center mt-4">
                                 @if($incident->getMedia('incidentImages')->count())
                                     @foreach ($incident->getMedia('incidentImages') as $media)
-                                        <img src="{{ $media->getUrl() }}" alt="Imagen incidencia" class="img-thumbnail m-1" style="max-width: 150px; cursor:pointer;"
+                                        <img src="{{ $media->getUrl() }}?v={{ time() }}" alt="Imagen incidencia" class="img-thumbnail m-1" style="max-width: 150px; cursor:pointer;"
                                             data-toggle="modal" data-target="#imagePreviewModal{{ $media->id }}">
                                         <!-- Modal para vista previa -->
                                         <div class="modal fade" id="imagePreviewModal{{ $media->id }}" tabindex="-1" role="dialog" aria-labelledby="imagePreviewModalLabel{{ $media->id }}" aria-hidden="true">
@@ -67,7 +67,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body text-center">
-                                                        <img src="{{ $media->getUrl() }}" alt="Imagen incidencia" class="img-fluid rounded" style="max-height: 500px;">
+                                                        <img src="{{ $media->getUrl() }}?v={{ time() }}" alt="Imagen incidencia" class="img-fluid rounded" style="max-height: 500px;">
                                                     </div>
                                                 </div>
                                             </div>

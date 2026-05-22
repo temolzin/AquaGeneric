@@ -221,6 +221,17 @@
         }
     });
 
+        @if(session('success'))
+            window.addEventListener('load', function () {
+            if (!sessionStorage.getItem('reloaded')) {
+                sessionStorage.setItem('reloaded', 'true');
+                location.reload();
+            } else {
+                sessionStorage.removeItem('reloaded');
+            }
+        });
+        @endif
+
     $(document).on('shown.bs.modal', '[id^="edit"]', function() {
         $(this).find('.select2').each(function() {
             if ($(this).hasClass('select2-hidden-accessible')) {
