@@ -230,14 +230,15 @@
     });
 
         @if(session('success'))
-            window.addEventListener('load', function () {
-            if (!sessionStorage.getItem('reloaded')) {
-                sessionStorage.setItem('reloaded', 'true');
-                location.reload();
-            } else {
-                sessionStorage.removeItem('reloaded');
-            }
-        });
+            (function() {
+                let hasReloaded = false;
+                window.addEventListener('load', function () {
+                    if (!hasReloaded) {
+                        hasReloaded = true;
+                        location.reload();
+                    }
+                });
+            })();
         @endif
 
     $(document).on('shown.bs.modal', '[id^="edit"]', function() {
