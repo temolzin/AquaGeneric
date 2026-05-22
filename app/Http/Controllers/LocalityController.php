@@ -37,7 +37,7 @@ class LocalityController extends Controller
         return view('localities.index', compact('localities','mailExamples', 'memberships'));
     }
 
-    public function pdfLocalities(Request $request)
+    public function generatepdfLocalities(Request $request)
     {
         $authUser = auth()->user();
 
