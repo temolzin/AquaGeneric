@@ -133,6 +133,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware' => ['can:viewLocality']], function () {
         Route::get('/localities', [LocalityController::class, 'index'])->name('localities.index');
+        Route::get('/report/pdfLocalities', [LocalityController::class, 'pdfLocalities'])->name('localities.pdfLocalities');
         Route::resource('localities', LocalityController::class);
         Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');

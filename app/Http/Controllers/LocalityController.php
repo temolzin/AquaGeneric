@@ -6,6 +6,7 @@ use App\Models\Locality;
 use App\Models\Membership;
 use App\Models\Token;
 use App\Models\MailConfiguration;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Crypt;
 
@@ -34,6 +35,36 @@ class LocalityController extends Controller
         ];
 
         return view('localities.index', compact('localities','mailExamples', 'memberships'));
+    }
+
+    public function pdfLocalities(Request $request)
+    {
+        $authUser = auth()->user();
+
+        $query = Locality::query()->orderBy('name');
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->whereRaw("CONCAT(name, ' ', municipality, ' ', zip_code) LIKE ?", ["%{$search}%"]);
+        }
+
+        $localities = $query->get();
+        $localitiesPerFirstPage = 26;
+        $localitiesPerNextPages = 40;
+
+        $firstPageLocalities = $localities->take($localitiesPerFirstPage);
+        $remainingLocalities = $localities->slice($localitiesPerFirstPage);
+        $otherPagesLocalities = $remainingLocalities->chunk($localitiesPerNextPages);
+
+        $totalPages = 1 + ceil(max(0, $localities->count() - $localitiesPerFirstPage) / $localitiesPerNextPages);
+
+        $pdf = Pdf::loadView('reports.pdfLocalities', compact(
+            'authUser',
+            'firstPageLocalities',
+            'otherPagesLocalities',
+            'totalPages'
+        ))->setPaper('A4', 'portrait');
+
+        return $pdf->stream('localities.pdf');
     }
 
     public function store(Request $request)

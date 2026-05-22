@@ -91,7 +91,8 @@ class IncidentController extends Controller
             }
         }
 
-        return redirect()->route('incidents.index')->with('success', 'Incidente creado exitosamente.');
+        $redirectRoute = $authUser->hasRole(User::ROLE_CUSTOMER) ? 'customerIncidents.index' : 'incidents.index';
+        return redirect()->route($redirectRoute)->with('success', 'Incidente creado exitosamente.');
     }
 
     public function show($id)
