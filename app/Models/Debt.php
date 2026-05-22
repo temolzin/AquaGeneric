@@ -101,6 +101,11 @@ class Debt extends Model
         return max(0, $this->amount - $paid);
     }
 
+    public function getTotalPaidAttribute()
+    {
+        return $this->debt_current ?? $this->payments()->sum('amount') ?? 0;
+    }
+
     public function isPaid()
     {
         $paid = $this->debt_current ?? $this->payments()->sum('amount') ?? 0;

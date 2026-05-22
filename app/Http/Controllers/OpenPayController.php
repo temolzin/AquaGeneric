@@ -178,13 +178,9 @@ class OpenPayController extends Controller
                 ->whereNull('payment_id')
                 ->update(['payment_id' => $payment->id]);
 
-            $debt->refresh();
+            $debt->debt_current += $request->amount;
 
-            $debt->debt_current = $debt->total_paid;
-
-            $pendingAmount = $debt->remaining_amount;
-
-            if ($pendingAmount <= 0) {
+            if ($debt->debt_current >= $debt->amount) {
                 $debt->status = 'paid';
             } elseif ($debt->debt_current > 0) {
                 $debt->status = 'partial';
