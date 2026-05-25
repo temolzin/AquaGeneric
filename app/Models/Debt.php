@@ -95,15 +95,31 @@ class Debt extends Model
         return $this->payments()->exists();
     }
 
+    protected function getPaidAmount(): float
+    {
+        $paymentsTotal = $this->payments()->sum('amount') ?? 0;
+
+        if ($this->debt_current > 0) {
+            return max($this->debt_current, $paymentsTotal);
+        }
+
+        return $paymentsTotal;
+    }
+
     public function getRemainingAmountAttribute()
     {
-        $paid = $this->debt_current ?? $this->payments()->sum('amount') ?? 0;
+        $paid = $this->getPaidAmount();
         return max(0, $this->amount - $paid);
+    }
+
+    public function getTotalPaidAttribute()
+    {
+        return $this->getPaidAmount();
     }
 
     public function isPaid()
     {
-        $paid = $this->debt_current ?? $this->payments()->sum('amount') ?? 0;
+        $paid = $this->getPaidAmount();
         return $paid >= $this->amount;
     }
 }
