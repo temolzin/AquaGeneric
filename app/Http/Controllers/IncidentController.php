@@ -30,7 +30,16 @@ class IncidentController extends Controller
             $query->where('category_id', $request->category);
         }
 
-        $incidents = $query->paginate(10);
+        $internalOnly = $request->boolean('internal_only');
+        if (! $authUser->hasRole(User::ROLE_CUSTOMER) && $internalOnly) {
+            $query->whereDoesntHave('creator', function ($q) {
+                $q->whereHas('roles', function ($q2) {
+                    $q2->where('name', User::ROLE_CUSTOMER);
+                });
+            });
+        }
+
+        $incidents = $query->paginate(10)->appends($request->query());
 
         $categories = IncidentCategory::where(function ($query) use ($authUser) {
             $query->where('locality_id', $authUser->locality_id)
