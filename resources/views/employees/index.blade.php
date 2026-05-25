@@ -30,7 +30,7 @@
                                         <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Generar Lista de Empleados" href="{{ route('report.generateEmployeeListReport') }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista
                                         </a>
-                                        <button type="button" class="btn" style="background-color: #6f42c1; color: white; border-color: #6f42c1;" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
+                                        <button type="button" class="btn bg-purple" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
                                             <i class="fas fa-filter"></i> Reporte por Rol
                                         </button>
                                     </div>
@@ -52,7 +52,7 @@
                                                 </a>
                                             </div>
                                             <div class="col-12 mt-2">
-                                                <button type="button" class="btn w-100 py-2" style="background-color: #6f42c1; color: white; border-color: #6f42c1;" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
+                                                <button type="button" class="btn bg-purple w-100 py-2" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
                                                     <i class="fas fa-filter"></i> Reporte por Rol
                                                 </button>
                                             </div>
