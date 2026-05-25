@@ -57,7 +57,9 @@ class OpenPayController extends Controller
 
         DB::beginTransaction();
         try {
-            $debt = Debt::with(['customer', 'payments', 'waterConnection', 'locality'])->findOrFail($request->debt_id);
+            $debt = Debt::with(['customer', 'payments', 'waterConnection', 'locality'])
+                ->lockForUpdate()
+                ->findOrFail($request->debt_id);
 
             $locality = $debt->locality;
             if (!$locality) {
@@ -185,7 +187,7 @@ class OpenPayController extends Controller
             } elseif ($debt->debt_current > 0) {
                 $debt->status = 'partial';
             }
-            $debt->save();
+            $debt->save();  
 
             DB::commit();
 
