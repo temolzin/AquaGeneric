@@ -30,13 +30,24 @@ class IncidentController extends Controller
             $query->where('category_id', $request->category);
         }
 
-        $internalOnly = $request->boolean('internal_only');
-        if (! $authUser->hasRole(User::ROLE_CUSTOMER) && $internalOnly) {
-            $query->whereDoesntHave('creator', function ($q) {
-                $q->whereHas('roles', function ($q2) {
-                    $q2->where('name', User::ROLE_CUSTOMER);
+        $showCustomerIncidents = $request->has('show_customer_incidents')
+            ? $request->boolean('show_customer_incidents')
+            : true;
+
+        if (! $authUser->hasRole(User::ROLE_CUSTOMER)) {
+            if ($showCustomerIncidents) {
+                $query->whereHas('creator', function ($q) {
+                    $q->whereHas('roles', function ($q2) {
+                        $q2->where('name', User::ROLE_CUSTOMER);
+                    });
                 });
-            });
+            } else {
+                $query->whereDoesntHave('creator', function ($q) {
+                    $q->whereHas('roles', function ($q2) {
+                        $q2->where('name', User::ROLE_CUSTOMER);
+                    });
+                });
+            }
         }
 
         $incidents = $query->paginate(10)->appends($request->query());

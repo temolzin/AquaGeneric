@@ -39,9 +39,10 @@
                                             <div class="flex-grow-1"></div>
 
                                             @if(!auth()->user()->hasRole(\App\Models\User::ROLE_CUSTOMER))
+                                                <input type="hidden" name="show_customer_incidents" id="show_customer_incidents_input" value="{{ request('show_customer_incidents', '1') }}">
                                                 <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="internal_only" name="internal_only" value="1" {{ request('internal_only') ? 'checked' : '' }}>
-                                                    <label class="custom-control-label" for="internal_only">Solo incidencias internas</label>
+                                                    <input type="checkbox" class="custom-control-input" id="show_customer_incidents" {{ request('show_customer_incidents', '1') == '1' ? 'checked' : '' }}>
+                                                    <label class="custom-control-label" for="show_customer_incidents">Insidencias internas</label>
                                                 </div>
                                             @endif
                                         </div>
@@ -217,6 +218,12 @@
             paging: false,
             info: false,
             searching: false
+        });
+
+        $('#show_customer_incidents').on('change', function() {
+            var checked = $(this).is(':checked');
+            $('#show_customer_incidents_input').val(checked ? 1 : 0);
+            $(this).closest('form').submit();
         });
 
         var successMessage = "{{ session('success') }}";
