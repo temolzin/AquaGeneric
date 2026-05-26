@@ -38,11 +38,11 @@
 
                                             <div class="flex-grow-1"></div>
 
-                                            @if(!auth()->user()->hasRole(\App\Models\User::ROLE_CUSTOMER))
-                                                <input type="hidden" name="show_customer_incidents" id="show_customer_incidents_input" value="{{ request('show_customer_incidents', '1') }}">
+                                            @if($canToggleIncidentType)
+                                                <input type="hidden" name="show_customer_incidents" id="show_customer_incidents_input" value="{{ $showCustomerIncidents ? '1' : '0' }}">
                                                 <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="show_customer_incidents" {{ request('show_customer_incidents', '1') == '1' ? 'checked' : '' }}>
-                                                    <label class="custom-control-label" for="show_customer_incidents">Insidencias internas</label>
+                                                    <input type="checkbox" class="custom-control-input" id="show_customer_incidents" {{ $showCustomerIncidents ? 'checked' : '' }}>
+                                                    <label class="custom-control-label" for="show_customer_incidents">Mostrar incidencias de clientes</label>
                                                 </div>
                                             @endif
                                         </div>

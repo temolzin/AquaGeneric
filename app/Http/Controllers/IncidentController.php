@@ -30,23 +30,25 @@ class IncidentController extends Controller
             $query->where('category_id', $request->category);
         }
 
-        $showCustomerIncidents = $request->has('show_customer_incidents')
-            ? $request->boolean('show_customer_incidents')
-            : true;
+        $showCustomerIncidents = $request->boolean('show_customer_incidents', true);
+        $canToggleIncidentType = ! $authUser->hasRole(User::ROLE_CUSTOMER);
 
-        if (! $authUser->hasRole(User::ROLE_CUSTOMER)) {
-            if ($showCustomerIncidents) {
-                $query->whereHas('creator', function ($q) {
-                    $q->whereHas('roles', function ($q2) {
-                        $q2->where('name', User::ROLE_CUSTOMER);
+        if ($canToggleIncidentType) {
+            switch ($showCustomerIncidents) {
+                case true:
+                    $query->whereHas('creator', function ($q) {
+                        $q->whereHas('roles', function ($q2) {
+                            $q2->where('name', User::ROLE_CUSTOMER);
+                        });
                     });
-                });
-            } else {
-                $query->whereDoesntHave('creator', function ($q) {
-                    $q->whereHas('roles', function ($q2) {
-                        $q2->where('name', User::ROLE_CUSTOMER);
+                    break;
+                case false:
+                    $query->whereDoesntHave('creator', function ($q) {
+                        $q->whereHas('roles', function ($q2) {
+                            $q2->where('name', User::ROLE_CUSTOMER);
+                        });
                     });
-                });
+                    break;
             }
         }
 
@@ -65,7 +67,14 @@ class IncidentController extends Controller
 
         $viewName = Route::current()->getName() === 'customerIncidents.index' ? 'customerIncidents.index' : 'incidents.index';
         
-        return view($viewName, compact('incidents', 'categories', 'employees', 'statuses'));
+        return view($viewName, compact(
+            'incidents',
+            'categories',
+            'employees',
+            'statuses',
+            'showCustomerIncidents',
+            'canToggleIncidentType'
+        ));
     }
 
     public function create()
