@@ -30,7 +30,29 @@ class IncidentController extends Controller
             $query->where('category_id', $request->category);
         }
 
-        $incidents = $query->paginate(10);
+        $showCustomerIncidents = $request->boolean('show_customer_incidents', true);
+        $canToggleIncidentType = ! $authUser->hasRole(User::ROLE_CUSTOMER);
+
+        if ($canToggleIncidentType) {
+            switch ($showCustomerIncidents) {
+                case true:
+                    $query->whereHas('creator', function ($q) {
+                        $q->whereHas('roles', function ($q2) {
+                            $q2->where('name', User::ROLE_CUSTOMER);
+                        });
+                    });
+                    break;
+                case false:
+                    $query->whereDoesntHave('creator', function ($q) {
+                        $q->whereHas('roles', function ($q2) {
+                            $q2->where('name', User::ROLE_CUSTOMER);
+                        });
+                    });
+                    break;
+            }
+        }
+
+        $incidents = $query->paginate(10)->appends($request->query());
 
         $categories = IncidentCategory::where(function ($query) use ($authUser) {
             $query->where('locality_id', $authUser->locality_id)
@@ -45,7 +67,14 @@ class IncidentController extends Controller
 
         $viewName = Route::current()->getName() === 'customerIncidents.index' ? 'customerIncidents.index' : 'incidents.index';
         
-        return view($viewName, compact('incidents', 'categories', 'employees', 'statuses'));
+        return view($viewName, compact(
+            'incidents',
+            'categories',
+            'employees',
+            'statuses',
+            'showCustomerIncidents',
+            'canToggleIncidentType'
+        ));
     }
 
     public function create()
