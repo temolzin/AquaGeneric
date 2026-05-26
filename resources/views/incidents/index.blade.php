@@ -13,49 +13,7 @@
                             <div class="col-lg-12">
                                 <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
                                     <form method="GET" action="{{ route('incidents.index') }}" class="flex-grow-1 col-md-8 px-0" style="min-width: 200px;">
-                                        <style>
-                                            .internal-switch {
-                                                display: flex;
-                                                align-items: center;
-                                                gap: 0.75rem;
-                                                margin-left: 0.75rem;
-                                            }
-                                            .internal-switch input[type="checkbox"] {
-                                                -webkit-appearance: none;
-                                                appearance: none;
-                                                width: 3.4rem;
-                                                height: 1.8rem;
-                                                background: #d2d6de;
-                                                border-radius: 999px;
-                                                position: relative;
-                                                outline: none;
-                                                cursor: pointer;
-                                                transition: background 0.25s ease;
-                                            }
-                                            .internal-switch input[type="checkbox"]::after {
-                                                content: '';
-                                                position: absolute;
-                                                width: 1.6rem;
-                                                height: 1.6rem;
-                                                top: 0.1rem;
-                                                left: 0.1rem;
-                                                background: #fff;
-                                                border-radius: 50%;
-                                                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-                                                transition: transform 0.25s ease;
-                                            }
-                                            .internal-switch input[type="checkbox"]:checked {
-                                                background: linear-gradient(135deg, #2d7cdb, #35baf6);
-                                            }
-                                            .internal-switch input[type="checkbox"]:checked::after {
-                                                transform: translateX(1.6rem);
-                                            }
-                                            .internal-switch label {
-                                                margin-bottom: 0;
-                                                font-size: 0.95rem;
-                                                font-weight: 500;
-                                            }
-                                        </style>
+                                        
                                         <div class="d-flex flex-wrap align-items-center gap-2 w-100">
                                             <div class="d-flex align-items-center flex-grow-1" style="min-width: 670px; gap:0.5rem;">
                                                 <select name="category" class="form-control select2 rounded-start border-end-0" style="flex:1 1 100%; min-width: 360px;">
@@ -81,9 +39,9 @@
                                             <div class="flex-grow-1"></div>
 
                                             @if(!auth()->user()->hasRole(\App\Models\User::ROLE_CUSTOMER))
-                                                <div class="internal-switch d-flex align-items-center">
-                                                    <input type="checkbox" id="internal_only" name="internal_only" value="1" {{ request('internal_only') ? 'checked' : '' }}>
-                                                    <label for="internal_only">Solo incidencias internas</label>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="internal_only" name="internal_only" value="1" {{ request('internal_only') ? 'checked' : '' }}>
+                                                    <label class="custom-control-label" for="internal_only">Solo incidencias internas</label>
                                                 </div>
                                             @endif
                                         </div>
