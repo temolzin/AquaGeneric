@@ -45,27 +45,23 @@ class MembershipsTableSeeder extends Seeder
 
         $now = now();
 
-        $payload = collect($memberships)->map(function ($m) use ($adminId, $now) {
+        foreach ($memberships as $membership) {
             $data = [
-                'name' => $m['name'],
-                'price' => $m['price'],
-                'term_months' => $m['term_months'],
-                'water_connections_number' => $m['water_connections_number'],
-                'users_number' => $m['users_number'],
+                'name' => $membership['name'],
+                'price' => $membership['price'],
+                'term_months' => $membership['term_months'],
+                'water_connections_number' => $membership['water_connections_number'],
+                'users_number' => $membership['users_number'],
                 'created_at' => $now,
+                'updated_at' => $now,
             ];
-            
-            if (Schema::hasColumn('memberships', 'created_by') && $adminId) {
-                $data['created_by'] = $adminId;
-            }
-            
-            return $data;
-        })->toArray();
 
-        DB::table('memberships')->upsert(
-            $payload,
-            ['name'],
-            ['price', 'term_months', 'water_connections_number', 'users_number', 'created_by']
-        );
+            Schema::hasColumn('memberships', 'created_by') && $adminId && $data['created_by'] = $adminId;
+
+            DB::table('memberships')->updateOrInsert(
+                ['term_months' => $membership['term_months']],
+                $data
+            );
+        }
     }
 }
