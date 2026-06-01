@@ -38,12 +38,10 @@
                                     @else
                                         <img class="profile-user-img" style="width: 150px; height: 150px; border-radius: 50%;" src="{{ asset('img/userDefault.png') }}">
                                     @endif
-                                    @if(!$authUser->hasRole(\App\Models\User::ROLE_CUSTOMER))
                                     <button href="#" class="btn btn-outline-primary btn-sm edit-profile-pic" data-toggle="modal" data-target="#updateImage"
                                         style="position: absolute; bottom: 5px; right: 5px; background: white; border-radius: 10%; padding: 5px;">
                                         <i class="fas fa-camera"></i>
                                     </button>
-                                    @endif
                                 </div>
                             </div>
                             <h3 class="profile-username text-center">{{ $authUser->name }} {{ $authUser->last_name }}</h3>
@@ -134,7 +132,7 @@
                                 </div>
                                 <div class="offset-sm-2 col-sm-10">
                                     <div class="text-center">
-                                        @if(!$authUser->hasRole(\App\Models\User::ROLE_CUSTOMER))
+                                        @if($canEditProfile)
                                         <button type="submit" class="btn btn-success" id="updateInformation" name="updateInformation">
                                             Editar datos
                                         </button>
