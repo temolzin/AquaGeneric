@@ -30,7 +30,7 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="col-lg-4">
-                <form method="GET" action="{{ route('localities.index') }}" class="my-3">
+                <form method="GET" action="{{ route('localities.index') }}" class="flex-grow-1 mt-2" style="min-width: 420px; max-width: 40%;">
                     <div class="input-group">
                         <input type="text" name="search" class="form-control" placeholder="Buscar por localidad, municipio, código postal" value="{{ request('search') }}">
                         <div class="input-group-append">

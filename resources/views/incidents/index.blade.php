@@ -11,11 +11,10 @@
                         <h2>Incidencias</h2>
                         <div class="row mb-2">
                             <div class="col-lg-12">
-                                <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
-                                    <form method="GET" action="{{ route('incidents.index') }}" class="flex-grow-1 col-md-8 px-0" style="min-width: 200px;">
-                                        
-                                        <div class="d-flex flex-wrap align-items-center gap-2 w-100">
-                                            <div class="d-flex align-items-center flex-grow-1" style="min-width: 670px; gap:0.5rem;">
+                                <div class="d-flex align-items-center flex-wrap" style="gap: 235px;">
+                                    <form method="GET" action="{{ route('incidents.index') }}" class="px-0 m-0">
+                                        <div class="d-flex flex-wrap align-items-center" style="gap: 8px;">
+                                            <div class="d-flex align-items-center flex-grow-1" style="min-width: 400px; gap:0.5rem;">
                                                 <select name="category" class="form-control select2 rounded-start border-end-0" style="flex:1 1 100%; min-width: 360px;">
                                                     <option value="">Filtrar por categoría</option>
                                                     @foreach ($categories as $category)
@@ -47,7 +46,7 @@
                                             @endif
                                         </div>
                                     </form>
-                                    <div class="d-flex flex-wrap gap-2 justify-content-end w-100 w-lg-auto">
+                                    <div class="d-flex flex-wrap" style="gap: 8px;">
                                         <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2 mr-1" data-toggle='modal'
                                                 data-target="#createIncidence" title="Registrar Incidencia">
                                             <i class="fa fa-plus"></i>

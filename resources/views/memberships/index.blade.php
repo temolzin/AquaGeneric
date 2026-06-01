@@ -12,7 +12,7 @@
                         <div class="row mb-2">
                             <div class="col-12">
                                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-                                    <form method="GET" action="{{ route('memberships.index') }}" class="flex-grow-1 w-100" style="min-width: 300px; max-width: 100%;">
+                                    <form method="GET" action="{{ route('memberships.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
                                         <div class="input-group">
                                             <input type="text" name="search" class="form-control" placeholder="Buscar por nombre" value="{{ request('search') }}">
                                             <div class="input-group-append">
