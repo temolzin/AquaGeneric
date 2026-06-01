@@ -23,7 +23,7 @@ class LocalitiesTableSeeder extends Seeder
                 'municipality' => 'Smallville',
                 'state' => 'Kansas',
                 'zip_code' => '66002',
-                'membership_name' => 'Plan Premium', // cambiado a español
+                'membership_name' => 'Plan Premium',
                 'token_expired' => false,
             ],
             [
@@ -31,7 +31,7 @@ class LocalitiesTableSeeder extends Seeder
                 'municipality' => 'Springfield',
                 'state' => 'Oregon',
                 'zip_code' => '97477',
-                'membership_name' => 'Plan Empresarial', // cambiado a español
+                'membership_name' => 'Plan Empresarial',
                 'token_expired' => false,
             ],
             [
@@ -39,7 +39,7 @@ class LocalitiesTableSeeder extends Seeder
                 'municipality' => 'Scranton',
                 'state' => 'Pennsylvania',
                 'zip_code' => '18503',
-                'membership_name' => 'Plan Básico', // cambiado a español
+                'membership_name' => 'Plan Básico',
                 'token_expired' => true,
             ],
         ];
