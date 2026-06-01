@@ -22,6 +22,8 @@ class ProfileController extends Controller
             }
         ]);
 
+        $canEditProfile = !$authUser->hasRole(User::ROLE_CUSTOMER);
+
         $membershipStats = [
             'users_count' => $authUser->locality && $authUser->locality->membership ?
                 DB::table('memberships as m')
@@ -40,7 +42,7 @@ class ProfileController extends Controller
             'membership_name' => $authUser->locality && $authUser->locality->membership ? $authUser->locality->membership->name : 'Sin membresía'
         ];
 
-        return view('profile.index', compact('authUser', 'membershipStats'));
+        return view('profile.index', compact('authUser', 'membershipStats', 'canEditProfile'));
     }
 
     public function profileUpdate(Request $request)
