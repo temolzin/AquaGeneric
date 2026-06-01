@@ -85,7 +85,7 @@ class CustomerController extends Controller
 
             session(['passview_'.$user->id => $passview]);
 
-            $user->assignRole('cliente');
+            $user->assignRole(User::ROLE_CUSTOMER);
 
             $customerData['user_id'] = $user->id;
             $customerData['name'] = $user->name;
@@ -219,7 +219,7 @@ class CustomerController extends Controller
             $user->locality_id = $customer->locality_id;
             $user->save();
 
-            $user->assignRole('cliente');
+            $user->assignRole(User::ROLE_CUSTOMER);
             $customer->user_id = $user->id;
             $customer->save();
 

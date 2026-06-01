@@ -21,9 +21,7 @@ class UserController extends Controller
         $localities = Locality::all();
 
         $users = User::where('id', '!=', $currentUserId)
-                    ->whereDoesntHave('roles', function($query) {
-                        $query->whereIn('name', ['cliente', '$currentUserId']);
-                    })
+                    ->whereDoesntHave('roles', fn($q) => $q->where('name', User::ROLE_CUSTOMER))
                     ->orderBy('id', 'desc')
                     ->get();
 
