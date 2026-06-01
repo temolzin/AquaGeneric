@@ -12,12 +12,11 @@
                             <div class="card-box head">
                                 <div class="row align-items-center">
                                     <div class="col-md-2 text-center">
-                                        @if ($authUser->getFirstMediaUrl('userGallery'))
-                                            <img src="{{ $authUser->getFirstMediaUrl('userGallery') }}"
-                                                alt="Foto de {{ $authUser->name }}">
-                                        @else
-                                            <img src="{{ asset('img/userDefault.png') }}">
-                                        @endif
+                                        <img id="userProfileImage"
+                                            src="{{ $authUser->getAdminlteImageAttribute() }}"
+                                            alt="Foto de {{ $authUser->name }}"
+                                            class="img-fluid"
+                                            style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
                                     </div>
                                     <div class="col-md-8">
                                         <h4 class="font-weight-bold text-capitalize welcome">Bienvenid@</h4>
@@ -253,7 +252,7 @@
                                     <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100">
                                         @csrf
                                         <button type="submit" class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm w-100 w-md-auto" title="{{ $hasMailConfig
-                                                ? 'Enviar correos de recordatorio' : 'No hay configuración de correo válida para esta localidad' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
+                                                ? 'Enviar correos de recordatorio' : 'Para enviar recordatorios configura tu correo, contáctanos' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
                                             <i class="fas fa-envelope"></i> Enviar recordatorios
                                         </button>
                                     </form>

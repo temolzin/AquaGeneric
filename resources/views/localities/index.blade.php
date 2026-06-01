@@ -18,7 +18,7 @@
                                 <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createLocality">
                                     <i class="fa fa-plus"></i> Registrar Localidad
                                 </button>
-                                <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Localities" href="#">
+                                <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Localidades" href="{{ route('localities.pdfLocalities', ['search' => request('search')]) }}">
                                     <i class="fas fa-map"></i> Generar Lista
                                 </a>
                                 <a type="button" class="btn btn-info" href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank" title="Ver guía de registro">
@@ -30,7 +30,7 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="col-lg-4">
-                <form method="GET" action="{{ route('localities.index') }}" class="my-3">
+                <form method="GET" action="{{ route('localities.index') }}" class="flex-grow-1 mt-2" style="min-width: 420px; max-width: 40%;">
                     <div class="input-group">
                         <input type="text" name="search" class="form-control" placeholder="Buscar por localidad, municipio, código postal" value="{{ request('search') }}">
                         <div class="input-group-append">
@@ -66,13 +66,12 @@
                                         <tr>
                                             <td scope="row">{{$locality->id}}</td>
                                             <td>
-                                                @if ($locality->getFirstMediaUrl('localityGallery'))
-                                                <img src="{{$locality->getFirstMediaUrl('localityGallery') }}" alt="Foto de {{$locality->name}}"
-                                                style="width: 50px; height: 50px; border-radius: 50%;">
-                                            @else
-                                                <img src="{{ asset('img/localityDefault.png') }}"
-                                                style="width: 50px; height: 50px; border-radius: 50%;">
-                                            @endif
+                                                @php
+                                                    $localityPhoto = $locality->getFirstMedia('localityGallery');
+                                                    $localityPhotoUrl = $localityPhoto ? asset('storage/' . $localityPhoto->id . '/' . $localityPhoto->file_name) . '?t=' . (optional($locality->updated_at)->timestamp ?? now()->timestamp) : asset('img/localityDefault.png');
+                                                @endphp
+                                                <img src="{{ $localityPhotoUrl }}" alt="Foto de {{$locality->name}}"
+                                                    style="width: 50px; height: 50px; border-radius: 50%;">
                                             </td>
                                             <td>{{$locality->name}}</td>
                                             <td>{{$locality->municipality}}</td>

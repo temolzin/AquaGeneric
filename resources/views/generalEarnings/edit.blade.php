@@ -72,9 +72,13 @@
                                         <div class="form-group">
                                             <label for="receiptUpdate" class="form-label">Comprobante del ingreso (*)</label>
                                             <div class="d-flex align-items-center">
-                                                @if($earning->hasMedia('earningGallery'))
+                                                @php
+                                                    $receipt = $earning->getFirstMedia('earningGallery');
+                                                    $receiptUrl = $receipt ? asset('storage/' . $receipt->id . '/' . $receipt->file_name) . '?t=' . (optional($earning->updated_at)->timestamp ?? now()->timestamp) : null;
+                                                @endphp
+                                                @if($receiptUrl)
                                                     <div class="col-lg-6">
-                                                        <a href="{{ $earning->getFirstMediaUrl('earningGallery') }}" target="_blank" class="btn btn-warning">
+                                                        <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-warning">
                                                             <i class="fas fa-eye"></i> Ver recibo actual
                                                         </a>
                                                     </div>
@@ -82,7 +86,7 @@
                                                     <p class="mt-2 text-danger">No hay recibo actual.</p>
                                                 @endif
                                                 <div class="col-lg-6">
-                                                    <input type="file" class="form-control" name="receiptUpdate" id="receiptUpdate" accept=".jpg,.jpeg,.png,.pdf"/>
+                                                    <input type="file" class="form-control" name="receiptUpdate" id="receiptUpdate{{ $earning->id }}" accept=".jpg,.jpeg,.png,.pdf"/>
                                                 </div>
                                             </div>
                                         </div>

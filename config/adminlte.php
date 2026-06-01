@@ -443,7 +443,8 @@ return [
         'text' => 'Roles',
         'url' => '/roles',
         'icon' => 'fas fa-fw fa-user-shield',
-        'can'  => 'viewRoles'
+        'can'  => 'viewRoles',
+        'active' => ['/roles*'],
     ],
     [
         'text' => 'Clientes',

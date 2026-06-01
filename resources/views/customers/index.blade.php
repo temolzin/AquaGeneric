@@ -94,13 +94,12 @@
                                         <tr>
                                             <td scope="row">{{$customer->id}}</td>
                                             <td>
-                                                @if ($customer->getFirstMediaUrl('customerGallery'))
-                                                <img src="{{$customer->getFirstMediaUrl('customerGallery') }}" alt="Foto de {{$customer->name}}"
+                                                @php
+                                                    $customerPhoto = $customer->getFirstMedia('customerGallery');
+                                                    $customerPhotoUrl = $customerPhoto ? asset('storage/' . $customerPhoto->id . '/' . $customerPhoto->file_name) . '?t=' . now()->timestamp : asset('img/userDefault.png');
+                                                @endphp
+                                                <img src="{{ $customerPhotoUrl }}" alt="Foto de {{$customer->name}}"
                                                     style="width: 50px; height: 50px; border-radius: 50%;">
-                                            @else
-                                                <img src="{{ asset('img/userDefault.png') }}"
-                                                    style="width: 50px; height: 50px; border-radius: 50%;">
-                                            @endif
                                             </td>
                                             <td>
                                                 {{ $customer->name ?? 'N/A' }}
@@ -130,6 +129,17 @@
                                                                 data-target="#passwordModal{{$customer->id}}">
                                                             <i class="fas fa-key"></i>
                                                         </button>
+                                                    @endif
+                                                    @if ($customer->user)
+                                                        <button type="button"
+                                                                class="btn btn-dark mr-2"
+                                                                title="Editar Contraseña"
+                                                                data-toggle="modal"
+                                                                data-target="#editPassword{{$customer->user->id}}">
+                                                            <i class="fas fa-user-lock"></i>
+                                                        </button>
+
+                                                        @include('users.editPassword', ['user' => $customer->user])
                                                     @endif
                                                     @can('deleteCustomer')
                                                         @if($customer->hasDependencies())

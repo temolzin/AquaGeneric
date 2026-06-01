@@ -21,16 +21,27 @@ class IncidentController extends Controller
 
         $query = Incident::with('incidentCategory', 'status', 'getstatusChangeLogs.employee', 'creator');
 
-        $query->when($authUser->hasRole(User::ROLE_CUSTOMER), 
-            fn($q) => $q->where('created_by', $authUser->id),
-            fn($q) => $q->where('locality_id', $authUser->locality_id)
-        );
+        $query->when($authUser->hasRole(User::ROLE_CUSTOMER), fn($q) => $q->where('created_by', $authUser->id));
+        $query->when(!$authUser->hasRole(User::ROLE_CUSTOMER), fn($q) => $q->where('locality_id', $authUser->locality_id));
 
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
-        $incidents = $query->paginate(10);
+        $showCustomerIncidents = $request->boolean('show_customer_incidents', true);
+        $canToggleIncidentType = ! $authUser->hasRole(User::ROLE_CUSTOMER);
+
+        if ($canToggleIncidentType) {
+            $query->when($showCustomerIncidents, function ($q) {
+                $q->whereHas('creator.roles', fn($sq) => $sq->where('name', User::ROLE_CUSTOMER));
+            });
+
+            $query->when(!$showCustomerIncidents, function ($q) {
+                $q->whereDoesntHave('creator.roles', fn($sq) => $sq->where('name', User::ROLE_CUSTOMER));
+            });
+        }
+
+        $incidents = $query->paginate(10)->appends($request->query());
 
         $categories = IncidentCategory::where(function ($query) use ($authUser) {
             $query->where('locality_id', $authUser->locality_id)
@@ -45,7 +56,14 @@ class IncidentController extends Controller
 
         $viewName = Route::current()->getName() === 'customerIncidents.index' ? 'customerIncidents.index' : 'incidents.index';
         
-        return view($viewName, compact('incidents', 'categories', 'employees', 'statuses'));
+        return view($viewName, compact(
+            'incidents',
+            'categories',
+            'employees',
+            'statuses',
+            'showCustomerIncidents',
+            'canToggleIncidentType'
+        ));
     }
 
     public function create()
@@ -91,7 +109,8 @@ class IncidentController extends Controller
             }
         }
 
-        return redirect()->route('incidents.index')->with('success', 'Incidente creado exitosamente.');
+        $redirectRoute = $authUser->hasRole(User::ROLE_CUSTOMER) ? 'customerIncidents.index' : 'incidents.index';
+        return redirect()->route($redirectRoute)->with('success', 'Incidente creado exitosamente.');
     }
 
     public function show($id)

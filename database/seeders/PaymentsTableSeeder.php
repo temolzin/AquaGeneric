@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use App\Models\User;
 
 class PaymentsTableSeeder extends Seeder
 {
@@ -19,25 +20,12 @@ class PaymentsTableSeeder extends Seeder
         $faker = Faker::create();
         $payments = [];
         
-        $alonsoPaymentCount = DB::table('payments')
-            ->join('water_connections', 'payments.customer_id', '=', 'water_connections.customer_id')
+        $debtIds = DB::table('debts')
+            ->join('water_connections', 'debts.water_connection_id', '=', 'water_connections.id')
             ->join('customers', 'water_connections.customer_id', '=', 'customers.id')
-            ->where('customers.user_id', 5)
-            ->count();
-        
-        if ($alonsoPaymentCount >= 2) {
-            return;
-        }
-        
-        $debtIds = DB::table('debts')->pluck('id');
-        $paymentsAdded = 0;
+            ->pluck('debts.id');
 
         foreach ($debtIds as $debtId) {
-
-            if ($paymentsAdded >= 2) {
-                break;
-            }
-            
             $debt = DB::table('debts')->find($debtId);
 
             if (!$debt) {
@@ -50,15 +38,8 @@ class PaymentsTableSeeder extends Seeder
                 continue;
             }
 
-            $customer = DB::table('customers')->where('id', $waterConnection->customer_id)->first();
-            
-            if (!$customer || $customer->user_id != 5) {
-                continue;
-            }
-
             $localityUserIds = DB::table('users')
                 ->where('locality_id', $debt->locality_id)
-                ->where('id', '!=', 5)
                 ->whereIn('id', DB::table('model_has_roles')
                     ->whereIn('role_id', DB::table('roles')
                         ->whereIn('name', ['Supervisor', 'Secretaria'])
@@ -86,35 +67,10 @@ class PaymentsTableSeeder extends Seeder
                 $createdAt,
                 $waterConnection->customer_id
             );
-            
-            $paymentsAdded++;
         }
 
-        DB::table('payments')->insert($payments);
-    }
-
-    private function handlePayment($debt, array $userIds, $faker, $waterConnection, &$payments)
-    {
-        $remainingDebt = $debt->debt_current;
-
-        while ($remainingDebt > 0) {
-            $amount = ($remainingDebt < self::MIN_AMOUNT)
-                ? $remainingDebt
-                : rand(self::MIN_AMOUNT, min($remainingDebt, $debt->debt_current));
-
-            $remainingDebt -= $amount;
-
-            $createdAt = $this->getRandomCreatedAt();
-
-            $payments[] = $this->createPayment(
-                $debt,
-                $userIds,
-                $faker,
-                $amount,
-                $createdAt,
-                $createdAt,
-                $waterConnection->customer_id
-            );
+        if (!empty($payments)) {
+            DB::table('payments')->insert($payments);
         }
     }
 

@@ -133,6 +133,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware' => ['can:viewLocality']], function () {
         Route::get('/localities', [LocalityController::class, 'index'])->name('localities.index');
+        Route::get('/report/pdfLocalities', [LocalityController::class, 'generatepdfLocalities'])->name('localities.pdfLocalities');
         Route::resource('localities', LocalityController::class);
         Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
@@ -211,10 +212,13 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware' => ['can:viewIncidents']], function () {
         Route::resource('incidents', IncidentController::class);
-        Route::resource('customerIncidents', IncidentController::class)->parameters(['customerIncidents' => 'incident']);
         Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
         Route::get('/reports/generateIncidentListReport', [IncidentController::class, 'generateIncidentListReport'])->name('report.generateIncidentListReport');
         Route::post('/incidents/update-status', [IncidentController::class, 'updateStatus'])->name('incidents.updateStatus');
+    });
+
+    Route::group(['middleware' => ['can:viewCustomerIncidents']], function () {
+        Route::resource('customerIncidents', IncidentController::class)->parameters(['customerIncidents' => 'incident']);
     });
 
     Route::group(['middleware' => ['can:viewEmployee']], function () {

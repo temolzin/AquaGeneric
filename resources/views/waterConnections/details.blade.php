@@ -20,30 +20,30 @@
                 <div class="modal-body">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="history-tab-{{ $connection->id }}" data-toggle="tab"
-                                href="#history-{{ $connection->id }}" role="tab">
-                                Historial
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="debts-tab-{{ $connection->id }}" data-toggle="tab"
+                            <a class="nav-link active" id="debts-tab-{{ $connection->id }}" data-toggle="tab"
                                 href="#debts-{{ $connection->id }}" role="tab">
                                 Deudas
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="history-tab-{{ $connection->id }}" data-toggle="tab"
+                                href="#history-{{ $connection->id }}" role="tab">
+                                Historial
+                            </a>
+                        </li>
                     </ul>
                     <div class="tab-content pt-3">
-                        <div class="tab-pane fade show active" id="history-{{ $connection->id }}" role="tabpanel">
-                            <div id="historyContent{{ $connection->id }}">
-                                <div class="text-muted">
-                                    Cargando historial...
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="debts-{{ $connection->id }}" role="tabpanel">
+                        <div class="tab-pane fade show active" id="debts-{{ $connection->id }}" role="tabpanel">
                             <div id="debtsContent{{ $connection->id }}">
                                 <div class="text-muted">
                                     Cargando deudas...
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="history-{{ $connection->id }}" role="tabpanel">
+                            <div id="historyContent{{ $connection->id }}">
+                                <div class="text-muted">
+                                    Cargando historial...
                                 </div>
                             </div>
                         </div>

@@ -12,7 +12,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                    <form method="GET" action="{{ route('employees.index') }}" class="mb-3 mb-lg-0" style="min-width: 300px;">
+                                    <form method="GET" action="{{ route('employees.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 30%;">
                                         <div class="input-group">
                                             <input type="text" name="search" class="form-control" placeholder="Buscar por nombre, apellido" value="{{ request('search') }}">
                                             <div class="input-group-append">
@@ -30,7 +30,7 @@
                                         <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Generar Lista de Empleados" href="{{ route('report.generateEmployeeListReport') }}">
                                             <i class="fas fa-file-pdf"></i> Generar Lista
                                         </a>
-                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
+                                        <button type="button" class="btn bg-purple" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
                                             <i class="fas fa-filter"></i> Reporte por Rol
                                         </button>
                                     </div>
@@ -52,7 +52,7 @@
                                                 </a>
                                             </div>
                                             <div class="col-12 mt-2">
-                                                <button type="button" class="btn btn-warning w-100 py-2" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
+                                                <button type="button" class="btn bg-purple w-100 py-2" data-toggle="modal" data-target="#reportByRoleModal" title="Reporte por Rol">
                                                     <i class="fas fa-filter"></i> Reporte por Rol
                                                 </button>
                                             </div>
@@ -74,7 +74,7 @@
                                                 <th>ID</th>
                                                 <th class="not-export">FOTO</th>
                                                 <th>NOMBRE</th>
-                                                <th>DIRECCION</th>
+                                                <th>CARGO</th>
                                                 <th class="not-export">OPCIONES</th>
                                             </tr>
                                         </thead>
@@ -100,7 +100,21 @@
                                                             @endif
                                                         </td>
                                                         <td>{{$employee->name}} {{$employee->last_name}}</td>
-                                                        <td>{{$employee->state}}, {{$employee->locality}}</td>
+                                                        <td>
+                                                            @php
+                                                                $positionColor = 'bg-secondary';
+                                                                $positionName = $employee->rol ?? 'Sin Cargo';
+                                                                if($employee->rol) {
+                                                                    foreach($positions as $position) {
+                                                                        if($position->name === $employee->rol) {
+                                                                            $positionColor = $position->color ?? 'bg-secondary';
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            @endphp
+                                                            <span class="badge {{ $positionColor }} text-white" style="color: #fff !important;">{{ $positionName }}</span>
+                                                        </td>
                                                         <td>
                                                             <div class="btn-group" role="group" aria-label="Opciones">
                                                                 <button type="button" class="btn btn-info mr-2" data-toggle="modal"

@@ -57,14 +57,13 @@
                                                 <tr>
                                                     <td scope="row">{{ $user->id }}</td>
                                                     <td>
-                                                        @if ($user->getFirstMediaUrl('userGallery'))
-                                                            <img src="{{ $user->getFirstMediaUrl('userGallery') }}"
-                                                                alt="Foto de {{ $user->name }}"
-                                                                style="width: 50px; height: 50px; border-radius: 50%;">
-                                                        @else
-                                                            <img src="{{ asset('img/userDefault.png') }}"
-                                                                style="width: 50px; height: 50px; border-radius: 50%;">
-                                                        @endif
+                                                        @php
+                                                            $photo = $user->getFirstMedia('userGallery');
+                                                            $photoUrl = $photo ? asset('storage/' . $photo->id . '/' . $photo->file_name) . '?t=' . (optional($user->updated_at)->timestamp ?? now()->timestamp) : asset('img/userDefault.png');
+                                                        @endphp
+                                                        <img src="{{ $photoUrl }}"
+                                                            alt="Foto de {{ $user->name }}"
+                                                            style="width: 50px; height: 50px; border-radius: 50%;">
                                                     </td>
                                                     <td>{{ $user->name }} {{ $user->last_name }}</td>
                                                     <td>{{ $user->phone }}</td>
