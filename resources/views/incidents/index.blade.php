@@ -83,91 +83,88 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if (count($incidents) <= 0)
+                                            @foreach ($incidents as $incident)
                                                 <tr>
-                                                    <td colspan="8">No hay incidentes registrados.</td>
-                                                </tr>
-                                            @else
-                                                @foreach ($incidents as $incident)
-                                                    <tr>
-                                                        <td>{{ $incident->id }}</td>
-                                                        <td>{{ $incident->name }}</td>
-                                                        <td>
-                                                            @forelse ($incident->responsible_employees as $employee)
-                                                                @php
-                                                                    $employeePhoto = $employee->getFirstMedia('employeeGallery');
-                                                                    $employeePhotoUrl = $employeePhoto ? asset('storage/' . $employeePhoto->id . '/' . $employeePhoto->file_name) . '?t=' . (optional($employee->updated_at)->timestamp ?? now()->timestamp) : asset('img/userDefault.png');
-                                                                @endphp
-                                                                <img src="{{ $employeePhotoUrl }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}"
-                                                                    class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 3px;">
-                                                            @empty
-                                                                <span class="text-muted">Sin asignar</span>
-                                                            @endforelse
-                                                        </td>
-                                                        <td>{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}</td>
-                                                        <td>
-                                                             <span class="badge {{ $incident->incidentCategory->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
-                                                                {{ $incident->incidentCategory->name }}
-                                                            </span>
-                                                        </td>
-                                                        <td>
+                                                    <td>{{ $incident->id }}</td>
+                                                    <td>{{ $incident->name }}</td>
+                                                    <td>
+                                                        @if ($incident->responsible_employees->isEmpty())
+                                                            <span class="text-muted">Sin asignar</span>
+                                                        @endif
+                                                        @foreach ($incident->responsible_employees as $employee)
                                                             @php
-                                                                if ($incident->status) {
-                                                                    $statusName = $incident->status->status;
-                                                                    $statusColor = (preg_match('/^#[a-f0-9]{6}$/i', $incident->status->color)) ? $incident->status->color : '#6c757d';
-                                                                    echo '<span class="badge ' . $incident->status->color . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
-                                                                } else {
-                                                                    echo '<span class="badge badge-secondary">Pendiente</span>';
-                                                                }
+                                                                $employeePhoto = $employee->getFirstMedia('employeeGallery');
+                                                                $employeePhotoUrl = $employeePhoto ? asset('storage/' . $employeePhoto->id . '/' . $employeePhoto->file_name) . '?t=' . (optional($employee->updated_at)->timestamp ?? now()->timestamp) : asset('img/userDefault.png');
                                                             @endphp
-                                                        </td>
-                                                        <td>
-                                                            @if ($incident->creator)
-                                                                @php
-                                                                    $creatorPhoto = $incident->creator->getFirstMedia('userGallery');
-                                                                    $creatorPhotoUrl = $creatorPhoto ? asset('storage/' . $creatorPhoto->id . '/' . $creatorPhoto->file_name) . '?t=' . (optional($incident->creator->updated_at)->timestamp ?? now()->timestamp) : asset('img/userDefault.png');
-                                                                @endphp
-                                                                <div style="display: flex; align-items: center; gap: 8px;">
-                                                                    <img src="{{ $creatorPhotoUrl }}" alt="Creador" title="{{ $incident->creator->name }} {{ $incident->creator->last_name }}"
-                                                                        class="img-thumbnail" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
-                                                                    <span>{{ $incident->creator->name }} {{ $incident->creator->last_name }}</span>
-                                                                </div>
-                                                            @else
-                                                                <span class="text-muted">Sin especificar</span>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-info btn-sm mr-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $incident->id }}">
-                                                                <i class="fas fa-eye"></i>
+                                                            <img src="{{ $employeePhotoUrl }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}"
+                                                                class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 3px;">
+                                                        @endforeach
+                                                    </td>
+                                                    <td>{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}</td>
+                                                    <td>
+                                                         <span class="badge {{ $incident->incidentCategory->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                            {{ $incident->incidentCategory->name }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        @php
+                                                            if (!$incident->status) {
+                                                                echo '<span class="badge badge-secondary">Pendiente</span>';
+                                                            }
+                                                            if ($incident->status) {
+                                                                $statusName = $incident->status->status;
+                                                                $statusColor = (preg_match('/^#[a-f0-9]{6}$/i', $incident->status->color)) ? $incident->status->color : '#6c757d';
+                                                                echo '<span class="badge ' . $incident->status->color . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
+                                                            }
+                                                        @endphp
+                                                    </td>
+                                                    <td>
+                                                        @if (!$incident->creator)
+                                                            <span class="text-muted">Sin especificar</span>
+                                                        @endif
+                                                        @if ($incident->creator)
+                                                            @php
+                                                                $creatorPhoto = $incident->creator->getFirstMedia('userGallery');
+                                                                $creatorPhotoUrl = $creatorPhoto ? asset('storage/' . $creatorPhoto->id . '/' . $creatorPhoto->file_name) . '?t=' . (optional($incident->creator->updated_at)->timestamp ?? now()->timestamp) : asset('img/userDefault.png');
+                                                            @endphp
+                                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                                <img src="{{ $creatorPhotoUrl }}" alt="Creador" title="{{ $incident->creator->name }} {{ $incident->creator->last_name }}"
+                                                                    class="img-thumbnail" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
+                                                                <span>{{ $incident->creator->name }} {{ $incident->creator->last_name }}</span>
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-info btn-sm mr-1" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $incident->id }}">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+
+                                                        @can('editIncidents')
+                                                            <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $incident->id }}">
+                                                                <i class="fas fa-edit"></i>
                                                             </button>
+                                                        @endcan
 
-                                                            @can('editIncidents')
-                                                                <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal" title="Editar Datos" data-target="#edit{{ $incident->id }}">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </button>
-                                                            @endcan
-
-                                                            @can('deleteIncidents')
-                                                                <button type="button" class="btn bg-red btn-sm mr-1" data-toggle="modal" title="Eliminar Incidencia" data-target="#delete{{ $incident->id }}">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                            @endcan
-
-                                                            <button type="button" class="btn bg-purple btn-sm mr-1" data-toggle="modal" title="Cambiar Estatus de Incidencia" data-target="#createResponsible" data-incident-id="{{ $incident->id }}" data-incident-name="{{ $incident->name }}">
-                                                                <i class="fas fa-exchange-alt"></i>
+                                                        @can('deleteIncidents')
+                                                            <button type="button" class="btn bg-red btn-sm mr-1" data-toggle="modal" title="Eliminar Incidencia" data-target="#delete{{ $incident->id }}">
+                                                                <i class="fas fa-trash-alt"></i>
                                                             </button>
+                                                        @endcan
 
-                                                            <button type="button" class="btn bg-maroon btn-sm" data-toggle="modal" title="Historial de Incidencia" data-target="#historyModal{{ $incident->id }}">
-                                                                <i class="fas fa-history"></i>
-                                                            </button>
-                                                        </td>
+                                                        <button type="button" class="btn bg-purple btn-sm mr-1" data-toggle="modal" title="Cambiar Estatus de Incidencia" data-target="#createResponsible" data-incident-id="{{ $incident->id }}" data-incident-name="{{ $incident->name }}">
+                                                            <i class="fas fa-exchange-alt"></i>
+                                                        </button>
+
+                                                        <button type="button" class="btn bg-maroon btn-sm" data-toggle="modal" title="Historial de Incidencia" data-target="#historyModal{{ $incident->id }}">
+                                                            <i class="fas fa-history"></i>
+                                                        </button>
                                                         @include('incidents.edit')
                                                         @include('incidents.delete')
                                                         @include('incidents.show')
                                                         @include('incidents.incidentHistoryModal')
-                                                    </tr>
-                                                @endforeach
-                                            @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                     @include('incidents.changeStatusModal')
@@ -219,10 +216,11 @@
             searching: false
         });
 
-        $('#show_customer_incidents').on('change', function() {
-            var checked = $(this).is(':checked');
-            $('#show_customer_incidents_input').val(checked ? 1 : 0);
-            $(this).closest('form').submit();
+        $(document).on('change', '#show_customer_incidents', function() {
+            var isChecked = this.checked ? '1' : '0';
+            var input = document.getElementById('show_customer_incidents_input');
+            input.value = isChecked;
+            input.closest('form').submit();
         });
 
         var successMessage = "{{ session('success') }}";
@@ -258,21 +256,6 @@
                 });
             })();
         @endif
-
-    $(document).on('shown.bs.modal', '[id^="edit"]', function() {
-        $(this).find('.select2').each(function() {
-            if ($(this).hasClass('select2-hidden-accessible')) {
-                $(this).select2('destroy');
-            }
-            
-            $(this).select2({
-                allowClear: false,
-                placeholder: 'Selecciona una opción',
-                width: '100%',
-                dropdownParent: $(this).closest('.modal')
-            });
-        });
-    });
 
     $('#createResponsible').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);

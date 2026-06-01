@@ -21,10 +21,8 @@ class IncidentController extends Controller
 
         $query = Incident::with('incidentCategory', 'status', 'getstatusChangeLogs.employee', 'creator');
 
-        $query->when($authUser->hasRole(User::ROLE_CUSTOMER), 
-            fn($q) => $q->where('created_by', $authUser->id),
-            fn($q) => $q->where('locality_id', $authUser->locality_id)
-        );
+        $query->when($authUser->hasRole(User::ROLE_CUSTOMER), fn($q) => $q->where('created_by', $authUser->id));
+        $query->when(!$authUser->hasRole(User::ROLE_CUSTOMER), fn($q) => $q->where('locality_id', $authUser->locality_id));
 
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
@@ -34,22 +32,13 @@ class IncidentController extends Controller
         $canToggleIncidentType = ! $authUser->hasRole(User::ROLE_CUSTOMER);
 
         if ($canToggleIncidentType) {
-            switch ($showCustomerIncidents) {
-                case true:
-                    $query->whereHas('creator', function ($q) {
-                        $q->whereHas('roles', function ($q2) {
-                            $q2->where('name', User::ROLE_CUSTOMER);
-                        });
-                    });
-                    break;
-                case false:
-                    $query->whereDoesntHave('creator', function ($q) {
-                        $q->whereHas('roles', function ($q2) {
-                            $q2->where('name', User::ROLE_CUSTOMER);
-                        });
-                    });
-                    break;
-            }
+            $query->when($showCustomerIncidents, function ($q) {
+                $q->whereHas('creator.roles', fn($sq) => $sq->where('name', User::ROLE_CUSTOMER));
+            });
+
+            $query->when(!$showCustomerIncidents, function ($q) {
+                $q->whereDoesntHave('creator.roles', fn($sq) => $sq->where('name', User::ROLE_CUSTOMER));
+            });
         }
 
         $incidents = $query->paginate(10)->appends($request->query());

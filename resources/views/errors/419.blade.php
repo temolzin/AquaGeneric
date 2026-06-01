@@ -41,7 +41,7 @@
         <div class="mt-8 flex flex-col sm:flex-row gap-4 w-full justify-center items-center">
             <a href="{{ url('/') }}"
                 class="w-56 rounded-full bg-transparent border-2 border-aqua-dark py-3 px-6 text-sm font-bold text-aqua-dark hover:bg-aqua-dark hover:text-white transition-all uppercase tracking-wider text-center">
-                Rolver al inicio
+                Volver al inicio
             </a>
             <a href="{{ url()->current() }}"
                 class="w-56 rounded-full bg-aqua-dark py-3 px-6 text-sm font-bold text-white shadow-md hover:bg-opacity-90 transition-all uppercase tracking-wider text-center">
