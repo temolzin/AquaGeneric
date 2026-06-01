@@ -89,16 +89,17 @@
                                                     <td>{{ $incident->id }}</td>
                                                     <td>{{ $incident->name }}</td>
                                                     <td>
-                                                        @forelse ($incident->responsible_employees as $employee)
+                                                        @if ($incident->responsible_employees->isEmpty())
+                                                            <span class="text-muted">Sin asignar</span>
+                                                        @endif
+                                                        @foreach ($incident->responsible_employees as $employee)
                                                             @php
                                                                 $employeePhoto = $employee->getFirstMedia('employeeGallery');
                                                                 $employeePhotoUrl = $employeePhoto ? asset('storage/' . $employeePhoto->id . '/' . $employeePhoto->file_name) . '?t=' . (optional($employee->updated_at)->timestamp ?? now()->timestamp) : asset('img/userDefault.png');
                                                             @endphp
                                                             <img src="{{ $employeePhotoUrl }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}"
                                                                 class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 3px;">
-                                                        @empty
-                                                            <span class="text-muted">Sin asignar</span>
-                                                        @endforelse
+                                                        @endforeach
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}</td>
                                                     <td>
@@ -108,16 +109,20 @@
                                                     </td>
                                                     <td>
                                                         @php
+                                                            if (!$incident->status) {
+                                                                echo '<span class="badge badge-secondary">Pendiente</span>';
+                                                            }
                                                             if ($incident->status) {
                                                                 $statusName = $incident->status->status;
                                                                 $statusColor = (preg_match('/^#[a-f0-9]{6}$/i', $incident->status->color)) ? $incident->status->color : '#6c757d';
                                                                 echo '<span class="badge ' . $incident->status->color . ' text-white" style="color: #fff !important;">' . $statusName . '</span>';
-                                                            } else {
-                                                                echo '<span class="badge badge-secondary">Pendiente</span>';
                                                             }
                                                         @endphp
                                                     </td>
                                                     <td>
+                                                        @if (!$incident->creator)
+                                                            <span class="text-muted">Sin especificar</span>
+                                                        @endif
                                                         @if ($incident->creator)
                                                             @php
                                                                 $creatorPhoto = $incident->creator->getFirstMedia('userGallery');
@@ -128,8 +133,6 @@
                                                                     class="img-thumbnail" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
                                                                 <span>{{ $incident->creator->name }} {{ $incident->creator->last_name }}</span>
                                                             </div>
-                                                        @else
-                                                            <span class="text-muted">Sin especificar</span>
                                                         @endif
                                                     </td>
                                                     <td>
