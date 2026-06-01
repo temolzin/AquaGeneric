@@ -252,7 +252,7 @@
                                     <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100">
                                         @csrf
                                         <button type="submit" class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm w-100 w-md-auto" title="{{ $hasMailConfig
-                                                ? 'Enviar correos de recordatorio' : 'No hay configuración de correo válida para esta localidad' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
+                                                ? 'Enviar correos de recordatorio' : 'Para enviar recordatorios configura tu correo, contáctanos' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
                                             <i class="fas fa-envelope"></i> Enviar recordatorios
                                         </button>
                                     </form>

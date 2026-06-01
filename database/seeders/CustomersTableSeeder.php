@@ -59,5 +59,27 @@ class CustomersTableSeeder extends Seeder
                 'created_by' => $faker->randomElement($userIds),
             ]);
         }
+        $alonsoUser = DB::table('users')->where('email', 'alonso@gmail.com')->first();
+            
+            if ($alonsoUser) {
+                DB::table('customers')->insert([
+                    'user_id' => $alonsoUser->id,
+                    'name' => 'Alonso',
+                    'last_name' => 'Gutiérrez López',
+                    'email' => 'alonso@gmail.com',
+                    'locality' => 'Mexico City',
+                    'state' => 'CDMX',
+                    'zip_code' => '28001',
+                    'block' => 'A',
+                    'street' => 'Calle Principal',
+                    'exterior_number' => 123,
+                    'interior_number' => 1,
+                    'marital_status' => 1,
+                    'status' => 1,
+                    'responsible_name' => null,
+                    'locality_id' => $alonsoUser->locality_id,
+                    'created_by' => 1,
+                ]);
+            }
     }
 }

@@ -136,7 +136,7 @@ class ReportListController extends Controller
                 }
                 break;
 
-            case 'Deudas':
+            case 'Gestión de Deudas':
                 $reports = [
                     ['text' => 'Clientes con Deudas', 'url' => '/customers-with-debts', 'type' => 'pdf'],
                 ];
@@ -172,7 +172,7 @@ class ReportListController extends Controller
                 ];
                 break;
 
-            case 'Empleados':
+            case 'Gestión de Empleados':
                 $reports = [
                     ['text' => 'Lista de Empleados', 'url' => '/reports/generateEmployeeListReport', 'type' => 'pdf'],
                 ];
