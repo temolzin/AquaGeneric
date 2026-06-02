@@ -85,7 +85,7 @@
                                             @foreach ($waterConnection->debts as $waterConnectionDebt)
                                                 <div class="debt-item card mb-3 mx-0">
                                                     <div class="card-body">
-                                                        <div class="row align-items-center"></div>
+                                                        <div class="row align-items-center">
                                                             <div class="col-12 col-md-1">
                                                                 <p class="mb-0"><strong>ID:</strong><br> {{ $waterConnectionDebt->id }}</p>
                                                             </div>
