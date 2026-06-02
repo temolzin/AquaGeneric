@@ -4,13 +4,7 @@
 @section('auth_body')
 
     @php
-        $lockoutSeconds = 0;
-        foreach ($errors->all() as $error) {
-            if (preg_match('/(\d+)\s*segundo/', $error, $m)) {
-                $lockoutSeconds = (int) $m[1];
-                break;
-            }
-        }
+        $lockoutSeconds = session('lockout_seconds', 0);
         $isLocked = $lockoutSeconds > 0;
     @endphp
 
@@ -67,7 +61,7 @@
             <span id="timer-display"
                   style="display:inline-block;background:#1e293b;color:#fff;border-radius:6px;
                          padding:2px 10px;font-size:1.1rem;font-weight:700;letter-spacing:2px;">
-                05:00
+                {{ sprintf('%02d:%02d', floor($lockoutSeconds / 60), $lockoutSeconds % 60) }}
             </span>
         </div>
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 use Carbon\Carbon;
 
 class LoginController extends Controller
@@ -35,20 +36,17 @@ class LoginController extends Controller
 
         $key = $this->throttleKey($request);
 
-        if (Cache::has($key . '_locked')) {
-            $secondsLeft = (int) Cache::get($key . '_locked') - time();
-            if ($secondsLeft > 0) {
-                return back()->withErrors([
-                    'email' => "Demasiados intentos fallidos. Por favor espera {$secondsLeft} segundos antes de intentarlo de nuevo.",
-                ])->withInput($request->only('email'));
-            }
-            Cache::forget($key . '_locked');
-            Cache::forget($key . '_count');
+        if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
+            $secondsLeft = RateLimiter::availableIn($key);
+            session()->flash('lockout_seconds', $secondsLeft);
+            return back()->withErrors([
+                'email' => "Demasiados intentos fallidos. Por favor espera {$secondsLeft} segundos antes de intentarlo de nuevo.",
+            ])->withInput($request->only('email'));
         }
 
         if (Auth::attempt($request->only('email', 'password'))) {
-            Cache::forget($key . '_count');
-            Cache::forget($key . '_locked');
+            $request->session()->regenerate();
+            RateLimiter::clear($key);
 
             $user = Auth::user();
             $locality = $user->locality;
@@ -76,18 +74,16 @@ class LoginController extends Controller
             return redirect()->intended('dashboard');
         }
 
-        $attempts = (int) Cache::get($key . '_count', 0) + 1;
-        Cache::put($key . '_count', $attempts, self::LOCKOUT_SECONDS + 60);
+        RateLimiter::hit($key, self::LOCKOUT_SECONDS);
 
-        if ($attempts >= self::MAX_ATTEMPTS) {
-            Cache::put($key . '_locked', time() + self::LOCKOUT_SECONDS, self::LOCKOUT_SECONDS + 60);
-            Cache::put($key . '_count', 0, self::LOCKOUT_SECONDS + 60);
-
+        if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
+            session()->flash('lockout_seconds', self::LOCKOUT_SECONDS);
             return back()->withErrors([
                 'email' => 'Demasiados intentos fallidos. Por favor espera ' . self::LOCKOUT_SECONDS . ' segundos antes de intentarlo de nuevo.',
             ])->withInput($request->only('email'));
         }
 
+        $attempts = RateLimiter::attempts($key);
         $remaining = self::MAX_ATTEMPTS - $attempts;
 
         return back()->withErrors([
