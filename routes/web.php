@@ -54,7 +54,7 @@ use App\Http\Controllers\LocalityOpenPayController;
 */
 
 Route::view('/', 'home')->name('home');
-Route::view('/login', 'login')->name('login');
+Route::view('/login', 'auth.login')->name('login');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 Route::get('/dashboard', function () {

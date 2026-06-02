@@ -5,14 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 use Carbon\Carbon;
 
 class LoginController extends Controller
-{   
+{
     private const WARNING_DAY_FIRST_NOTICE = 12;
     private const WARNING_DAY_FINAL_NOTICE = 3;
+    private const MAX_ATTEMPTS   = 2;
+    private const LOCKOUT_SECONDS = 300;
+
+    private function throttleKey(Request $request): string
+    {
+        return 'login_attempts_' . md5($request->ip() . '|' . strtolower($request->input('email', '')));
+    }
 
     public function showLoginForm()
     {
@@ -26,9 +34,20 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $key = $this->throttleKey($request);
 
-        if (Auth::attempt($credentials)) {
+        if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
+            $secondsLeft = RateLimiter::availableIn($key);
+            session()->flash('lockout_seconds', $secondsLeft);
+            return back()->withErrors([
+                'email' => "Demasiados intentos fallidos. Por favor espera {$secondsLeft} segundos antes de intentarlo de nuevo.",
+            ])->withInput($request->only('email'));
+        }
+
+        if (Auth::attempt($request->only('email', 'password'))) {
+            $request->session()->regenerate();
+            RateLimiter::clear($key);
+
             $user = Auth::user();
             $locality = $user->locality;
 
@@ -55,9 +74,21 @@ class LoginController extends Controller
             return redirect()->intended('dashboard');
         }
 
+        RateLimiter::hit($key, self::LOCKOUT_SECONDS);
+
+        if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
+            session()->flash('lockout_seconds', self::LOCKOUT_SECONDS);
+            return back()->withErrors([
+                'email' => 'Demasiados intentos fallidos. Por favor espera ' . self::LOCKOUT_SECONDS . ' segundos antes de intentarlo de nuevo.',
+            ])->withInput($request->only('email'));
+        }
+
+        $attempts = RateLimiter::attempts($key);
+        $remaining = self::MAX_ATTEMPTS - $attempts;
+
         return back()->withErrors([
-            'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
-        ]);
+            'email' => "Las credenciales proporcionadas no coinciden con nuestros registros. Te queda(n) {$remaining} intento(s).",
+        ])->withInput($request->only('email'));
     }
 
     public function logout()
