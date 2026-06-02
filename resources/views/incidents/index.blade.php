@@ -12,7 +12,7 @@
                         <div class="row mb-2">
                             <div class="col-lg-12">
                                 <div class="d-flex align-items-center flex-wrap" style="gap: 235px;">
-                                    <form method="GET" action="{{ route('incidents.index') }}" class="px-0 m-0">
+                                    <form method="GET" action="{{ route('incidents.index') }}" class="px-0 m-0" id="incidents-filter-form">
                                         <div class="d-flex flex-wrap align-items-center" style="gap: 8px;">
                                             <div class="d-flex align-items-center flex-grow-1" style="min-width: 400px; gap:0.5rem;">
                                                 <select name="category" class="form-control select2 rounded-start border-end-0" style="flex:1 1 100%; min-width: 360px;">
@@ -68,7 +68,7 @@
                     <div class="x_content">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="card-box table-responsive">
+                                <div class="card-box table-responsive" id="incidents-table-container">
                                     <table id="incident" class="table table-striped display responsive nowrap" style="width:100%">
                                         <thead>
                                             <tr>
@@ -185,7 +185,11 @@
 
 @section('js')
 <script>
-    $(document).ready(function() {
+    function initIncidentDataTable() {
+        if ($.fn.DataTable.isDataTable('#incident')) {
+            $('#incident').DataTable().destroy();
+        }
+
         $('#incident').DataTable({
             responsive: true,
             buttons:[
@@ -215,12 +219,48 @@
             info: false,
             searching: false
         });
+    }
+
+    $(document).ready(function() {
+        initIncidentDataTable();
+
+        function updateIncidentsTable(url, data) {
+            $('#incidents-table-container').css('opacity', '0.5');
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: data,
+                success: function(response) {
+                    const newHtml = $(response).find('#incidents-table-container').html();
+                    $('#incidents-table-container').html(newHtml);
+                    initIncidentDataTable();
+                    $('#incidents-table-container').css('opacity', '1');
+                },
+                error: function() {
+                    $('#incidents-table-container').css('opacity', '1');
+                    Swal.fire('Error', 'No se pudieron actualizar las incidencias', 'error');
+                }
+            });
+        }
+
+        $(document).on('submit', '#incidents-filter-form', function(e) {
+            e.preventDefault();
+            updateIncidentsTable($(this).attr('action'), $(this).serialize());
+        });
 
         $(document).on('change', '#show_customer_incidents', function() {
             var isChecked = this.checked ? '1' : '0';
-            var input = document.getElementById('show_customer_incidents_input');
-            input.value = isChecked;
-            input.closest('form').submit();
+            $('#show_customer_incidents_input').val(isChecked);
+            
+            const form = $('#incidents-filter-form');
+            updateIncidentsTable(form.attr('action'), form.serialize());
+        });
+
+        $(document).on('click', '#incidents-table-container .pagination a', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            if (url) updateIncidentsTable(url, {});
         });
 
         var successMessage = "{{ session('success') }}";
