@@ -48,6 +48,34 @@
             backdrop-filter: blur(10px);
             min-height: 520px;
         }
+        @media (max-width: 640px) {
+           .unified-login-container {
+            flex-direction: column;
+            border-radius: 14px;
+            min-height: unset;
+        }
+
+        .info-section {
+            padding: 25px 20px;
+            flex: unset;
+        }
+
+       .features-list {
+            display: none;
+        }   
+
+       .login-section {
+            flex: unset;
+            width: 100%;
+            padding: 25px 20px;
+        }
+
+        .login-page, .register-page {
+            align-items: flex-start;
+            padding: 12px;
+        }
+     }
+
 
         .info-section {
             flex: 1;
