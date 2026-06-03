@@ -202,6 +202,8 @@ class CustomerController extends Controller
 
     public function assignOrUpdatePassword(Request $request, $id)
     {
+        $customer = Customer::with('user')->findOrFail($id);
+
         $rules = [
             'password' => 'required|min:6',
         ];
@@ -211,17 +213,25 @@ class CustomerController extends Controller
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ];
 
-        $rules['password_confirmation'] = 'required|same:password';
-        $messages['password_confirmation.required'] = 'La confirmación de contraseña es obligatoria.';
-        $messages['password_confirmation.same'] = 'La confirmación de contraseña no coincide.';
+        if ($customer->user) {
+            $rules['password_confirmation'] = 'required|same:password';
+            $messages['password_confirmation.required'] = 'La confirmación de contraseña es obligatoria.';
+            $messages['password_confirmation.same'] = 'La confirmación de contraseña no coincide.';
+        }
 
         $request->validate($rules, $messages);
-
-        $customer = Customer::with('user')->findOrFail($id);
 
         $passview = $request->password;
 
         if (!$customer->user) {
+            if (!$customer->email) {
+                return redirect()->back()->with('error', 'El cliente no tiene correo electrónico. No se puede crear el usuario.');
+            }
+
+            if (User::where('email', $customer->email)->exists()) {
+                return redirect()->back()->with('error', 'Ya existe un usuario asociado con el correo del cliente.');
+            }
+
             $user = new User();
             $user->name = $customer->name;
             $user->last_name = $customer->last_name;
@@ -239,12 +249,11 @@ class CustomerController extends Controller
             SendCustomerCredentialsEmail::dispatch($customer->id, Auth::id(), $passview);
 
             $hash = md5($customer->id);
-            $pdfUrl = route('generate.user.access.pdf', $hash);
 
             return redirect()
-            ->route('customers.index')
-            ->with('success', 'Usuario creado y contraseña asignada correctamente.')
-            ->with('pdf_url', route('generate.user.access.pdf', ['hash' => $hash]));
+                ->route('customers.index')
+                ->with('success', 'Usuario creado y contraseña asignada correctamente.')
+                ->with('pdf_url', route('generate.user.access.pdf', ['hash' => $hash]));
         }
 
         $customer->user->password = Hash::make($passview);
@@ -255,12 +264,11 @@ class CustomerController extends Controller
         SendCustomerCredentialsEmail::dispatch($customer->id, Auth::id(), $passview);
 
         $hash = md5($customer->id);
-        $pdfUrl = route('generate.user.access.pdf', $hash);
 
         return redirect()
-        ->route('customers.index')
-        ->with('success', 'Contraseña actualizada correctamente.')
-        ->with('pdf_url', route('generate.user.access.pdf', ['hash' => $hash]));
+            ->route('customers.index')
+            ->with('success', 'Contraseña actualizada correctamente.')
+            ->with('pdf_url', route('generate.user.access.pdf', ['hash' => $hash]));
     }
 
     public function show($id)
