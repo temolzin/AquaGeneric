@@ -94,7 +94,6 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
         Route::get('/payment-history/{id}', [CustomerController::class, 'generatePaymentHistoryReport'])->name('reports.paymentHistoryReport');
         Route::get('/generate-user-access-pdf/{hash}', [CustomerController::class, 'generateUserAccessPDF'])->name('generate.user.access.pdf');
-        Route::post('/customers/{id}/update-password', [CustomerController::class, 'updatePassword'])->name('customers.updatePassword');
         Route::post('/customers/{id}/assign-password', [CustomerController::class, 'assignOrUpdatePassword'])->name('customers.assignPassword');
         Route::post('/customers/import', [CustomerController::class, 'import'])->name('customers.import');
         Route::get('/customers-download-template', [CustomerController::class, 'downloadTemplate'])->name('customers.downloadTemplate');
