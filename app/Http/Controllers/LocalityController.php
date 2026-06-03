@@ -14,11 +14,13 @@ class LocalityController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Locality::query()->orderBy('created_at', 'desc');
+        $query = Locality::withCount('customers')
+            ->withSum('payments as total_earnings', 'amount')
+            ->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->whereRaw("CONCAT(name, ' ', municipality, ' ', zip_code) LIKE ?", ["%{$search}%"]);
+            $query->where('name', 'LIKE', "%{$search}%");
         }
 
         $localities = $query->paginate(10);
@@ -41,10 +43,13 @@ class LocalityController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Locality::query()->orderBy('name');
+        $query = Locality::withCount('customers')
+            ->withSum('payments as total_earnings', 'amount')
+            ->orderBy('name');
+
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->whereRaw("CONCAT(name, ' ', municipality, ' ', zip_code) LIKE ?", ["%{$search}%"]);
+            $query->where('name', 'LIKE', "%{$search}%");
         }
 
         $localities = $query->get();

@@ -198,27 +198,22 @@
 
             .report-table th:nth-child(1),
             .report-table td:nth-child(1) {
-                width: 8%;
+                width: 10%;
             }
 
             .report-table th:nth-child(2),
             .report-table td:nth-child(2) {
-                width: 32%;
+                width: 40%;
             }
 
             .report-table th:nth-child(3),
             .report-table td:nth-child(3) {
-                width: 20%;
+                width: 25%;
             }
 
             .report-table th:nth-child(4),
             .report-table td:nth-child(4) {
-                width: 20%;
-            }
-
-            .report-table th:nth-child(5),
-            .report-table td:nth-child(5) {
-                width: 20%;
+                width: 25%;
             }
         </style>
     </head>
@@ -249,9 +244,8 @@
                             <tr>
                                 <th>ID</th>
                                 <th>NOMBRE</th>
-                                <th>MUNICIPIO</th>
-                                <th>ESTADO</th>
-                                <th>C.P.</th>
+                                <th>TOTAL CLIENTES</th>
+                                <th>GANANCIAS</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -259,9 +253,8 @@
                                 <tr>
                                     <td>{{ $locality->id }}</td>
                                     <td>{{ $locality->name }}</td>
-                                    <td>{{ $locality->municipality }}</td>
-                                    <td>{{ $locality->state }}</td>
-                                    <td>{{ $locality->zip_code }}</td>
+                                    <td>{{ $locality->customers_count }}</td>
+                                    <td>${{ number_format($locality->total_earnings ?? 0, 2) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -294,9 +287,8 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>NOMBRE</th>
-                                    <th>MUNICIPIO</th>
-                                    <th>ESTADO</th>
-                                    <th>C.P.</th>
+                                    <th>TOTAL CLIENTES</th>
+                                    <th>GANANCIAS</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -304,9 +296,8 @@
                                     <tr>
                                         <td>{{ $locality->id }}</td>
                                         <td>{{ $locality->name }}</td>
-                                        <td>{{ $locality->municipality }}</td>
-                                        <td>{{ $locality->state }}</td>
-                                        <td>{{ $locality->zip_code }}</td>
+                                        <td>{{ $locality->customers_count }}</td>
+                                        <td>${{ number_format($locality->total_earnings ?? 0, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
