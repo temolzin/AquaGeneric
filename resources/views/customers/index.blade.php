@@ -139,7 +139,10 @@
                                                             <i class="fas fa-user-lock"></i>
                                                         </button>
 
-                                                        @include('users.editPassword', ['user' => $customer->user])
+                                                        @include('customers.editPassword', [
+                                                            'user' => $customer->user,
+                                                            'customer' => $customer,
+                                                        ])
                                                     @endif
                                                     @can('deleteCustomer')
                                                         @if($customer->hasDependencies())

@@ -202,9 +202,20 @@ class CustomerController extends Controller
 
     public function assignOrUpdatePassword(Request $request, $id)
     {
-        $request->validate([
+        $rules = [
             'password' => 'required|min:6',
-        ]);
+        ];
+
+        $messages = [
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+        ];
+
+        $rules['password_confirmation'] = 'required|same:password';
+        $messages['password_confirmation.required'] = 'La confirmación de contraseña es obligatoria.';
+        $messages['password_confirmation.same'] = 'La confirmación de contraseña no coincide.';
+
+        $request->validate($rules, $messages);
 
         $customer = Customer::with('user')->findOrFail($id);
 

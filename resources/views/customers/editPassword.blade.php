@@ -8,9 +8,8 @@
                         <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                 </div>
-                <form action="{{ route('users.updatePassword', $user->id) }}" enctype="multipart/form-data" method="POST" id="edit-user-form-{{ $user->id }}">
+                <form action="{{ route('customers.assignPassword', $customer->id) }}" enctype="multipart/form-data" method="POST" id="edit-user-form-{{ $customer->id }}">
                     @csrf
-                    @method('PUT')
                     <div class="card-body">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
@@ -23,13 +22,13 @@
                             </div>
                             <div class="col-lg-6 mx-auto">
                                 <div class="form-group">
-                                    <label for="updatePassword" class="form-label">Nueva contraseña(*)</label>
+                                    <label for="password{{ $user->id }}" class="form-label">Nueva contraseña(*)</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
                                         </div>
-                                        <input type="password" class="input form-control" name="updatePassword" id="updatePassword{{ $user->id }}" placeholder="Ingresa una nueva contraseña" required aria-label="updatePassword" aria-describedby="basic-addon1">
-                                        <div class="input-group-append" onclick="password_show_hide('updatePassword{{ $user->id }}', 'show_eye_update{{ $user->id }}', 'hide_eye_update{{ $user->id }}');">
+                                        <input type="password" class="input form-control" name="password" id="password{{ $user->id }}" placeholder="Ingresa una nueva contraseña" required aria-label="password" aria-describedby="basic-addon1">
+                                        <div class="input-group-append" onclick="password_show_hide('password{{ $user->id }}', 'show_eye_update{{ $user->id }}', 'hide_eye_update{{ $user->id }}');">
                                             <span class="input-group-text">
                                                 <i class="fas fa-eye" id="show_eye_update{{ $user->id }}"></i>
                                                 <i class="fas fa-eye-slash d-none" id="hide_eye_update{{ $user->id }}"></i>
@@ -40,12 +39,12 @@
                             </div>
                             <div class="col-lg-6 mx-auto">
                                 <div class="form-group">
-                                    <label for="passwordConfirmation" class="form-label">Confirmar contraseña(*)</label>
+                                    <label for="passwordConfirmation{{ $user->id }}" class="form-label">Confirmar contraseña(*)</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
                                         </div>
-                                        <input type="password" class="input form-control" name="passwordConfirmation" id="passwordConfirmation{{ $user->id }}" placeholder="Ingresa nuevamente la contraseña" required aria-label="passwordConfirmation" aria-describedby="basic-addon1">
+                                        <input type="password" class="input form-control" name="password_confirmation" id="passwordConfirmation{{ $user->id }}" placeholder="Ingresa nuevamente la contraseña" required aria-label="passwordConfirmation" aria-describedby="basic-addon1">
                                         <div class="input-group-append" onclick="password_show_hide('passwordConfirmation{{ $user->id }}', 'show_eye_confirmation{{ $user->id }}', 'hide_eye_confirmation{{ $user->id }}');">
                                             <span class="input-group-text">
                                                 <i class="fas fa-eye" id="show_eye_confirmation{{ $user->id }}"></i>
@@ -97,7 +96,7 @@
     }
 
     function clearInputs(userId) {
-        document.getElementById('updatePassword' + userId).value = '';
+        document.getElementById('password' + userId).value = '';
         document.getElementById('passwordConfirmation' + userId).value = '';
     }
 </script>
