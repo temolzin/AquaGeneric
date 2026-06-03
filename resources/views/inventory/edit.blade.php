@@ -25,7 +25,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="nameUpdate{{ $component->id }}" class="form-label">Nombre del Componente(*)</label>
                                             <input type="text" class="form-control" name="name" id="nameUpdate{{ $component->id }}" value="{{ $component->name }}" required>
