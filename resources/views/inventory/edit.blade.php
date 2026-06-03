@@ -33,12 +33,6 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="amountUpdate{{ $component->id }}" class="form-label">Cantidad(*)</label>
-                                            <input type="number" min="0" class="form-control" name="amount" id="amountUpdate{{ $component->id }}" value="{{ $component->amount }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
                                             <label for="inventory_category_idUpdate{{ $component->id }}" class="form-label">Categoría(*)</label>
                                             <select class="form-control select2" id="inventory_category_idUpdate{{ $component->id }}" name="inventory_category_id" required style="width: 100%;">
                                                 <option value="">Selecciona la categoría</option>
