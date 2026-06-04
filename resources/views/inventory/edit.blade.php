@@ -25,16 +25,10 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="nameUpdate{{ $component->id }}" class="form-label">Nombre del Componente(*)</label>
                                             <input type="text" class="form-control" name="name" id="nameUpdate{{ $component->id }}" value="{{ $component->name }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="amountUpdate{{ $component->id }}" class="form-label">Cantidad(*)</label>
-                                            <input type="number" min="0" class="form-control" name="amount" id="amountUpdate{{ $component->id }}" value="{{ $component->amount }}" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
