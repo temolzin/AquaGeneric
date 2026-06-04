@@ -15,7 +15,9 @@ class LocalityController extends Controller
     public function index(Request $request)
     {
         $query = Locality::withCount('customers')
-            ->withSum('payments as total_earnings', 'amount')
+            ->withSum('payments as total_payments', 'amount')
+            ->withSum('generalEarnings as total_general_earnings', 'amount')
+            ->withSum('generalExpenses as total_expenses', 'amount')
             ->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {
@@ -44,7 +46,9 @@ class LocalityController extends Controller
         $authUser = auth()->user();
 
         $query = Locality::withCount('customers')
-            ->withSum('payments as total_earnings', 'amount')
+            ->withSum('payments as total_payments', 'amount')
+            ->withSum('generalEarnings as total_general_earnings', 'amount')
+            ->withSum('generalExpenses as total_expenses', 'amount')
             ->orderBy('name');
 
         if ($request->filled('search')) {

@@ -113,6 +113,16 @@ class Locality extends Model implements HasMedia
         return $this->hasMany(Customer::class);
     }
 
+    public function generalEarnings()
+    {
+        return $this->hasMany(GeneralEarning::class);
+    }
+
+    public function generalExpenses()
+    {
+        return $this->hasMany(GeneralExpense::class);
+    }
+
     public function payments()
     {
         return $this->hasMany(Payment::class);

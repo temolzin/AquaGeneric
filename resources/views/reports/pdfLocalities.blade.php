@@ -254,7 +254,7 @@
                                     <td>{{ $locality->id }}</td>
                                     <td>{{ $locality->name }}</td>
                                     <td>{{ $locality->customers_count }}</td>
-                                    <td>${{ number_format($locality->total_earnings ?? 0, 2) }}</td>
+                                    <td>${{ number_format(($locality->total_payments ?? 0) + ($locality->total_general_earnings ?? 0) - ($locality->total_expenses ?? 0), 2) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -297,7 +297,7 @@
                                         <td>{{ $locality->id }}</td>
                                         <td>{{ $locality->name }}</td>
                                         <td>{{ $locality->customers_count }}</td>
-                                        <td>${{ number_format($locality->total_earnings ?? 0, 2) }}</td>
+                                        <td>${{ number_format(($locality->total_payments ?? 0) + ($locality->total_general_earnings ?? 0) - ($locality->total_expenses ?? 0), 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
