@@ -41,10 +41,15 @@ class LocalityController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Locality::query()->orderBy('name');
+        $query = Locality::withCount('customers')
+            ->withSum('payments as total_payments', 'amount')
+            ->withSum('generalEarnings as total_general_earnings', 'amount')
+            ->withSum('generalExpenses as total_expenses', 'amount')
+            ->orderBy('name');
+
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->whereRaw("CONCAT(name, ' ', municipality, ' ', zip_code) LIKE ?", ["%{$search}%"]);
+            $query->where('name', 'LIKE', "%{$search}%");
         }
 
         $localities = $query->get();
