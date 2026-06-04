@@ -14,7 +14,7 @@ class LoginController extends Controller
 {
     private const WARNING_DAY_FIRST_NOTICE = 12;
     private const WARNING_DAY_FINAL_NOTICE = 3;
-    private const MAX_ATTEMPTS   = 2;
+    private const MAX_ATTEMPTS   = 3;
     private const LOCKOUT_SECONDS = 300;
 
     private function throttleKey(Request $request): string
