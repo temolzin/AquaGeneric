@@ -22,3 +22,27 @@ img {
     font-size: 30px; 
     margin-bottom: 10px;
 }
+
+.chart-card-body {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.chart-card-body canvas {
+    width: 100% !important;
+    max-width: 100%;
+    height: 280px !important;
+    max-height: 280px;
+}
+
+@media (max-width: 992px) {
+    .chart-card-body {
+        min-height: 260px;
+    }
+    .chart-card-body canvas {
+        height: 240px !important;
+    }
+}
