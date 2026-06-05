@@ -210,8 +210,9 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         <th class="text_table">ID</th>
                         <th class="text_table">NOMBRE</th>
                         <th class="text_table">ESTATUS</th>
-                        <th class="text_table">CATEGORIA</th>
-                        <th class="text_table">FECHA INICIO</th>
+                        <th class="text_table">CATEGORÍA</th>
+                        <th class="text_table">FECHA REPORTE</th>
+                        <th class="text_table">FECHA ATENCIÓN</th>
                     </tr>
                 </thead>
                 <tbody id="statusDetails">
@@ -224,8 +225,15 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                                     {{ $incident->current_status_name }}
                                 </span>
                             </td>
-                            <td class="text_center">{{ $incident->incidentCategory->name}}</td>
+                            <td class="text_center" style="vertical-align:middle;">
+                                <span class="oval_color" style="background-color: {{ pdf_color($incident->incidentCategory->color ?? '#6c757d') }} !important;">
+                                    {{ $incident->incidentCategory->name }}
+                                </span>
+                            </td>
                             <td class="text_center">{{ \Carbon\Carbon::parse($incident->start_date)->format('d/m/Y') }}</td>
+                            <td class="text_center">
+                                {{ $incident->last_status_date ? \Carbon\Carbon::parse($incident->last_status_date)->format('d/m/Y') : '---' }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
