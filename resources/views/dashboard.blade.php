@@ -202,6 +202,52 @@
                     @endcan
 
                     @can('viewLocalityCharts')
+                        <div class="row">
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ $totalUsers }}</h3>
+                                        <p>Usuarios</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <a href="{{ route('users.index') }}" class="small-box-footer">
+                                        Más información <i class="fa fa-arrow-circle-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="small-box bg-warning">
+                                    <div class="inner">
+                                        <h3>{{ $totalLocalities }}</h3>
+                                        <p>Localidades</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <a href="{{ route('localities.index') }}" class="small-box-footer">
+                                        Más información <i class="fa fa-arrow-circle-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="small-box bg-success">
+                                    <div class="inner">
+                                        <h3>{{ $totalMemberships }}</h3>
+                                        <p>Membresías</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-id-card"></i>
+                                    </div>
+                                    <a href="{{ route('memberships.index') }}" class="small-box-footer">
+                                        Más información <i class="fa fa-arrow-circle-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="locality_id" class="form-label">Seleccionar Localidad</label>
@@ -218,25 +264,36 @@
                     @endcan
                     @can('viewGraficsEarningsAnnual')
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">Ingresos Mensuales<span id="localityInfoMonthly"></h3>
                                 </div>
-                                <div class="card-body">
-                                    <canvas id="earningsChart" width="400" height="200"></canvas>
+                                <div class="card-body chart-card-body">
+                                    <canvas id="earningsChart"></canvas>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">Ingresos Anuales por Mes<span id="localityInfoAnnual"></h3>
                                 </div>
-                                <div class="card-body">
-                                    <canvas id="annualEarningsChart" width="400" height="200"></canvas>
+                                <div class="card-body chart-card-body">
+                                    <canvas id="annualEarningsChart"></canvas>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        Estado de Membresías
+                                    </h3>
+                                </div>
+                                <div class="card-body chart-card-body">
+                                    <canvas id="membershipPieChart"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -397,6 +454,8 @@
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -419,9 +478,62 @@
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true
+                    }
+                }
+            }
+        });
+        var pieCtx = document.getElementById('membershipPieChart').getContext('2d');
+        var membershipDistributionData = @json($membershipDistribution);
+        var membershipLabels = membershipDistributionData.map(function(item) {
+            return item.name;
+        });
+        var membershipData = membershipDistributionData.map(function(item) {
+            return item.total;
+        });
+        function generateChartColors(count) {
+            var colors = [];
+            for (var i = 0; i < count; i++) {
+                var hue = Math.round((360 / count) * i);
+                colors.push('hsl(' + hue + ', 100%, 45%)');
+            }
+            return colors;
+        }
+        var colors = generateChartColors(membershipData.length);
+
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: membershipLabels,
+                datasets: [{
+                    data: membershipData,
+                    backgroundColor: colors,
+                    borderColor: '#ffffff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 16
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var value = context.parsed || 0;
+                                return value + ' localidades';
+                            }
+                        }
                     }
                 }
             }

@@ -9,8 +9,11 @@ use App\Models\LocalityNotice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Membership;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Exception;
@@ -24,6 +27,53 @@ class DashboardController extends Controller
         $authUser = Auth::user();
         $totalCustomers = Customer::count();
         $localities = Locality::all();
+        $totalUsers = User::count();
+        $totalLocalities = Locality::count();
+        $totalMemberships = Membership::count();
+
+        $membershipDistribution = Membership::withCount('localities')
+            ->get()
+            ->map(function ($membership) {
+                return [
+                    'name' => $membership->name,
+                    'total' => $membership->localities_count
+                ];
+            });
+
+        // Calcular estado de membresías: Activa, Próximas a vencer, Vencida
+        $active = 0;
+        $expiringSoon = 0;
+        $expired = 0;
+        $thresholdDays = 30;
+
+        $allLocalities = Locality::all();
+        foreach ($allLocalities as $loc) {
+            $status = $loc->getSubscriptionStatus();
+            if ($status === Locality::SUBSCRIPTION_ACTIVE && $loc->token) {
+                try {
+                    $tokenValidation = Crypt::decrypt($loc->token);
+                    $endDate = Carbon::parse($tokenValidation['data']['endDate'])->startOfDay();
+                    $today = now()->startOfDay();
+                    $diff = $today->diffInDays($endDate, false);
+                    if ($diff >= 0 && $diff <= $thresholdDays) {
+                        $expiringSoon++;
+                    } else {
+                        $active++;
+                    }
+                } catch (\Exception $e) {
+                    $expired++;
+                }
+            } else {
+                // Considerar sin token o caducada como vencida
+                $expired++;
+            }
+        }
+
+        $membershipStatusCounts = [
+            'active' => $active,
+            'expiringSoon' => $expiringSoon,
+            'expired' => $expired,
+        ];
 
         $customersByLocality = Customer::where('locality_id', $authUser->locality_id)->count();
 
@@ -89,6 +139,8 @@ class DashboardController extends Controller
             'earningsPerMonth' => array_values($earningsPerMonth),
             'localities' => $localities,
             'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
+            'membershipDistribution' => $membershipDistribution,
+            'membershipStatusCounts' => $membershipStatusCounts,
         ];
 
         return view('dashboard', compact(
@@ -99,7 +151,12 @@ class DashboardController extends Controller
             'totalDebts',
             'pendingDebts',
             'totalOwed',
-            'notices'
+            'notices',
+            'totalUsers',
+            'totalLocalities',
+            'totalMemberships',
+            'membershipDistribution'
+            , 'membershipStatusCounts'
         ));
     }
 
