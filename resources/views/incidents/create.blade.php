@@ -39,7 +39,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="category" class="form-label">Categoría(*)</label>
-                                            <select class="form-control select2" name="category" required>
+                                            <select class="form-control" name="category" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($categories as $category)
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -50,7 +50,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="status_id" class="form-label">Estatus(*)</label>
-                                            <select class="form-control select2" name="statusUpdate" required>
+                                            <select class="form-control" name="statusUpdate" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($statuses as $status)
                                                     <option value="{{ $status->id }}">
@@ -106,30 +106,6 @@
 </div>
 
 <script>
-    $(document).on('shown.bs.modal', '#createIncidence', function() {
-        var modalElement = $(this);
-        var dropdownParent = modalElement.find('.modal-body');
-        
-        $(this).find('.select2').each(function() {
-            if ($(this).hasClass('select2-hidden-accessible')) {
-                $(this).select2('destroy');
-            }
-            
-            $(this).select2({
-                allowClear: false,
-                placeholder: 'Selecciona una opción',
-                width: '100%',
-                dropdownParent: dropdownParent
-            });
-        });
-
-        modalElement.on('keydown', function(e) {
-            if ($('.select2-container--open').length && e.keyCode === 27) {
-                e.stopPropagation();
-            }
-        });
-    });
-
     document.addEventListener('DOMContentLoaded', function () {
         const input = document.getElementById('imagesInput');
         const label = input.nextElementSibling;

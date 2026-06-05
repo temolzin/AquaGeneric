@@ -10,54 +10,55 @@
                     <div class="x_title">
                         <h2>Incidencias</h2>
                         <div class="row mb-2">
-                            <div class="col-lg-12">
-                                <div class="d-flex align-items-center flex-wrap" style="gap: 235px;">
-                                    <form method="GET" action="{{ route('incidents.index') }}" class="px-0 m-0" id="incidents-filter-form">
-                                        <div class="d-flex flex-wrap align-items-center" style="gap: 8px;">
-                                            <div class="d-flex align-items-center flex-grow-1" style="min-width: 400px; gap:0.5rem;">
-                                                <select name="category" class="form-control select2 rounded-start border-end-0" style="flex:1 1 100%; min-width: 360px;">
-                                                    <option value="">Filtrar por categoría</option>
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                                            {{ $category->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <button type="submit" class="btn btn-primary btn-sm" title="Filtrar por categoría">
-                                                    <i class="fas fa-filter d-md-none"></i>
-                                                    <span class="d-none d-md-inline">Filtrar</span>
-                                                </button>
-                                                @if(request('category'))
-                                                    <a href="{{ route('incidents.index') }}" class="btn btn-secondary btn-sm ml-2" title="Quitar filtro">
-                                                        <i class="fas fa-times d-md-none"></i>
-                                                        <span class="d-none d-md-inline">Limpiar</span>
-                                                    </a>
-                                                @endif
-                                            </div>
-
-                                            <div class="flex-grow-1"></div>
-
-                                            @if($canToggleIncidentType)
-                                                <input type="hidden" name="show_customer_incidents" id="show_customer_incidents_input" value="{{ $showCustomerIncidents ? '1' : '0' }}">
-                                                <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="show_customer_incidents" {{ $showCustomerIncidents ? 'checked' : '' }}>
-                                                    <label class="custom-control-label" for="show_customer_incidents">Mostrar incidencias de clientes</label>
-                                                </div>
-                                            @endif
+                            <div class="col-12 col-lg-8">
+                                <form method="GET" action="{{ route('incidents.index') }}" class="m-0" id="incidents-filter-form">
+                                    <div class="form-row align-items-center">
+                                        <div class="col-8 col-md-5 mb-2 mb-md-0">
+                                            <select name="category" class="form-control select2 w-100">
+                                                <option value="">Filtrar por categoría</option>
+                                                @foreach ($categories as $category)
+                                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                                        {{ $category->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                    </form>
-                                    <div class="d-flex flex-wrap" style="gap: 8px;">
-                                        <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2 mr-1" data-toggle='modal'
-                                                data-target="#createIncidence" title="Registrar Incidencia">
-                                            <i class="fa fa-plus"></i>
-                                            <span class="d-none d-md-inline">Registrar Incidencia</span>
-                                            <span class="d-inline d-md-none">Registrar Incidencia</span>
+                                        <div class="col-4 col-md-auto mb-3 mb-md-0">
+                                            <button type="submit" class="btn btn-primary btn-sm btn-block">
+                                                <i class="fas fa-filter"></i> <span class="d-none d-sm-inline">Filtrar</span>
+                                            </button>
+                                        </div>
+                                        @if($canToggleIncidentType)
+                                            <div class="col-12 col-md-auto mb-2 mb-md-0">
+                                                <input type="hidden" name="show_customer_incidents" id="show_customer_incidents_input" value="{{ $showCustomerIncidents ? '1' : '0' }}">
+                                                <div class="border rounded p-1 px-2 bg-white text-center">
+                                                    <div class="custom-control custom-switch d-inline-block">
+                                                        <input type="checkbox" class="custom-control-input" id="show_customer_incidents" {{ $showCustomerIncidents ? 'checked' : '' }}>
+                                                        <label class="custom-control-label font-weight-normal mb-0" for="show_customer_incidents">Incidencias Cliente</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if(request('category'))
+                                            <div class="col-12 col-md-auto mb-2 mb-md-0">
+                                                <a href="{{ route('incidents.index') }}" class="btn btn-secondary btn-sm btn-block px-3">
+                                                    <i class="fas fa-times"></i> <span class="d-none d-sm-inline">Limpiar</span>
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-12 col-lg-4 mt-2 mt-lg-0">
+                                <div class="form-row justify-content-lg-end">
+                                    <div class="col-12 col-md-auto mb-2 mb-lg-0">
+                                        <button class="btn btn-success btn-block px-3.5" data-toggle='modal' data-target="#createIncidence">
+                                            <i class="fa fa-plus"></i> <span>Registrar Incidencia</span>
                                         </button>
-                                        <a type="button" class="btn btn-secondary flex-grow-1 flex-lg-grow-0 mt-2 ml-1" target="_blank"
-                                        title="Generar Lista" href="{{ route('report.generateIncidentListReport') }}">
-                                            <i class="fas fa-file-pdf"></i>
-                                            <span class="d-none d-md-inline">Generar Lista</span>
-                                            <span class="d-inline d-md-none">Generar Lista</span>
+                                    </div>
+                                    <div class="col-12 col-md-auto">
+                                        <a class="btn btn-secondary btn-block px-3.5" target="_blank" href="{{ route('report.generateIncidentListReport') }}">
+                                            <i class="fas fa-file-pdf"></i> <span>Generar Lista</span>
                                         </a>
                                     </div>
                                 </div>
@@ -223,6 +224,18 @@
 
     $(document).ready(function() {
         initIncidentDataTable();
+        $(document).on('click', '#incident .btn', function(e) {
+            e.stopPropagation();
+            
+            var target = $(this).data('target');
+            if (target && target.startsWith('#')) {
+                var $modal = $(target);
+                if ($modal.length && !$modal.parent().is('body')) {
+                    $modal.appendTo('body');
+                    $modal.modal('show');
+                }
+            }
+        });
 
         function updateIncidentsTable(url, data) {
             $('#incidents-table-container').css('opacity', '0.5');
