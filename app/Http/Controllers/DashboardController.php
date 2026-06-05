@@ -40,7 +40,6 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Calcular estado de membresías: Activa, Próximas a vencer, Vencida
         $active = 0;
         $expiringSoon = 0;
         $expired = 0;
@@ -48,25 +47,23 @@ class DashboardController extends Controller
 
         $allLocalities = Locality::all();
         foreach ($allLocalities as $loc) {
-            $status = $loc->getSubscriptionStatus();
-            if ($status === Locality::SUBSCRIPTION_ACTIVE && $loc->token) {
+        $status = $loc->getSubscriptionStatus();
+        ($status === Locality::SUBSCRIPTION_ACTIVE && $loc->token)
+            ? (function () use ($loc, $thresholdDays, &$active, &$expiringSoon, &$expired) {
                 try {
                     $tokenValidation = Crypt::decrypt($loc->token);
                     $endDate = Carbon::parse($tokenValidation['data']['endDate'])->startOfDay();
                     $today = now()->startOfDay();
                     $diff = $today->diffInDays($endDate, false);
-                    if ($diff >= 0 && $diff <= $thresholdDays) {
-                        $expiringSoon++;
-                    } else {
-                        $active++;
-                    }
+
+                    $diff >= 0 && $diff <= $thresholdDays
+                        ? $expiringSoon++
+                        : $active++;
                 } catch (\Exception $e) {
                     $expired++;
                 }
-            } else {
-                // Considerar sin token o caducada como vencida
-                $expired++;
-            }
+            })()
+            : $expired++;
         }
 
         $membershipStatusCounts = [
