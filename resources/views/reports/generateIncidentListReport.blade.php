@@ -119,6 +119,12 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 padding: 5px;
             }
 
+            #detailedReport th:nth-child(3),
+            #detailedReport td:nth-child(3) {
+                width: 150px;
+                max-width: 150px;
+            }
+
             #statusDetails tr {
                 border-top: 1px solid #bfc9ff;
                 min-height: 60px;
@@ -172,12 +178,15 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 font-weight: bold;
                 font-size: 9pt;
                 border-radius: 18px;
-                padding: 3px 12px;
+                padding: 4px 12px;
                 margin: 0 2px;
-                min-width: 70px;
+                min-width: 90px;
+                max-width: 150px;
                 text-align: center;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.2);
                 line-height: 1.2;
+                word-wrap: break-word;
+                white-space: normal;
             }
         </style>
     </head>
