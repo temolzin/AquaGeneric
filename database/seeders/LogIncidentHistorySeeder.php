@@ -70,12 +70,8 @@ class LogIncidentHistorySeeder extends Seeder
 
             $validUsers = User::where('locality_id', $localityId)
                 ->whereHas('roles', function($q) {
-                    $q->whereIn('name', ['Admin', 'Supervisor', 'Secretaria']);
+                    $q->whereIn('name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY]);
                 })->get();
-
-            if ($validUsers->isEmpty()) {
-                $validUsers = User::role('Admin')->get();
-            }
 
             if (empty($validStatuses) || $validEmployees->isEmpty() || $validUsers->isEmpty()) {
                 $this->command->info("Saltando incidencia ID {$incident->id}: No hay empleados o usuarios en la localidad {$localityId}");
@@ -83,10 +79,8 @@ class LogIncidentHistorySeeder extends Seeder
             }
 
             $numLogs = rand(1, 3);
-            $currentDate = Carbon::parse($incident->start_date);
 
             for ($i = 0; $i < $numLogs; $i++) {
-                $currentDate = $currentDate->addMinutes(rand(120, 2880));
                 $logStatus = $faker->randomElement($validStatuses);
                 $possibleDescriptions = $statusDescriptionMap[$logStatus] ?? $statusDescriptionMap['default'];
 
@@ -97,8 +91,6 @@ class LogIncidentHistorySeeder extends Seeder
                     'created_by'  => $validUsers->random()->id,
                     'status'      => $logStatus,
                     'description' => $faker->randomElement($possibleDescriptions),
-                    'created_at'  => $currentDate,
-                    'updated_at'  => $currentDate,
                 ]);
             }
         }
