@@ -111,7 +111,7 @@ class CustomerDefaultSeeder extends Seeder
                     'status' => 1,
                     'responsible_name' => null,
                     'locality_id' => $locality->id,
-                    'created_by' => 1,
+                    'created_by' => 3,
                 ]
             );
 

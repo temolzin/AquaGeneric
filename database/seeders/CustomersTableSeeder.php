@@ -78,7 +78,7 @@ class CustomersTableSeeder extends Seeder
                 'status' => 1,
                 'responsible_name' => null,
                 'locality_id' => $alonsoUser->locality_id,
-                'created_by' => 1,
+                'created_by' => 3,
             ]);
         }
     }
