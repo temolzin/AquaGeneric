@@ -27,7 +27,9 @@ class DashboardController extends Controller
         $authUser = Auth::user();
         $totalCustomers = Customer::count();
         $localities = Locality::all();
-        $totalUsers = User::count();
+        $totalUsers = User::whereDoesntHave('roles', function ($query) {
+            $query->where('name', User::ROLE_CUSTOMER);
+        })->count();
         $totalLocalities = Locality::count();
         $totalMemberships = Membership::count();
 
