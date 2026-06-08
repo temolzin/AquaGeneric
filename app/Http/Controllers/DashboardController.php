@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Debt;
+use App\Models\GeneralEarning;
+use App\Models\GeneralExpense;
 use App\Models\Locality;
 use App\Models\Payment;
 use App\Models\LocalityNotice;
@@ -87,17 +89,45 @@ class DashboardController extends Controller
                 $query->where('status', '!=', 'paid');
             })->count();
 
-        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(created_at) as month')
+        $monthlyPayments = Payment::selectRaw('SUM(amount) as total, MONTH(created_at) as month')
             ->where('locality_id', $authUser->locality_id)
             ->whereYear('created_at', Carbon::now()->year)
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
-        $earningsPerMonth = array_fill(1, 12, 0);
+        $monthlyGeneralEarnings = GeneralEarning::selectRaw('SUM(amount) as total, MONTH(earning_date) as month')
+            ->where('locality_id', $authUser->locality_id)
+            ->whereYear('earning_date', Carbon::now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
-        foreach ($monthlyEarnings as $earning) {
-            $earningsPerMonth[$earning->month] = $earning->total;
+        $monthlyExpensesData = GeneralExpense::selectRaw('SUM(amount) as total, MONTH(expense_date) as month')
+            ->where('locality_id', $authUser->locality_id)
+            ->whereYear('expense_date', Carbon::now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $monthlyIncomes = array_fill(1, 12, 0);
+        $monthlyExpenses = array_fill(1, 12, 0);
+        $monthlyGains = array_fill(1, 12, 0);
+
+        foreach ($monthlyPayments as $payment) {
+            $monthlyIncomes[$payment->month] += $payment->total;
+        }
+
+        foreach ($monthlyGeneralEarnings as $earning) {
+            $monthlyIncomes[$earning->month] += $earning->total;
+        }
+
+        foreach ($monthlyExpensesData as $expense) {
+            $monthlyExpenses[$expense->month] = $expense->total;
+        }
+
+        foreach ($monthlyIncomes as $month => $income) {
+            $monthlyGains[$month] = $income - $monthlyExpenses[$month];
         }
 
         $currentMonth = Carbon::now();
@@ -135,7 +165,9 @@ class DashboardController extends Controller
             'customersWithoutDebts' => $customersWithoutDebts,
             'noDebtsForCurrentMonth' => $noDebtsForCurrentMonth,
             'months' => $months,
-            'earningsPerMonth' => array_values($earningsPerMonth),
+            'monthlyIncomes' => array_values($monthlyIncomes),
+            'annualExpenses' => array_values($monthlyExpenses),
+            'annualGains' => array_values($monthlyGains),
             'localities' => $localities,
             'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
             'membershipDistribution' => $membershipDistribution,
@@ -163,21 +195,51 @@ class DashboardController extends Controller
     {
         $localityId = $request->input('locality_id');
 
-        $monthlyEarnings = Payment::selectRaw('SUM(amount) as total, MONTH(created_at) as month')
-        ->where('locality_id', $localityId)
-        ->whereYear('created_at', Carbon::now()->year)
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get();
+        $monthlyPayments = Payment::selectRaw('SUM(amount) as total, MONTH(created_at) as month')
+            ->where('locality_id', $localityId)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
-        $earningsPerMonth = array_fill(1, 12, 0);
+        $monthlyGeneralEarnings = GeneralEarning::selectRaw('SUM(amount) as total, MONTH(earning_date) as month')
+            ->where('locality_id', $localityId)
+            ->whereYear('earning_date', Carbon::now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
-        foreach ($monthlyEarnings as $earning) {
-            $earningsPerMonth[$earning->month] = $earning->total;
+        $monthlyExpenses = GeneralExpense::selectRaw('SUM(amount) as total, MONTH(expense_date) as month')
+            ->where('locality_id', $localityId)
+            ->whereYear('expense_date', Carbon::now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $incomes = array_fill(1, 12, 0);
+        $expenses = array_fill(1, 12, 0);
+        $gains = array_fill(1, 12, 0);
+
+        foreach ($monthlyPayments as $payment) {
+            $incomes[$payment->month] += $payment->total;
+        }
+
+        foreach ($monthlyGeneralEarnings as $earning) {
+            $incomes[$earning->month] += $earning->total;
+        }
+
+        foreach ($monthlyExpenses as $expense) {
+            $expenses[$expense->month] = $expense->total;
+        }
+
+        foreach ($incomes as $month => $income) {
+            $gains[$month] = $income - $expenses[$month];
         }
 
         return response()->json([
-            'earningsPerMonth' => array_values($earningsPerMonth),
+            'incomes' => array_values($incomes),
+            'expenses' => array_values($expenses),
+            'gains' => array_values($gains),
             'months' => collect(range(1, 12))->map(function ($month) {
                 return ucfirst(Carbon::create()->month($month)->locale('es')->monthName);
             })

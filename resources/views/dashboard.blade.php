@@ -275,7 +275,7 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Ingresos Anuales por Mes<span id="localityInfoAnnual"></h3>
+                                    <h3 class="card-title">Balance General<span id="localityInfoAnnual"></span></h3>
                                 </div>
                                 <div class="card-body chart-card-body">
                                     <canvas id="annualEarningsChart"></canvas>
@@ -382,10 +382,12 @@
                         type: 'GET',
                         data: { locality_id: localityId},
                         success: function(response){
-                            earningsChart.data.datasets[0].data = response.earningsPerMonth;
+                            earningsChart.data.datasets[0].data = response.incomes;
                             earningsChart.update();
 
-                            annualEarningsChart.data.datasets[0].data = response.earningsPerMonth;
+                            annualEarningsChart.data.datasets[0].data = response.incomes;
+                            annualEarningsChart.data.datasets[1].data = response.expenses;
+                            annualEarningsChart.data.datasets[2].data = response.gains;
                             annualEarningsChart.update();
                         },
                         error: function(xhr) {
@@ -399,6 +401,8 @@
                     earningsChart.update();
 
                     annualEarningsChart.data.datasets[0].data = Array(12).fill(0);
+                    annualEarningsChart.data.datasets[1].data = Array(12).fill(0);
+                    annualEarningsChart.data.datasets[2].data = Array(12).fill(0);
                     annualEarningsChart.update();
 
                     $('#localityInfoMonthly').text('');
@@ -447,7 +451,7 @@
                 labels: @json($data['months']),
                 datasets: [{
                     label: 'Ingresos en $',
-                    data: @json($data['earningsPerMonth']),
+                    data: @json($data['monthlyIncomes']),
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
@@ -469,20 +473,46 @@
             type: 'line',
             data: {
                 labels: @json($data['months']),
-                datasets: [{
-                    label: 'Ingresos Anuales en $',
-                    data: @json($data['earningsPerMonth']),
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 2
-                }]
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: @json($data['monthlyIncomes']),
+                        backgroundColor: 'rgba(54, 162, 235, 0.4)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: 'Gastos',
+                        data: @json($data['annualExpenses']),
+                        backgroundColor: 'rgba(236, 125, 41, 0.99)',
+                        borderColor: 'rgb(248, 84, 34)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: 'Ganancias',
+                        data: @json($data['annualGains']),
+                        backgroundColor: 'rgba(75, 192, 192, 0.4)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        suggestedMax: 4500,
+                        ticks: {
+                            stepSize: 500
+                        }
                     }
                 }
             }
