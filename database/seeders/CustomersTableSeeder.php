@@ -61,7 +61,6 @@ class CustomersTableSeeder extends Seeder
         }
         $alonsoUser = DB::table('users')->where('email', 'alonso@gmail.com')->first();
         $alonsoCustomerExists = DB::table('customers')->where('email', 'alonso@gmail.com')->exists();
-
         if ($alonsoUser && !$alonsoCustomerExists) {
             DB::table('customers')->insert([
                 'user_id' => $alonsoUser->id,
