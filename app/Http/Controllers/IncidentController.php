@@ -196,6 +196,8 @@ class IncidentController extends Controller
             ->get();
 
         foreach ($incidents as $incident) {
+            $latestLog = $incident->getstatusChangeLogs->first();
+            $incident->last_status_date = $latestLog ? $latestLog->created_at : null;
             $latest = $incident->getLatestStatus();
             $incident->current_status_name = $latest ? strtoupper($latest) : 'SIN ESTATUS';
             $incident->current_status_color = '#6c757d';
