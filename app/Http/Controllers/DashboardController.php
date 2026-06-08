@@ -47,23 +47,22 @@ class DashboardController extends Controller
 
         $allLocalities = Locality::all();
         foreach ($allLocalities as $loc) {
-        $status = $loc->getSubscriptionStatus();
-        ($status === Locality::SUBSCRIPTION_ACTIVE && $loc->token)
-            ? (function () use ($loc, $thresholdDays, &$active, &$expiringSoon, &$expired) {
-                try {
-                    $tokenValidation = Crypt::decrypt($loc->token);
-                    $endDate = Carbon::parse($tokenValidation['data']['endDate'])->startOfDay();
-                    $today = now()->startOfDay();
-                    $diff = $today->diffInDays($endDate, false);
-
-                    $diff >= 0 && $diff <= $thresholdDays
-                        ? $expiringSoon++
-                        : $active++;
-                } catch (\Exception $e) {
-                    $expired++;
-                }
-            })()
-            : $expired++;
+            $status = $loc->getSubscriptionStatus();
+            if ($status !== Locality::SUBSCRIPTION_ACTIVE || !$loc->token) {
+                $expired++;
+                continue;
+            }
+            try {
+                $tokenValidation = Crypt::decrypt($loc->token);
+                $endDate = Carbon::parse($tokenValidation['data']['endDate'])->startOfDay();
+                $today = now()->startOfDay();
+                $diff = $today->diffInDays($endDate, false);
+                $diff >= 0 && $diff <= $thresholdDays
+                    ? $expiringSoon++
+                    : $active++;
+            } catch (\Exception $e) {
+                $expired++;
+            }
         }
 
         $membershipStatusCounts = [

@@ -217,7 +217,6 @@
                                     </a>
                                 </div>
                             </div>
-
                             <div class="col-lg-4 col-xs-6">
                                 <div class="small-box bg-warning">
                                     <div class="inner">
@@ -232,7 +231,6 @@
                                     </a>
                                 </div>
                             </div>
-
                             <div class="col-lg-4 col-xs-6">
                                 <div class="small-box bg-success">
                                     <div class="inner">
@@ -264,7 +262,7 @@
                     @endcan
                     @can('viewGraficsEarningsAnnual')
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">Ingresos Mensuales<span id="localityInfoMonthly"></h3>
@@ -274,7 +272,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">Ingresos Anuales por Mes<span id="localityInfoAnnual"></h3>
@@ -284,8 +282,10 @@
                                 </div>
                             </div>
                         </div>
-                        @if(Auth::user()->hasRole('Admin'))
-                        <div class="col-md-4">
+                    </div>
+                    @endcan
+                    @if(Auth::user()->hasRole('Admin'))
+                        <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">
@@ -298,8 +298,6 @@
                             </div>
                         </div>
                         @endif
-                    </div>
-                    @endcan
                     @can('viewDashboardCards')
                     <div class="card">
                         <div class="card-header">
