@@ -27,12 +27,13 @@ class DatabaseSeeder extends Seeder
         $this->call(ExpenseTypeSeeder::class);
         $this->call(GeneralExpensesSeeder::class);
         $this->call(MailConfigurationsTableSeeder::class);
+        $this->call(EmployeePositionSeeder::class);
+        $this->call(EmployeesTableSeeder::class);
         $this->call(IncidentStatusSeeder::class);
         $this->call(IncidentCategorySeeder::class);
         $this->call(IncidentSeeder::class);
         $this->call(CustomerIncidentSeeder::class);
-        $this->call(EmployeePositionSeeder::class);
-        $this->call(EmployeesTableSeeder::class);
+        $this->call(LogIncidentHistorySeeder::class);
         $this->call(AdvancePaymentsSeeder::class);
         $this->call(LocalityNoticesSeeder::class);
         $this->call(FaultReportSeeder::class);
