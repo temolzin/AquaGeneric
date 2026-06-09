@@ -168,7 +168,6 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    @include('incidents.changeStatusModal')
                                     <div class="d-flex justify-content-center">
                                         {!! $incidents->links('pagination::bootstrap-4') !!}
                                     </div>
@@ -181,6 +180,7 @@
         </div>
     </section>
     @include('incidents.create')
+    @include('incidents.changeStatusModal')
 
 @endsection
 
@@ -333,39 +333,6 @@
                 width: '100%',
                 dropdownParent: $(this).closest('.modal')
             });
-        });
-    });
-
-    $('#changeStatusForm').on('submit', function(e) {
-        e.preventDefault();
-
-        var form = $(this);
-        var formData = form.serialize();
-
-        $.ajax({
-            url: "{{ route('incidents.updateStatus') }}",
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: response.message,
-                        confirmButtonText: 'Aceptar'
-                    }).then(() => {
-                        location.reload();
-                    });
-                }
-            },
-            error: function(xhr) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error al actualizar el estatus',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
         });
     });
 </script>
