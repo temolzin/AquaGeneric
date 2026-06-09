@@ -16,11 +16,7 @@
                         <div class="col-md-5">
                             <form method="GET" action="{{ route('localities.index') }}">
                                 <div class="input-group">
-                                    <input type="text"
-                                        name="search"
-                                        class="form-control"
-                                        placeholder="Buscar por localidad, municipio, código postal"
-                                        value="{{ request('search') }}">
+                                    <input type="text" name="search" class="form-control" placeholder="Buscar por localidad, municipio, código postal" value="{{ request('search') }}">
                                     <div class="input-group-append">
                                         <button type="submit" class="btn btn-primary">
                                             Buscar
@@ -31,9 +27,7 @@
                         </div>
                         <div class="col-md-7 text-md-right mt-2 mt-md-0">
                             <div class="btn-group" role="group">
-                                <button class="btn btn-success mr-2"
-                                        data-toggle="modal"
-                                        data-target="#createLocality">
+                                <button class="btn btn-success mr-2" data-toggle="modal" data-target="#createLocality">
                                     <i class="fa fa-plus"></i>
                                     Registrar Localidad
                                 </button>
@@ -44,8 +38,7 @@
                                     Generar Lista
                                 </a>
                                 <a class="btn btn-info"
-                                href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}"
-                                target="_blank">
+                                href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank">
                                     <i class="fas fa-file-pdf"></i>
                                     Guía OpenPay
                                 </a>
