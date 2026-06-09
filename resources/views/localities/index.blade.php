@@ -12,33 +12,36 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Localidades</h2>
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            <div class="btn-group" role="group" aria-label="Acciones de Usuario">
-                                <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createLocality">
-                                    <i class="fa fa-plus"></i> Registrar Localidad
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-5">
+                            <form method="GET" action="{{ route('localities.index') }}">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Buscar por localidad, municipio, código postal" value="{{ request('search') }}">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">
+                                            Buscar
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-7 text-md-right mt-2 mt-md-0">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-success mr-2" data-toggle="modal" data-target="#createLocality">
+                                    <i class="fa fa-plus">Registrar Localidad</i>
                                 </button>
-                                <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Localidades" href="{{ route('localities.pdfLocalities', ['search' => request('search')]) }}">
-                                    <i class="fas fa-map"></i> Generar Lista
+                                <a class="btn btn-secondary mr-2"
+                                    target="_blank"
+                                    href="{{ route('localities.pdfLocalities', ['search' => request('search')]) }}"> <i class="fas fa-map">Generar Lista</i>
                                 </a>
-                                <a type="button" class="btn btn-info" href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank" title="Ver guía de registro">
-                                    <i class="fas fa-file-pdf"></i> Guía OpenPay
+                                <a class="btn btn-info"
+                                    href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank"> <i class="fas fa-file-pdf">Guía OpenPay</i>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <div class="col-lg-4">
-                <form method="GET" action="{{ route('localities.index') }}" class="flex-grow-1 mt-2" style="min-width: 420px; max-width: 40%;">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Buscar por localidad, municipio, código postal" value="{{ request('search') }}">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
                 <div class="x_content">
                     <div class="row">
                         <div class="col-sm-12">

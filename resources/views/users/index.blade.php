@@ -9,26 +9,26 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Usuarios</h2>
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            <div class="btn-group" role="group" aria-label="Acciones de Usuario">
-                                <button class="btn btn-success mr-2" data-toggle='modal' data-target="#create" title="Registrar Usuario">
-                                    <i class="fa fa-plus"></i> Registrar Usuario
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                     <div class="clearfix"></div>
                 </div>
-                <div class="col-lg-4">
-                    <form id="formSearch" method="GET" action="{{ route('users.index') }}" class="my-3">
-                        <div class="input-group">
-                            <input type="text" name="search" id="searchName" class="form-control" placeholder="Buscar por nombre o email" value="{{ request('search') ?? '' }}">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary">Buscar</button>
+                <div class="row align-items-center my-3">
+                    <div class="col-md-6 col-lg-4">
+                        <form id="formSearch" method="GET" action="{{ route('users.index') }}" class="mb-2 mb-md-0">
+                            <div class="input-group">
+                                <input type="text" name="search" id="searchName" class="form-control" placeholder="Buscar por nombre o email" value="{{ request('search') ?? '' }}">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">Buscar</button>
+                                </div>
                             </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6 col-lg-8 text-md-right">
+                        <div class="btn-group" role="group" aria-label="Acciones de Usuario">
+                            <button class="btn btn-success" data-toggle='modal' data-target="#create" title="Registrar Usuario">
+                                <i class="fa fa-plus"></i> Registrar Usuario
+                            </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="x_content">
                     <div class="row">
