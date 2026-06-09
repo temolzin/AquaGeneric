@@ -218,7 +218,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-4 col-xs-6">
-                                <div class="small-box" style="background-color:#1f4e79;color:white;">
+                                <div class="small-box bg-danger">
                                     <div class="inner">
                                         <h3>{{ $totalLocalities }}</h3>
                                         <p>Localidades</p>
