@@ -9,28 +9,28 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Roles</h2>
-                    <div class="row">
-                        @include('roles.create')
-                        <div class="col-lg-12 text-right">
-                            <div class="btn-group" role="group" aria-label="Acciones de Rol">
-                                <button type="button" class="btn btn-success mr-2" data-toggle="modal"
-                                        data-target="#createRoleModal" title="Registrar Rol">
-                                    <i class="fa fa-plus"></i> Registrar Rol
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    @include('roles.create')
                     <div class="clearfix"></div>
                 </div>
-                <div class="col-lg-4">
-                    <form id="formSearch" method="GET" action="{{ route('roles.index') }}" class="my-3">
-                        <div class="input-group">
-                            <input type="text" name="search" id="searchName" class="form-control" placeholder="Buscar por nombre" value="{{ request('search') ?? '' }}">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary">Buscar</button>
+                <div class="row align-items-center my-3">
+                    <div class="col-md-6 col-lg-4">
+                        <form id="formSearch" method="GET" action="{{ route('roles.index') }}" class="mb-2 mb-md-0">
+                            <div class="input-group">
+                                <input type="text" name="search" id="searchName" class="form-control" placeholder="Buscar por nombre" value="{{ request('search') ?? '' }}">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">Buscar</button>
+                                </div>
                             </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6 col-lg-8 text-md-right">
+                        <div class="btn-group" role="group" aria-label="Acciones de Rol">
+                            <button type="button" class="btn btn-success" data-toggle="modal"
+                                    data-target="#createRoleModal" title="Registrar Rol">
+                                <i class="fa fa-plus"></i> Registrar Rol
+                            </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="x_content">
                     <div class="row">
@@ -39,9 +39,9 @@
                                 <table id="roles" class="table table-striped display responsive nowrap" style="width:100%">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>NOMBRE</th>
-                                            <th>OPCIONES</th>
+                                            <th class="text-center">ID</th>
+                                            <th class="text-center">NOMBRE</th>
+                                            <th class="text-center">OPCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -52,9 +52,9 @@
                                         @else
                                             @foreach ($roles as $role)
                                                 <tr>
-                                                    <td>{{ $role->id }}</td>
-                                                    <td>{{ $role->name }}</td>
-                                                    <td>
+                                                    <td class="text-center">{{ $role->id }}</td>
+                                                    <td class="text-center">{{ $role->name }}</td>
+                                                    <td class="text-center">
                                                         <div class="btn-group" role="group" aria-label="Opciones">
                                                             <button type="button" class="btn btn-info mr-2" data-toggle="modal"
                                                                     title="Ver Detalles" data-target="#view{{ $role->id }}">
