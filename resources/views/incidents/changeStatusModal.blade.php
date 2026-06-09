@@ -77,7 +77,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" id="saveStatus" class="btn btn-success">Guardar</button>
+                        <button type="submit" id="saveStatus" class="btn btn-success">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -119,10 +119,11 @@
             });
         });
 
-        saveBtn.addEventListener('click', function () {
-            const formData = new FormData(form);
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
 
-            fetch(form.action, {
+            fetch(this.action, {
                 method: 'POST',
                 body: formData,
                 headers: {
