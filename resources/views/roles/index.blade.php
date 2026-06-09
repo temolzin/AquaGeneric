@@ -25,8 +25,7 @@
                     </div>
                     <div class="col-md-6 col-lg-8 text-md-right">
                         <div class="btn-group" role="group" aria-label="Acciones de Rol">
-                            <button type="button" class="btn btn-success" data-toggle="modal"
-                                    data-target="#createRoleModal" title="Registrar Rol">
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createRoleModal" title="Registrar Rol">
                                 <i class="fa fa-plus"></i> Registrar Rol
                             </button>
                         </div>
