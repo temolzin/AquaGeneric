@@ -102,7 +102,11 @@
                                                             <i class="fas fa-image"></i>
                                                         </button>
                                                     @endcan
-                                                    <button type="button" class="btn bg-purple mr-2" data-toggle="modal"  title="Configurar correo" data-target="#mailConfigModal{{$locality->id}}">
+                                                    <button type="button" 
+                                                        class="btn {{ $locality->mailConfiguration ? 'bg-purple' : 'btn-outline-secondary text-purple' }} mr-2" 
+                                                        data-toggle="modal" 
+                                                        title="{{ $locality->mailConfiguration ? 'Correo configurado' : 'Configurar correo' }}" 
+                                                        data-target="#mailConfigModal{{$locality->id}}">
                                                         <i class="fas fa-envelope"></i>
                                                     </button>
                                                     <button type="button" class="btn bg-navy mr-2" data-toggle="modal" title="Fondo de reporte" data-target="#editPdfBackground{{$locality->id}}">
