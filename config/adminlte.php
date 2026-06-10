@@ -311,7 +311,7 @@ return [
     [
         'text' => 'Panel',
         'url' => '/dashboard',
-        'icon' => 'fas fa-fw fa-home',
+        'icon' => 'fas fa-fw fa-home text-white',
     ],
     [
         'text' => 'Gestión de Pagos',
