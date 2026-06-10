@@ -25,6 +25,11 @@
                                     alt="Fondo Vertical" style="width: 200px; height: 280px; border-radius: 10px; margin-bottom: 10px;">
                                 <input type="file" accept="image/*" name="pdf_background_vertical"
                                     class="form-control" onchange="previewImageEdit(event, 'vertical', {{ $locality->id }})">
+                                @if($locality->getFirstMediaUrl('pdfBackgroundVertical'))
+                                    <button type="button" class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('reset-vertical-form-{{ $locality->id }}').submit();">
+                                        <i class="fas fa-redo"></i> Restablecer
+                                    </button>
+                                @endif
                             </div>
                         </div>
                         <div class="card">
@@ -40,6 +45,11 @@
                                     alt="Fondo Horizontal" style="width: 280px; height: 200px; border-radius: 10px; margin-bottom: 10px;">
                                 <input type="file" accept="image/*" name="pdf_background_horizontal"
                                     class="form-control" onchange="previewImageEdit(event, 'horizontal', {{ $locality->id }})">
+                                @if($locality->getFirstMediaUrl('pdfBackgroundHorizontal'))
+                                    <button type="button" class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('reset-horizontal-form-{{ $locality->id }}').submit();">
+                                        <i class="fas fa-redo"></i> Restablecer
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -47,6 +57,15 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetForm({{ $locality->id }})">Cancelar</button>
                         <button type="submit" class="btn bg-navy">Actualizar</button>
                     </div>
+                </form>
+                <form action="{{ route('localities.resetPdfBackground', $locality->id) }}" method="POST" id="reset-vertical-form-{{ $locality->id }}" style="display: none;">
+                    @csrf
+                    <input type="hidden" name="type" value="vertical">
+                </form>
+
+                <form action="{{ route('localities.resetPdfBackground', $locality->id) }}" method="POST" id="reset-horizontal-form-{{ $locality->id }}" style="display: none;">
+                    @csrf
+                    <input type="hidden" name="type" value="horizontal">
                 </form>
             </div>
         </div>
