@@ -29,11 +29,9 @@
                                 <button class="btn btn-success mr-2" data-toggle="modal" data-target="#createLocality">
                                     <i class="fa fa-plus"></i> Registrar Localidad
                                 </button>
-
                                 <a class="btn btn-secondary mr-2" target="_blank" href="{{ route('localities.pdfLocalities', ['search' => request('search')]) }}">
                                     <i class="fas fa-map"></i> Generar Lista
                                 </a>
-
                                 <a class="btn btn-info" href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank">
                                     <i class="fas fa-file-pdf"></i> Guía OpenPay
                                 </a>
