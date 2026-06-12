@@ -205,4 +205,27 @@ class LocalityController extends Controller
 
         return redirect()->route('localities.index')->with('success', 'Fondos de reportes actualizados correctamente.');
     }
+
+    public function resetPdfBackground(Request $request, $id)
+    {
+        $locality = Locality::find($id);
+
+        if (!$locality) {
+            return redirect()->back()->with('error', 'Localidad no encontrada.');
+        }
+
+        $type = $request->input('type');
+
+        if ($type === 'vertical') {
+            $locality->clearMediaCollection('pdfBackgroundVertical');
+            return redirect()->route('localities.index')->with('success', 'Fondo de reporte vertical reseteado correctamente.');
+        }
+
+        if ($type === 'horizontal') {
+            $locality->clearMediaCollection('pdfBackgroundHorizontal');
+            return redirect()->route('localities.index')->with('success', 'Fondo de reporte horizontal reseteado correctamente.');
+        }
+
+        return redirect()->back()->with('error', 'Tipo de fondo no válido.');
+    }
 }
