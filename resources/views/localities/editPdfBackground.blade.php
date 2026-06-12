@@ -62,7 +62,6 @@
                     @csrf
                     <input type="hidden" name="type" value="vertical">
                 </form>
-
                 <form action="{{ route('localities.resetPdfBackground', $locality->id) }}" method="POST" id="reset-horizontal-form-{{ $locality->id }}" style="display: none;">
                     @csrf
                     <input type="hidden" name="type" value="horizontal">
