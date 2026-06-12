@@ -89,41 +89,41 @@
                                                     <td>{{ $incident->id }}</td>
                                                     <td>{{ $incident->name }}</td>
                                                     <td>
-    @if ($incident->responsible_employees->isEmpty())
-        <span class="text-muted">Sin asignar</span>
-    @else
-        <div class="d-flex align-items-center">
-            @foreach ($incident->responsible_employees->take(5) as $employee)
-                @php
-                    $employeePhoto = $employee->getFirstMedia('employeeGallery');
+                                                        @if ($incident->responsible_employees->isEmpty())
+                                                            <span class="text-muted">Sin asignar</span>
+                                                        @else
+                                                            <div class="d-flex align-items-center">
+                                                                @foreach ($incident->responsible_employees->take(5) as $employee)
+                                                                    @php
+                                                                        $employeePhoto = $employee->getFirstMedia('employeeGallery');
 
-                    $employeePhotoUrl = $employeePhoto
-                        ? asset('storage/' . $employeePhoto->id . '/' . $employeePhoto->file_name)
-                            . '?t=' . (optional($employee->updated_at)->timestamp ?? now()->timestamp)
-                        : asset('img/userDefault.png');
-                @endphp
+                                                                        $employeePhotoUrl = $employeePhoto
+                                                                            ? asset('storage/' . $employeePhoto->id . '/' . $employeePhoto->file_name)
+                                                                                . '?t=' . (optional($employee->updated_at)->timestamp ?? now()->timestamp)
+                                                                            : asset('img/userDefault.png');
+                                                                    @endphp
 
-                <img
-                    src="{{ $employeePhotoUrl }}"
-                    alt="Empleado"
-                    title="{{ $employee->name }} {{ $employee->last_name }}"
-                    class="img-thumbnail mr-1"
-                    style="
-                        width:32px;
-                        height:32px;
-                        object-fit:cover;
-                        border-radius:50%;
-                    ">
-            @endforeach
+                                                                    <img
+                                                                        src="{{ $employeePhotoUrl }}"
+                                                                        alt="Empleado"
+                                                                        title="{{ $employee->name }} {{ $employee->last_name }}"
+                                                                        class="img-thumbnail mr-1"
+                                                                        style="
+                                                                            width:32px;
+                                                                            height:32px;
+                                                                            object-fit:cover;
+                                                                            border-radius:50%;
+                                                                        ">
+                                                                @endforeach
 
-            @if($incident->responsible_employees->count() > 5)
-                <span class="badge badge-secondary ml-1">
-                    +{{ $incident->responsible_employees->count() - 5 }}
-                </span>
-            @endif
-        </div>
-    @endif
-</td>
+                                                                @if($incident->responsible_employees->count() > 5)
+                                                                    <span class="badge badge-secondary ml-1">
+                                                                        +{{ $incident->responsible_employees->count() - 5 }}
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        @endif
+                                                    </td>
                                                     <td>{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}</td>
                                                     <td>
                                                          <span class="badge {{ $incident->incidentCategory->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
