@@ -70,7 +70,7 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="card-box table-responsive" id="incidents-table-container">
-                                    <table id="incident" class="table table-striped display responsive nowrap" style="width:100%">
+                                    <table id="incident" class="table table-striped display responsive" style="width:100%">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -89,18 +89,41 @@
                                                     <td>{{ $incident->id }}</td>
                                                     <td>{{ $incident->name }}</td>
                                                     <td>
-                                                        @if ($incident->responsible_employees->isEmpty())
-                                                            <span class="text-muted">Sin asignar</span>
-                                                        @endif
-                                                        @foreach ($incident->responsible_employees as $employee)
-                                                            @php
-                                                                $employeePhoto = $employee->getFirstMedia('employeeGallery');
-                                                                $employeePhotoUrl = $employeePhoto ? asset('storage/' . $employeePhoto->id . '/' . $employeePhoto->file_name) . '?t=' . (optional($employee->updated_at)->timestamp ?? now()->timestamp) : asset('img/userDefault.png');
-                                                            @endphp
-                                                            <img src="{{ $employeePhotoUrl }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}"
-                                                                class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 3px;">
-                                                        @endforeach
-                                                    </td>
+    @if ($incident->responsible_employees->isEmpty())
+        <span class="text-muted">Sin asignar</span>
+    @else
+        <div class="d-flex align-items-center">
+            @foreach ($incident->responsible_employees->take(5) as $employee)
+                @php
+                    $employeePhoto = $employee->getFirstMedia('employeeGallery');
+
+                    $employeePhotoUrl = $employeePhoto
+                        ? asset('storage/' . $employeePhoto->id . '/' . $employeePhoto->file_name)
+                            . '?t=' . (optional($employee->updated_at)->timestamp ?? now()->timestamp)
+                        : asset('img/userDefault.png');
+                @endphp
+
+                <img
+                    src="{{ $employeePhotoUrl }}"
+                    alt="Empleado"
+                    title="{{ $employee->name }} {{ $employee->last_name }}"
+                    class="img-thumbnail mr-1"
+                    style="
+                        width:32px;
+                        height:32px;
+                        object-fit:cover;
+                        border-radius:50%;
+                    ">
+            @endforeach
+
+            @if($incident->responsible_employees->count() > 5)
+                <span class="badge badge-secondary ml-1">
+                    +{{ $incident->responsible_employees->count() - 5 }}
+                </span>
+            @endif
+        </div>
+    @endif
+</td>
                                                     <td>{{ \Carbon\Carbon::parse($incident->start_date)->translatedFormat('d/F/Y') }}</td>
                                                     <td>
                                                          <span class="badge {{ $incident->incidentCategory->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
