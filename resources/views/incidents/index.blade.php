@@ -102,7 +102,7 @@
                                                                                 . '?t=' . (optional($employee->updated_at)->timestamp ?? now()->timestamp)
                                                                             : asset('img/userDefault.png');
                                                                     @endphp
-                                                                    <imgsrc="{{ $employeePhotoUrl }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}" 
+                                                                    <img src="{{ $employeePhotoUrl }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}" 
                                                                         class="img-thumbnail mr-1" style="width:32px; height:32px; object-fit:cover; border-radius:50%;">
                                                                 @endforeach
                                                                 @if($incident->responsible_employees->count() > 5)
