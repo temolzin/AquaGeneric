@@ -33,7 +33,7 @@ class CustomerCardController extends Controller
         $locality = $user->locality;
 
         if (!$customer) {
-            return redirect()->route('dashboard')
+            return redirect()->back()
                 ->with('error', 'No se encontró un cliente asociado a tu cuenta.');
         }
 

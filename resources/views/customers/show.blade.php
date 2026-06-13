@@ -16,13 +16,12 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="form-group text-center">
-                                        @if ($customer->getFirstMediaUrl('customerGallery'))
-                                            <img src="{{ $customer->getFirstMediaUrl('customerGallery') }}" alt="Foto del Cliente" class="img-fluid" 
+                                        @php
+                                            $customerPhoto = $customer->getFirstMedia('customerGallery');
+                                            $customerPhotoUrl = $customerPhoto ? asset('storage/' . $customerPhoto->id . '/' . $customerPhoto->file_name) . '?t=' . now()->timestamp : asset('img/userDefault.png');
+                                        @endphp
+                                        <img src="{{ $customerPhotoUrl }}" alt="Foto del Cliente" class="img-fluid"
                                             style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
-                                        @else
-                                            <img src="{{ asset('img/userDefault.png') }}" alt="Foto del Usuario" class="img-fluid" 
-                                            style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 5px;">
-                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-lg-2">

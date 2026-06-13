@@ -132,9 +132,11 @@
                                 </div>
                                 <div class="offset-sm-2 col-sm-10">
                                     <div class="text-center">
+                                        @if($canEditProfile)
                                         <button type="submit" class="btn btn-success" id="updateInformation" name="updateInformation">
                                             Editar datos
                                         </button>
+                                        @endif
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editPassword">
                                             Cambiar contraseña
                                         </button>

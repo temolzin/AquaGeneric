@@ -54,7 +54,7 @@ use App\Http\Controllers\LocalityOpenPayController;
 */
 
 Route::view('/', 'home')->name('home');
-Route::view('/login', 'login')->name('login');
+Route::view('/login', 'auth.login')->name('login');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 Route::get('/dashboard', function () {
@@ -94,7 +94,6 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
         Route::get('/payment-history/{id}', [CustomerController::class, 'generatePaymentHistoryReport'])->name('reports.paymentHistoryReport');
         Route::get('/generate-user-access-pdf/{hash}', [CustomerController::class, 'generateUserAccessPDF'])->name('generate.user.access.pdf');
-        Route::post('/customers/{id}/update-password', [CustomerController::class, 'updatePassword'])->name('customers.updatePassword');
         Route::post('/customers/{id}/assign-password', [CustomerController::class, 'assignOrUpdatePassword'])->name('customers.assignPassword');
         Route::post('/customers/import', [CustomerController::class, 'import'])->name('customers.import');
         Route::get('/customers-download-template', [CustomerController::class, 'downloadTemplate'])->name('customers.downloadTemplate');
@@ -133,12 +132,14 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware' => ['can:viewLocality']], function () {
         Route::get('/localities', [LocalityController::class, 'index'])->name('localities.index');
+        Route::get('/report/pdfLocalities', [LocalityController::class, 'generatepdfLocalities'])->name('localities.pdfLocalities');
         Route::resource('localities', LocalityController::class);
         Route::post('/localities/{locality}/update-logo', [LocalityController::class, 'updateLogo'])->name('localities.updateLogo');
         Route::get('/locality-earnings', [DashboardController::class, 'getEarningsByLocality'])->name('locality.earnings');
         Route::put('/localities/{locality}/mailConfiguration', [MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
         Route::post('/localities/generateTeoken', [LocalityController::class, 'generateToken'])->name('localities.generateToken');
         Route::post('/localities/{locality}/update-pdf-background', [LocalityController::class, 'updatePdfBackground'])->name('localities.updatePdfBackground');
+        Route::post('/localities/{locality}/reset-pdf-background', [LocalityController::class, 'resetPdfBackground'])->name('localities.resetPdfBackground');
         Route::get('/reports/movements/generate', [MovementHistoryController::class, 'generatePDF'])->name('reports.generatePdfMovementsHistory');
         
         Route::put('/localities/{locality}/openpay', [LocalityOpenPayController::class, 'update'])->name('localities.openpay.update');
@@ -211,10 +212,13 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
 
     Route::group(['middleware' => ['can:viewIncidents']], function () {
         Route::resource('incidents', IncidentController::class);
-        Route::resource('customerIncidents', IncidentController::class)->parameters(['customerIncidents' => 'incident']);
         Route::post('/logIncidents', [LogIncidentController::class, 'store'])->name('logsIncidents.store');
         Route::get('/reports/generateIncidentListReport', [IncidentController::class, 'generateIncidentListReport'])->name('report.generateIncidentListReport');
         Route::post('/incidents/update-status', [IncidentController::class, 'updateStatus'])->name('incidents.updateStatus');
+    });
+
+    Route::group(['middleware' => ['can:viewCustomerIncidents']], function () {
+        Route::resource('customerIncidents', IncidentController::class)->parameters(['customerIncidents' => 'incident']);
     });
 
     Route::group(['middleware' => ['can:viewEmployee']], function () {

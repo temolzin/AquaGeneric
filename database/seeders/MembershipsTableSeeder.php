@@ -21,21 +21,21 @@ class MembershipsTableSeeder extends Seeder
 
         $memberships = [
             [
-                'name' => 'Basic Plan - 3 Months',
+                'name' => 'Plan Básico',
                 'price' => 299.00,
                 'term_months' => 3,
                 'water_connections_number' => 1000,
                 'users_number' => 1,
             ],
             [
-                'name' => 'Premium Plan - 6 Months',
+                'name' => 'Plan Premium',
                 'price' => 499.00,
                 'term_months' => 6,
                 'water_connections_number' => 4000,
                 'users_number' => 3,
             ],
             [
-                'name' => 'Enterprise Plan - 12 Months',
+                'name' => 'Plan Empresarial',
                 'price' => 899.00,
                 'term_months' => 12,
                 'water_connections_number' => 10000,

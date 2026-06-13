@@ -21,6 +21,24 @@ class DebtController extends Controller
         $authUser = auth()->user();
         $localityId = $authUser->locality_id;
 
+        $debts = Customer::where('locality_id', $localityId)
+            ->whereHas('waterConnections.debts', function ($query) {
+                $query->where('status', '!=', 'paid');
+            })
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('id', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+                });
+            })
+            ->with(['waterConnections.debts' => function ($query) {
+                $query->where('status', '!=', 'paid');
+            }])
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
         $customers = Customer::where('customers.locality_id', $localityId)
             ->select('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
             ->where(function ($query) use ($search) {
@@ -29,7 +47,6 @@ class DebtController extends Controller
                     ->orWhere('customers.last_name', 'like', "%{$search}%")
                     ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"]);
             })
-
             ->groupBy('customers.id', 'customers.name', 'customers.last_name', 'customers.locality_id')
             ->get();
 
@@ -37,34 +54,7 @@ class DebtController extends Controller
             ->where('locality_id', $localityId)
             ->get();
 
-        $debts = Debt::with(['waterConnection.customer', 'creator', 'debtCategory'])
-            ->whereHas('waterConnection', function ($query) use ($search, $localityId) {
-                $query->where('locality_id', $localityId)
-                    ->whereHas('customer', function ($query) use ($search) {
-                        $query->where(function ($query) use ($search) {
-                            $query->where('customers.id', 'like', "%{$search}%")
-                                ->orWhere('customers.name', 'like', "%{$search}%")
-                                ->orWhere('customers.last_name', 'like', "%{$search}%")
-                                ->orWhereRaw("CONCAT(customers.name, ' ', customers.last_name) LIKE ?", ["%{$search}%"]);
-                        });
-                    });
-            })
-            ->selectRaw('water_connection_id, debts.created_at, SUM(amount) as total_amount, MAX(debt_category_id) as debt_category_id')
-            ->where('status', '!=', 'paid')
-            ->groupBy('water_connection_id', 'debts.created_at')
-            ->orderByDesc('debts.created_at')
-            ->paginate(10);
         $totalDebts = [];
-        foreach ($debts as $debt) {
-            $customerId = $debt->waterConnection->customer_id;
-            if (!isset($totalDebts[$customerId])) {
-                $totalDebts[$customerId] = 0;
-            }
-
-            $totalDebtAmount = Debt::where('water_connection_id', $debt->water_connection_id)->sum('amount');
-            $totalDebtPaid = Debt::where('water_connection_id', $debt->water_connection_id)->sum('debt_current');
-            $totalDebts[$customerId] = $totalDebtAmount - $totalDebtPaid;
-        }
         $user = auth()->user();
         $debtCategoriesQuery = DebtCategory::query();
         $debtCategoriesQuery->where(function ($q) use ($user) {

@@ -45,6 +45,9 @@ class RoleController extends Controller
             'Earningtype' => 'Tipos de ingresos',
             'Generalearning' => 'Ingresos generales',
             'Graficsearningsannual' => 'Gráficas de ingresos',
+            'Debtcategorie' => 'Categorías de Deuda',
+            'Customerincident' => 'Incidentes de Clientes',
+            'Employeeposition' => 'Puestos de Empleados',
         ];
     }
 

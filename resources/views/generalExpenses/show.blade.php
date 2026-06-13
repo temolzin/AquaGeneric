@@ -62,12 +62,14 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label>Comprobante del Gasto</label>
-                                        @if ($expense->hasMedia('expenseGallery'))
-                                            <form action="{{ $expense->getFirstMediaUrl('expenseGallery') }}" method="get" target="_blank">
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="fas fa-eye"></i> Ver recibo
-                                                </button>
-                                            </form>
+                                        @php
+                                            $receipt = $expense->getFirstMedia('expenseGallery');
+                                            $receiptUrl = $receipt ? asset('storage/' . $receipt->id . '/' . $receipt->file_name) . '?t=' . (optional($expense->updated_at)->timestamp ?? now()->timestamp) : null;
+                                        @endphp
+                                        @if ($receiptUrl)
+                                            <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-primary">
+                                                <i class="fas fa-eye"></i> Ver recibo
+                                            </a>
                                         @else
                                             <button class="btn btn-secondary" disabled>
                                                 <i class="fas fa-eye-slash"></i> Sin recibo disponible

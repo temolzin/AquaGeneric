@@ -78,9 +78,11 @@
                                         @endif
                                     </tbody>
                                 </table>
+                                @if(method_exists($connections, 'links'))
                                 <div class="d-flex justify-content-center mt-3">
                                     {!! $connections->links('pagination::bootstrap-4') !!}
                                 </div>
+                                @endif
                             </div>
                         </div>
                     </div>

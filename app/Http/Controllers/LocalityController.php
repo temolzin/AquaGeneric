@@ -6,6 +6,7 @@ use App\Models\Locality;
 use App\Models\Membership;
 use App\Models\Token;
 use App\Models\MailConfiguration;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Crypt;
 
@@ -34,6 +35,41 @@ class LocalityController extends Controller
         ];
 
         return view('localities.index', compact('localities','mailExamples', 'memberships'));
+    }
+
+    public function generatepdfLocalities(Request $request)
+    {
+        $authUser = auth()->user();
+
+        $query = Locality::withCount('customers')
+            ->withSum('payments as total_payments', 'amount')
+            ->withSum('generalEarnings as total_general_earnings', 'amount')
+            ->withSum('generalExpenses as total_expenses', 'amount')
+            ->orderBy('name');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'LIKE', "%{$search}%");
+        }
+
+        $localities = $query->get();
+        $localitiesPerFirstPage = 26;
+        $localitiesPerNextPages = 40;
+
+        $firstPageLocalities = $localities->take($localitiesPerFirstPage);
+        $remainingLocalities = $localities->slice($localitiesPerFirstPage);
+        $otherPagesLocalities = $remainingLocalities->chunk($localitiesPerNextPages);
+
+        $totalPages = 1 + ceil(max(0, $localities->count() - $localitiesPerFirstPage) / $localitiesPerNextPages);
+
+        $pdf = Pdf::loadView('reports.pdfLocalities', compact(
+            'authUser',
+            'firstPageLocalities',
+            'otherPagesLocalities',
+            'totalPages'
+        ))->setPaper('A4', 'portrait');
+
+        return $pdf->stream('localities.pdf');
     }
 
     public function store(Request $request)
@@ -168,5 +204,28 @@ class LocalityController extends Controller
         }
 
         return redirect()->route('localities.index')->with('success', 'Fondos de reportes actualizados correctamente.');
+    }
+
+    public function resetPdfBackground(Request $request, $id)
+    {
+        $locality = Locality::find($id);
+
+        if (!$locality) {
+            return redirect()->back()->with('error', 'Localidad no encontrada.');
+        }
+
+        $type = $request->input('type');
+
+        if ($type === 'vertical') {
+            $locality->clearMediaCollection('pdfBackgroundVertical');
+            return redirect()->route('localities.index')->with('success', 'Fondo de reporte vertical reseteado correctamente.');
+        }
+
+        if ($type === 'horizontal') {
+            $locality->clearMediaCollection('pdfBackgroundHorizontal');
+            return redirect()->route('localities.index')->with('success', 'Fondo de reporte horizontal reseteado correctamente.');
+        }
+
+        return redirect()->back()->with('error', 'Tipo de fondo no válido.');
     }
 }

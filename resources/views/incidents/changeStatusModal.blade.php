@@ -34,7 +34,7 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="employee" class="form-label">Responsable(*)</label>
-                                            <select class="form-control select2" name="employee" required>
+                                            <select class="form-control" name="employee" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($employees as $employee)
                                                     <option value="{{ $employee->id }}">
@@ -47,7 +47,7 @@
                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="status" class="form-label">Estatus(*)</label>
-                                            <select class="form-control select2" name="status_id" id="status_id" required>
+                                            <select class="form-control" name="status_id" id="status_id" required>
                                                 <option value="">Selecciona una opción</option>
                                                 @foreach ($statuses as $status)
                                                     <option value="{{ $status->id }}">{{ $status->status }}</option>
@@ -57,8 +57,8 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="description" class="form-label">Descripción</label>
-                                            <textarea class="form-control" name="description" placeholder="Agrega una descripción" rows="3"></textarea>
+                                            <label for="description" class="form-label">Descripción(*)</label>
+                                            <textarea class="form-control" name="description" placeholder="Agrega una descripción" rows="3" required></textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -77,7 +77,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" id="saveStatus" class="btn btn-success">Guardar</button>
+                        <button type="submit" id="saveStatus" class="btn btn-success">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -119,10 +119,11 @@
             });
         });
 
-        saveBtn.addEventListener('click', function () {
-            const formData = new FormData(form);
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
 
-            fetch(form.action, {
+            fetch(this.action, {
                 method: 'POST',
                 body: formData,
                 headers: {

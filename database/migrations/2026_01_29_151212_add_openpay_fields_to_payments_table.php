@@ -26,10 +26,8 @@ return new class extends Migration
 
     public function down()
     {
-        // Primero actualizar cualquier registro con 'openpay' a 'card'
         DB::table('payments')->where('method', 'openpay')->update(['method' => 'card']);
 
-        // Luego revertir el enum
         DB::statement("ALTER TABLE payments MODIFY method ENUM('cash', 'card', 'transfer') NOT NULL DEFAULT 'cash'");
 
         Schema::table('payments', function (Blueprint $table) {

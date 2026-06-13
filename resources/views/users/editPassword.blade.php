@@ -8,9 +8,15 @@
                         <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                 </div>
-                <form action="{{ route('users.updatePassword', $user->id) }}" enctype="multipart/form-data" method="POST" id="edit-user-form-{{ $user->id }}">
+                @php
+                    $passwordRouteName = $passwordRouteName ?? 'users.updatePassword';
+                    $passwordFormMethod = $passwordFormMethod ?? 'PUT';
+                @endphp
+                <form action="{{ route($passwordRouteName, $user->id) }}" enctype="multipart/form-data" method="POST" id="edit-user-form-{{ $user->id }}">
                     @csrf
-                    @method('PUT')
+                    @if(strtoupper($passwordFormMethod) !== 'POST')
+                        @method($passwordFormMethod)
+                    @endif
                     <div class="card-body">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">

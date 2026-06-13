@@ -12,12 +12,11 @@
                             <div class="card-box head">
                                 <div class="row align-items-center">
                                     <div class="col-md-2 text-center">
-                                        @if ($authUser->getFirstMediaUrl('userGallery'))
-                                            <img src="{{ $authUser->getFirstMediaUrl('userGallery') }}"
-                                                alt="Foto de {{ $authUser->name }}">
-                                        @else
-                                            <img src="{{ asset('img/userDefault.png') }}">
-                                        @endif
+                                        <img id="userProfileImage"
+                                            src="{{ $authUser->getAdminlteImageAttribute() }}"
+                                            alt="Foto de {{ $authUser->name }}"
+                                            class="img-fluid"
+                                            style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
                                     </div>
                                     <div class="col-md-8">
                                         <h4 class="font-weight-bold text-capitalize welcome">Bienvenid@</h4>
@@ -203,6 +202,50 @@
                     @endcan
 
                     @can('viewLocalityCharts')
+                        <div class="row">
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>{{ $totalUsers }}</h3>
+                                        <p>Usuarios</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <a href="{{ route('users.index') }}" class="small-box-footer">
+                                        Más información <i class="fa fa-arrow-circle-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="small-box bg-danger">
+                                    <div class="inner">
+                                        <h3>{{ $totalLocalities }}</h3>
+                                        <p>Localidades</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <a href="{{ route('localities.index') }}" class="small-box-footer">
+                                        Más información <i class="fa fa-arrow-circle-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-xs-6">
+                                <div class="small-box bg-success">
+                                    <div class="inner">
+                                        <h3>{{ $totalMemberships }}</h3>
+                                        <p>Membresías</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-id-card"></i>
+                                    </div>
+                                    <a href="{{ route('memberships.index') }}" class="small-box-footer">
+                                        Más información <i class="fa fa-arrow-circle-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="locality_id" class="form-label">Seleccionar Localidad</label>
@@ -224,24 +267,37 @@
                                 <div class="card-header">
                                     <h3 class="card-title">Ingresos Mensuales<span id="localityInfoMonthly"></h3>
                                 </div>
-                                <div class="card-body">
-                                    <canvas id="earningsChart" width="400" height="200"></canvas>
+                                <div class="card-body chart-card-body">
+                                    <canvas id="earningsChart"></canvas>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Ingresos Anuales por Mes<span id="localityInfoAnnual"></h3>
+                                    <h3 class="card-title">Balance General<span id="localityInfoAnnual"></span></h3>
                                 </div>
-                                <div class="card-body">
-                                    <canvas id="annualEarningsChart" width="400" height="200"></canvas>
+                                <div class="card-body chart-card-body">
+                                    <canvas id="annualEarningsChart"></canvas>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
                     @endcan
+                    @if(Auth::user()->hasRole('Admin'))
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        Estado de Membresías
+                                    </h3>
+                                </div>
+                                <div class="card-body chart-card-body">
+                                    <canvas id="membershipPieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     @can('viewDashboardCards')
                     <div class="card">
                         <div class="card-header">
@@ -253,7 +309,7 @@
                                     <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100">
                                         @csrf
                                         <button type="submit" class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm w-100 w-md-auto" title="{{ $hasMailConfig
-                                                ? 'Enviar correos de recordatorio' : 'No hay configuración de correo válida para esta localidad' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
+                                                ? 'Enviar correos de recordatorio' : 'Para enviar recordatorios configura tu correo, contáctanos' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
                                             <i class="fas fa-envelope"></i> Enviar recordatorios
                                         </button>
                                     </form>
@@ -326,10 +382,12 @@
                         type: 'GET',
                         data: { locality_id: localityId},
                         success: function(response){
-                            earningsChart.data.datasets[0].data = response.earningsPerMonth;
+                            earningsChart.data.datasets[0].data = response.incomes;
                             earningsChart.update();
 
-                            annualEarningsChart.data.datasets[0].data = response.earningsPerMonth;
+                            annualEarningsChart.data.datasets[0].data = response.incomes;
+                            annualEarningsChart.data.datasets[1].data = response.expenses;
+                            annualEarningsChart.data.datasets[2].data = response.gains;
                             annualEarningsChart.update();
                         },
                         error: function(xhr) {
@@ -343,6 +401,8 @@
                     earningsChart.update();
 
                     annualEarningsChart.data.datasets[0].data = Array(12).fill(0);
+                    annualEarningsChart.data.datasets[1].data = Array(12).fill(0);
+                    annualEarningsChart.data.datasets[2].data = Array(12).fill(0);
                     annualEarningsChart.update();
 
                     $('#localityInfoMonthly').text('');
@@ -391,13 +451,15 @@
                 labels: @json($data['months']),
                 datasets: [{
                     label: 'Ingresos en $',
-                    data: @json($data['earningsPerMonth']),
+                    data: @json($data['monthlyIncomes']),
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -411,18 +473,97 @@
             type: 'line',
             data: {
                 labels: @json($data['months']),
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: @json($data['monthlyIncomes']),
+                        backgroundColor: 'rgba(54, 162, 235, 0.4)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: 'Gastos',
+                        data: @json($data['annualExpenses']),
+                        backgroundColor: 'rgba(236, 125, 41, 0.99)',
+                        borderColor: 'rgb(248, 84, 34)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: 'Ganancias',
+                        data: @json($data['annualGains']),
+                        backgroundColor: 'rgba(75, 192, 192, 0.4)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 4500,
+                        ticks: {
+                            stepSize: 500
+                        }
+                    }
+                }
+            }
+        });
+        var pieCtx = document.getElementById('membershipPieChart').getContext('2d');
+        var membershipDistributionData = @json($membershipDistribution);
+        var membershipLabels = membershipDistributionData.map(function(item) {
+            return item.name;
+        });
+        var membershipData = membershipDistributionData.map(function(item) {
+            return item.total;
+        });
+        function generateChartColors(count) {
+            var colors = [];
+            for (var i = 0; i < count; i++) {
+                var hue = Math.round((360 / count) * i);
+                colors.push('hsl(' + hue + ', 100%, 45%)');
+            }
+            return colors;
+        }
+        var colors = generateChartColors(membershipData.length);
+
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: membershipLabels,
                 datasets: [{
-                    label: 'Ingresos Anuales en $',
-                    data: @json($data['earningsPerMonth']),
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 2
+                    data: membershipData,
+                    backgroundColor: colors,
+                    borderColor: '#ffffff',
+                    borderWidth: 1
                 }]
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 16
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var value = context.parsed || 0;
+                                return value + ' localidades';
+                            }
+                        }
                     }
                 }
             }

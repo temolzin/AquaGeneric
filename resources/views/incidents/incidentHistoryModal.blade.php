@@ -69,8 +69,11 @@
                                                         <div class="container-fluid">
                                                             <div class="row">
                                                                 @foreach ($log->getMedia('logIncidentImages') as $media)
+                                                                    @php
+                                                                        $mediaUrl = asset('storage/' . $media->id . '/' . $media->file_name) . '?v=' . time();
+                                                                    @endphp
                                                                     <div class="col-6 mb-3">
-                                                                        <img src="{{ $media->getUrl() }}" alt="Imagen incidencia"
+                                                                        <img src="{{ $mediaUrl }}" alt="Imagen incidencia"
                                                                             class="img-fluid rounded img-thumbnail"
                                                                             style="width: 100%; max-height: 150px; object-fit: cover;">
                                                                     </div>

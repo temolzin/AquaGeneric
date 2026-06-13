@@ -15,7 +15,8 @@ class EmployeeController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Employee::where('locality_id', $authUser->locality_id)
+        $query = Employee::with('position')
+            ->where('locality_id', $authUser->locality_id)
             ->orderBy('created_at', 'desc');
 
         if ($request->has('search')) {

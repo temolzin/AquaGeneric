@@ -32,9 +32,25 @@ class ReportListController extends Controller
 
         $sectionsCollection = new Collection($sections);
 
-        $sectionsCollection = $sectionsCollection->filter(function ($section) {
-            return $section['text'] === 'Panel' || !empty($section['reports']);
-        });
+        $allowedSections = [
+            'Panel',
+            'Gestión de Tomas de Agua',
+            'Gestión de Pagos',
+            'Gestión de Incidencias',
+            'Clientes',
+            'Gestión de Deudas',
+            'Gestión de Empleados',
+            'Gestion de Inventario'
+        ];
+
+        $sectionsCollection = $sectionsCollection
+            ->filter(function ($section) use ($allowedSections) {
+                return in_array($section['text'], $allowedSections);
+            })
+            ->sortBy(function ($section) use ($allowedSections) {
+                return array_search($section['text'], $allowedSections);
+            })
+            ->values();
 
         $search = $request->input('search');
         if ($search) {
@@ -120,7 +136,7 @@ class ReportListController extends Controller
                 }
                 break;
 
-            case 'Deudas':
+            case 'Gestión de Deudas':
                 $reports = [
                     ['text' => 'Clientes con Deudas', 'url' => '/customers-with-debts', 'type' => 'pdf'],
                 ];
@@ -136,6 +152,14 @@ class ReportListController extends Controller
                 ];
                 break;
 
+                case 'Gestion de Inventario':
+                $reports = [
+                    [
+                        'text' => 'Inventario','url' => '/reports/pdfInventory','type' => 'pdf'
+                    ],
+                ];
+                break;
+
             case 'Gestión de Gastos':
                 $reports = [];
                 break;
@@ -148,15 +172,9 @@ class ReportListController extends Controller
                 ];
                 break;
 
-            case 'Empleados':
+            case 'Gestión de Empleados':
                 $reports = [
                     ['text' => 'Lista de Empleados', 'url' => '/reports/generateEmployeeListReport', 'type' => 'pdf'],
-                ];
-                break;
-
-            case 'Gestion de Inventario':
-                $reports = [
-                    ['text' => 'Inventario de Componentes', 'url' => '/reports/pdfInventory', 'type' => 'pdf'],
                 ];
                 break;
 

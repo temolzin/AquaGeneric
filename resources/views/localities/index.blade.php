@@ -12,14 +12,26 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Localidades</h2>
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            <div class="btn-group" role="group" aria-label="Acciones de Usuario">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-5">
+                            <form method="GET" action="{{ route('localities.index') }}">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Buscar por localidad, municipio, código postal" value="{{ request('search') }}">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">
+                                            Buscar
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-7 text-md-right">
+                            <div class="btn-group" role="group">
                                 <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createLocality">
                                     <i class="fa fa-plus"></i> Registrar Localidad
                                 </button>
-                                <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Localities" href="#">
-                                    <i class="fas fa-map"></i> Generar Lista
+                                <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Localities" href="{{ route('localities.pdfLocalities', ['search' => request('search')]) }}">
+                                    <i class="fas fa-file-pdf"></i> Lista de Localidades
                                 </a>
                                 <a type="button" class="btn btn-info" href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank" title="Ver guía de registro">
                                     <i class="fas fa-file-pdf"></i> Guía OpenPay
@@ -29,16 +41,6 @@
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <div class="col-lg-4">
-                <form method="GET" action="{{ route('localities.index') }}" class="my-3">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Buscar por localidad, municipio, código postal" value="{{ request('search') }}">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
                 <div class="x_content">
                     <div class="row">
                         <div class="col-sm-12">
@@ -66,13 +68,12 @@
                                         <tr>
                                             <td scope="row">{{$locality->id}}</td>
                                             <td>
-                                                @if ($locality->getFirstMediaUrl('localityGallery'))
-                                                <img src="{{$locality->getFirstMediaUrl('localityGallery') }}" alt="Foto de {{$locality->name}}"
-                                                style="width: 50px; height: 50px; border-radius: 50%;">
-                                            @else
-                                                <img src="{{ asset('img/localityDefault.png') }}"
-                                                style="width: 50px; height: 50px; border-radius: 50%;">
-                                            @endif
+                                                @php
+                                                    $localityPhoto = $locality->getFirstMedia('localityGallery');
+                                                    $localityPhotoUrl = $localityPhoto ? asset('storage/' . $localityPhoto->id . '/' . $localityPhoto->file_name) . '?t=' . (optional($locality->updated_at)->timestamp ?? now()->timestamp) : asset('img/localityDefault.png');
+                                                @endphp
+                                                <img src="{{ $localityPhotoUrl }}" alt="Foto de {{$locality->name}}"
+                                                    style="width: 50px; height: 50px; border-radius: 50%;">
                                             </td>
                                             <td>{{$locality->name}}</td>
                                             <td>{{$locality->municipality}}</td>
@@ -100,7 +101,11 @@
                                                             <i class="fas fa-image"></i>
                                                         </button>
                                                     @endcan
-                                                    <button type="button" class="btn bg-purple mr-2" data-toggle="modal"  title="Configurar correo" data-target="#mailConfigModal{{$locality->id}}">
+                                                    <button type="button" 
+                                                        class="btn {{ $locality->mailConfiguration ? 'bg-purple' : 'btn-outline-secondary text-purple' }} mr-2" 
+                                                        data-toggle="modal" 
+                                                        title="{{ $locality->mailConfiguration ? 'Correo configurado' : 'Configurar correo' }}" 
+                                                        data-target="#mailConfigModal{{$locality->id}}">
                                                         <i class="fas fa-envelope"></i>
                                                     </button>
                                                     <button type="button" class="btn bg-navy mr-2" data-toggle="modal" title="Fondo de reporte" data-target="#editPdfBackground{{$locality->id}}">

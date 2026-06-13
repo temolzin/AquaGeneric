@@ -443,7 +443,8 @@ return [
         'text' => 'Roles',
         'url' => '/roles',
         'icon' => 'fas fa-fw fa-user-shield',
-        'can'  => 'viewRoles'
+        'can'  => 'viewRoles',
+        'active' => ['/roles*'],
     ],
     [
         'text' => 'Clientes',
@@ -514,31 +515,31 @@ return [
         'text' => 'Mis Pagos',
         'url' => '/viewCustomerPayments',
         'can' => 'viewCustomerPayments',
-        'icon' => 'fas fa-fw fa-dollar-sign text-white',
+        'icon' => 'fas fa-fw fa-dollar-sign',
     ],
     [
         'text' => 'Mis Deudas',
         'url' => '/viewCustomerDebts',
         'can'  => 'viewCustomerDebts',
-        'icon' => 'fas fa-fw fa-exclamation-circle text-white',
+        'icon' => 'fas fa-fw fa-exclamation-circle',
     ],
     [
         'text' => 'Mis Tarjetas',
         'url' => '/customerCards',
         'can'  => 'viewCustomerDebts',
-        'icon' => 'fas fa-fw fa-credit-card text-white',
+        'icon' => 'fas fa-fw fa-credit-card',
     ],
     [
         'text' => 'Mis Tomas de Agua',
         'url' => '/viewCustomerWaterConnections',
         'can' => 'viewWaterConnections',
-        'icon' => 'fas fa-fw fa-water text-white',
+        'icon' => 'fas fa-fw fa-water',
     ],
     [
         'text' => 'Mis Incidencias',
         'url' => '/customerIncidents',
         'can' => 'viewCustomerFaultReports',
-        'icon' => 'fa fa-exclamation-triangle text-white',
+        'icon' => 'fa fa-exclamation-triangle',
     ],
     [
         'text' => 'Avisos',
