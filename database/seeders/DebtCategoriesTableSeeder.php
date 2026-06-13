@@ -25,6 +25,11 @@ class DebtCategoriesTableSeeder extends Seeder
         );
 
         $localityIds = DB::table('localities')->pluck('id');
+        $localitiesWithCategories = DB::table('debt_categories')
+            ->whereNotNull('locality_id')
+            ->distinct()
+            ->pluck('locality_id')
+            ->toArray();
         $usersByLocality = DB::table('users')
             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
@@ -54,6 +59,9 @@ class DebtCategoriesTableSeeder extends Seeder
         $data = [];
 
         foreach ($localityIds as $localityId) {
+            if (in_array($localityId, $localitiesWithCategories)) {
+                continue;
+            }
             $createdBy = $usersByLocality[$localityId]->first()->id ?? $defaultUser;
 
             foreach ($baseCategories as $category) {
@@ -66,11 +74,12 @@ class DebtCategoriesTableSeeder extends Seeder
                 ];
             }
         }
-
+        if (!empty($data)) {
         DB::table('debt_categories')->upsert(
             $data,
             ['name', 'locality_id'],
             []
         );
+        }
     }
 }
