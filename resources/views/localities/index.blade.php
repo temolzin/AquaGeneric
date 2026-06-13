@@ -25,17 +25,19 @@
                                 </div>
                             </form>
                         </div>
-                            <div class="col-md-7 text-right">
-                                <button class="btn btn-success mr-2" data-toggle="modal" data-target="#createLocality">
+                        <div class="col-md-7 text-md-right">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-success mr-2" data-toggle='modal' data-target="#createLocality">
                                     <i class="fa fa-plus"></i> Registrar Localidad
                                 </button>
-                                <a class="btn btn-secondary mr-2" target="_blank" href="{{ route('localities.pdfLocalities', ['search' => request('search')]) }}">
-                                    <i class="fas fa-map"></i> Generar Lista
+                                <a type="button" class="btn btn-secondary mr-2" target="_blank" title="Localities" href="{{ route('localities.pdfLocalities', ['search' => request('search')]) }}">
+                                    <i class="fas fa-file-pdf"></i> Lista de Localidades
                                 </a>
-                                <a class="btn btn-info" href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank">
+                                <a type="button" class="btn btn-info" href="{{ asset('docs/GUIA_PARA_REGISTRAR.pdf') }}" target="_blank" title="Ver guía de registro">
                                     <i class="fas fa-file-pdf"></i> Guía OpenPay
                                 </a>
                             </div>
+                        </div>
                     </div>
                     <div class="clearfix"></div>
                 </div>
