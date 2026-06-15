@@ -219,8 +219,15 @@ class DashboardController extends Controller
             'totalUsers',
             'totalLocalities',
             'totalMemberships',
+<<<<<<< HEAD
             'membershipDistribution'
             , 'membershipStatusCounts'
+=======
+            'membershipDistribution',
+            'membershipStatusChart',
+            'remindersSentToday',
+            'membershipStatusCounts'
+>>>>>>> 86ed63523c773fd51bf018db260034f9810b0cad
         ));
     }
 
