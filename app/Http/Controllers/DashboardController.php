@@ -143,6 +143,8 @@ class DashboardController extends Controller
 
         $mailConfig = $authUser->locality?->mailConfiguration;
         $hasMailConfig = $mailConfig && $mailConfig->isComplete();
+        $locality = $authUser->locality;
+        $remindersSentToday = $locality && $locality->last_reminder_sent_at && $locality->last_reminder_sent_at->isToday();
 
         $waterConnections = $authUser->customer?->waterConnections ?? collect();
         $totalDebts = $waterConnections->flatMap->debts->count();
@@ -186,8 +188,9 @@ class DashboardController extends Controller
             'totalUsers',
             'totalLocalities',
             'totalMemberships',
-            'membershipDistribution'
-            , 'membershipStatusCounts'
+            'membershipDistribution',
+            'remindersSentToday',
+            'membershipStatusCounts'
         ));
     }
 
