@@ -71,9 +71,9 @@ class DashboardController extends Controller
                 ? $activeMemberships++
                 : $expiredMemberships++;
 
-        } catch (Exception $e) {
-            $expiredMemberships++;
-        }
+            } catch (Exception $e) {
+                $expiredMemberships++;
+            }
         }
         $membershipStatusChart = [
             'Activas' => $activeMemberships,
