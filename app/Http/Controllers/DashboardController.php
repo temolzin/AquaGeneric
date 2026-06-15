@@ -61,19 +61,19 @@ class DashboardController extends Controller
                 continue;
             }
             try {
-                $tokenValidation = Crypt::decrypt($locality->token);
-                $endDate = Carbon::parse(
-                    $tokenValidation['data']['endDate']
-                );
+            $tokenValidation = Crypt::decrypt($locality->token);
 
-                if ($endDate->isFuture()) {
-                    $activeMemberships++;
-                } else {
-                    $expiredMemberships++;
-                }
-            } catch (Exception $e) {
-                $expiredMemberships++;
-            }
+            $endDate = Carbon::parse(
+                $tokenValidation['data']['endDate']
+            );
+
+            $endDate->isFuture()
+                ? $activeMemberships++
+                : $expiredMemberships++;
+
+        } catch (Exception $e) {
+            $expiredMemberships++;
+        }
         }
         $membershipStatusChart = [
             'Activas' => $activeMemberships,
