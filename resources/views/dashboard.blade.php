@@ -582,7 +582,7 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false // esto oculta la leyenda
+                            display: false 
                         }
                     },
                     scales: {
