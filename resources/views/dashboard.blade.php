@@ -305,14 +305,21 @@
                                 <div class="col-12 col-md-10">
                                     <h3 class="card-title m-0">Períodos Próximos a Vencer</h3>
                                 </div>
-                                <div class="col-12 col-md-auto mt-2 mt-md-0 ms-md-auto">
-                                    <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100">
-                                        @csrf
-                                        <button type="submit" class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm w-100 w-md-auto" title="{{ $hasMailConfig
-                                                ? 'Enviar correos de recordatorio' : 'Para enviar recordatorios configura tu correo, contáctanos' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
-                                            <i class="fas fa-envelope"></i> Enviar recordatorios
-                                        </button>
-                                    </form>
+                                <div class="col-12 col-md-auto mt-2 mt-md-0 ms-md-auto d-flex align-items-center">
+                                    @if($remindersSentToday)
+                                        <div class="text-warning d-flex align-items-center" title="Los recordatorios ya fueron enviados el día de hoy">
+                                            <i class="fas fa-exclamation-circle fa-lg mr-2"></i>
+                                            <span class="font-weight-bold">Ya se enviaron recordatorios</span>
+                                        </div>
+                                    @else
+                                        <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100" id="sendRemindersForm">
+                                            @csrf
+                                            <button type="submit" class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm w-100 w-md-auto" title="{{ $hasMailConfig
+                                                    ? 'Enviar correos de recordatorio' : 'Para enviar recordatorios configura tu correo, contáctanos' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
+                                                <i class="fas fa-envelope"></i> Enviar recordatorios
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </div>
                         </div>
