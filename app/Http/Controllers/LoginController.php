@@ -40,7 +40,7 @@ class LoginController extends Controller
             $secondsLeft = RateLimiter::availableIn($key);
             session()->flash('lockout_seconds', $secondsLeft);
             return back()->withErrors([
-                'email' => "Demasiados intentos fallidos. Por favor espera {$secondsLeft} segundos antes de intentarlo de nuevo.",
+                'password' => "Demasiados intentos fallidos. Por favor espera {$secondsLeft} segundos antes de intentarlo de nuevo.",
             ])->withInput($request->only('email'));
         }
 
@@ -79,7 +79,7 @@ class LoginController extends Controller
         if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
             session()->flash('lockout_seconds', self::LOCKOUT_SECONDS);
             return back()->withErrors([
-                'email' => 'Demasiados intentos fallidos. Por favor espera ' . self::LOCKOUT_SECONDS . ' segundos antes de intentarlo de nuevo.',
+                'password' => 'Demasiados intentos fallidos. Por favor espera ' . self::LOCKOUT_SECONDS . ' segundos antes de intentarlo de nuevo.',
             ])->withInput($request->only('email'));
         }
 
@@ -87,7 +87,7 @@ class LoginController extends Controller
         $remaining = self::MAX_ATTEMPTS - $attempts;
 
         return back()->withErrors([
-            'email' => "Las credenciales proporcionadas no coinciden con nuestros registros. Te queda(n) {$remaining} intento(s).",
+            'password' => "Las credenciales proporcionadas no coinciden con nuestros registros. Te queda(n) {$remaining} intento(s).",
         ])->withInput($request->only('email'));
     }
 
