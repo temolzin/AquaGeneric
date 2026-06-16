@@ -118,12 +118,11 @@
                                                         <i class="fas fa-credit-card"></i>
                                                     </button>
                                                     @can('deleteLocality')
-                                                        @if($locality->hasDependencies())
-                                                            <button type="button" class="btn btn-secondary mr-2" data-toggle="modal" title="Eliminación no permitida: Existen datos relacionados con este registro." disabled>
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
-                                                        @else
-                                                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{$locality->id}}">
+                                                        @if(!$locality->hasDependencies())
+                                                            <button type="button" class="btn btn-danger mr-2"
+                                                                data-toggle="modal"
+                                                                title="Eliminar Registro"
+                                                                data-target="#delete{{$locality->id}}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         @endif
