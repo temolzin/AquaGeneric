@@ -90,7 +90,7 @@ To run this project, you will need:
 To ensure the system works correctly, you must configure the following variables in your `.env` file. These are crucial for the application's core functionalities:
 
 ### Captcha Settings
-*   **`NOCAPTCHA_SITEKEY`**, **`NOCAPTCHA_SECRET`**: Fill in your Google reCAPTCHA keys. These are required to protect your login and registration forms from automated bot attacks and spam.
+*   **`NOCAPTCHA_SITEKEY`**, **`NOCAPTCHA_SECRET`**: Fill in your Google reCAPTCHA keys.
 
 ### Mail Configuration
 *   **`MAIL_HOST`**, **`MAIL_PORT`**, **`MAIL_USERNAME`**, **`MAIL_PASSWORD`**: Provide your SMTP server details. This allows the system to send critical notifications, service alerts, and password recovery emails to users.
