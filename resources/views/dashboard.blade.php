@@ -285,7 +285,8 @@
                     </div>
                     @endcan
                     @if(Auth::user()->hasRole('Admin'))
-                        <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">
@@ -297,7 +298,16 @@
                                 </div>
                             </div>
                         </div>
-                        @endif
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Estatus de Membresías</h3>
+                            </div>
+                            <div class="card-body chart-card-body">
+                                <canvas id="membershipStatusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     @can('viewDashboardCards')
                     <div class="card">
                         <div class="card-header">
@@ -541,7 +551,45 @@
             return colors;
         }
         var colors = generateChartColors(membershipData.length);
-
+        const membershipStatusData = @json($membershipStatusChart);
+        const statusCtx = document.getElementById('membershipStatusChart').getContext('2d');
+        if (statusCtx) {
+            new Chart(statusCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(membershipStatusData),
+                    datasets: [{
+                        label: 'Localidades',
+                        data: Object.values(membershipStatusData),
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.35)',
+                            'rgba(220, 53, 69, 0.30)',
+                            'rgba(111, 66, 193, 0.35)'
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(111, 66, 193, 1)'
+                        ],
+                        borderWidth: 2,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false 
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
         new Chart(pieCtx, {
             type: 'doughnut',
             data: {
