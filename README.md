@@ -85,6 +85,20 @@ To run this project, you will need:
 
     Open the URL shown in the console (usually http://127.0.0.1:8000).
 
+## Environment Variables 
+
+To ensure the system works correctly, you must configure the following variables in your `.env` file. These are crucial for the application's core functionalities:
+
+### Captcha Settings
+*   **`NOCAPTCHA_SITEKEY`**, **`NOCAPTCHA_SECRET`**: Fill in your Google reCAPTCHA keys. These are required to protect your login and registration forms from automated bot attacks and spam.
+
+### Mail Configuration
+*   **`MAIL_HOST`**, **`MAIL_PORT`**, **`MAIL_USERNAME`**, **`MAIL_PASSWORD`**: Provide your SMTP server details. This allows the system to send critical notifications, service alerts, and password recovery emails to users.
+
+### Communication Settings
+*   **`WHATSAPP_NUMBER`**: Enter the administration's phone number in international format. This number is used to generate direct contact links so users can reach support via WhatsApp.
+*   **`CONTACT_FORM_TO_EMAIL`**: Specify the email address where you want to receive inquiries. All messages submitted through the website's contact form will be forwarded to this address.
+
 ## Additional Commands
 
 - **Manual Migrations**:
