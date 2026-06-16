@@ -1,6 +1,6 @@
 @extends('layouts.adminlte')
 
-@section('title', config('adminlte.title') . ' | Cargos de Empleados')
+@section('title', config('adminlte.title') . ' | Departamentos de Empleados')
 
 @section('content')
 <section class="content">
@@ -8,7 +8,7 @@
         <div class="col-md-12 col-sm-12">
             <div class="x_panel">
                 <div class="x_title">
-                    <h2>Cargos de Empleados</h2>
+                    <h2>Departamentos de Empleados</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">

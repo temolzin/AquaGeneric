@@ -493,7 +493,7 @@ return [
                 'can'  => 'viewEmployee',
             ],
             [
-                'text' => 'Cargos de Empleados',
+                'text' => 'Departamentos de Empleados',
                 'url'  => '/employeePositions',
                 'icon' => 'fas fa-fw fa-tags',
                 'can'  => 'viewEmployeePositions',
