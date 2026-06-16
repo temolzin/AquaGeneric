@@ -50,6 +50,34 @@ class DashboardController extends Controller
         $thresholdDays = 30;
 
         $allLocalities = Locality::all();
+        $activeMemberships = 0;
+        $expiredMemberships = 0;
+        $withoutTokenMemberships = 0;
+
+        foreach ($allLocalities as $locality) {
+            if (!$locality->token) {
+                $withoutTokenMemberships++;
+                continue;
+            }
+            try {
+            $tokenValidation = Crypt::decrypt($locality->token);
+            $endDate = Carbon::parse(
+                $tokenValidation['data']['endDate']
+            );
+            $endDate->isFuture()
+                ? $activeMemberships++
+                : $expiredMemberships++;
+
+            } catch (Exception $e) {
+                $expiredMemberships++;
+            }
+        }
+        $membershipStatusChart = [
+            'Activas' => $activeMemberships,
+            'Caducadas' => $expiredMemberships,
+            'Sin Token' => $withoutTokenMemberships,
+        ];
+
         foreach ($allLocalities as $loc) {
         $status = $loc->getSubscriptionStatus();
         ($status === Locality::SUBSCRIPTION_ACTIVE && $loc->token)
@@ -174,6 +202,7 @@ class DashboardController extends Controller
             'paidDebtsExpiringSoon' => $this->getPaidDebtsExpiringSoon($authUser->locality_id),
             'membershipDistribution' => $membershipDistribution,
             'membershipStatusCounts' => $membershipStatusCounts,
+            'membershipStatusChart' => $membershipStatusChart,
         ];
 
         return view('dashboard', compact(
@@ -189,6 +218,7 @@ class DashboardController extends Controller
             'totalLocalities',
             'totalMemberships',
             'membershipDistribution',
+            'membershipStatusChart',
             'remindersSentToday',
             'membershipStatusCounts'
         ));
