@@ -15,41 +15,25 @@
                         <div class="card-body">
                             <ul class="nav nav-tabs mb-3" id="debtTabs{{ $waterConnectionDebt->id }}" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active"
-                                        id="general-tab{{ $waterConnectionDebt->id }}"
-                                        data-toggle="tab"
-                                        href="#general{{ $waterConnectionDebt->id }}"
-                                        role="tab">
+                                    <a class="nav-link active" id="general-tab{{ $waterConnectionDebt->id }}" data-toggle="tab" href="#general{{ $waterConnectionDebt->id }}" role="tab">
                                         Información General
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link"
-                                        id="payments-tab{{ $waterConnectionDebt->id }}"
-                                        data-toggle="tab"
-                                        href="#payments{{ $waterConnectionDebt->id }}"
-                                        role="tab">
+                                    <a class="nav-link" id="payments-tab{{ $waterConnectionDebt->id }}" data-toggle="tab" href="#payments{{ $waterConnectionDebt->id }}" role="tab">
                                         Historial de Pagos
                                     </a>
                                 </li>
                             </ul>
-
                             <div class="tab-content pt-3">
-
-                                {{-- TAB INFORMACIÓN GENERAL --}}
-                                <div class="tab-pane fade show active"
-                                    id="general{{ $waterConnectionDebt->id }}"
-                                    role="tabpanel">
-
+                                <div class="tab-pane fade show active" id="general{{ $waterConnectionDebt->id }}" role="tabpanel">
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>ID</label>
-                                                <input type="text" disabled class="form-control"
-                                                    value="{{ $waterConnectionDebt->id }}">
+                                                <input type="text" disabled class="form-control" value="{{ $waterConnectionDebt->id }}">
                                             </div>
                                         </div>
-
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>Estado</label>
@@ -64,7 +48,6 @@
                                                 </p>
                                             </div>
                                         </div>
-
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>Monto de la Deuda</label>
@@ -74,12 +57,10 @@
                                                             <i class="fa fa-dollar-sign"></i>
                                                         </span>
                                                     </div>
-                                                    <input type="text" disabled class="form-control"
-                                                        value="{{ number_format($waterConnectionDebt->amount, 2) }}">
+                                                    <input type="text" disabled class="form-control" value="{{ number_format($waterConnectionDebt->amount, 2) }}">
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>Cantidad Pagada</label>
@@ -89,12 +70,10 @@
                                                             <i class="fa fa-dollar-sign"></i>
                                                         </span>
                                                     </div>
-                                                    <input type="text" disabled class="form-control"
-                                                        value="{{ number_format($waterConnectionDebt->debt_current, 2) }}">
+                                                    <input type="text" disabled class="form-control" value="{{ number_format($waterConnectionDebt->debt_current, 2) }}">
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label>Saldo pendiente</label>
@@ -104,40 +83,31 @@
                                                             <i class="fa fa-dollar-sign"></i>
                                                         </span>
                                                     </div>
-
                                                     @php
                                                         $remainingAmount = $waterConnectionDebt->amount - $waterConnectionDebt->debt_current;
                                                     @endphp
-
-                                                    <input type="text" disabled class="form-control"
-                                                        value="{{ number_format($remainingAmount, 2) }}">
+                                                    <input type="text" disabled class="form-control" value="{{ number_format($remainingAmount, 2) }}">
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>Fecha de Inicio</label>
-                                                <input type="text" disabled class="form-control"
-                                                    value="{{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
+                                                <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
                                             </div>
                                         </div>
-
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>Fecha de Fin</label>
-                                                <input type="text" disabled class="form-control"
-                                                    value="{{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
+                                                <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
                                             </div>
                                         </div>
-
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label>Observación</label>
                                                 <textarea disabled class="form-control">{{ $waterConnectionDebt->note }}</textarea>
                                             </div>
                                         </div>
-
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label>Registrada por</label>
@@ -146,14 +116,8 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-
-                                {{-- TAB HISTORIAL DE PAGOS --}}
-                                <div class="tab-pane fade"
-                                    id="payments{{ $waterConnectionDebt->id }}"
-                                    role="tabpanel">
-
+                                <div class="tab-pane fade" id="payments{{ $waterConnectionDebt->id }}" role="tabpanel">
                                     <div class="payment-history" style="max-height: 350px; overflow-y: auto;">
                                         <ul class="list-group">
                                             @forelse ($waterConnectionDebt->payments as $payment)
@@ -161,34 +125,28 @@
                                                     <strong>Monto:</strong>
                                                     ${{ number_format($payment->amount, 2) }}
                                                     <br>
-
                                                     @switch($payment->method)
                                                         @case('cash')
                                                             <strong>Método:</strong> Efectivo
                                                             <br>
                                                         @break
-
                                                         @case('card')
                                                             <strong>Método:</strong> Tarjeta
                                                             <br>
                                                         @break
-
                                                         @case('transfer')
                                                             <strong>Método:</strong> Transferencia
                                                             <br>
                                                         @break
-
                                                         @default
                                                             <strong>Método:</strong> Desconocido
                                                             <br>
                                                     @endswitch
-
                                                     @if ($payment->note)
                                                         <strong>Nota:</strong>
                                                         {{ $payment->note }}
                                                         <br>
                                                     @endif
-
                                                     <strong>Fecha:</strong>
                                                     {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
                                                 </li>
@@ -199,11 +157,8 @@
                                             @endforelse
                                         </ul>
                                     </div>
-
                                 </div>
-
                             </div>
-                            
                         </div>
                     </div>
                 </div>
