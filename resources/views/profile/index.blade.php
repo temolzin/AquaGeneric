@@ -151,8 +151,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-                        
+            </div>                        
             @can('viewDashboardCards')
             <div class="row mt-3">
                 <div class="col-md-12">
