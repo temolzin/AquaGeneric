@@ -285,6 +285,10 @@
                     </div>
                     @endcan
                     @if(Auth::user()->hasRole('Admin'))
+                    <div class="dashboard-divider">
+                        <h3 class="divider-title">Sección de Análisis de Membresías</h3>
+                        <p class="divider-subtitle">Resumen de los niveles y el estado de activación de todas tus suscripciones.</p>
+                    </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="card">
@@ -298,12 +302,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Estatus de Membresías</h3>
-                            </div>
-                            <div class="card-body chart-card-body">
-                                <canvas id="membershipStatusChart"></canvas>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Estatus de Membresías</h3>
+                                </div>
+                                <div class="card-body chart-card-body">
+                                    <canvas id="membershipStatusChart"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
