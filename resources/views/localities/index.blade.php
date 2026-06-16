@@ -119,10 +119,7 @@
                                                     </button>
                                                     @can('deleteLocality')
                                                         @if(!$locality->hasDependencies())
-                                                            <button type="button" class="btn btn-danger mr-2"
-                                                                data-toggle="modal"
-                                                                title="Eliminar Registro"
-                                                                data-target="#delete{{$locality->id}}">
+                                                            <button type="button" class="btn btn-danger mr-2" data-toggle="modal" title="Eliminar Registro" data-target="#delete{{$locality->id}}">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         @endif
