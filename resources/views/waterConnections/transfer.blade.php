@@ -2,10 +2,10 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h4 class="modal-title">
+                <h5 class="modal-title">
                     Cambio de Propietario (Fallecimiento)
                     <small>&nbsp;(*) Campos requeridos</small>
-                </h4>
+                </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -16,6 +16,8 @@
                     @if(session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
+                    <div class="card">                        
+                        <div class="card-body">
                     <div class="p-3 mb-3 rounded border border-success" style="background:#e9f7ef;">
                         <h5 class="mb-2">Información de la toma</h5>
                         <p class="mb-1"><strong>Toma:</strong> {{ $connection->name }}</p>
@@ -80,6 +82,8 @@
                                 @enderror
                             </div>
                         @endforeach
+                    </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
