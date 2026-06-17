@@ -1,3 +1,6 @@
+@php
+    use Carbon\Carbon;
+@endphp
 <div class="modal fade" id="viewDebt{{ $waterConnectionDebt->id }}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel{{ $waterConnectionDebt->id }}" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -99,13 +102,13 @@
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>Fecha de Inicio</label>
-                                                <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
+                                                <input type="text" disabled class="form-control" value="{{ Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>Fecha de Fin</label>
-                                                <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
+                                                <input type="text" disabled class="form-control" value="{{ Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-12">
@@ -154,7 +157,7 @@
                                                         <br>
                                                     @endif
                                                     <strong>Fecha:</strong>
-                                                    {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                                    {{Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
                                                 </li>
                                             @empty
                                                 <li class="list-group-item">
