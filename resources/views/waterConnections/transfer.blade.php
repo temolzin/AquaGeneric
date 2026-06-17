@@ -15,7 +15,7 @@
                 @csrf
                 <div class="modal-body">
                     @if(session('error'))
-                    <div class="alert alert-danger">{{ session('error') }}</div>
+                        <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
                     <div class="card">
                         <div class="card-body">
@@ -36,16 +36,16 @@
                                     class="form-control select2" required>
                                     <option value="">Selecciona una opción</option>
                                     @foreach($customers as $customer)
-                                    @if((int)$customer->id !== (int)$connection->customer_id)
-                                    <option value="{{ $customer->id }}">
-                                        {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
-                                    </option>
-                                    @endif
+                                        @if((int)$customer->id !== (int)$connection->customer_id)
+                                            <option value="{{ $customer->id }}">
+                                                {{ $customer->id }} - {{ $customer->name }} {{ $customer->last_name }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                                 <small class="text-muted">Solo se muestran clientes activos (con vida).</small>
                                 @error('new_customer_id')
-                                <small class="text-danger">{{ $message }}</small>
+                                    <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
                             <div class="form-group mt-3">
@@ -53,7 +53,7 @@
                                 <textarea name="note" id="note_{{ $connection->id }}" class="form-control"
                                     rows="3">{{ old('note') }}</textarea>
                                 @error('note')
-                                <small class="text-danger">{{ $message }}</small>
+                                    <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
                             <hr>
@@ -62,32 +62,32 @@
                                 La transferencia NO se completará si falta cualquiera de los documentos requeridos.
                             </small>
                             @php
-                            $docTypes = \App\Models\LogWaterConnectionTransfer::REQUIRED_DOCUMENT_TYPES;
-                            $docLabels = \App\Models\LogWaterConnectionTransfer::documentTypeLabels();
-                            $lastIndex = count($docTypes) - 1;
+                                $docTypes = \App\Models\LogWaterConnectionTransfer::REQUIRED_DOCUMENT_TYPES;
+                                $docLabels = \App\Models\LogWaterConnectionTransfer::documentTypeLabels();
+                                $lastIndex = count($docTypes) - 1;
                             @endphp
                             <div class="row">
                                 @foreach ($docTypes as $index => $type)
-                                <div class="{{ $index === $lastIndex ? 'col-12' : 'col-12 col-md-6' }} mb-3">
-                                    @php
-                                    $label = $docLabels[$type] ?? $type;
-                                    preg_match('/^(.*?)(\s*\((.*)\))?$/u', $label, $m);
-                                    $main = trim($m[1] ?? $label);
-                                    $extra = isset($m[3]) ? trim($m[3]) : null;
-                                    @endphp
-                                    <label class="form-label mb-1">{{ $main }} <span
-                                            class="text-danger">*</span></label>
-                                    @if($extra)
-                                    <small class="text-muted d-block mb-2">{{ $extra }}</small>
-                                    @else
-                                    <div style="height: 18px;" class="mb-2"></div>
-                                    @endif
-                                    <input type="file" name="documents[{{ $type }}]" class="form-control @error("
-                                        documents.$type") is-invalid @enderror" required accept=".pdf,.jpg,.jpeg,.png">
-                                    @error("documents.$type")
-                                    <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
+                                    <div class="{{ $index === $lastIndex ? 'col-12' : 'col-12 col-md-6' }} mb-3">
+                                        @php
+                                            $label = $docLabels[$type] ?? $type;
+                                            preg_match('/^(.*?)(\s*\((.*)\))?$/u', $label, $m);
+                                            $main = trim($m[1] ?? $label);
+                                            $extra = isset($m[3]) ? trim($m[3]) : null;
+                                        @endphp
+                                        <label class="form-label mb-1">{{ $main }} <span
+                                                class="text-danger">*</span></label>
+                                        @if($extra)
+                                            <small class="text-muted d-block mb-2">{{ $extra }}</small>
+                                        @else
+                                            <div style="height: 18px;" class="mb-2"></div>
+                                        @endif
+                                        <input type="file" name="documents[{{ $type }}]" class="form-control @error("
+                                            documents.$type") is-invalid @enderror" required accept=".pdf,.jpg,.jpeg,.png">
+                                        @error("documents.$type")
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
                                 @endforeach
                             </div>
                         </div>
