@@ -38,13 +38,19 @@
                                             <div class="form-group">
                                                 <label>Estado</label>
                                                 <p class="form-control">
-                                                    @if ($waterConnectionDebt->status === 'pending')
-                                                        <span class="badge badge-danger">No pagada</span>
-                                                    @elseif ($waterConnectionDebt->status === 'partial')
-                                                        <span class="badge badge-warning">Abonada</span>
-                                                    @elseif ($waterConnectionDebt->status === 'paid')
-                                                        <span class="badge badge-success">Pagada</span>
-                                                    @endif
+                                                    @switch($waterConnectionDebt->status)
+                                                        @case('pending')
+                                                            <span class="badge badge-danger">No pagada</span>
+                                                            @break
+                                                        @case('partial')
+                                                            <span class="badge badge-warning">Abonada</span>
+                                                            @break
+                                                        @case('paid')
+                                                            <span class="badge badge-success">Pagada</span>
+                                                            @break
+                                                        @default
+                                                            <span class="badge badge-secondary">Desconocido</span>
+                                                    @endswitch
                                                 </p>
                                             </div>
                                         </div>
