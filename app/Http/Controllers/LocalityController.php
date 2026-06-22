@@ -182,14 +182,14 @@ class LocalityController extends Controller
         }
 
         $request->validate([
-            'pdf_background_vertical' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-            'pdf_background_horizontal' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pdf_background_vertical' => 'nullable|image|mimes:jpg,jpeg|max:5120',
+            'pdf_background_horizontal' => 'nullable|image|mimes:jpg,jpeg|max:5120',
         ], [
             'pdf_background_vertical.image' => 'El archivo debe ser una imagen.',
-            'pdf_background_vertical.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'pdf_background_vertical.mimes' => 'Solo se permiten imágenes JPG.',
             'pdf_background_vertical.max' => 'La imagen no puede superar los 5MB.',
             'pdf_background_horizontal.image' => 'El archivo debe ser una imagen.',
-            'pdf_background_horizontal.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'pdf_background_horizontal.mimes' => 'Solo se permiten imágenes JPG.',
             'pdf_background_horizontal.max' => 'La imagen no puede superar los 5MB.',
         ]);
 
