@@ -18,12 +18,14 @@ class AdvancePaymentController extends Controller
     public function index(Request $request)
     {
         $chartData = $this->getChartData();
+        $hasChartData = collect($chartData['totals'])->sum() > 0;
 
         return view('advancePayments.index', [
             'payments' => $this->getAdvancePayments($request),
             'customers' => Customer::where('locality_id', auth()->user()->locality_id)->get(),
             'months' => $chartData['months'],
             'totals' => $chartData['totals'],
+            'hasChartData' => $hasChartData,
         ]);
     }
 
