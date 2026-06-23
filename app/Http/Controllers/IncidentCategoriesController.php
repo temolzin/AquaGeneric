@@ -15,7 +15,7 @@ class IncidentCategoriesController extends Controller
             $query->where('locality_id', $authUser->locality_id)
                 ->orWhereNull('locality_id');
         })
-            ->orderByRaw('locality_id IS NULL DESC')
+            ->orderByRaw('locality_id IS NOT NULL')
             ->orderBy('created_at', 'desc');
         
         if (request()->has('search') && request('search') != '') {
