@@ -239,8 +239,13 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             </div>
         </div>
         <div class="signature">
-            _________________________________
-            <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
+            @if ($payment->isOpenPayPayment())
+                <p>Este comprobante corresponde a un pago electrónico autorizado por la plataforma de pagos.</p>
+            @endif
+            @if (!$payment->isOpenPayPayment())
+                _________________________________
+                <p>{{ $payment->creator->name }} {{ $payment->creator->last_name }}</p>
+            @endif
         </div>
         <div class="footer_last_page">
             <div class="info_bottom">

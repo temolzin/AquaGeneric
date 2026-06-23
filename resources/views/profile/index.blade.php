@@ -140,7 +140,7 @@
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editPassword">
                                             Cambiar contraseña
                                         </button>
-                                        @if($authUser->hasRole(['Supervisor', 'Secretaria', 'Admin']))
+                                        @if($authUser->hasRole(['Supervisor', 'Secretaria']))
                                         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#editPaymentConfig">
                                             <i class="fas fa-credit-card mr-1"></i>Configurar Pagos
                                         </button>
