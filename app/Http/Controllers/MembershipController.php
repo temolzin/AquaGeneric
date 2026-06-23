@@ -18,6 +18,7 @@ class MembershipController extends Controller
             ->when($search, function($query, $search) {
                 return $query->where('name', 'like', '%'.$search.'%');
             })
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('memberships.index', compact('memberships'));

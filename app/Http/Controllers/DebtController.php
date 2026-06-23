@@ -36,7 +36,13 @@ class DebtController extends Controller
             ->with(['waterConnections.debts' => function ($query) {
                 $query->where('status', '!=', 'paid');
             }])
-            ->orderBy('id', 'desc')
+            ->orderByDesc(
+                Debt::select('debts.created_at')
+                    ->join('water_connections', 'water_connections.id', '=', 'debts.water_connection_id')
+                    ->whereColumn('water_connections.customer_id', 'customers.id')
+                    ->latest('debts.created_at')
+                    ->limit(1)
+            )
             ->paginate(10);
 
         $customers = Customer::where('customers.locality_id', $localityId)

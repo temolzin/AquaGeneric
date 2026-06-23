@@ -42,7 +42,9 @@ class DebtCategoryController extends Controller
             });
         }
 
-        $categories = $query->orderBy('name')
+        $categories = $query
+            ->orderByRaw('locality_id IS NOT NULL')
+            ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->appends($request->query());
 
