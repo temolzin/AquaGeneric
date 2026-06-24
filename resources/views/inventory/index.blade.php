@@ -29,9 +29,7 @@
                                         <span class="d-none d-md-inline">Registrar Componente</span>
                                         <span class="d-inline d-md-none">Nuevo Componente</span>
                                     </button>
-                                    <a class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank"
-                                    href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}"
-                                    title="Generar Lista">
+                                    <a class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank" href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}" title="Generar Lista">
                                         <i class="fas fa-file-pdf"></i> Generar Lista
                                     </a>
                                     <button class="btn btn bg-purple flex-grow-1 flex-md-grow-0 ml-1 mt-2" data-toggle="modal" data-target="#importData" title="Importar desde CSV">
@@ -143,6 +141,14 @@
 
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
+    }
+    @media(max-width:991.98px){
+        .d-flex.flex-column.flex-lg-row .btn{
+            width:100%;
+        }
+    }
+    div.dt-buttons{
+        margin-top:1rem;
     }
 </style>
 @endsection

@@ -9,28 +9,36 @@
     @include('advancePayments.advancePaymentsReportForm')
     @include('advancePayments.paymentHistoryModal')
 
-    <div class="row mb-3">
-        <div class="col-lg-12">
-            <div class="d-flex flex-wrap justify-content-end mb-2">
+    <div class="row justify-content-end mb-3">
+        <div class="col-12">
+            <div class="responsive-actions">
                 @if($hasChartData)
-                    <button class="btn btn-primary mt-2 mx-1 mb-2" id="btnGenerateReportGraph" title="Generar PDF de Gráficos">
-                        <i class="fa fa-chart-pie"></i>
+                    <button class="btn btn-primary" id="btnGenerateReportGraph" title="Generar PDF de Gráficos">
+                        <i class="fa fa-chart-pie mr-1"></i>
                         <span class="d-none d-md-inline">Generar PDF de Gráficos</span>
                         <span class="d-inline d-md-none">Gráficos</span>
                     </button>
                 @endif
-                <button class="btn btn-success mt-2 mx-1 mb-2" data-toggle="modal"
-                        data-target="#paymentHistoryModal" title="Historial de pagos">
-                    <i class="fa fa-calendar"></i>
+                <button
+                    class="btn btn-success"
+                    data-toggle="modal"
+                    data-target="#paymentHistoryModal"
+                    title="Historial de pagos">
+                    <i class="fa fa-calendar mr-1"></i>
                     <span class="d-none d-md-inline">Historial de Pagos</span>
                     <span class="d-inline d-md-none">Historial</span>
                 </button>
-                <button class="btn bg-teal mt-2 mx-1 mb-2" data-toggle="modal"
-                        data-target="#generateAdvancePaymentsReportModal" title="Reporte de Pagos Adelantados">
-                        <i class="fas fa-file-pdf"></i>
+
+                <button
+                    class="btn bg-teal text-white"
+                    data-toggle="modal"
+                    data-target="#generateAdvancePaymentsReportModal"
+                    title="Reporte de Pagos Adelantados">
+                    <i class="fas fa-file-pdf mr-1"></i>
                     <span class="d-none d-md-inline">Reporte de Pagos Adelantados</span>
-                    <span class="d-inline d-md-none">Reporte de Pagos Adelantados</span>
+                    <span class="d-inline d-md-none">Reporte</span>
                 </button>
+
             </div>
         </div>
     </div>
@@ -68,6 +76,33 @@
     #btnGenerateReportGraph:disabled {
         opacity: 0.7;
         cursor: not-allowed;
+    }
+    @media (max-width: 767.98px) {
+    .responsive-actions{
+        display: flex !important;
+        flex-direction: column;
+        width: 100%;
+        gap: .5rem;
+    }
+    .responsive-actions .btn{
+        width: 100%;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+}
+
+    @media (min-width: 768px) {
+        .responsive-actions{
+            display: flex !important;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: .5rem;
+        }
+        .responsive-actions .btn{
+            width: auto;
+        }   
     }
 </style>
 

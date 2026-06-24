@@ -10,33 +10,38 @@
                 <div class="x_title">
                     <h2>Estatus de Incidencia</h2>
                     <div class="row">
-                        <div class="col-lg-12">
-                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                <form method="GET" action="{{ route('incidentStatuses.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
-                                    <div class="input-group">
-                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Estatus, Descripción" value="{{ request('search') }}">
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-primary" title="Buscar Estatus">
-                                                <i class="fa fa-search"></i> Buscar
-                                            </button>
-                                        </div>
+                        <div class="col-12 col-lg-7 mb-3">
+                            <form method="GET" action="{{ route('incidentStatuses.index') }}">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Buscar por Estatus, Descripción" value="{{ request('search') }}">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search"></i> Buscar
+                                        </button>
                                     </div>
-                                </form>
-                                <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                                    <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mt-2 mr-1"
-                                            data-toggle="modal" data-target="#createIncidentStatusModal" title="Registrar Estatus">
-                                        <i class="fa fa-plus"></i>
-                                        <span class="d-none d-md-inline">Registrar Estatus</span>
-                                        <span class="d-inline d-md-none">Estatus</span>
-                                    </button>
-                                    <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 mt-2 ml-1"
-                                    target="_blank" title="Generar Lista"
-                                    href="{{ route('report.generateIncidentStatusListReport') }}">
-                                        <i class="fas fa-file-pdf"></i>
-                                        <span class="d-none d-md-inline">Generar Lista</span>
-                                        <span class="d-inline d-md-none">Lista PDF</span>
-                                    </a>
                                 </div>
+                            </form>
+                        </div>
+                        <div class="col-12 col-lg-5">
+                            <div class="d-flex flex-column flex-lg-row justify-content-lg-end mt-2 mb-3">
+                                <button type="button" class="btn btn-success mb-2 mb-lg-0 mr-lg-2" data-toggle="modal" data-target="#createIncidentStatusModal">
+                                    <i class="fa fa-plus"></i>
+                                    <span class="d-none d-md-inline">
+                                        Registrar Estatus
+                                    </span>
+                                    <span class="d-inline d-md-none">
+                                        Estatus
+                                    </span>
+                                </button>
+                                <a class="btn btn-secondary ml-lg-2" target="_blank" href="{{ route('report.generateIncidentStatusListReport') }}">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span class="d-none d-md-inline">
+                                        Generar Lista
+                                    </span>
+                                    <span class="d-inline d-md-none">
+                                        Lista PDF
+                                    </span>
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -38,32 +38,19 @@
                                             <i class="fas fa-file-pdf"></i> Generar Lista Resumen
                                         </a>
                                     </div>
-                                    <div class="d-md-none w-100">
-                                        <div class="row g-2">
-                                            <div class="col-6 pe-1">
-                                                <button class="btn btn-success w-100 py-2" data-toggle='modal'
-                                                        data-target="#createCustomer" title="Registrar Cliente">
-                                                        <i class="fa fa-plus"></i>
-                                                        <span class="d-none d-md-inline">Registrar Cliente</span>
-                                                        <span class="d-inline d-md-none">Registrar</span>
-                                                </button>
-                                            </div>
-                                            <div class="col-6 ps-1">
-                                            <button class="btn bg-purple w-100 py-2" data-toggle='modal' data-target="#importData" title="Importar Datos">
-                                                <i class="fas fa-file-import"></i> Importar
-                                            </button>
-                                            </div>
-                                            <div class="col-12 mt-2">
-                                                <a type="button" class="btn btn-secondary w-100 py-2" target="_blank" title="Generar Lista" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
-                                                    <i class="fas fa-file-pdf"></i> Generar Lista
-                                                </a>
-                                            </div>
-                                            <div class="col-12 mt-2">
-                                                <a type="button" class="btn btn-primary w-100 py-2" target="_blank" title="Generar Lista Resumen" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
-                                                    <i class="fas fa-file-pdf"></i> Generar Lista Resumen
-                                                </a>
-                                            </div>
-                                        </div>
+                                    <div class="d-md-none w-100 mt-2">
+                                        <button class="btn btn-success btn-block mb-2" data-toggle="modal" data-target="#createCustomer" title="Registrar Cliente">
+                                            <i class="fa fa-plus"></i> Registrar
+                                        </button>
+                                        <button class="btn bg-purple btn-block mb-2" data-toggle="modal" data-target="#importData" title="Importar Datos">
+                                            <i class="fas fa-file-import"></i> Importar
+                                        </button>
+                                        <a class="btn btn-secondary btn-block mb-2" target="_blank" href="{{ route('customers.pdfCustomers', ['search' => request('search')]) }}">
+                                            <i class="fas fa-file-pdf"></i> Generar Lista
+                                        </a>
+                                        <a class="btn btn-primary btn-block" target="_blank" href="{{ route('customers.pdfCustomersSummary', ['search' => request('search')]) }}">
+                                            <i class="fas fa-file-pdf"></i> Generar Lista Resumen
+                                        </a>
                                     </div>
                                 </div>
                             </div>

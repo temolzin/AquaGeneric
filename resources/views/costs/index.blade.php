@@ -22,7 +22,7 @@
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                <div class="d-flex flex-column flex-lg-row justify-content-lg-end mt-2">
                                     <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-1" data-toggle="modal"
                                         data-target="#create" title="Registrar Costo">
                                         <i class="fa fa-plus"></i>
@@ -109,7 +109,39 @@
     </div>
 </section>
 @endsection
-
+@section('css')
+<style>
+    div.dt-buttons{
+        margin-top:1rem;
+    }
+@media (min-width:992px){
+    .responsive-actions{
+        display:flex;
+        justify-content:flex-end;
+        align-items:center;
+        flex-wrap:nowrap;
+        gap:.5rem;
+    }
+    .responsive-actions .btn{
+        width:auto;
+        margin:0;
+    }
+}
+@media (max-width:991.98px){
+    .responsive-actions{
+        display:flex;
+        flex-direction:column;
+        width:100%;
+        gap:.5rem;
+        margin-top:.5rem;
+    }
+    .responsive-actions .btn{
+        width:100%;
+        margin:0;
+    }
+}
+</style>
+@endsection
 @section('js')
 <script>
     $(document).ready(function() {
