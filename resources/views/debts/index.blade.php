@@ -22,24 +22,18 @@
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap justify-content-end mb-2 mt-2 mt-lg-0">
-                                    <button type="button" class="btn btn-primary mx-1" data-toggle="modal"
-                                            title="Asignar Deuda a Todos" data-target="#assignDebtModal">
+                                <div class="d-flex flex-column flex-lg-row justify-content-end mb-2 mt-2 mt-lg-0">
+                                    <button type="button" class="btn btn-primary mb-2 mb-lg-0 mr-lg-2 w-100 w-lg-auto" data-toggle="modal" title="Asignar Deuda a Todos" data-target="#assignDebtModal">
                                         <i class="fa fa-plus"></i>
-                                        <span class="d-none d-lg-inline">Asignar Deuda a Todos</span>
-                                        <span class="d-inline d-lg-none">Asignar a Todos</span>
+                                        Asignar a Todos
                                     </button>
-                                    <button type="button" class="btn btn-success mx-1" data-toggle="modal"
-                                            title="Crear Deuda" data-target="#createDebt">
+                                    <button type="button" class="btn btn-success mb-2 mb-lg-0 mr-lg-2 w-100 w-lg-auto" data-toggle="modal" title="Crear Deuda" data-target="#createDebt">
                                         <i class="fa fa-plus"></i>
-                                        <span class="d-none d-lg-inline">Crear Deuda</span>
-                                        <span class="d-inline d-lg-none">Crear Deuda</span>
+                                        Crear Deuda
                                     </button>
-                                    <a type="button" class="btn btn-secondary mx-1" target="_blank"
-                                    title="Clientes con deudas" href="{{ route('report.with-debts') }}">
+                                    <a class="btn btn-secondary w-100 w-lg-auto" target="_blank" title="Clientes con deudas" href="{{ route('report.with-debts') }}">
                                         <i class="fas fa-file-pdf"></i>
-                                        <span class="d-none d-lg-inline">Clientes con deudas</span>
-                                        <span class="d-inline d-lg-none">Clientes con deudas</span>
+                                        Clientes con deudas
                                     </a>
                                 </div>
                             </div>
@@ -104,7 +98,15 @@
     </div>
 </section>
 @endsection
-
+@section('css')
+<style>
+    @media (min-width: 992px) {
+        .w-lg-auto {
+            width: auto !important;
+        }
+    }
+</style>
+@endsection
 @section('js')
 <script>
     document.addEventListener("DOMContentLoaded", function() {

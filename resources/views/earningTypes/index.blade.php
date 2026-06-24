@@ -11,8 +11,8 @@
                     <h2>Tipos de Ingreso</h2>
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                <form method="GET" action="{{ route('earningTypes.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center">
+                                <form method="GET" action="{{ route('earningTypes.index') }}" class="w-100 mt-2 mt-lg-0 earning-search-form">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por ID, Nombre, Descripción" value="{{ request('search') }}">
                                         <div class="input-group-append">
@@ -22,12 +22,10 @@
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap justify-content-md-end justify-content-start flex-grow-1 mt-2 mt-lg-0">
-                                    <button type="button" class="btn btn-success"
-                                            data-toggle="modal" data-target="#createEarningTypeModal" title="Registrar Tipo de Ingreso">
+                                <div class="w-100 mt-2 mt-lg-0 text-lg-right">
+                                    <button type="button" class="btn btn-success btn-lg-mobile" data-toggle="modal" data-target="#createEarningTypeModal">
                                         <i class="fa fa-plus"></i>
-                                        <span class="d-none d-md-inline">Registrar Tipo</span>
-                                        <span class="d-inline d-md-none">Tipo</span>
+                                        Registrar Tipo
                                     </button>
                                 </div>
                             </div>
@@ -118,6 +116,22 @@
 
     .table-dark .color-badge {
         border: 1px solid rgba(255,255,255,0.1);
+    }
+    .dt-buttons {
+        margin-top: 15px;
+    }
+    @media (max-width: 991.98px) {
+        .earning-search-form {
+            max-width: 100% !important;
+            min-width: 100% !important;
+        }
+        .btn-lg-mobile {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .dt-buttons .btn {
+            flex: 1;
+        }
     }
 </style>
 @endsection

@@ -11,8 +11,8 @@
                     <h2>Ingresos</h2>
                     <div class="row mb-2">
                         <div class="col-lg-12">
-                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
-                                <form method="GET" action="{{ route('generalEarnings.index') }}" class="flex-grow-1 mt-2" style="min-width: 330px; max-width: 30%;">
+                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
+                                <form method="GET" action="{{ route('generalEarnings.index') }}" class="mb-3 mb-lg-0 mr-lg-3" style="min-width:300px;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por ID o Concepto" value="{{ request('search') }}">
                                         <div class="input-group-append">
@@ -23,12 +23,19 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success flex-grow-1 flex-lg-grow-0 mt-2" data-toggle='modal'
-                                    data-target="#createGeneralEarnings" title="Registrar Ingreso">
-                                    <i class="fa fa-plus"></i>
-                                    <span class="d-none d-md-inline">Registrar Ingreso</span>
-                                    <span class="d-inline d-md-none">Registrar Ingreso</span>
-                                </button>
+                                <div class="btn-group d-none d-md-flex" role="group">
+                                    <button class="btn btn-success mr-2" data-toggle="modal" data-target="#createGeneralEarnings">
+                                        <i class="fa fa-plus"></i>
+                                        Registrar Ingreso
+                                    </button>
+                                </div>
+                                <div class="d-md-none w-100">
+                                    <button class="btn btn-success btn-block" data-toggle="modal" data-target="#createGeneralEarnings">
+                                        <i class="fa fa-plus"></i>
+                                        Registrar Ingreso
+                                    </button>
+                                </div>
+
                             </div>
                         </div>
                     </div>
