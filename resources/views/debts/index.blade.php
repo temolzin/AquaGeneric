@@ -30,10 +30,10 @@
                                         <span class="d-inline d-lg-none">Asignar a Todos</span>
                                     </button>
                                     <button type="button" class="btn btn-success mx-1" data-toggle="modal"
-                                            title="Crear Deuda" data-target="#createDebt">
+                                            title="Registrar Deuda" data-target="#createDebt">
                                         <i class="fa fa-plus"></i>
-                                        <span class="d-none d-lg-inline">Crear Deuda</span>
-                                        <span class="d-inline d-lg-none">Crear Deuda</span>
+                                        <span class="d-none d-lg-inline">Registrar Deuda</span>
+                                        <span class="d-inline d-lg-none">Registrar Deuda</span>
                                     </button>
                                     <a type="button" class="btn btn-secondary mx-1" target="_blank"
                                     title="Clientes con deudas" href="{{ route('report.with-debts') }}">
