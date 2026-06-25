@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content card-warning">
             <div class="modal-header bg-warning text-white">
-                <h5 class="modal-title">Actualizar Tipo de Ingreso (*) Campos requeridos</h5>
+                <h4 class="card-title">Actualizar Tipo de Ingreso<small>&nbsp;(*) Campos requeridos</small></h4>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity:1;">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-warning">Actualizar</button>
                 </div>
             </form>
