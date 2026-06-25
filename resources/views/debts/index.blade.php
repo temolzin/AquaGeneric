@@ -27,6 +27,11 @@
                                         <i class="fa fa-plus"></i>
                                         Asignar a Todos
                                     </button>
+                                    <button type="button" class="btn btn-success mx-1" data-toggle="modal"
+                                            title="Registrar Deuda" data-target="#createDebt">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="d-none d-lg-inline">Registrar Deuda</span>
+                                        <span class="d-inline d-lg-none">Registrar Deuda</span>
                                     <button type="button" class="btn btn-success mb-2 mb-lg-0 mr-lg-2 w-100 w-lg-auto" data-toggle="modal" title="Crear Deuda" data-target="#createDebt">
                                         <i class="fa fa-plus"></i>
                                         Crear Deuda
