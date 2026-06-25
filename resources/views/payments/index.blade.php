@@ -45,7 +45,7 @@
                                 </form>
                             </div>
                             <div class="col-12">
-                                <div class="d-flex flex-wrap mb-2">
+                                <div class="payments-actions d-flex flex-wrap mb-2">
                                     <button type="button" class="btn btn-success mt-2 mx-1 mb-2" data-toggle="modal"
                                         data-target="#createPayment" title="Registrar Pago">
                                         <i class="fa fa-plus"></i>
@@ -150,4 +150,26 @@
             </div>
         </div>
     </section>
+@endsection
+@section('css')
+<style>
+    @media (max-width: 991.98px) {
+
+        /* Botonera de acciones */
+        .payments-actions {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .payments-actions .btn {
+            width: 100%;
+            margin: 0 0 10px 0 !important;
+        }
+
+        /* Espacio entre búsqueda y botones */
+        #formSearch {
+            margin-bottom: 15px;
+        }
+    }
+</style>
 @endsection

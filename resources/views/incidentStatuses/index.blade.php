@@ -116,14 +116,29 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-
-    .status-badge:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    .d-flex.flex-wrap.gap-2.justify-content-lg-end {
+        margin-bottom: 20px !important;
     }
-
-    .table-dark .status-badge {
-        border: 1px solid rgba(255,255,255,0.1);
+    #custom-buttons-container {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    #custom-buttons-container .dt-button {
+        flex: 1;
+        margin: 0 !important;
+        padding: 8px 12px !important;
+        border: none !important;
+        border-radius: 4px !important;
+        background-color: #6c757d !important;
+        color: #ffffff !important;
+        text-align: center;
+        font-weight: 500;
+        cursor: pointer;
+    }
+    #custom-buttons-container .dt-button:hover {
+        background-color: #5a6268 !important;
     }
 </style>
 @endsection

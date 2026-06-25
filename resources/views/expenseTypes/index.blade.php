@@ -12,7 +12,7 @@
                     <div class="row mb-2">
                         <div class="col-lg-12">
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                <form method="GET" action="{{ route('expenseTypes.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
+                                <form method="GET" action="{{ route('expenseTypes.index') }}" class="mb-3 mb-lg-0 mr-lg-3" style="min-width: 380px;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción" value="{{ request('search') }}">
                                         <div class="input-group-append">
@@ -22,12 +22,14 @@
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap justify-content-md-end justify-content-start flex-grow-1 mt-2 mt-lg-0">
-                                    <button type="button" class="btn btn-success"
-                                            data-toggle="modal" data-target="#createExpenseTypeModal" title="Registrar Tipo de Gasto">
-                                        <i class="fa fa-plus"></i>
-                                        <span class="d-none d-md-inline">Registrar Tipo</span>
-                                        <span class="d-inline d-md-none">Tipo</span>
+                                <div class="btn-group d-none d-md-flex" role="group">
+                                    <button class="btn btn-success mr-2" data-toggle="modal" data-target="#createExpenseTypeModal">
+                                        <i class="fa fa-plus"></i> Registrar Tipo
+                                    </button>
+                                </div>
+                                <div class="d-md-none w-100">
+                                    <button class="btn btn-success btn-block" data-toggle="modal" data-target="#createExpenseTypeModal">
+                                        <i class="fa fa-plus"></i> Tipo
                                     </button>
                                 </div>
                             </div>
@@ -122,7 +124,36 @@
     }
 </style>
 @endsection
-
+@section('css')
+<style>
+    .color-badge {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    .color-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .table-dark .color-badge {
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    @media (max-width:767px){
+        .table-responsive{
+            overflow-x:auto;
+            -webkit-overflow-scrolling:touch;
+        }
+        table.dataTable th,
+        table.dataTable td{
+            white-space: nowrap;
+        }
+        td .btn-group{
+            display:flex;
+            flex-wrap:wrap;
+            gap:3px;
+        }
+    }
+</style>
+@endsection
 @section('js')
 <script>
     $(document).ready(function() {
