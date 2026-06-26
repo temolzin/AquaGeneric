@@ -61,26 +61,24 @@
     </div>
 </section>
 @endsection
-
 <style>
     #btnGenerateReportGraph:disabled {
         opacity: 0.7;
         cursor: not-allowed;
     }
     @media (max-width: 767.98px) {
-    .responsive-actions{
-        display: flex !important;
-        flex-direction: column;
-        width: 100%;
-        gap: .5rem;
+        .responsive-actions{
+            display: flex !important;
+            flex-direction: column;
+            width: 100%;
+            gap: .5rem;
+        }
+        .responsive-actions .btn{
+            width: 100%;
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+        }
     }
-    .responsive-actions .btn{
-        width: 100%;
-        margin-right: 0 !important;
-        margin-left: 0 !important;
-    }
-}
-
     @media (min-width: 768px) {
         .responsive-actions{
             display: flex !important;
@@ -95,7 +93,6 @@
         }   
     }
 </style>
-
 @push('js')
 <script>
 
