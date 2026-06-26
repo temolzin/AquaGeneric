@@ -109,32 +109,29 @@
 @endsection
 @section('css')
 <style>
-div.dt-buttons{
-    margin-top:1rem;
-}
-
-@media (min-width:992px){
-    .responsive-actions{
-        display:flex;
-        justify-content:flex-end;
-        align-items:center;
-        gap:.5rem;
+    div.dt-buttons{
+        margin-top:1rem;
     }
-}
-
-@media (max-width:991.98px){
-    .responsive-actions{
-        display:flex;
-        flex-direction:column;
-        gap:.5rem;
-        width:100%;
-        margin-top:.75rem;
+    @media (min-width:992px){
+        .responsive-actions{
+            display:flex;
+            justify-content:flex-end;
+            align-items:center;
+            gap:.5rem;
+        }
     }
-
-    .responsive-actions .btn{
-        width:100%;
+    @media (max-width:991.98px){
+        .responsive-actions{
+            display:flex;
+            flex-direction:column;
+            gap:.5rem;
+            width:100%;
+            margin-top:.75rem;
+        }
+        .responsive-actions .btn{
+            width:100%;
+        }
     }
-}
 </style>
 @endsection
 @section('js')
