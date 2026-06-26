@@ -154,8 +154,6 @@
 @section('css')
 <style>
     @media (max-width: 991.98px) {
-
-        /* Botonera de acciones */
         .payments-actions {
             display: flex;
             flex-direction: column;
@@ -165,8 +163,6 @@
             width: 100%;
             margin: 0 0 10px 0 !important;
         }
-
-        /* Espacio entre búsqueda y botones */
         #formSearch {
             margin-bottom: 15px;
         }
