@@ -19,26 +19,16 @@
                         <span class="d-inline d-md-none">Gráficos</span>
                     </button>
                 @endif
-                <button
-                    class="btn btn-success"
-                    data-toggle="modal"
-                    data-target="#paymentHistoryModal"
-                    title="Historial de pagos">
+                <button class="btn btn-success" data-toggle="modal" data-target="#paymentHistoryModal" title="Historial de pagos">
                     <i class="fa fa-calendar mr-1"></i>
                     <span class="d-none d-md-inline">Historial de Pagos</span>
                     <span class="d-inline d-md-none">Historial</span>
                 </button>
-
-                <button
-                    class="btn bg-teal text-white"
-                    data-toggle="modal"
-                    data-target="#generateAdvancePaymentsReportModal"
-                    title="Reporte de Pagos Adelantados">
+                <button class="btn bg-teal text-white" data-toggle="modal" data-target="#generateAdvancePaymentsReportModal" title="Reporte de Pagos Adelantados">
                     <i class="fas fa-file-pdf mr-1"></i>
                     <span class="d-none d-md-inline">Reporte de Pagos Adelantados</span>
                     <span class="d-inline d-md-none">Reporte</span>
                 </button>
-
             </div>
         </div>
     </div>

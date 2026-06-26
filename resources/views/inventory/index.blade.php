@@ -23,17 +23,21 @@
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap justify-content-end gap-2 w-100 w-md-auto">
-                                    <button class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-2" data-toggle="modal" data-target="#createInventory" title="Registrar Componente">
+                                <div class="responsive-actions mt-2">
+                                    <button class="btn btn-success" data-toggle="modal" data-target="#createInventory" title="Registrar Componente">
                                         <i class="fa fa-plus"></i>
                                         <span class="d-none d-md-inline">Registrar Componente</span>
                                         <span class="d-inline d-md-none">Nuevo Componente</span>
                                     </button>
-                                    <a class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-2" target="_blank" href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}" title="Generar Lista">
-                                        <i class="fas fa-file-pdf"></i> Generar Lista
+                                    <a class="btn btn-secondary" target="_blank" href="{{ route('inventory.pdfInventory', ['search' => request()->query('search')]) }}" title="Generar Lista">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <span class="d-none d-md-inline">Generar Lista</span>
+                                        <span class="d-inline d-md-none">Generar Lista</span>
                                     </a>
-                                    <button class="btn btn bg-purple flex-grow-1 flex-md-grow-0 ml-1 mt-2" data-toggle="modal" data-target="#importData" title="Importar desde CSV">
-                                        <i class="fas fa-file-csv"></i> Importar Datos
+                                    <button class="btn bg-purple" data-toggle="modal" data-target="#importData" title="Importar desde CSV">
+                                        <i class="fas fa-file-csv"></i>
+                                        <span class="d-none d-md-inline">Importar Datos</span>
+                                        <span class="d-inline d-md-none">Importar Datos</span>
                                     </button>
                                 </div>
                             </div>
@@ -129,26 +133,44 @@
 
 @section('css')
 <style>
-    .color-badge {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
+    .color-badge{
+        box-shadow:0 2px 4px rgba(0,0,0,.1);
+        transition:.3s;
     }
-
-    .color-badge:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    .color-badge:hover{
+        transform:translateY(-2px);
+        box-shadow:0 4px 8px rgba(0,0,0,.15);
     }
-
-    .table-dark .color-badge {
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-    @media(max-width:991.98px){
-        .d-flex.flex-column.flex-lg-row .btn{
-            width:100%;
-        }
+    .table-dark .color-badge{
+        border:1px solid rgba(255,255,255,.1);
     }
     div.dt-buttons{
         margin-top:1rem;
+    }
+    @media (min-width:992px){
+        .responsive-actions{
+            display:flex;
+            justify-content:flex-end;
+            align-items:center;
+            gap:.5rem;
+            flex-wrap:wrap;
+        }
+        .responsive-actions .btn{
+            margin:0;
+        }
+    }
+    @media (max-width:991.98px){
+        .responsive-actions{
+            display:flex;
+            flex-direction:column;
+            gap:.5rem;
+            width:100%;
+            margin-top:.5rem;
+        }
+        .responsive-actions .btn{
+            width:100%;
+            margin:0;
+        }
     }
 </style>
 @endsection
