@@ -28,7 +28,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Nombre (*)</label>
                                             <input type="text" class="form-control" name="name" placeholder="Ingrese el nombre del descuento" value="{{ old('name',$discount->name) }}" required>
@@ -45,7 +45,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label>Color (*)</label>
                                             <div class="d-flex align-items-center">

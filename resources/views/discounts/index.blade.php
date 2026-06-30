@@ -165,7 +165,8 @@
 
 @section('js')
 <script>
-     $(document).ready(function(){Expand commentComment on line L159Resolved
+    $(document).ready(function(){
+        $(document).ready(function(){
 
         $('#discounts').DataTable({
             responsive:true,
@@ -195,6 +196,9 @@
             paging:false,
             info:false,
             searching:false
+            });
+        });
+    });
     document.addEventListener('DOMContentLoaded', function () {
         const colorSelect = document.getElementById('color');
         const previewBox = document.createElement('div');
