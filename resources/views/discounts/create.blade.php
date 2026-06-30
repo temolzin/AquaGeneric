@@ -41,7 +41,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="color">Color(*)</label>
                                             <div class="d-flex align-items-center" style="gap: 0;">
