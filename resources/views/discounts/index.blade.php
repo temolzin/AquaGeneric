@@ -49,20 +49,16 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>LOCALIDAD</th>
                                             <th>DESCUENTO</th>
                                             <th>DESCRIPCIÓN</th>
                                             <th>PORCENTAJE</th>
-                                            <th>CREADO POR</th>
                                             <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         @forelse($discounts as $discount)
                                             <tr>
                                                 <td>{{ $discount->id }}</td>
-                                                <td>{{ optional($discount->locality)->name ?? 'Sin localidad' }}</td>
                                                 <td>
                                                     <span class="badge text-white" style="background-color: {{ $discount->color ?? '#6c757d' }};">
                                                         {{ $discount->name }}
@@ -70,7 +66,6 @@
                                                 </td>
                                                 <td>{{ $discount->description ?? 'Sin descripción' }}</td>
                                                 <td>{{ number_format($discount->percentage,2) }}%</td>
-                                                <td>{{ optional($discount->creator)->name ?? 'N/D' }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Opciones">
                                                         <button type="button" class="btn btn-info mr-2" data-toggle="modal" data-target="#viewDiscount{{ $discount->id }}" title="Ver Detalles">
@@ -128,34 +123,78 @@
         opacity:1!important;
         box-shadow:0 2px 5px rgba(0,0,0,.25);
     }
-
     .color-badge:hover{
         transform:translateY(-2px);
         box-shadow:0 4px 8px rgba(0,0,0,.25);
     }
-
     @media(max-width:767px){
         .table-responsive{
             overflow-x:auto;
             -webkit-overflow-scrolling:touch;
         }
-
         table.dataTable th,
         table.dataTable td{
             white-space:nowrap;
         }
-
         td .btn-group{
             display:flex;
             flex-wrap:wrap;
             gap:3px;
         }
     }
+    .card-box.table-responsive {
+        width: 100%;
+        margin: 0 auto;
+        padding-right: 0;
+    }
+    table#discounts {
+        width: 100% !important;
+        table-layout: auto;
+        white-space: normal;
+    }
+    table#discounts th,
+    table#discounts td {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .dataTables_wrapper {
+        overflow-x: hidden !important;
+    }
 </style>
 @endsection
 
 @section('js')
 <script>
+     $(document).ready(function(){Expand commentComment on line L159Resolved
+
+        $('#discounts').DataTable({
+            responsive:true,
+            buttons:[
+                {
+                    extend:'csv',
+                    charset:'utf-8',
+                    bom:true,
+                    exportOptions:{
+                        columns:':not(.not-export)'
+                    }
+                },
+                {
+                    extend:'excel',
+                    exportOptions:{
+                        columns:':not(.not-export)'
+                    }
+                },
+                {
+                    extend:'print',
+                    exportOptions:{
+                        columns:':not(.not-export)'
+                    }
+                }
+            ],
+            dom:'Bfrtip',
+            paging:false,
+            info:false,
+            searching:false
     document.addEventListener('DOMContentLoaded', function () {
         const colorSelect = document.getElementById('color');
         const previewBox = document.createElement('div');
@@ -175,6 +214,26 @@
             const selectedColor = colorSelect.value;
             previewBox.style.backgroundColor = selectedColor;
         });
+
+        let successMessage="{{ session('success') }}";
+        let errorMessage="{{ session('error') }}";
+
+        if(successMessage){Expand commentComment on line L194Resolved
+            Swal.fire({
+                icon:'success',
+                title:'Éxito',
+                text:successMessage,
+                confirmButtonText:'Aceptar'
+            });
+        }
+        if(errorMessage){
+            Swal.fire({
+                icon:'error',
+                title:'Error',
+                text:errorMessage,
+                confirmButtonText:'Aceptar'
+            });
+        }
 
         const form = document.querySelector('#createDiscount form');
         form.addEventListener('submit', function (e) {
