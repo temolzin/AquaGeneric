@@ -222,7 +222,7 @@
         let successMessage="{{ session('success') }}";
         let errorMessage="{{ session('error') }}";
 
-        if(successMessage){Expand commentComment on line L194Resolved
+        if(successMessage){
             Swal.fire({
                 icon:'success',
                 title:'Éxito',
