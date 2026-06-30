@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CostController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
@@ -108,6 +109,12 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('costs', CostController::class);
         Route::get('/costs', [CostController::class, 'index'])->name('costs.index');
         Route::get('/reports/generateCostListReport', [CostController::class, 'generateCostListReport'])->name('report.generateCostListReport');
+    });
+    
+    Route::group(['middleware' => ['can:viewDiscount']], function () {
+        Route::resource('discounts', DiscountController::class);
+        Route::get('/discounts', [DiscountController::class, 'index'])->name('discounts.index');
+        Route::get('/reports/generateDiscountListReport', [DiscountController::class, 'generateDiscountListReport'])->name('report.generateDiscountListReport');
     });
 
     Route::group(['middleware' => ['can:viewDebts']], function () {

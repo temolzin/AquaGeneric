@@ -48,6 +48,7 @@ class RoleController extends Controller
             'Debtcategorie' => 'Categorías de Deuda',
             'Customerincident' => 'Incidentes de Clientes',
             'Employeeposition' => 'Departamento de Empleados',
+            'Discount' => 'Descuentos'
         ];
     }
 
