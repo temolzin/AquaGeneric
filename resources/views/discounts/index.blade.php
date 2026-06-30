@@ -64,7 +64,7 @@
                                                 <td>{{ $discount->id }}</td>
                                                 <td>{{ optional($discount->locality)->name ?? 'Sin localidad' }}</td>
                                                 <td>
-                                                    <span class="badge text-white color-badge" style="background:{{ $discount->color }};color:#fff !important;">
+                                                    <span class="badge text-white" style="background-color: {{ $discount->color ?? '#6c757d' }};">
                                                         {{ $discount->name }}
                                                     </span>
                                                 </td>
@@ -156,59 +156,39 @@
 
 @section('js')
 <script>
-    $(document).ready(function(){
+    document.addEventListener('DOMContentLoaded', function () {
+        const colorSelect = document.getElementById('color');
+        const previewBox = document.createElement('div');
 
-        $('#discounts').DataTable({
-            responsive:true,
-            buttons:[
-                {
-                    extend:'csv',
-                    charset:'utf-8',
-                    bom:true,
-                    exportOptions:{
-                        columns:':not(.not-export)'
-                    }
-                },
-                {
-                    extend:'excel',
-                    exportOptions:{
-                        columns:':not(.not-export)'
-                    }
-                },
-                {
-                    extend:'print',
-                    exportOptions:{
-                        columns:':not(.not-export)'
-                    }
-                }
-            ],
-            dom:'Bfrtip',
-            paging:false,
-            info:false,
-            searching:false
+        previewBox.style.width = '40px';
+        previewBox.style.height = '40px';
+        previewBox.style.borderRadius = '5px';
+        previewBox.style.border = '1px solid #ccc';
+        previewBox.style.marginLeft = '10px';
+        previewBox.style.display = 'inline-block';
+        previewBox.style.verticalAlign = 'middle';
+        previewBox.style.backgroundColor = '#6c757d';
+
+        colorSelect.parentNode.appendChild(previewBox);
+
+        colorSelect.addEventListener('change', function () {
+            const selectedColor = colorSelect.value;
+            previewBox.style.backgroundColor = selectedColor;
         });
 
-        let successMessage="{{ session('success') }}";
-        let errorMessage="{{ session('error') }}";
-
-        if(successMessage){
-            Swal.fire({
-                icon:'success',
-                title:'Éxito',
-                text:successMessage,
-                confirmButtonText:'Aceptar'
-            });
-        }
-
-        if(errorMessage){
-            Swal.fire({
-                icon:'error',
-                title:'Error',
-                text:errorMessage,
-                confirmButtonText:'Aceptar'
-            });
-        }
-
+        const form = document.querySelector('#createDiscount form');
+        form.addEventListener('submit', function (e) {
+            const selectedColor = colorSelect.value;
+            if (!selectedColor) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Por favor selecciona un color para el descuento.',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
     });
 </script>
 @endsection
