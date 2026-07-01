@@ -49,28 +49,23 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>LOCALIDAD</th>
                                             <th>DESCUENTO</th>
                                             <th>DESCRIPCIÓN</th>
                                             <th>PORCENTAJE</th>
-                                            <th>CREADO POR</th>
                                             <th class="not-export">OPCIONES</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         @forelse($discounts as $discount)
                                             <tr>
                                                 <td>{{ $discount->id }}</td>
-                                                <td>{{ optional($discount->locality)->name ?? 'Sin localidad' }}</td>
                                                 <td>
-                                                    <span class="badge text-white color-badge" style="background:{{ $discount->color }};color:#fff !important;">
+                                                    <span class="badge text-white" style="background-color: {{ $discount->color ?? '#6c757d' }};">
                                                         {{ $discount->name }}
                                                     </span>
                                                 </td>
                                                 <td>{{ $discount->description ?? 'Sin descripción' }}</td>
                                                 <td>{{ number_format($discount->percentage,2) }}%</td>
-                                                <td>{{ optional($discount->creator)->name ?? 'N/D' }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Opciones">
                                                         <button type="button" class="btn btn-info mr-2" data-toggle="modal" data-target="#viewDiscount{{ $discount->id }}" title="Ver Detalles">
@@ -128,28 +123,42 @@
         opacity:1!important;
         box-shadow:0 2px 5px rgba(0,0,0,.25);
     }
-
     .color-badge:hover{
         transform:translateY(-2px);
         box-shadow:0 4px 8px rgba(0,0,0,.25);
     }
-
     @media(max-width:767px){
         .table-responsive{
             overflow-x:auto;
             -webkit-overflow-scrolling:touch;
         }
-
         table.dataTable th,
         table.dataTable td{
             white-space:nowrap;
         }
-
         td .btn-group{
             display:flex;
             flex-wrap:wrap;
             gap:3px;
         }
+    }
+    .card-box.table-responsive {
+        width: 100%;
+        margin: 0 auto;
+        padding-right: 0;
+    }
+    table#discounts {
+        width: 100% !important;
+        table-layout: auto;
+        white-space: normal;
+    }
+    table#discounts th,
+    table#discounts td {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .dataTables_wrapper {
+        overflow-x: hidden !important;
     }
 </style>
 @endsection
@@ -157,6 +166,7 @@
 @section('js')
 <script>
     $(document).ready(function(){
+        $(document).ready(function(){
 
         $('#discounts').DataTable({
             responsive:true,
@@ -186,6 +196,27 @@
             paging:false,
             info:false,
             searching:false
+            });
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const colorSelect = document.getElementById('color');
+        const previewBox = document.createElement('div');
+
+        previewBox.style.width = '40px';
+        previewBox.style.height = '40px';
+        previewBox.style.borderRadius = '5px';
+        previewBox.style.border = '1px solid #ccc';
+        previewBox.style.marginLeft = '10px';
+        previewBox.style.display = 'inline-block';
+        previewBox.style.verticalAlign = 'middle';
+        previewBox.style.backgroundColor = '#6c757d';
+
+        colorSelect.parentNode.appendChild(previewBox);
+
+        colorSelect.addEventListener('change', function () {
+            const selectedColor = colorSelect.value;
+            previewBox.style.backgroundColor = selectedColor;
         });
 
         let successMessage="{{ session('success') }}";
@@ -199,7 +230,6 @@
                 confirmButtonText:'Aceptar'
             });
         }
-
         if(errorMessage){
             Swal.fire({
                 icon:'error',
@@ -209,6 +239,19 @@
             });
         }
 
+        const form = document.querySelector('#createDiscount form');
+        form.addEventListener('submit', function (e) {
+            const selectedColor = colorSelect.value;
+            if (!selectedColor) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Por favor selecciona un color para el descuento.',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
     });
 </script>
 @endsection
