@@ -10,7 +10,7 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('discounts.store') }}" method="POST">
+                <form action="{{ route('discounts.store') }} " method="POST" id="createDiscountForm">
                     @csrf
                     <div class="card-body">
                         <div class="card">
@@ -47,7 +47,6 @@
                                             <div class="d-flex align-items-center" style="gap: 0;">
                                                 <select name="color" class="form-control select2" id="colorSelect" required>
                                                     <option value="">Seleccione un color</option>
-
                                                     <option value="#e74c3c">Rojo</option>
                                                     <option value="#3498db">Azul</option>
                                                     <option value="#2ecc71">Verde</option>
@@ -105,7 +104,7 @@
         initializeColorSelect();
     });
 
-    $(document).on('shown.bs.modal', '#createExpenseTypeModal', function() {
+    $(document).on('shown.bs.modal', '#createDiscountForm', function() {
         var modalElement = $(this);
         var dropdownParent = modalElement.find('.modal-body');
         
@@ -134,4 +133,57 @@
             colorPreview.style.border = `1px solid ${color}`;
         }
     });
+
+    (function(){
+        $('#createDiscountForm').on('submit', function(e){
+            e.preventDefault();
+
+            const form = $(this);
+            const name = $.trim(form.find('[name="name"]').val());
+            const percentage = parseFloat(form.find('[name="percentage"]').val());
+            const color = form.find('[name="color"]').val();
+            const description = $.trim(form.find('[name="description"]').val());
+
+            if (!name) {
+                Swal.fire({icon:'error', title:'Error', text:'Por favor ingresa el nombre del descuento.'});
+                return;
+            }
+            if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+                Swal.fire({icon:'error', title:'Error', text:'Por favor ingresa un porcentaje válido (1-100).'});
+                return;
+            }
+            if (!color) {
+                Swal.fire({icon:'error', title:'Error', text:'Por favor selecciona un color para el descuento.'});
+                return;
+            }
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method') || 'POST',
+                data: form.serialize(),
+                success: function(resp){
+                    console.log('create discount success response', resp);
+                    const msg = resp && resp.success ? resp.success : 'Descuento registrado con éxito.';
+                    $('#create').modal('hide');
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({icon:'success', title:'Registrado', text: msg}).then(function(){
+                            location.reload();
+                        });
+                    } else {
+                        alert(msg);
+                        location.reload();
+                    }
+                },
+                error: function(xhr){
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        const errors = xhr.responseJSON.errors;
+                        const first = Object.keys(errors)[0];
+                        Swal.fire({icon:'error', title:'Error', text: errors[first][0]});
+                        return;
+                    }
+                    Swal.fire({icon:'error', title:'Error', text: 'Ocurrió un error al crear el descuento.'});
+                }
+            });
+        });
+    })();
 </script>

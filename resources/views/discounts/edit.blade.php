@@ -50,6 +50,7 @@
                                             <label>Color (*)</label>
                                             <div class="d-flex align-items-center">
                                                 <select name="color" id="colorSelect{{ $discount->id }}" class="form-control" required>
+                                                    <option value="">Seleccione un color</option>
                                                     <option value="#e74c3c" data-color="#e74c3c">Rojo</option>
                                                     <option value="#3498db" data-color="#3498db">Azul</option>
                                                     <option value="#2ecc71" data-color="#2ecc71">Verde</option>
@@ -105,4 +106,57 @@
 
         $('#colorSelect{{ $discount->id }}').trigger('change');
     }
+</script>
+
+<script>
+    (function(){
+        $(document).on('submit', '[id^="editDiscountForm"]', function(e){
+            e.preventDefault();
+            const form = $(this);
+            const name = $.trim(form.find('[name="name"]').val());
+            const percentage = parseFloat(form.find('[name="percentage"]').val());
+            const color = form.find('[name="color"]').val();
+
+            if (!name) {
+                Swal.fire({icon:'error', title:'Error', text:'Por favor ingresa el nombre del descuento.'});
+                return;
+            }
+            if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+                Swal.fire({icon:'error', title:'Error', text:'Por favor ingresa un porcentaje válido (1-100).'});
+                return;
+            }
+            if (!color) {
+                Swal.fire({icon:'error', title:'Error', text:'Por favor selecciona un color para el descuento.'});
+                return;
+            }
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method') || 'POST',
+                data: form.serialize(),
+                success: function(resp){
+                    console.log('edit discount success response', resp);
+                    const msg = resp && resp.success ? resp.success : 'Descuento actualizado con éxito.';
+                    form.closest('.modal').modal('hide');
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({icon:'success', title:'Actualizado', text: msg}).then(function(){
+                            location.reload();
+                        });
+                    } else {
+                        alert(msg);
+                        location.reload();
+                    }
+                },
+                error: function(xhr){
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        const errors = xhr.responseJSON.errors;
+                        const first = Object.keys(errors)[0];
+                        Swal.fire({icon:'error', title:'Error', text: errors[first][0]});
+                        return;
+                    }
+                    Swal.fire({icon:'error', title:'Error', text: 'Ocurrió un error al actualizar el descuento.'});
+                }
+            });
+        });
+    })();
 </script>

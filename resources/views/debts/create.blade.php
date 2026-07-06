@@ -86,6 +86,72 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <div class="form-group mb-3">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="has_discount" name="has_discount">
+                                                    <label class="custom-control-label font-weight-bold text-success" for="has_discount">
+                                                        Aplicar descuento a esta deuda
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div id="discountContainer" style="display:none;">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Descuento(*)</label>
+                                                            <select class="form-control select2" name="discount_id" id="discount_id">
+                                                                <option value="">Seleccione un descuento</option>
+                                                                @foreach($discounts as $discount)
+                                                                    <option value="{{ $discount->id }}" data-percentage="{{ $discount->percentage }}">
+                                                                        {{ $discount->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Porcentaje</label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="discount_percentage" readonly>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">%</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Monto del Descuento</label>
+                                                            <input type="text" class="form-control bg-light text-success font-weight-bold" id="discount_amount" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Monto con Descuento</label>
+                                                            <input type="text" class="form-control bg-light text-success font-weight-bold" id="amount_with_discount" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 d-flex align-items-end">
+                                                        <div class="alert alert-info w-100 mb-0">
+                                                            <i class="fa fa-info-circle"></i>
+                                                            El descuento se aplicará directamente al saldo de la deuda.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="alert alert-primary">
+                                        <i class="fa fa-info-circle"></i>
+                                        El descuento aplicado se reflejará en el saldo pendiente y en los próximos pagos que se realicen sobre esta deuda.
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -128,4 +194,28 @@
             console.error('Error:', error);
         }
     });
+    const checkDiscount = document.getElementById('has_discount');
+    const container = document.getElementById('discountContainer');
+    const amount = document.querySelector('input[name="amount"]');
+    const discount = document.getElementById('discount_id');
+
+    checkDiscount.addEventListener('change', function () {
+
+        container.style.display = this.checked ? 'block' : 'none';
+
+        calculateDiscount();
+
+    });
+
+    $('#discount_id').on('change', calculateDiscount);
+    function calculateDiscount(){
+        let total = parseFloat(amount.value) || 0;
+        let percentage = parseFloat(
+            $('#discount_id option:selected').attr('data-percentage')
+        ) || 0;
+        $('#discount_percentage').val(percentage.toFixed(2));
+        let discountAmount = total * percentage / 100;
+        $('#discount_amount').val('$' + discountAmount.toFixed(2));
+        $('#amount_with_discount').val('$' + (total - discountAmount).toFixed(2));
+    }
 </script>

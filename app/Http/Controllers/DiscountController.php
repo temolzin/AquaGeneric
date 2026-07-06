@@ -53,7 +53,7 @@ class DiscountController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        Discount::create([
+        $discount = Discount::create([
             'name' => $request->name,
             'percentage' => $request->percentage,
             'color' => $request->color,
@@ -61,10 +61,14 @@ class DiscountController extends Controller
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
         ]);
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Descuento creado exitosamente.']);
+        }
 
         return redirect()->route('discounts.index')
             ->with('success', 'Descuento creado exitosamente.');
     }
+
 
     public function show(Discount $discount)
     {
@@ -78,6 +82,7 @@ class DiscountController extends Controller
 
     public function update(Request $request, Discount $discount)
     {
+        $authUser = auth()->user();
         $request->validate([
             'name' => 'required|string|max:255',
             'percentage' => 'required|numeric|min:0|max:100',
@@ -85,24 +90,21 @@ class DiscountController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $before = $discount->toArray();
-
-        $discount->update($request->all());
-
-        $after = $discount->fresh()->toArray();
-
-        MovementHistory::create([
-            'alter_by'     => Auth::user()->id,
-            'module'       => 'descuentos',
-            'action'       => 'update',
-            'record_id'    => $discount->id,
-            'before_data'  => $before,
-            'current_data' => $after,
+        $discount->update([
+            'name' => $request->name,
+            'percentage' => $request->percentage,
+            'color' => $request->color,
+            'description' => $request->description,
+            'locality_id' => $authUser->locality_id,
+            'updated_by' => $authUser->id,
         ]);
-
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Descuento actualizado exitosamente.']);
+        }
         return redirect()->route('discounts.index')
             ->with('success', 'Descuento actualizado exitosamente.');
     }
+
 
     public function destroy(Discount $discount)
     {

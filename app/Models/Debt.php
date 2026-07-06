@@ -22,8 +22,10 @@ class Debt extends Model
         'start_date',
         'end_date',
         'amount',
+        'has_discount',
+        'discount_id',
         'note',
-        'debt_category_id'
+        'debt_category_id',
     ];
 
     protected static function booted()
@@ -121,5 +123,10 @@ class Debt extends Model
     {
         $paid = $this->getPaidAmount();
         return $paid >= $this->amount;
+    }
+
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class);
     }
 }

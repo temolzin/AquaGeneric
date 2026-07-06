@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\WaterConnection;
 use App\Models\DebtCategory;
 use App\Models\MovementHistory;
+use App\Models\Discount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -70,7 +71,8 @@ class DebtController extends Controller
             }
         });
         $debtCategories = $debtCategoriesQuery->orderBy('name')->get();
-        return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts', 'debtCategories'));
+        $discounts = Discount::query() ->where('locality_id', $localityId) ->orderBy('name') ->get();
+        return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts', 'debtCategories', 'discounts'));
     }
 
     public function getWaterConnections(Request $request)
@@ -136,7 +138,7 @@ class DebtController extends Controller
             return response()->json(['error' => 'Ya existe una deuda de Servicio de Agua en este rango de fechas para la toma.'], 400);
         }
 
-        Debt::create([
+        $debt = Debt::create([
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'water_connection_id' => $request->water_connection_id,
@@ -144,8 +146,36 @@ class DebtController extends Controller
             'start_date' => $startDate->format('Y-m-d'),
             'end_date' => $endDate->format('Y-m-d'),
             'amount' => $request->input('amount'),
+            'has_discount' => $request->boolean('has_discount'),
+            'discount_id' => $request->input('discount_id'),
             'note' => $request->input('note'),
         ]);
+
+        if ($request->boolean('has_discount') && $request->filled('discount_id')) {
+            $discount = Discount::find($request->discount_id);
+            if ($discount) {
+                $originalAmount = $request->amount;
+                $discountAmount = ($originalAmount * $discount->percentage) / 100;
+                $finalAmount = $originalAmount - $discountAmount;
+
+                MovementHistory::create([
+                    'alter_by'  => Auth::id(),
+                    'module'    => 'deudas',
+                    'action'    => 'discount',
+                    'record_id' => $debt->id,
+                    'before_data' => [
+                        'amount' => $originalAmount
+                    ],
+                    'current_data' => [
+                        'discount_id' => $discount->id,
+                        'discount_name' => $discount->name,
+                        'percentage' => $discount->percentage,
+                        'discount_amount' => $discountAmount,
+                        'final_amount' => $finalAmount
+                    ]
+                ]);
+            }
+        }
 
         return response()->json(['success' => 'Deuda creada exitosamente.']);
     }

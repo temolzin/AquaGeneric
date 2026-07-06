@@ -10,6 +10,8 @@ use App\Models\GeneralExpense;
 use App\Models\User;
 use App\Models\WaterConnection;
 use App\Models\MovementHistory;
+use App\Models\Discount;
+use App\Models\DiscountHistory;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
@@ -77,13 +79,28 @@ class PaymentController extends Controller
             })
             ->get();
 
-        return view('payments.index', compact('payments', 'customers'));
+        $payments = $query->paginate(10);
+        $customers = Customer::with('user')
+            ->where('locality_id', $authUser->locality_id)
+            ->whereHas('waterConnections.debts', function ($q) {
+                $q->whereIn('status', [Debt::STATUS_PENDING, Debt::STATUS_PARTIAL]);
+            })
+            ->get();
+
+        $discounts = Discount::where('locality_id', $authUser->locality_id)->get();
+
+        return view('payments.index', compact(
+            'payments',
+            'customers',
+            'discounts'
+        ));
     }
 
     public function getWaterConnectionsByCustomer(Request $request)
     {
         $authUser = auth()->user();
         $customerId = $request->input('waterCustomerId');
+        \Log::info('AJAX getWaterConnectionsByCustomer request', ['customerId' => $customerId, 'user_id' => $authUser->id]);
         $waterConnections = WaterConnection::where('customer_id', $customerId)
             ->where('locality_id', $authUser->locality_id)
             ->get()
@@ -93,6 +110,7 @@ class PaymentController extends Controller
                     'name' => $waterConnection->name,
                 ];
             });
+        \Log::info('AJAX getWaterConnectionsByCustomer result', ['count' => $waterConnections->count()]);
 
         return response()->json(['waterConnections' => $waterConnections]);
     }
@@ -150,20 +168,67 @@ class PaymentController extends Controller
                 ->with('error', 'El monto del pago supera la cantidad restante de la deuda.');
         }
 
+        $applyDiscount = $request->boolean('has_discount') && $request->filled('discount_id');
+        $discountPercentage = null;
+        $calculatedDiscountAmount = null;
+        $finalDebtAmount = null;
+
+        if ($applyDiscount) {
+            $discount = Discount::find($request->discount_id);
+            if ($discount) {
+                $discountPercentage = $discount->percentage;
+                $calculatedDiscountAmount = ($remainingAmount * $discount->percentage) / 100;
+                $finalDebtAmount = $remainingAmount - $calculatedDiscountAmount;
+            }
+        }
+
+        $paymentAmountToApply = $request->amount;
+        $savedDiscountAmount = null;
+        $savedFinalAmount = null;
+
+        if ($applyDiscount && $finalDebtAmount !== null && $request->amount >= $remainingAmount) {
+            $paymentAmountToApply = $finalDebtAmount;
+            $savedDiscountAmount = $calculatedDiscountAmount;
+            $savedFinalAmount = $finalDebtAmount;
+        }
+
         $payment = Payment::create([
             'customer_id' => $request->customer_id,
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
             'method' => $request->method,
-            'amount' => $request->amount,
+            'amount' => $paymentAmountToApply,
             'note' => $request->note,
             'is_future_payment' => $isFuturePayment,
+            'has_discount' => $request->boolean('has_discount'),
+            'discount_id' => $request->filled('discount_id') ? $request->discount_id : null,
+            'discount_percentage' => $discountPercentage,
+            'discount_amount' => $savedDiscountAmount !== null ? $savedDiscountAmount : 0,
+            'final_amount' => $savedFinalAmount !== null ? $savedFinalAmount : $paymentAmountToApply
         ]);
+
+        if ($savedDiscountAmount && $request->amount >= $remainingAmount) {
+            MovementHistory::create([
+                'alter_by'  => Auth::id(),
+                'module'    => 'pagos',
+                'action'    => 'discount',
+                'record_id' => $payment->id,
+                'before_data' => [
+                    'amount' => $request->amount
+                ],
+                'current_data' => [
+                    'discount_id'     => $request->discount_id,
+                    'percentage'      => $discountPercentage,
+                    'discount_amount' => $savedDiscountAmount,
+                    'final_amount'    => $savedFinalAmount
+                ]
+            ]);
+        }
 
         \Log::info('Payment created:', ['id' => $payment->id, 'is_future_payment' => $payment->is_future_payment]);
 
-        $debt->debt_current += $request->amount;
+        $debt->debt_current += $payment->amount;
 
         if ($debt->debt_current >= $debt->amount) {
             $debt->status = 'paid';
