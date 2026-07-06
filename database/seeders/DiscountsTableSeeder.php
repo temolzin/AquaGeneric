@@ -24,6 +24,8 @@ class DiscountsTableSeeder extends Seeder
                 'name' => 'Adulto Mayor',
                 'percentage' => 50,
                 'color' => '#3498db',
+                'created_at' => now(),
+                'updated_at' => now(),
                 'description' => 'Descuento para personas de la tercera edad.',
             ],
             [
@@ -32,6 +34,8 @@ class DiscountsTableSeeder extends Seeder
                 'name' => 'Jubilados',
                 'percentage' => 40,
                 'color' => '#e74c3c',
+                'created_at' => now(),
+                'updated_at' => now(),
                 'description' => 'Descuento para jubilados.',
             ],
             [
@@ -40,6 +44,8 @@ class DiscountsTableSeeder extends Seeder
                 'name' => 'Personas con Discapacidad',
                 'percentage' => 35,
                 'color' => '#f39c12',
+                'created_at' => now(),
+                'updated_at' => now(),
                 'description' => 'Apoyo para personas con discapacidad.',
             ],
             [
@@ -48,6 +54,8 @@ class DiscountsTableSeeder extends Seeder
                 'name' => 'Convenio Especial',
                 'percentage' => 25,
                 'color' => '#2ecc71',
+                'created_at' => now(),
+                'updated_at' => now(),
                 'description' => 'Convenio autorizado por el administrador.',
             ],
             [
@@ -56,6 +64,8 @@ class DiscountsTableSeeder extends Seeder
                 'name' => 'Empleado',
                 'percentage' => 20,
                 'color' => '#3498db',
+                'created_at' => now(),
+                'updated_at' => now(),
                 'description' => 'Descuento para empleados.',
             ],
             [
@@ -64,6 +74,8 @@ class DiscountsTableSeeder extends Seeder
                 'name' => 'Programa Social',
                 'percentage' => 15,
                 'color' => '#f39c12',
+                'created_at' => now(),
+                'updated_at' => now(),
                 'description' => 'Beneficiarios de programas sociales.',
             ],
             [
@@ -72,6 +84,8 @@ class DiscountsTableSeeder extends Seeder
                 'name' => 'Apoyo Municipal',
                 'percentage' => 10,
                 'color' => '#e74c3c',
+                'created_at' => now(),
+                'updated_at' => now(),
                 'description' => 'Descuento autorizado por el municipio.',
             ],
         ];
