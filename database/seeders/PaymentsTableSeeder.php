@@ -70,7 +70,9 @@ class PaymentsTableSeeder extends Seeder
         }
 
         if (!empty($payments)) {
-            DB::table('payments')->insert($payments);
+            foreach (array_chunk($payments, 250) as $chunk) {
+                DB::table('payments')->insert($chunk);
+            }
         }
     }
 
