@@ -31,7 +31,8 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Nombre (*)</label>
-                                            <input type="text" class="form-control" name="name" placeholder="Ingrese el nombre del descuento" value="{{ old('name',$discount->name) }}" required>
+                                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $discount->name) }}" placeholder="Ingrese el nombre del tipo de ingreso" required>
+                                            @error('name') <span class="invalid-feedback">{{ $message }}</span> @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -49,16 +50,19 @@
                                         <div class="form-group">
                                             <label>Color (*)</label>
                                             <div class="d-flex align-items-center">
-                                                <select name="color" id="colorSelect{{ $discount->id }}" class="form-control" required>
-                                                    <option value="#e74c3c" data-color="#e74c3c">Rojo</option>
-                                                    <option value="#3498db" data-color="#3498db">Azul</option>
-                                                    <option value="#2ecc71" data-color="#2ecc71">Verde</option>
-                                                    <option value="#f39c12" data-color="#f39c12">Naranja</option>
-                                                    <option value="#9b59b6" data-color="#9b59b6">Púrpura</option>
-                                                    <option value="#1abc9c" data-color="#1abc9c">Turquesa</option>
-                                                    <option value="#34495e" data-color="#34495e">Gris oscuro</option>
+                                                <select name="color_index" class="form-control select2" id="colorSelect{{ $discount->id }}" style="flex: 1;" required>
+                                                    <option value="">Seleccione un color</option>
+                                                    <option value="13" data-color="#e74c3c" {{ $discount->color == 'bg-danger' ? 'selected' : '' }}>Rojo</option>
+                                                    <option value="0"  data-color="#3498db" {{ $discount->color == 'bg-blue' ? 'selected' : '' }}>Azul</option>
+                                                    <option value="10" data-color="#2ecc71" {{ $discount->color == 'bg-success' ? 'selected' : '' }}>Verde</option>
+                                                    <option value="4"  data-color="#f39c12" {{ $discount->color == 'bg-orange' ? 'selected' : '' }}>Naranja</option>
+                                                    <option value="1"  data-color="#9b59b6" {{ $discount->color == 'bg-purple' ? 'selected' : '' }}>Púrpura</option>
+                                                    <option value="6"  data-color="#1abc9c" {{ $discount->color == 'bg-teal' ? 'selected' : '' }}>Turquesa</option>
+                                                    <option value="14" data-color="#34495e" {{ $discount->color == 'bg-secondary' ? 'selected' : '' }}>Gris oscuro</option>
                                                 </select>
-                                                <span id="colorPreview{{ $discount->id }}" class="input-group-text" style="width:45px;height:38px;padding:0;"></span>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text color-preview" id="colorPreview{{ $discount->id }}" style="width: 45px; height: 45px; padding: 0; background-color: {{ $discount->color ? pdf_color($discount->color) : '#6c757d' }}; border: 1px solid #ced4da;"></span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -89,10 +93,12 @@
         const colorPreview = $('#colorPreview{{ $discount->id }}');
 
         function updatePreview() {
-            const color = colorSelect.val() || '#6c757d';
+            const selected = colorSelect.find(':selected');
+            const color = selected.data('color') || '#6c757d';
+
             colorPreview.css({
-                'background-color': color,
-                'border': '1px solid ' + color
+                backgroundColor: color,
+                border: '1px solid ' + color
             });
         }
 

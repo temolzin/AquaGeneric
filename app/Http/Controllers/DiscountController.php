@@ -49,14 +49,14 @@ class DiscountController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'percentage' => 'required|numeric|min:0|max:100',
-            'color' => 'required|string|max:20',
+            'color_index' => 'required|integer|min:0|max:19',
             'description' => 'nullable|string',
         ]);
 
         Discount::create([
             'name' => $request->name,
             'percentage' => $request->percentage,
-            'color' => $request->color,
+            'color' => color($request->color_index),
             'description' => $request->description,
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
@@ -73,21 +73,30 @@ class DiscountController extends Controller
 
     public function edit(Discount $discount)
     {
+        $this->authorizeDiscount($discount);
+
         return view('discounts.edit', compact('discount'));
     }
 
     public function update(Request $request, Discount $discount)
     {
+        $this->authorizeDiscount($discount);
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'percentage' => 'required|numeric|min:0|max:100',
-            'color' => 'required|string|max:20',
+            'percentage' => 'required|numeric|min:1|max:100',
+            'color_index' => 'required|integer|min:0|max:19',
             'description' => 'nullable|string',
         ]);
 
         $before = $discount->toArray();
 
-        $discount->update($request->all());
+        $discount->update([
+            'name' => $request->name,
+            'percentage' => $request->percentage,
+            'description' => $request->description,
+            'color' => color($request->color_index),
+        ]);
 
         $after = $discount->fresh()->toArray();
 
@@ -106,6 +115,8 @@ class DiscountController extends Controller
 
     public function destroy(Discount $discount)
     {
+        $this->authorizeDiscount($discount);
+
         $before = $discount->toArray();
 
         $discount->delete();
@@ -132,5 +143,12 @@ class DiscountController extends Controller
             ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc')
             ->get();
+    }
+    
+    private function authorizeDiscount(Discount $discount)
+    {
+        if (is_null($discount->locality_id)) {
+            abort(403, 'Este descuento no puede ser modificado.');
+        }
     }
 }

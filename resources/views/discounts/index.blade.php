@@ -60,7 +60,7 @@
                                             <tr>
                                                 <td>{{ $discount->id }}</td>
                                                 <td>
-                                                    <span class="badge text-white" style="background-color: {{ $discount->color ?? '#6c757d' }};">
+                                                    <span class="badge {{ $discount->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
                                                         {{ $discount->name }}
                                                     </span>
                                                 </td>
@@ -68,19 +68,23 @@
                                                 <td>{{ number_format($discount->percentage,2) }}%</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Opciones">
-                                                        <button type="button" class="btn btn-info mr-2" data-toggle="modal" data-target="#viewDiscount{{ $discount->id }}" title="Ver Detalles">
+                                                        <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#viewDiscount{{ $discount->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        @can('editDiscount')
-                                                        <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $discount->id }}">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        @endcan
-                                                        @can('deleteDiscount')
-                                                        <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" data-toggle="modal" data-target="#delete{{ $discount->id }}">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                        @endcan
+
+                                                        @if (!is_null($discount->locality_id))
+                                                            @can('editDiscount')
+                                                            <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $discount->id }}">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                            @endcan
+
+                                                            @can('deleteDiscount')
+                                                            <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" data-toggle="modal" data-target="#delete{{ $discount->id }}">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                            @endcan
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
@@ -160,98 +164,104 @@
     .dataTables_wrapper {
         overflow-x: hidden !important;
     }
+    table#discounts td:last-child {
+        text-align: left !important;
+    }
 </style>
 @endsection
 
 @section('js')
 <script>
-    $(document).ready(function(){
-        $(document).ready(function(){
+    $(document).ready(function () {
 
         $('#discounts').DataTable({
-            responsive:true,
-            buttons:[
+            responsive: true,
+            buttons: [
                 {
-                    extend:'csv',
-                    charset:'utf-8',
-                    bom:true,
-                    exportOptions:{
-                        columns:':not(.not-export)'
+                    extend: 'csv',
+                    charset: 'utf-8',
+                    bom: true,
+                    exportOptions: {
+                        columns: ':not(.not-export)'
                     }
                 },
                 {
-                    extend:'excel',
-                    exportOptions:{
-                        columns:':not(.not-export)'
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
                     }
                 },
                 {
-                    extend:'print',
-                    exportOptions:{
-                        columns:':not(.not-export)'
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':not(.not-export)'
                     }
                 }
             ],
-            dom:'Bfrtip',
-            paging:false,
-            info:false,
-            searching:false
-            });
-        });
-    });
-    document.addEventListener('DOMContentLoaded', function () {
-        const colorSelect = document.getElementById('color');
-        const previewBox = document.createElement('div');
-
-        previewBox.style.width = '40px';
-        previewBox.style.height = '40px';
-        previewBox.style.borderRadius = '5px';
-        previewBox.style.border = '1px solid #ccc';
-        previewBox.style.marginLeft = '10px';
-        previewBox.style.display = 'inline-block';
-        previewBox.style.verticalAlign = 'middle';
-        previewBox.style.backgroundColor = '#6c757d';
-
-        colorSelect.parentNode.appendChild(previewBox);
-
-        colorSelect.addEventListener('change', function () {
-            const selectedColor = colorSelect.value;
-            previewBox.style.backgroundColor = selectedColor;
+            dom: 'Bfrtip',
+            paging: false,
+            info: false,
+            searching: false
         });
 
-        let successMessage="{{ session('success') }}";
-        let errorMessage="{{ session('error') }}";
+        var successMessage = "{{ session('success') }}";
+        var errorMessage = "{{ session('error') }}";
 
-        if(successMessage){
+        if (successMessage) {
             Swal.fire({
-                icon:'success',
-                title:'Éxito',
-                text:successMessage,
-                confirmButtonText:'Aceptar'
+                icon: 'success',
+                title: 'Éxito',
+                text: successMessage,
+                confirmButtonText: 'Aceptar'
             });
         }
-        if(errorMessage){
+
+        if (errorMessage) {
             Swal.fire({
-                icon:'error',
-                title:'Error',
-                text:errorMessage,
-                confirmButtonText:'Aceptar'
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        const colorSelect = document.getElementById('color');
+
+        if (colorSelect) {
+            const previewBox = document.createElement('div');
+
+            previewBox.style.width = '40px';
+            previewBox.style.height = '40px';
+            previewBox.style.borderRadius = '5px';
+            previewBox.style.border = '1px solid #ccc';
+            previewBox.style.marginLeft = '10px';
+            previewBox.style.display = 'inline-block';
+            previewBox.style.verticalAlign = 'middle';
+            previewBox.style.backgroundColor = '#6c757d';
+
+            colorSelect.parentNode.appendChild(previewBox);
+
+            colorSelect.addEventListener('change', function () {
+                previewBox.style.backgroundColor = this.value;
             });
         }
 
         const form = document.querySelector('#createDiscount form');
-        form.addEventListener('submit', function (e) {
-            const selectedColor = colorSelect.value;
-            if (!selectedColor) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Por favor selecciona un color para el descuento.',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        });
+
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                if (!colorSelect.value) {
+                    e.preventDefault();
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Por favor selecciona un color para el descuento.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+        }
     });
 </script>
 @endsection

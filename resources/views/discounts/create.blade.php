@@ -45,16 +45,15 @@
                                         <div class="form-group">
                                             <label for="color">Color(*)</label>
                                             <div class="d-flex align-items-center" style="gap: 0;">
-                                                <select name="color" class="form-control select2" id="colorSelect" required>
+                                                <select name="color_index" class="form-control select2" id="colorSelect" style="flex: 1;" required>
                                                     <option value="">Seleccione un color</option>
-
-                                                    <option value="#e74c3c">Rojo</option>
-                                                    <option value="#3498db">Azul</option>
-                                                    <option value="#2ecc71">Verde</option>
-                                                    <option value="#f39c12">Naranja</option>
-                                                    <option value="#9b59b6">Púrpura</option>
-                                                    <option value="#1abc9c">Turquesa</option>
-                                                    <option value="#34495e">Gris oscuro</option>
+                                                    <option value="13" data-color="#e74c3c">Rojo</option>
+                                                    <option value="0"  data-color="#3498db">Azul</option>
+                                                    <option value="10" data-color="#2ecc71">Verde</option>
+                                                    <option value="4"  data-color="#f39c12">Naranja</option>
+                                                    <option value="1"  data-color="#9b59b6">Púrpura</option>
+                                                    <option value="6"  data-color="#1abc9c">Turquesa</option>
+                                                    <option value="14" data-color="#34495e">Gris oscuro</option>
                                                 </select>
                                                 <span class="input-group-text" id="colorPreview" style="width: 45px; height: 45px; background-color: #6c757d; padding: 0; border: 1px solid #ced4da; margin-left: -1px;"></span>
                                             </div>
@@ -87,13 +86,12 @@
         const colorPreview = document.getElementById('colorPreview');
 
         const updatePreview = () => {
-            const color = colorSelect.value || '#6c757d';
+            if (!colorSelect || !colorPreview) return;
+            const selected = colorSelect.options[colorSelect.selectedIndex];
+            const color = selected?.dataset.color || '#6c757d';
             colorPreview.style.backgroundColor = color;
             colorPreview.style.border = `1px solid ${color}`;
         };
-
-        $('#colorSelect').on('change', updatePreview);
-        updatePreview();
 
         const initializeColorSelect = () => {
             if (!colorSelect || !colorPreview) return;

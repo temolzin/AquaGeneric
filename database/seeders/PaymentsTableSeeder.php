@@ -70,10 +70,11 @@ class PaymentsTableSeeder extends Seeder
         }
 
         if (!empty($payments)) {
-            DB::table('payments')->insert($payments);
+            foreach (array_chunk($payments, 300) as $chunk) {
+                DB::table('payments')->insert($chunk);
+            }
         }
     }
-
     private function getRandomCreatedAt(): Carbon
     {
         return Carbon::now()->subMonths(rand(0, self::MAX_MONTHS_SUBTRACT))
