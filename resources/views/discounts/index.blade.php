@@ -60,7 +60,7 @@
                                             <tr>
                                                 <td>{{ $discount->id }}</td>
                                                 <td>
-                                                    <span class="badge text-white" style="background-color: {{ $discount->color ?? '#6c757d' }};">
+                                                    <span class="badge {{ $discount->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
                                                         {{ $discount->name }}
                                                     </span>
                                                 </td>
