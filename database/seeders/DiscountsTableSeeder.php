@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use App\Models\Discount;
+use App\Models\User;
 
-class DiscountSeeder extends Seeder
+class DiscountsTableSeeder extends Seeder
 {
     public function run()
     {
@@ -20,78 +22,59 @@ class DiscountSeeder extends Seeder
             ->where('email', 'jose@gmail.com')
             ->value('id');
 
-        Discount::updateOrCreate([
+        Discount::updateOrCreate(
             [
-                'locality_id' => null,
                 'name' => 'Adulto Mayor',
+                'locality_id' => null,
+            ],
+            [
                 'description' => 'Descuento para personas de la tercera edad.',
                 'percentage' => 35,
                 'color' => color(13),
                 'created_by' => $adminUserId,
                 'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            ]
+        );
+
+        $baseDiscounts = [
             [
-                'locality_id' => 1,
                 'name' => 'Jubilados',
                 'description' => 'Descuento para jubilados.',
                 'percentage' => 40,
-                'color' => '0',
-                'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'color' => color(0)
             ],
             [
-                'locality_id' => 1,
                 'name' => 'Personas con Discapacidad',
                 'description' => 'Apoyo para personas con discapacidad.',
                 'percentage' => 35,
-                'color' => '10', 
-                'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'color' => color(10)
             ],
             [
-                'locality_id' => 1,
                 'name' => 'Convenio Especial',
                 'description' => 'Convenio autorizado por el administrador.',
                 'percentage' => 25,
-                'color' => '4',
-                'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'color' => color(4)
             ],
             [
-                'locality_id' => 1,
                 'name' => 'Empleado',
                 'description' => 'Descuento para empleados.',
                 'percentage' => 20,
-                'color' => '1', 
-                'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'color' => color(1)
             ],
             [
-                'locality_id' => 1,
                 'name' => 'Programa Social',
                 'description' => 'Beneficiarios de programas sociales.',
                 'percentage' => 15,
-                'color' => '6', 
-                'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'color' => color(6)
             ],
             [
-                'locality_id' => 1,
                 'name' => 'Apoyo Municipal',
                 'description' => 'Descuento autorizado por el municipio.',
                 'percentage' => 10,
-                'color' => '14',
-                'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+                'color' => color(14)
+            ]
+        ];
+
 
         foreach ($localityIds as $localityId) {
 
