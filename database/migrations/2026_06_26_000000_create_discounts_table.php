@@ -16,11 +16,11 @@ class CreateDiscountsTable extends Migration
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('locality_id')->nullable();
+            $table->unsignedBigInteger('locality_id');
             $table->unsignedBigInteger('created_by');
             $table->string('name');
             $table->decimal('percentage',5,2);
-            $table->string('color')->default('#6c757d');
+            $table->string('color',20)->default('0');
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
