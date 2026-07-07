@@ -20,7 +20,7 @@ class CreateDiscountsTable extends Migration
             $table->unsignedBigInteger('created_by');
             $table->string('name');
             $table->decimal('percentage',5,2);
-            $table->string('color')->default('#6c757d');
+            $table->string('color')->default('bg-secondary');
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
