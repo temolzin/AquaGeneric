@@ -15,13 +15,15 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 use App\Models\GeneralEarning;
+use App\Models\Discount;
+use App\Models\DiscountHistory;
 
 class PaymentController extends Controller
 {
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = Payment::with(['debt.customer', 'creator'])
+        $query = Payment::with(['debt.customer', 'creator', 'discount', 'discountHistory'])
             ->where('locality_id', $authUser->locality_id)
             ->whereHas('creator', function ($q) use ($authUser) {
                 $q->where('locality_id', $authUser->locality_id);
@@ -77,7 +79,12 @@ class PaymentController extends Controller
             })
             ->get();
 
-        return view('payments.index', compact('payments', 'customers'));
+        $discounts = Discount::where(function ($q) use ($authUser) {
+            $q->where('locality_id', $authUser->locality_id)
+              ->orWhereNull('locality_id');
+        })->orderBy('name')->get();
+
+        return view('payments.index', compact('payments', 'customers', 'discounts'));
     }
 
     public function getWaterConnectionsByCustomer(Request $request)
@@ -145,25 +152,64 @@ class PaymentController extends Controller
 
         $remainingAmount = $debt->amount - $debt->debt_current;
 
+        $isDiscountApplied = $request->has('has_discount');
+        $discountId = $isDiscountApplied ? $request->discount_id : null;
+        $discount = null;
+        $discountAmount = 0;
+        $amountWithDiscount = $remainingAmount;
+        $totalAppliedToDebt = $request->amount;
+
+        if ($isDiscountApplied && ! $discountId) {
+            return redirect()->route('payments.index')
+                ->with('error', 'Debe seleccionar un descuento para aplicar.');
+        }
+
+        if ($discountId) {
+            $discount = Discount::where('id', $discountId)
+                ->where(function ($q) use ($authUser) {
+                    $q->where('locality_id', $authUser->locality_id)
+                      ->orWhereNull('locality_id');
+                })
+                ->first();
+
+            if (! $discount) {
+                return redirect()->route('payments.index')
+                    ->with('error', 'El descuento seleccionado no es válido para esta localidad.');
+            }
+
+            $discountAmount = round($remainingAmount * ($discount->percentage / 100), 2);
+            $amountWithDiscount = max(0, $remainingAmount - $discountAmount);
+
+            if ($request->amount > $amountWithDiscount) {
+                return redirect()->route('payments.index')
+                    ->with('error', 'El monto del pago supera el monto permitido con descuento.');
+            }
+
+            $proportion = $amountWithDiscount > 0 ? ($request->amount / $amountWithDiscount) : 0;
+            $totalAppliedToDebt = $request->amount + round($discountAmount * $proportion, 2);
+            $totalAppliedToDebt = min($totalAppliedToDebt, $remainingAmount);
+        }
+
         if ($request->amount > $remainingAmount) {
             return redirect()->route('payments.index')
                 ->with('error', 'El monto del pago supera la cantidad restante de la deuda.');
         }
 
         $payment = Payment::create([
-            'customer_id' => $request->customer_id,
+            'customer_id' => $request->input('customer_id'),
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
-            'debt_id' => $request->debt_id,
-            'method' => $request->method,
-            'amount' => $request->amount,
-            'note' => $request->note,
+            'discount_id' => $discountId,
+            'debt_id' => $request->input('debt_id'),
+            'method' => $request->input('method'),
+            'amount' => $request->input('amount'),
+            'note' => $request->input('note'),
             'is_future_payment' => $isFuturePayment,
         ]);
 
-        \Log::info('Payment created:', ['id' => $payment->id, 'is_future_payment' => $payment->is_future_payment]);
+        \Log::info('Payment created:', ['id' => $payment->id, 'discount_id' => $discountId, 'is_future_payment' => $payment->is_future_payment]);
 
-        $debt->debt_current += $request->amount;
+        $debt->debt_current += $totalAppliedToDebt;
 
         if ($debt->debt_current >= $debt->amount) {
             $debt->status = 'paid';
@@ -174,6 +220,20 @@ class PaymentController extends Controller
         }
 
         $debt->save();
+
+        if ($discountId && $discount) {
+            DiscountHistory::create([
+                'locality_id' => $authUser->locality_id,
+                'discount_id' => $discount->id,
+                'customer_id' => $payment->customer_id,
+                'module' => 'payments',
+                'record_id' => $payment->id,
+                'original_amount' => $remainingAmount,
+                'discount_percentage' => $discount->percentage,
+                'final_amount' => $amountWithDiscount,
+                'created_by' => $authUser->id,
+            ]);
+        }
 
         return redirect()->route('payments.index')->with('success', 'Pago creado exitosamente.');
     }

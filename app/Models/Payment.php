@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Debt;
 use App\Models\Customer;
+use App\Models\Discount;
+use App\Models\Locality;
+use App\Models\OpenPayLog;
+use App\Models\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
@@ -16,6 +20,7 @@ class Payment extends Model
         'customer_id',
         'locality_id',
         'created_by',
+        'discount_id',
         'debt_id',
         'method',
         'amount',
@@ -54,6 +59,17 @@ class Payment extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class, 'discount_id');
+    }
+
+    public function discountHistory()
+    {
+        return $this->hasOne('App\\Models\\DiscountHistory', 'record_id')
+            ->where('module', 'payments');
     }
 
     public function openPayLogs()

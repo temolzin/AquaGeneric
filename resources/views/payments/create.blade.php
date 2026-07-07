@@ -12,6 +12,9 @@
                 </div>
                 <form action="{{ route('payments.store') }}" method="post" enctype="multipart/form-data" id="paymentForm">
                     @csrf
+                    <input type="hidden" name="discount_percentage" id="payment_discount_percentage_hidden">
+                    <input type="hidden" name="discount_amount" id="payment_discount_amount_hidden">
+                    <input type="hidden" name="final_amount" id="payment_final_amount_hidden">
                     <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
@@ -105,6 +108,66 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <div class="form-group mb-3">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="payment_has_discount" name="has_discount">
+                                                    <label class="custom-control-label font-weight-bold text-success" for="payment_has_discount">
+                                                        Aplicar descuento a esta deuda
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div id="paymentDiscountContainer" style="display:none;">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Descuento(*)</label>
+                                                            <select class="form-control select2" name="discount_id" id="payment_discount_id" disabled>
+                                                                <option value="">Seleccione un descuento</option>
+                                                                @foreach($discounts as $discount)
+                                                                    <option value="{{ $discount->id }}" data-percentage="{{ $discount->percentage }}">
+                                                                        {{ $discount->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Porcentaje</label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="payment_discount_percentage" readonly>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">%</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Monto del Descuento</label>
+                                                            <input type="text" class="form-control bg-light text-success font-weight-bold" id="payment_discount_amount" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Monto con Descuento</label>
+                                                            <input type="text" class="form-control bg-light text-success font-weight-bold" id="payment_amount_with_discount" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 d-flex align-items-end">
+                                                        <div class="alert alert-info w-100 mb-0">
+                                                            <i class="fa fa-info-circle"></i>
+                                                            El descuento se aplicará directamente al saldo de la deuda.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -118,143 +181,288 @@
     </div>
 </div>
 
+@push('js')
 <script>
-$(document).ready(function() {
-    $('#createPayment').on('shown.bs.modal', function() {
-        var modalElement = $(this);
-        var dropdownParent = modalElement.find('.modal-body');
-        
-        modalElement.find('.select2').each(function() {
-            if (!$(this).data('select2')) {
-                $(this).select2({
-                    dropdownParent: dropdownParent,
-                    allowClear: false,
-                    width: '100%'
+$(document).ready(function () {
+
+    function limpiarDescuento() {
+        $('#payment_discount_id').val('').trigger('change');
+        $('#payment_discount_id').prop('disabled', true);
+
+        $('#payment_discount_percentage').val('');
+        $('#payment_discount_amount').val('');
+        $('#payment_amount_with_discount').val('');
+
+        $('#payment_discount_percentage_hidden').val('');
+        $('#payment_discount_amount_hidden').val('');
+        $('#payment_final_amount_hidden').val('');
+
+        $('#paymentDiscountContainer').hide();
+        $('#payment_has_discount').prop('checked', false);
+    }
+
+    $('#createPayment').on('shown.bs.modal', function () {
+
+        $('.select2').each(function () {
+
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+
+            $(this).select2({
+                dropdownParent: $('#createPayment'),
+                width: '100%'
+            });
+
+        });
+
+        limpiarDescuento();
+
+        $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
+
+        $('#payment_amount').val('');
+
+        $('#debt_start_date').remove();
+        $('#debt_remaining_amount').remove();
+
+    });
+
+    $('#payment_has_discount').on('change', function () {
+
+        if ($(this).is(':checked')) {
+
+            $('#paymentDiscountContainer').slideDown();
+            $('#payment_discount_id').prop('disabled', false);
+
+            return;
+        }
+
+        limpiarDescuento();
+
+    });
+
+    $('#customer_id').on('change', function () {
+
+        let customerId = $(this).val();
+
+        $('#water_connection_id').empty()
+            .append('<option value="">Selecciona una toma</option>')
+            .trigger('change');
+
+        $('#debt_id').empty()
+            .append('<option value="">Selecciona una deuda</option>')
+            .trigger('change');
+
+        $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
+
+        if (!customerId) {
+            return;
+        }
+
+        $.ajax({
+
+            url: '{{ route("getWaterConnectionsByCustomer") }}',
+
+            data: {
+                waterCustomerId: customerId
+            },
+
+            success: function (data) {
+
+                $.each(data.waterConnections, function (i, connection) {
+
+                    $('#water_connection_id').append(
+                        '<option value="' + connection.id + '">' +
+                        connection.name +
+                        '</option>'
+                    );
+
                 });
+
+                $('#water_connection_id').trigger('change');
+
+            },
+
+            error: function () {
+
+                alert('Error al cargar las tomas.');
+
+            }
+
+        });
+
+    });
+
+    $('#water_connection_id').on('change', function () {
+
+        let waterConnectionId = $(this).val();
+
+        $('#debt_id').empty()
+            .append('<option value="">Selecciona una deuda</option>')
+            .trigger('change');
+
+        $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
+
+        limpiarDescuento();
+
+        if (!waterConnectionId) {
+            return;
+        }
+
+        $.ajax({
+
+            url: '{{ route("getDebtsByWaterConnection") }}',
+
+            data: {
+                water_connection_id: waterConnectionId
+            },
+
+            success: function (data) {
+
+                $.each(data.debts, function (i, debt) {
+
+                    $('#debt_id').append(
+                        '<option value="' + debt.id + '">' +
+                        debt.start_date +
+                        ' - $' +
+                        debt.remaining_amount +
+                        '</option>'
+                    );
+
+                });
+
+                $('#debt_id').trigger('change');
+
+            },
+
+            error: function () {
+
+                alert('Error al cargar las deudas.');
+
+            }
+
+        });
+
+    });
+        function calcularDescuento() {
+
+        if (!$('#payment_has_discount').is(':checked')) {
+            return;
+        }
+
+        let deuda = parseFloat($('#debt_remaining_amount').val()) || 0;
+
+        let porcentaje = parseFloat(
+            $('#payment_discount_id option:selected').data('percentage')
+        ) || 0;
+
+        let descuento = deuda * porcentaje / 100;
+        let total = deuda - descuento;
+
+        $('#payment_discount_percentage').val(porcentaje.toFixed(2));
+        $('#payment_discount_amount').val('$' + descuento.toFixed(2));
+        $('#payment_amount_with_discount').val('$' + total.toFixed(2));
+
+        $('#payment_discount_percentage_hidden').val(porcentaje);
+        $('#payment_discount_amount_hidden').val(descuento.toFixed(2));
+        $('#payment_final_amount_hidden').val(total.toFixed(2));
+
+        $('#payment_amount').val(total.toFixed(2));
+
+    }
+
+    $('#payment_discount_id').on('change', function () {
+        calcularDescuento();
+    });
+
+    $('#debt_id').on('change', function () {
+
+        let debtId = $(this).val();
+
+        if (!debtId) {
+            return;
+        }
+
+        $.ajax({
+
+            url: '{{ route("getDebtsByWaterConnection") }}',
+
+            data: {
+                water_connection_id: $('#water_connection_id').val()
+            },
+
+            success: function (data) {
+
+                let debt = data.debts.find(function (item) {
+                    return item.id == debtId;
+                });
+
+                if (!debt) {
+                    return;
+                }
+
+                $('#suggested_amount').text('$' + debt.remaining_amount);
+
+                $('#payment_amount').val(debt.remaining_amount);
+
+                $('#debt_start_date').remove();
+                $('#debt_remaining_amount').remove();
+
+                $('<input>')
+                    .attr({type: 'hidden', id: 'debt_start_date', value: debt.start_date}) .appendTo('#paymentForm');
+
+                $('<input>')
+                    .attr({type: 'hidden', id: 'debt_remaining_amount', value: debt.remaining_amount})
+                    .appendTo('#paymentForm');
+
+                let today = new Date('{{ date("Y-m-d") }}');
+                let debtDate = new Date(debt.start_date);
+                let isFuture = debtDate.getFullYear() > today.getFullYear() || (debtDate.getFullYear() == today.getFullYear() && debtDate.getMonth() > today.getMonth());
+                $('#is_future_payment').prop('checked', isFuture);
+                if ($('#payment_has_discount').is(':checked')) {
+                    calcularDescuento();
+                }
+            },
+            error: function () {
+                alert('Error al obtener la deuda.');
             }
         });
-        
-        modalElement.on('keydown', function(e) {
-            if ($('.select2-container--open').length && e.keyCode === 27) {
-                e.stopPropagation();
-            }
-        });
     });
 
-    $('#customer_id').on('change', function() {
-        var customerId = $(this).val();
-        if (customerId) {
-            $.ajax({
-                url: '{{ route("getWaterConnectionsByCustomer") }}',
-                data: { waterCustomerId: customerId },
-                success: function(data) {
-                    var waterConnectionSelect = $('#water_connection_id');
-                    waterConnectionSelect.empty().append('<option value="">Selecciona una toma</option>');
-                    $.each(data.waterConnections, function(index, connection) {
-                        waterConnectionSelect.append('<option value="' + connection.id + '">' + 
-                            connection.name + '</option>');
-                    });
-                    // Trigger change to update Select2
-                    waterConnectionSelect.trigger('change');
-                    $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>').trigger('change');
-                    $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
-                    $('#is_future_payment').prop('checked', false);
-                },
-                error: function(xhr) {
-                    console.error('Error al cargar tomas:', xhr.responseText);
-                    alert('Error al cargar las tomas. Por favor, intenta de nuevo.');
-                }
-            });
-        } else {
-            $('#water_connection_id').empty().append('<option value="">Selecciona una toma</option>').trigger('change');
-            $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>').trigger('change');
-            $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
-            $('#is_future_payment').prop('checked', false);
+    $('#payment_amount').on('keyup change', function () {
+        if ($('#payment_has_discount').is(':checked')) {
+            calcularDescuento();
         }
     });
 
-    $('#water_connection_id').on('change', function() {
-        var waterConnectionId = $(this).val();
-        if (waterConnectionId) {
-            $.ajax({
-                url: '{{ route("getDebtsByWaterConnection") }}',
-                data: { water_connection_id: waterConnectionId },
-                success: function(data) {
-                    var debtSelect = $('#debt_id');
-                    debtSelect.empty().append('<option value="">Selecciona una deuda</option>');
-                    $.each(data.debts, function(index, debt) {
-                        debtSelect.append('<option value="' + debt.id + '">' + 
-                            debt.start_date + ' - $' + debt.remaining_amount + '</option>');
-                    });
-                    // Trigger change to update Select2
-                    debtSelect.trigger('change');
-                    $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
-                    $('#is_future_payment').prop('checked', false);
-                },
-                error: function(xhr) {
-                    console.error('Error al cargar deudas:', xhr.responseText);
-                    alert('Error al cargar las deudas. Por favor, intenta de nuevo.');
-                }
-            });
-        } else {
-            $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>').trigger('change');
-            $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
-            $('#is_future_payment').prop('checked', false);
+    $('#paymentForm').on('submit', function (e) {
+        let startDate = $('#debt_start_date').val();
+        if (!startDate) {
+            return;
         }
-    });
 
-    $('#debt_id').on('change', function() {
-        var debtId = $(this).val();
-        if (debtId) {
-            $.ajax({
-                url: '{{ route("getDebtsByWaterConnection") }}',
-                data: { water_connection_id: $('#water_connection_id').val() },
-                success: function(data) {
-                    var debt = data.debts.find(d => d.id == debtId);
-                    if (debt) {
-                        $('#suggested_amount').text('$' + debt.remaining_amount);
-                        $('#debt_start_date').remove();
-                        $('<input>').attr({type: 'hidden', id: 'debt_start_date', value: debt.start_date}).appendTo('#paymentForm');
+        let today = new Date('{{ date("Y-m-d") }}');
+        let debtDate = new Date(startDate);
 
-                        var today = new Date('{{ date("Y-m-d") }}');
-                        var debtDate = new Date(debt.start_date);
-                        var isFutureDebt = debtDate.getFullYear() > today.getFullYear() || 
-                            (debtDate.getFullYear() === today.getFullYear() && debtDate.getMonth() + 1 > today.getMonth() + 1);
+        let deudaPeriodo = debtDate.getFullYear() * 100 + debtDate.getMonth();
+        let hoyPeriodo = today.getFullYear() * 100 + today.getMonth();
+        let pagoFuturo = $('#is_future_payment').is(':checked');
 
-                        $('#is_future_payment').prop('checked', isFutureDebt);
-                    }
-                },
-                error: function(xhr) {
-                    console.error('Error al cargar detalles de deuda:', xhr.responseText);
-                    alert('Error al cargar los detalles de la deuda. Por favor, intenta de nuevo.');
-                }
-            });
-        } else {
-            $('#is_future_payment').prop('checked', false);
+        if (deudaPeriodo > hoyPeriodo && !pagoFuturo) {
+            e.preventDefault();
+            alert(
+                'La deuda pertenece a un periodo futuro. Debe marcar "¿El cliente va a pagar por adelantado?".'
+            );
+            return;
         }
-    });
-
-    $('#paymentForm').on('submit', function(e) {
-        var isFuturePayment = $('#is_future_payment').is(':checked');
-        var startDate = $('#debt_start_date').val();
-        if (startDate) {
-            var today = new Date('{{ date("Y-m-d") }}');
-            var debtDate = new Date(startDate);
-            var debtMonthYear = debtDate.getFullYear() * 100 + debtDate.getMonth() + 1;
-            var todayMonthYear = today.getFullYear() * 100 + today.getMonth() + 1;
-
-            if (debtMonthYear > todayMonthYear && !isFuturePayment) {
-                e.preventDefault();
-                alert('Error: La deuda seleccionada es de un periodo futuro. Debe marcar "¿El cliente va a pagar por adelantado?".');
-                return false;
-            }
-
-            if (isFuturePayment && debtMonthYear <= todayMonthYear) {
-                e.preventDefault();
-                alert('Error: La deuda seleccionada no es de un periodo futuro.');
-                return false;
-            }
+        if (deudaPeriodo <= hoyPeriodo && pagoFuturo) {
+            e.preventDefault();
+            alert(
+                'La deuda seleccionada no corresponde a un periodo futuro.'
+            );
+            return;
         }
     });
 });
 </script>
+@endpush
