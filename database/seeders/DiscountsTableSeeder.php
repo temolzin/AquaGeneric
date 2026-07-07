@@ -75,7 +75,6 @@ class DiscountsTableSeeder extends Seeder
             ]
         ];
 
-
         foreach ($localityIds as $localityId) {
 
             $userIds = DB::table('users')
