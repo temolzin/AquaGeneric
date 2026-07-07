@@ -84,7 +84,7 @@ class DiscountController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'percentage' => 'required|numeric|min:0|max:100',
+            'percentage' => 'required|numeric|min:1|max:100',
             'color_index' => 'required|integer|min:0|max:19',
             'description' => 'nullable|string',
         ]);
@@ -93,6 +93,7 @@ class DiscountController extends Controller
 
         $discount->update([
             'name' => $request->name,
+            'percentage' => $request->percentage,
             'description' => $request->description,
             'color' => color($request->color_index),
         ]);
@@ -143,6 +144,7 @@ class DiscountController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
     }
+    
     private function authorizeDiscount(Discount $discount)
     {
         if (is_null($discount->locality_id)) {

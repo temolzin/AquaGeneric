@@ -262,7 +262,6 @@
                 }
             });
         }
-
     });
 </script>
 @endsection

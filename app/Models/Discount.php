@@ -17,12 +17,12 @@ class Discount extends Model
         'color',
         'description',
     ];
+    
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
-
 
     public function locality()
     {

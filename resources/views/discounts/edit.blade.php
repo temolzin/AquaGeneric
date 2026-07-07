@@ -31,7 +31,8 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Nombre (*)</label>
-                                            <input type="text" class="form-control" name="name" placeholder="Ingrese el nombre del descuento" value="{{ old('name',$discount->name) }}" required>
+                                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $discount->name) }}" placeholder="Ingrese el nombre del tipo de ingreso" required>
+                                            @error('name') <span class="invalid-feedback">{{ $message }}</span> @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

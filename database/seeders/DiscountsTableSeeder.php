@@ -9,24 +9,18 @@ use App\Models\User;
 
 class DiscountsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run($localityId = null)
+    public function run()
     {
-        dd(DB::table('users')->count());
+        $localityIds = DB::table('localities')->pluck('id')->toArray();
+
+        if (empty($localityIds)) {
+            $this->command->error('No localities found. Skipping discounts seeding.');
+            return;
+        }
+
         $adminUserId = DB::table('users')
             ->where('email', 'jose@gmail.com')
             ->value('id');
-
-        $adminUserId = $adminUserId ?: DB::table('users')->value('id');
-
-        if (!$adminUserId) {
-            $this->command->error('No users found. Skipping discounts seeding.');
-            return;
-        }
 
         Discount::updateOrCreate(
             [
@@ -35,7 +29,7 @@ class DiscountsTableSeeder extends Seeder
             ],
             [
                 'description' => 'Descuento para personas de la tercera edad.',
-                'percentage' => 50,
+                'percentage' => 35,
                 'color' => color(13),
                 'created_by' => $adminUserId,
                 'created_at' => now(),
@@ -81,60 +75,40 @@ class DiscountsTableSeeder extends Seeder
             ],
         ];
 
-        if ($localityId) {
-            $this->seedLocalityDiscounts((int) $localityId, $baseDiscounts);
-            return;
-        }
-
-        $localityIds = DB::table('localities')->pluck('id')->toArray();
-
-        if (empty($localityIds)) {
-            $this->command->info('Default discounts seeded. No localities found for locality discounts.');
-            return;
-        }
-
         foreach ($localityIds as $localityId) {
-            $this->seedLocalityDiscounts((int) $localityId, $baseDiscounts);
-        }
-    }
 
-    private function seedLocalityDiscounts(int $localityId, array $baseDiscounts): void
-    {
-        $userIds = DB::table('users')
-            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
-            ->where('users.locality_id', $localityId)
-            ->distinct()
-            ->pluck('users.id')
-            ->toArray();
+            $userIds = DB::table('users')
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', [
+                    User::ROLE_SUPERVISOR,
+                    User::ROLE_SECRETARY
+                ])
+                ->where('users.locality_id', $localityId)
+                ->distinct()
+                ->pluck('users.id')
+                ->toArray();
 
-        if (empty($userIds)) {
-            $fallbackUserId = DB::table('users')
-                ->where('locality_id', $localityId)
-                ->value('id');
-
-            if (!$fallbackUserId) {
-                return;
+            if (empty($userIds)) {
+                continue;
             }
 
-            $userIds = [$fallbackUserId];
-        }
+            foreach ($baseDiscounts as $discount) {
 
-        foreach ($baseDiscounts as $discount) {
-            Discount::updateOrCreate(
-                [
-                    'name' => $discount['name'],
-                    'locality_id' => $localityId,
-                ],
-                [
-                    'description' => $discount['description'],
-                    'percentage' => $discount['percentage'],
-                    'color' => $discount['color'],
-                    'created_by' => collect($userIds)->random(),
-                    'created_at' => now(),
-                ]
-            );
+                Discount::updateOrCreate(
+                    [
+                        'name' => $discount['name'],
+                        'locality_id' => $localityId
+                    ],
+                    [
+                        'description' => $discount['description'],
+                        'percentage' => $discount['percentage'],
+                        'color' => $discount['color'],
+                        'created_by' => collect($userIds)->random(),
+                        'created_at' => now(),
+                    ]
+                );
+            }
         }
     }
 }
