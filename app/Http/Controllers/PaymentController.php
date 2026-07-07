@@ -145,16 +145,6 @@ class PaymentController extends Controller
 
         $remainingAmount = $debt->amount - $debt->debt_current;
 
-            if ($request->amount > $amountWithDiscount) {
-                return redirect()->route('payments.index')
-                    ->with('error', 'El monto del pago supera el monto permitido con descuento.');
-            }
-
-            $proportion = $amountWithDiscount > 0 ? ($request->amount / $amountWithDiscount) : 0;
-            $totalAppliedToDebt = $request->amount + round($discountAmount * $proportion, 2);
-            $totalAppliedToDebt = min($totalAppliedToDebt, $remainingAmount);
-        }
-
         if ($request->amount > $remainingAmount) {
             return redirect()->route('payments.index')
                 ->with('error', 'El monto del pago supera la cantidad restante de la deuda.');
@@ -184,20 +174,6 @@ class PaymentController extends Controller
         }
 
         $debt->save();
-
-        if ($discountId && $discount) {
-            DiscountHistory::create([
-                'locality_id' => $authUser->locality_id,
-                'discount_id' => $discount->id,
-                'customer_id' => $payment->customer_id,
-                'module' => 'payments',
-                'record_id' => $payment->id,
-                'original_amount' => $remainingAmount,
-                'discount_percentage' => $discount->percentage,
-                'final_amount' => $amountWithDiscount,
-                'created_by' => $authUser->id,
-            ]);
-        }
 
         return redirect()->route('payments.index')->with('success', 'Pago creado exitosamente.');
     }
