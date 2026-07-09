@@ -48,79 +48,14 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
                                                 </div>
-                                                <input type="number" min="1" class="form-control" name="amount" id="amount-{{ $payment->id }}" value="{{ $payment->amount }}" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="card border-warning">
-                                            <div class="card-body">
-                                                <div class="custom-control custom-checkbox mb-3">
-                                                    <input type="number" min="1" class="form-control" name="amount" id="amount-{{ $payment->id }}" value="{{ $payment->amount }}" required>
-                                                        {{ $payment->discount_id ? 'checked' : '' }}>
-                                                    <label class="custom-control-label font-weight-bold text-warning" for="apply_discount-{{ $payment->id }}">
-                                                        Aplicar descuento a este pago
-                                                    </label>
-                                                </div>
-                                                <div id="discount_fields-{{ $payment->id }}" style="{{ $payment->discount_id ? '' : 'display:none;' }}">
-                                                    <div class="row">
-                                                        <div class="col-lg-4">
-                                                            <div class="form-group">
-                                                                <label class="form-label">
-                                                                    Descuento(*)
-                                                                </label>
-                                                                <select class="form-control select2" name="discount_id" id="discount_id-{{ $payment->id }}">
-                                                                    <option value="">
-                                                                        Selecciona un descuento
-                                                                    </option>
-                                                                    @foreach($discounts as $discount)
-                                                                        <option value="{{ $discount->id }}" data-percentage="{{ $discount->percentage }}" {{ $payment->discount_id == $discount->id ? 'selected' : '' }}>
-                                                                            {{ $discount->name }}
-                                                                            {{ number_format($discount->percentage,2) }}%
-                                                                        </option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-2">
-                                                            <div class="form-group">
-                                                                <label class="form-label">
-                                                                    Porcentaje
-                                                                </label>
-                                                                <input type="text" class="form-control" id="discount_percentage-{{ $payment->id }}" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-3">
-                                                            <div class="form-group">
-                                                                <label class="form-label">
-                                                                    Descuento
-                                                                </label>
-                                                                <input type="text" class="form-control bg-light text-success font-weight-bold" id="discount_amount-{{ $payment->id }}" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-3">
-                                                            <div class="form-group">
-                                                                <label class="form-label">
-                                                                    Total con descuento
-                                                                </label>
-                                                                <input type="text" class="form-control bg-light text-success font-weight-bold" id="amount_with_discount-{{ $payment->id }}" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6">
-                                                            <label class="form-label">
-                                                                Monto Original
-                                                            </label>
-                                                            <input type="text" class="form-control" id="original_amount-{{ $payment->id }}" value="${{ number_format($payment->amount,2) }}" readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <input  type="number" min="1" class="form-control" name="amount" id="amount" value="{{$payment-> amount}} "required >
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="note" class="form-label">Nota del Pago</label>
-                                            <textarea class="form-control" name="note" id="note-{{ $payment->id }}">{{ $payment->note }}</textarea>
+                                            <textarea  class = "form-control" name="note" id="note"> {{$payment->note}} </textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -138,93 +73,7 @@
 </div>
 
 <script>
-    $(document).ready(function(){
-
-        let paymentId = "{{ $payment->id }}";
-
-        function formatCurrency(value){
-            return '$' + Number(value || 0).toFixed(2);
-        }
-
-
-        function updateDiscount(){
-
-            let option = $('#discount_id-' + paymentId + ' option:selected');
-
-            let percentage = parseFloat(option.data('percentage')) || 0;
-
-            let originalAmount = parseFloat("{{ $payment->amount }}");
-
-            let discountAmount = originalAmount * (percentage / 100);
-
-            let finalAmount = originalAmount - discountAmount;
-
-
-            $('#discount_percentage-' + paymentId)
-                .val(percentage.toFixed(2));
-
-
-            $('#discount_amount-' + paymentId)
-                .val(formatCurrency(discountAmount));
-
-
-            $('#amount_with_discount-' + paymentId)
-                .val(formatCurrency(finalAmount));
-
-
-            if($('#apply_discount-' + paymentId).is(':checked')){
-
-                $('#amount-' + paymentId)
-                    .val(finalAmount.toFixed(2));
-
-            }
-
-        }
-
-
-        $('#apply_discount-' + paymentId).on('change', function(){
-
-            if($(this).is(':checked')){
-
-                $('#discount_fields-' + paymentId).show();
-
-                $('#discount_id-' + paymentId)
-                    .prop('required', true);
-
-            }else{
-
-                $('#discount_fields-' + paymentId).hide();
-
-                $('#discount_id-' + paymentId)
-                    .prop('required', false)
-                    .val('')
-                    .trigger('change');
-
-
-                $('#amount-' + paymentId)
-                    .val("{{ $payment->amount }}");
-
-            }
-
-
-            updateDiscount();
-
-        });
-
-
-        $('#discount_id-' + paymentId)
-            .on('change', updateDiscount);
-
-
-        updateDiscount();
-
-
-        $('#cancel-button-' + paymentId).on('click', function(){
-
-            $('#edit-payment-form-' + paymentId)[0].reset();
-
-        });
-
-
+    document.getElementById ( ' cancel-button - { { $payment -> id } } '   ). addEventListener ( ' click ' , function ( ) {
+        document.getElementById ( ' edit-payment-form - { { $payment- > id } } ' ) . reset ();  
     });
 </script>
