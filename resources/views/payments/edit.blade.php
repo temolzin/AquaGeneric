@@ -48,14 +48,14 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
                                                 </div>
-                                                <input  type="number" min="1" class="form-control" name="amount" id="amount" value="{{$payment-> amount}} "required >
+                                                <input type="number" min="1" class="form-control" name="amount" id="amount" value="{{$payment-> amount }} "required >
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="note" class="form-label">Nota del Pago</label>
-                                            <textarea  class = "form-control" name="note" id="note"> {{$payment->note}} </textarea>
+                                            <textarea class="form-control" name="note" id="note"> {{ $payment->note }} </textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -73,7 +73,7 @@
 </div>
 
 <script>
-    document.getElementById ( ' cancel-button - { { $payment -> id } } '   ). addEventListener ( ' click ' , function ( ) {
-        document.getElementById ( ' edit-payment-form - { { $payment- > id } } ' ) . reset ();  
+    document.getElementById('cancel-button-{{ $payment->id }}').addEventListener('click', function() {
+        document.getElementById('edit-payment-form-{{ $payment->id }}').reset();  
     });
 </script>
