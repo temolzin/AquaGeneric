@@ -74,6 +74,6 @@
 
 <script>
     document.getElementById('cancel-button-{{ $payment->id }}').addEventListener('click', function() {
-        document.getElementById('edit-payment-form-{{ $payment->id }}').reset();  
+        document.getElementById('edit-payment-form-{{ $payment->id }}').reset();
     });
 </script>
