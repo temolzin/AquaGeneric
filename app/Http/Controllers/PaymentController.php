@@ -257,30 +257,35 @@ class PaymentController extends Controller
 
         $debt->save();
 
-        if ($discountId) {
-            $discount = Discount::find($discountId);
-            if ($discount) {
-                DiscountHistory::updateOrCreate(
-                    [
-                        'module' => 'payments',
-                        'record_id' => $payment->id,
-                    ],
-                    [
-                        'locality_id' => $payment->locality_id,
-                        'discount_id' => $discount->id,
-                        'customer_id' => $payment->customer_id,
-                        'original_amount' => $previousAmount,
-                        'discount_percentage' => $discount->percentage,
-                        'final_amount' => $request->amount,
-                        'created_by' => Auth::id(),
-                    ]
-                );
-            }
-        } else {
+        if (!$discountId) {
             DiscountHistory::where('module', 'payments')
                 ->where('record_id', $payment->id)
                 ->delete();
+
+            return;
         }
+
+        $discount = Discount::find($discountId);
+
+        if (!$discount) {
+            return;
+        }
+
+        DiscountHistory::updateOrCreate(
+            [
+                'module' => 'payments',
+                'record_id' => $payment->id,
+            ],
+            [
+                'locality_id' => $payment->locality_id,
+                'discount_id' => $discount->id,
+                'customer_id' => $payment->customer_id,
+                'original_amount' => $previousAmount,
+                'discount_percentage' => $discount->percentage,
+                'final_amount' => $request->amount,
+                'created_by' => Auth::id(),
+            ]
+        );
 
         $after = $payment->fresh()->toArray();
 
