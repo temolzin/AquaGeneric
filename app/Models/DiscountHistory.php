@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\WaterConnection;
 
 class DiscountHistory extends Model
 {
@@ -56,10 +55,6 @@ class DiscountHistory extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function record()
-    {
-        return $this->morphTo(__FUNCTION__, 'module', 'record_id');
-    }
 
     public function scopeByUserLocality($query)
     {

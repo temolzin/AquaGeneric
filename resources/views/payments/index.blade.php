@@ -92,7 +92,7 @@
                                         <tbody>
                                             @if (count($payments) <= 0)
                                                 <tr>
-                                                    <td colspan="5">No hay resultados</td>
+                                                    <td colspan="6">No hay resultados</td>
                                                 </tr>
                                             @else
                                                 @foreach($payments as $payment)
