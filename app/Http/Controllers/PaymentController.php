@@ -23,7 +23,7 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = Payment::with(['debt.customer', 'creator','discount'])
+        $query = Payment::with(['debt.customer', 'creator'])
             ->where('locality_id', $authUser->locality_id)
             ->whereHas('creator', function ($q) use ($authUser) {
                 $q->where('locality_id', $authUser->locality_id);
@@ -183,7 +183,6 @@ class PaymentController extends Controller
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
             'discount_id' => $discount ? $discount->id : null,
-            'discount_amount' => $discountAmount,
             'method' => $request->method,
             'amount' => $request->amount,
             'note' => $request->note,
@@ -200,7 +199,6 @@ class PaymentController extends Controller
                 'record_id' => $payment->id,
                 'original_amount' => $originalAmount,
                 'discount_percentage' => $discountPercentage,
-                'discount_amount' => $discountAmount,
                 'final_amount' => $finalAmount,
             ]);
         }
@@ -213,10 +211,6 @@ class PaymentController extends Controller
 
         if (!$discount) {
             $debt->debt_current += $request->amount;
-        }
-
-        if ($debt->debt_current > $debt->amount) {
-            $debt->debt_current = $debt->amount;
         }
 
         $debt->status = 'pending';
@@ -269,7 +263,6 @@ class PaymentController extends Controller
             'amount' => $request->amount,
             'note' => $request->note,
             'discount_id' => $discountId,
-            'discount_amount' => $discountAmount,
         ]);
 
         $debt->debt_current += ($request->amount + $discountAmount);
@@ -311,7 +304,6 @@ class PaymentController extends Controller
                 'customer_id' => $payment->customer_id,
                 'original_amount' => $previousAmount,
                 'discount_percentage' => $discount->percentage,
-                'discount_amount' => $discountAmount,
                 'final_amount' => $request->amount,
                 'created_by' => Auth::id(),
             ]

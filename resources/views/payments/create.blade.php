@@ -12,6 +12,7 @@
                 </div>
                 <form action="{{ route('payments.store') }}" method="post" enctype="multipart/form-data" id="paymentForm">
                     @csrf
+                    <input type="hidden" name="discount_id" id="payment_discount_id_hidden">
                     <input type="hidden" name="discount_percentage" id="payment_discount_percentage_hidden">
                     <input type="hidden" name="discount_amount" id="payment_discount_amount_hidden">
                     <input type="hidden" name="final_amount" id="payment_final_amount_hidden">
@@ -370,7 +371,7 @@ $(document).ready(function() {
         $('#payment_discount_percentage_hidden').val(percentage);
         $('#payment_discount_amount_hidden').val(discount.toFixed(2));
         $('#payment_final_amount_hidden').val(finalAmount.toFixed(2));
-        $('#payment_discount_id_hidden').val($('#payment_discount_id').val());
+        $('#payment_discount_id_hidden').val($('#payment_discount_id').val() || '');
 
         $('input[name="amount"]').val(finalAmount.toFixed(2));
     }

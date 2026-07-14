@@ -18,7 +18,6 @@ class Payment extends Model
         'created_by',
         'debt_id',
         'discount_id',
-        'discount_amount',
         'method',
         'amount',
         'note',
