@@ -183,6 +183,7 @@ class PaymentController extends Controller
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
             'discount_id' => $discount ? $discount->id : null,
+            'discount_amount' => $discountAmount,
             'method' => $request->method,
             'amount' => $request->amount,
             'note' => $request->note,
@@ -199,6 +200,7 @@ class PaymentController extends Controller
                 'record_id' => $payment->id,
                 'original_amount' => $originalAmount,
                 'discount_percentage' => $discountPercentage,
+                'discount_amount' => $discountAmount,
                 'final_amount' => $finalAmount,
             ]);
         }
@@ -263,6 +265,7 @@ class PaymentController extends Controller
             'amount' => $request->amount,
             'note' => $request->note,
             'discount_id' => $discountId,
+            'discount_amount' => $discountAmount,
         ]);
 
         $debt->debt_current += ($request->amount + $discountAmount);
@@ -303,6 +306,7 @@ class PaymentController extends Controller
                 'discount_id' => $discount->id,
                 'customer_id' => $payment->customer_id,
                 'original_amount' => $previousAmount,
+                'discount_amount' => $discountAmount,
                 'discount_percentage' => $discount->percentage,
                 'final_amount' => $request->amount,
                 'created_by' => Auth::id(),

@@ -18,6 +18,7 @@ class CreateDiscountHistoriesTable extends Migration
             $table->string('module');
             $table->unsignedBigInteger('record_id');
             $table->decimal('original_amount', 10, 2);
+            $table->decimal('discount_amount', 10, 2);
             $table->decimal('discount_percentage', 4, 2);
             $table->decimal('final_amount', 10, 2);
             $table->timestamps();
