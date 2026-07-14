@@ -163,14 +163,16 @@ class PaymentController extends Controller
         $discount = null;
         $originalAmount = $request->amount;
         $discountPercentage = 0;
+        $discountAmount = 0;
         $finalAmount = $request->amount;
 
-        if ($request->filled('discount_id') && $request->has('apply_discount')) {
+        if ($request->filled('discount_id') && $request->boolean('has_discount')) {
             $discount = Discount::find($request->discount_id);
 
             if ($discount) {
                 $discountPercentage = $discount->percentage;
                 $originalAmount = $remainingAmount;
+                $discountAmount = $remainingAmount - $request->amount;
                 $finalAmount = $request->amount;
             }
         }
@@ -181,6 +183,7 @@ class PaymentController extends Controller
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
             'discount_id' => $discount ? $discount->id : null,
+            'discount_amount' => $discountAmount,
             'method' => $request->method,
             'amount' => $request->amount,
             'note' => $request->note,
@@ -197,20 +200,33 @@ class PaymentController extends Controller
                 'record_id' => $payment->id,
                 'original_amount' => $originalAmount,
                 'discount_percentage' => $discountPercentage,
+                'discount_amount' => $discountAmount,
                 'final_amount' => $finalAmount,
             ]);
         }
 
         \Log::info('Payment created:', ['id' => $payment->id, 'is_future_payment' => $payment->is_future_payment]);
 
-        $debt->debt_current += $request->amount;
+        if ($discount) {
+            $debt->debt_current += ($request->amount + $discountAmount);
+        }
+
+        if (!$discount) {
+            $debt->debt_current += $request->amount;
+        }
+
+        if ($debt->debt_current > $debt->amount) {
+            $debt->debt_current = $debt->amount;
+        }
+
+        $debt->status = 'pending';
+
+        if ($debt->debt_current > 0) {
+            $debt->status = 'partial';
+        }
 
         if ($debt->debt_current >= $debt->amount) {
             $debt->status = 'paid';
-        } elseif ($debt->debt_current > 0) {
-            $debt->status = 'partial';
-        } else {
-            $debt->status = 'pending';
         }
 
         $debt->save();
@@ -237,15 +253,26 @@ class PaymentController extends Controller
         }
 
         $debt->debt_current -= $previousAmount;
-        $discountId = $request->apply_discount ? $request->discount_id : null;
+        $discountId = $request->boolean('has_discount')
+            ? $request->discount_id
+            : null;
+        $discountAmount = 0;
+
+        if ($discountId) {
+            $discount = Discount::find($discountId);
+            if ($discount) {
+                $discountAmount = $previousAmount * ($discount->percentage / 100);
+            }
+        }
 
         $payment->update([
             'amount' => $request->amount,
             'note' => $request->note,
             'discount_id' => $discountId,
+            'discount_amount' => $discountAmount,
         ]);
 
-        $debt->debt_current += $request->amount;
+        $debt->debt_current += ($request->amount + $discountAmount);
 
         if ($debt->debt_current >= $debt->amount) {
             $debt->status = 'paid';
@@ -262,13 +289,15 @@ class PaymentController extends Controller
                 ->where('record_id', $payment->id)
                 ->delete();
 
-            return;
+            return redirect()->route('payments.index')
+                ->with('success', 'Pago actualizado exitosamente.');
         }
 
         $discount = Discount::find($discountId);
 
         if (!$discount) {
-            return;
+            return redirect()->route('payments.index')
+                ->with('error', 'El descuento seleccionado no existe.');
         }
 
         DiscountHistory::updateOrCreate(
@@ -282,6 +311,7 @@ class PaymentController extends Controller
                 'customer_id' => $payment->customer_id,
                 'original_amount' => $previousAmount,
                 'discount_percentage' => $discount->percentage,
+                'discount_amount' => $discountAmount,
                 'final_amount' => $request->amount,
                 'created_by' => Auth::id(),
             ]
