@@ -162,7 +162,6 @@ class PaymentController extends Controller
 
         $discount = null;
         $originalAmount = $request->amount;
-        $discountPercentage = 0;
         $discountAmount = 0;
         $finalAmount = $request->amount;
 
@@ -170,7 +169,6 @@ class PaymentController extends Controller
             $discount = Discount::find($request->discount_id);
 
             if ($discount) {
-                $discountPercentage = $discount->percentage;
                 $originalAmount = $remainingAmount;
                 $discountAmount = $remainingAmount - $request->amount;
                 $finalAmount = $request->amount;
@@ -182,7 +180,7 @@ class PaymentController extends Controller
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
-            'discount_id' => $discount ? $discount->id : null,
+            'discount_id' => $discount?->id,
             'discount_amount' => $discountAmount,
             'method' => $request->method,
             'amount' => $request->amount,
@@ -199,8 +197,8 @@ class PaymentController extends Controller
                 'module' => 'payments',
                 'record_id' => $payment->id,
                 'original_amount' => $originalAmount,
-                'discount_percentage' => $discountPercentage,
                 'discount_amount' => $discountAmount,
+                'discount_percentage' => $discount->percentage,
                 'final_amount' => $finalAmount,
             ]);
         }
@@ -257,7 +255,7 @@ class PaymentController extends Controller
         if ($discountId) {
             $discount = Discount::find($discountId);
             if ($discount) {
-                $discountAmount = $previousAmount * ($discount->percentage / 100);
+                $discountAmount = $remainingAmount - $request->amount;
             }
         }
 
@@ -265,7 +263,6 @@ class PaymentController extends Controller
             'amount' => $request->amount,
             'note' => $request->note,
             'discount_id' => $discountId,
-            'discount_amount' => $discountAmount,
         ]);
 
         $debt->debt_current += ($request->amount + $discountAmount);

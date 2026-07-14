@@ -17,23 +17,18 @@ class DiscountHistory extends Model
         'module',
         'record_id',
         'original_amount',
+        'discount_amount',
         'discount_percentage',
         'final_amount',
         'created_by',
     ];
 
-    protected static function booted()
-    {
-        parent::booted();
-
-        static::addGlobalScope('byUserLocality', function ($query) {
-            $user = auth()->user();
-            if ($user && $user->locality_id) {
-                $query->where('discount_histories.locality_id', $user->locality_id)
-                      ->orWhereNull('discount_histories.locality_id');
-            }
-        });
-    }
+    protected $casts = [
+        'original_amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
+        'final_amount' => 'decimal:2',
+    ];
 
     public function locality()
     {

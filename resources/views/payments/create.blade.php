@@ -81,7 +81,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
                                                 </div>
-                                                <input type="number" min="1" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
+                                                <input type="number" min="1" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount', $payment->amount) }}" required />
                                             </div>
                                         </div>
                                     </div>
@@ -126,7 +126,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>Descuento(*)</label>
-                                                            <select class="form-control select2" name="discount_id" id="payment_discount_id">
+                                                            <input type="checkbox" class="custom-control-input" id="payment_has_discount" name="has_discount" value="1" {{ $payment->discount_id ? 'checked' : '' }}>
                                                                 <option value="">Seleccione un descuento</option>
                                                                 @foreach($discounts as $discount)
                                                                     <option value="{{ $discount->id }}" data-percentage="{{ $discount->percentage }}">

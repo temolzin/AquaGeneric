@@ -15,14 +15,18 @@ class CreateDiscountHistoriesTable extends Migration
             $table->unsignedBigInteger('discount_id');
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
+
             $table->string('module');
             $table->unsignedBigInteger('record_id');
+
             $table->decimal('original_amount', 10, 2);
             $table->decimal('discount_amount', 10, 2);
-            $table->decimal('discount_percentage', 4, 2);
+            $table->decimal('discount_percentage', 5, 2);
             $table->decimal('final_amount', 10, 2);
+
             $table->timestamps();
             $table->softDeletes();
+
             $table->foreign('locality_id')->references('id')->on('localities')->onDelete('cascade');
             $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
             $table->foreign('customer_id')->references('id')->on('customers')->nullOnDelete();

@@ -36,6 +36,7 @@ class Payment extends Model
         'is_future_payment' => 'boolean',
         'openpay_card_data' => 'array',
         'openpay_processed_at' => 'datetime',
+        'discount_amount' => 'decimal:2',
     ];
 
     public function debt()
