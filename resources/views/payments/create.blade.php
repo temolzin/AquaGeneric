@@ -210,7 +210,7 @@ $(document).ready(function() {
         });
         resetDiscountFields();
     });
-    
+
     $('#customer_id').on('change', function() {
         var customerId = $(this).val();
         if (customerId) {
