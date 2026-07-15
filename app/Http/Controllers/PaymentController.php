@@ -162,15 +162,15 @@ class PaymentController extends Controller
 
         $discount = null;
         $discountAmount = 0;
-        $finalAmount = $request->amount;
+        $finalAmount = 0;
 
         if ($request->filled('discount_id') && $request->boolean('has_discount')) {
             $discount = Discount::find($request->discount_id);
 
             if ($discount) {
-                $originalAmount = $remainingAmount;
-                $discountAmount = $remainingAmount - $request->amount;
-                $finalAmount = $request->amount;
+                $originalAmount = $request->amount;
+                $discountAmount = $originalAmount * ($discount->percentage / 100);
+                $finalAmount = $originalAmount - $discountAmount;
             }
         }
 
@@ -193,7 +193,7 @@ class PaymentController extends Controller
                 'customer_id' => $request->customer_id,
                 'module' => 'payment',
                 'record_id' => $payment->id,
-                'original_amount'=> $request->amount,
+                'original_amount' => $request->amount,
                 'discount_amount' => $discountAmount,
                 'final_amount' => $finalAmount,
                 'created_by' => $authUser->id,
@@ -273,7 +273,7 @@ class PaymentController extends Controller
         $debt->save();
 
         if (!$discountId) {
-            DiscountHistory::where('module', 'payments')
+            DiscountHistory::where('module', 'payment')
                 ->where('record_id', $payment->id)
                 ->delete();
 
@@ -290,7 +290,7 @@ class PaymentController extends Controller
 
         DiscountHistory::updateOrCreate(
             [
-                'module' => 'payments',
+                'module' => 'payment',
                 'record_id' => $payment->id,
             ],
             [

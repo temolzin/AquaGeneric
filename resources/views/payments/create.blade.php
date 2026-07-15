@@ -369,9 +369,7 @@ $(document).ready(function() {
         $('#payment_discount_percentage_hidden').val(percentage);
         $('#payment_discount_amount_hidden').val(discount.toFixed(2));
         $('#payment_final_amount_hidden').val(finalAmount.toFixed(2));
-        $('#payment_discount_id_hidden').val($('#payment_discount_id').val() || '');
-
-        $('input[name="amount"]').val(finalAmount.toFixed(2));
+        $('#payment_discount_id_hidden').val($('#payment_discount_id').val() || '')
     }
 
     $('#payment_has_discount').on('change', function() {
