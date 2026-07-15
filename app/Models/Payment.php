@@ -17,8 +17,6 @@ class Payment extends Model
         'locality_id',
         'created_by',
         'debt_id',
-        'discount_id',
-        'discount_amount',
         'method',
         'amount',
         'note',

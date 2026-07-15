@@ -161,7 +161,6 @@ class PaymentController extends Controller
         }
 
         $discount = null;
-        $originalAmount = $request->amount;
         $discountAmount = 0;
         $finalAmount = $request->amount;
 
@@ -181,7 +180,6 @@ class PaymentController extends Controller
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
             'discount_id' => $discount?->id,
-            'discount_amount' => $discountAmount,
             'method' => $request->method,
             'amount' => $request->amount,
             'note' => $request->note,
@@ -193,13 +191,11 @@ class PaymentController extends Controller
                 'locality_id' => $authUser->locality_id,
                 'discount_id' => $discount->id,
                 'customer_id' => $request->customer_id,
-                'created_by' => $authUser->id,
-                'module' => 'payments',
+                'module' => 'payment',
                 'record_id' => $payment->id,
-                'original_amount' => $originalAmount,
-                'discount_amount' => $discountAmount,
-                'discount_percentage' => $discount->percentage,
+                'original_amount'=> $request->amount,
                 'final_amount' => $finalAmount,
+                'created_by' => $authUser->id,
             ]);
         }
 
@@ -212,8 +208,6 @@ class PaymentController extends Controller
         if (!$discount) {
             $debt->debt_current += $request->amount;
         }
-
-        $debt->status = 'pending';
 
         if ($debt->debt_current > 0) {
             $debt->status = 'partial';
@@ -303,7 +297,6 @@ class PaymentController extends Controller
                 'discount_id' => $discount->id,
                 'customer_id' => $payment->customer_id,
                 'original_amount' => $previousAmount,
-                'discount_amount' => $discountAmount,
                 'discount_percentage' => $discount->percentage,
                 'final_amount' => $request->amount,
                 'created_by' => Auth::id(),
