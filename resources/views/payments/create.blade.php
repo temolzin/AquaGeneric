@@ -218,7 +218,6 @@ $(document).ready(function() {
                 url: '{{ route("getWaterConnectionsByCustomer") }}',
                 data: { waterCustomerId: customerId },
                 success: function(data) {
-
                     var waterConnectionSelect = $('#water_connection_id');
                     waterConnectionSelect.empty().append('<option value="">Selecciona una toma</option>');
                     $.each(data.waterConnections, function(index, connection) {
@@ -284,7 +283,6 @@ $(document).ready(function() {
                     var debt = data.debts.find(d => d.id == debtId);
                     if (debt) {
                         $('#suggested_amount').text('Saldo pendiente: $' + parseFloat(debt.remaining_amount).toFixed(2));
-
                         selectedDebtRemaining = parseFloat(debt.remaining_amount) || 0;
                         $('input[name="amount"]').val(selectedDebtRemaining.toFixed(2));
                         calculateDiscount();
