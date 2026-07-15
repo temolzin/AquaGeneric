@@ -357,7 +357,7 @@ $(document).ready(function() {
 
         let option = $('#payment_discount_id option:selected');
         let percentage = parseFloat(option.data('percentage')) || 0;
-        let original = selectedDebtRemaining || 0;
+        let original = parseFloat($('input[name="amount"]').val()) || 0;
 
         let discount = original * (percentage / 100);
         let finalAmount = original - discount;
