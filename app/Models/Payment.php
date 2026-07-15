@@ -62,6 +62,12 @@ class Payment extends Model
         return $this->belongsTo(Discount::class);
     }
 
+    public function discountHistory()
+    {
+        return $this->hasOne(DiscountHistory::class, 'record_id')
+            ->where('module', 'payment');
+    }
+
     public function openPayLogs()
     {
         return $this->hasMany(OpenPayLog::class);

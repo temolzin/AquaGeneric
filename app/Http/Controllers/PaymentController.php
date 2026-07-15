@@ -23,7 +23,7 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = Payment::with(['debt.customer', 'creator'])
+        $query = Payment::with(['debt.customer', 'creator','discountHistory'])
             ->where('locality_id', $authUser->locality_id)
             ->whereHas('creator', function ($q) use ($authUser) {
                 $q->where('locality_id', $authUser->locality_id);

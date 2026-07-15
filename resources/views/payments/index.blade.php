@@ -107,7 +107,13 @@
                                                         <td>
                                                             {{ str_replace(['am', 'pm'], ['a.m.', 'p.m.'], \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('DD[/]MMMM[/]YYYY hh:mm:ss a')) }}
                                                         </td>
-                                                        <td>${{ number_format($payment->amount, 2) }}</td>
+                                                        <td>
+    @if($payment->discountHistory)
+        ${{ number_format($payment->discountHistory->final_amount, 2) }}
+    @else
+        ${{ number_format($payment->amount, 2) }}
+    @endif
+</td>
                                                         <td>
                                                             <div class="btn-group" payment="group" aria-label="Opciones">
                                                                 <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $payment->id }}">

@@ -81,7 +81,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
                                                 </div>
-                                                <input type="number" min="1" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required/>
+                                                <input type="number" min="1" class="form-control" name="amount" id="payment_amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required/>
                                             </div>
                                         </div>
                                     </div>
@@ -114,7 +114,7 @@
                                         <div class="card-body">
                                             <div class="form-group mb-3">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="hidden" name="has_discount" value="0">
+                                                    <input type="hidden" name="has_discount" id="has_discount" value="0">
                                                     <input type="checkbox" class="custom-control-input" id="payment_has_discount" name="has_discount" value="1">
                                                     <label class="custom-control-label font-weight-bold text-success" for="payment_has_discount">
                                                         Aplicar descuento a esta deuda
@@ -126,7 +126,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>Descuento(*)</label>
-                                                            <select class="form-control select2"  name="discount_id" id="payment_discount_id" disabled>
+                                                            <select class="form-control select2"  id="payment_discount_id">
                                                                 <option value="">Seleccione un descuento</option>
                                                                 @foreach($discounts as $discount)
                                                                     <option value="{{ $discount->id }}" data-percentage="{{ $discount->percentage }}">
@@ -369,17 +369,15 @@ $(document).ready(function() {
         $('#payment_discount_percentage_hidden').val(percentage);
         $('#payment_discount_amount_hidden').val(discount.toFixed(2));
         $('#payment_final_amount_hidden').val(finalAmount.toFixed(2));
-        $('#payment_discount_id_hidden').val($('#payment_discount_id').val() || '')
+        $('#payment_discount_id_hidden').val($('#payment_discount_id').val() || '');
     }
 
     $('#payment_has_discount').on('change', function() {
         let checked = $(this).is(':checked');
 
+        $('#has_discount').val(checked ? 1 : 0);
         $('#paymentDiscountContainer')[checked ? 'slideDown' : 'slideUp']();
-
-        $('#payment_discount_id')
-            .prop('disabled', !checked)
-            .prop('required', checked);
+        $('#payment_discount_id') .prop('disabled', !checked) .prop('required', checked);
 
         if (!checked) {
             $('#payment_discount_id').val('').trigger('change');
