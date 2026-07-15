@@ -297,7 +297,6 @@ class PaymentController extends Controller
                 'discount_id' => $discount->id,
                 'customer_id' => $payment->customer_id,
                 'original_amount' => $previousAmount,
-                'discount_percentage' => $discount->percentage,
                 'final_amount' => $request->amount,
                 'created_by' => Auth::id(),
             ]
