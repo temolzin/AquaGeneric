@@ -194,6 +194,7 @@ class PaymentController extends Controller
                 'module' => 'payment',
                 'record_id' => $payment->id,
                 'original_amount'=> $request->amount,
+                'discount_amount' => $discountAmount,
                 'final_amount' => $finalAmount,
                 'created_by' => $authUser->id,
             ]);
