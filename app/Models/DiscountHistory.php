@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\WaterConnection;
 
 class DiscountHistory extends Model
 {
@@ -18,23 +17,16 @@ class DiscountHistory extends Model
         'module',
         'record_id',
         'original_amount',
-        'discount_percentage',
+        'discount_amount',
         'final_amount',
         'created_by',
     ];
 
-    protected static function booted()
-    {
-        parent::booted();
-
-        static::addGlobalScope('byUserLocality', function ($query) {
-            $user = auth()->user();
-            if ($user && $user->locality_id) {
-                $query->where('discount_histories.locality_id', $user->locality_id)
-                      ->orWhereNull('discount_histories.locality_id');
-            }
-        });
-    }
+    protected $casts = [
+        'original_amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'final_amount' => 'decimal:2',
+    ];
 
     public function locality()
     {
@@ -56,10 +48,6 @@ class DiscountHistory extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function record()
-    {
-        return $this->morphTo(__FUNCTION__, 'module', 'record_id');
-    }
 
     public function scopeByUserLocality($query)
     {

@@ -92,7 +92,7 @@
                                         <tbody>
                                             @if (count($payments) <= 0)
                                                 <tr>
-                                                    <td colspan="5">No hay resultados</td>
+                                                    <td colspan="6">No hay resultados</td>
                                                 </tr>
                                             @else
                                                 @foreach($payments as $payment)
@@ -107,7 +107,9 @@
                                                         <td>
                                                             {{ str_replace(['am', 'pm'], ['a.m.', 'p.m.'], \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('DD[/]MMMM[/]YYYY hh:mm:ss a')) }}
                                                         </td>
-                                                        <td>${{ number_format($payment->amount, 2) }}</td>
+                                                        <td>
+                                                            ${{ number_format(optional($payment->discountHistory)->final_amount ?? $payment->amount, 2) }}
+                                                        </td>
                                                         <td>
                                                             <div class="btn-group" payment="group" aria-label="Opciones">
                                                                 <button type="button" class="btn btn-info mr-2" data-toggle="modal" title="Ver Detalles" data-target="#view{{ $payment->id }}">
