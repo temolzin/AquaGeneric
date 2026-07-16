@@ -181,7 +181,7 @@ class PaymentController extends Controller
             'debt_id' => $request->debt_id,
             'discount_id' => $discount?->id,
             'method' => $request->method,
-            'amount' => $request->amount,
+            'amount' => $discount ? $finalAmount : $request->amount,
             'note' => $request->note,
             'is_future_payment' => $isFuturePayment,
         ]);

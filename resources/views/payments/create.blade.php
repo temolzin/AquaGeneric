@@ -117,7 +117,7 @@
                                                     <input type="hidden" name="has_discount" id="has_discount" value="0">
                                                     <input type="checkbox" class="custom-control-input" id="payment_has_discount" name="has_discount" value="1">
                                                     <label class="custom-control-label font-weight-bold text-success" for="payment_has_discount">
-                                                        Aplicar descuento a esta deuda
+                                                        Aplicar descuento a este pago
                                                     </label>
                                                 </div>
                                             </div>
