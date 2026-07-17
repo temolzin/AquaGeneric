@@ -112,6 +112,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
     });
     
     Route::group(['middleware' => ['can:viewDiscount']], function () {
+        Route::get('discounts/pdf', [DiscountController::class, 'pdfDiscounts'])->name('discounts.pdfDiscounts');
         Route::resource('discounts', DiscountController::class);
         Route::get('/discounts', [DiscountController::class, 'index'])->name('discounts.index');
         Route::get('/reports/generateDiscountListReport', [DiscountController::class, 'generateDiscountListReport'])->name('report.generateDiscountListReport');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Discount;
 use App\Models\MovementHistory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -143,6 +144,43 @@ class DiscountController extends Controller
             ->orderByRaw('locality_id IS NULL DESC')
             ->orderBy('created_at', 'desc')
             ->get();
+    }
+    public function pdfDiscounts(Request $request)
+    {
+        $authUser = auth()->user();
+
+        $query = Discount::with('locality')
+            ->where(function ($q) use ($authUser) {
+                $q->where('locality_id', $authUser->locality_id)
+                ->orWhereNull('locality_id');
+            })
+            ->orderBy('id');
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $discounts = $query->get();
+
+        $discountsPerFirstPage = 26;
+        $discountsPerNextPages = 40;
+
+        $firstPageDiscounts = $discounts->take($discountsPerFirstPage);
+        $remainingDiscounts = $discounts->slice($discountsPerFirstPage);
+        $otherPagesDiscounts = $remainingDiscounts->chunk($discountsPerNextPages);
+
+        $totalPages = 1 + ceil(
+            max(0, $discounts->count() - $discountsPerFirstPage) / $discountsPerNextPages
+        );
+
+        $pdf = Pdf::loadView('reports.pdfDiscounts', compact(
+            'authUser',
+            'firstPageDiscounts',
+            'otherPagesDiscounts',
+            'totalPages'
+        ))->setPaper('A4', 'portrait');
+
+        return $pdf->stream('discounts.pdf');
     }
     
     private function authorizeDiscount(Discount $discount)
