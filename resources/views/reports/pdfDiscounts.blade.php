@@ -13,19 +13,16 @@
             size: A4 portrait;
             margin: 0;
         }
-
         html, body {
             margin: 0;
             padding: 0;
             font-family: 'Montserrat', sans-serif;
         }
-
         body {
             margin: 0;
             padding: 0;
             background: none;
         }
-
         .report-page {
             position: relative;
             width: 100%;
@@ -33,11 +30,9 @@
             overflow: hidden;
             box-sizing: border-box;
         }
-
         .page-break {
             page-break-before: always;
         }
-
         .page-bg {
             position: absolute;
             top: 0;
@@ -46,13 +41,11 @@
             bottom: 0;
             z-index: 1;
         }
-
         .page-bg img {
             width: 100%;
             height: 100%;
             display: block;
         }
-
         .page-content {
             position: absolute;
             top: 24px;
@@ -61,13 +54,11 @@
             bottom: 42px;
             z-index: 2;
         }
-
         .page-inner {
             width: 89%;
             margin-left: 3%;
             margin-right: 11%;
         }
-
         .report-footer {
             position: absolute;
             left: 16px;
@@ -76,56 +67,46 @@
             text-align: center;
             z-index: 3;
         }
-
         .text_infoE {
             font-size: 10pt;
             color: white;
             text-decoration: none;
             display: inline-block;
         }
-
         .page-number {
             font-weight: bold;
             font-size: 10pt;
             letter-spacing: .5px;
         }
-
         .footer-branding {
             color: #0B1C80 !important;
         }
-
         .footer-branding img {
             filter: brightness(0) saturate(100%) invert(5%) sepia(100%) saturate(10000%) hue-rotate(200deg);
         }
-
         .first-page-header {
             margin-top: 0;
             margin-bottom: 12px;
         }
-
         .first-page-logo-row {
             width: 100%;
             position: relative;
             margin-bottom: 8px;
         }
-
         .first-page-logo {
             text-align: left;
             padding-left: 74px;
         }
-
         .first-page-logo img {
             width: 112px;
             height: 112px;
             border-radius: 50%;
             display: block;
         }
-
         .first-page-title-block {
             margin-top: 114px;
             text-align: center;
         }
-
         .first-page-title {
             color: #0B1C80;
             font-size: 18pt;
@@ -135,7 +116,6 @@
             line-height: 1.18;
             text-align: center;
         }
-
         .first-page-subtitle {
             color: #0B1C80;
             font-size: 14pt;
@@ -143,13 +123,11 @@
             margin: 28px 0 6px 0;
             text-align: center;
         }
-
         .inner-page-header {
             width: 100%;
             margin-top: 18px;
             margin-bottom: 14px;
         }
-
         .inner-page-committee {
             color: #ffffff;
             font-size: 8.5pt;
@@ -157,7 +135,6 @@
             margin: 0 0 4px 0;
             line-height: 1.2;
         }
-
         .inner-page-title {
             color: #ffffff;
             font-size: 12pt;
@@ -166,14 +143,12 @@
             text-align: center;
             margin: 0;
         }
-
         .report-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 8px;
             table-layout: fixed;
         }
-
         .report-table thead th {
             background: #0B1C80;
             color: #FFF;
@@ -181,11 +156,9 @@
             font-size: 10pt;
             text-align: center;
         }
-
         .report-table tbody tr {
             border-top: 1px solid #bfc9ff;
         }
-
         .report-table td {
             background-color: transparent;
             text-align: center;
@@ -194,25 +167,33 @@
             word-wrap: break-word;
             line-height: 1.15;
         }
-
         .report-table th:nth-child(1),
         .report-table td:nth-child(1) {
             width: 10%;
         }
-
         .report-table th:nth-child(2),
         .report-table td:nth-child(2) {
             width: 40%;
         }
-
         .report-table th:nth-child(3),
         .report-table td:nth-child(3) {
             width: 20%;
         }
-
         .report-table th:nth-child(4),
         .report-table td:nth-child(4) {
             width: 30%;
+        }
+        .discount_color {
+            display: inline-block;
+            background-color: #6c757d;
+            color: #fff;
+            font-weight: bold;
+            font-size: 9pt;
+            border-radius: 18px;
+            padding: 4px 20px;
+            min-width: 120px;
+            text-align: center;
+            line-height: 1.2;
         }
     </style>
 </head>
@@ -259,8 +240,11 @@
                             <td>
                                 {{ $discount->id }}
                             </td>
-                            <td style="text-align:center;">
-                                {{ $discount->name }}
+                            <td class="text_center">
+                                <span class="discount_color" 
+                                    style="background-color: {{ pdf_color($discount->color) }} !important;">
+                                    {{ $discount->name }}
+                                </span>
                             </td>
                             <td>
                                 {{ $discount->percentage }}%
@@ -318,8 +302,11 @@
                             <td>
                                 {{ $discount->id }}
                             </td>
-                            <td style="text-align:center;">
-                                {{ $discount->name }}
+                            <td class="text_center">
+                                <span class="discount_color" 
+                                    style="background-color: {{ pdf_color($discount->color) }} !important;">
+                                    {{ $discount->name }}
+                                </span>
                             </td>
                             <td>
                                 {{ $discount->percentage }}%
