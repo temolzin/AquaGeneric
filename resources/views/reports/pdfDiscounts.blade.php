@@ -207,11 +207,13 @@
             <div class="first-page-header">
                 <div class="first-page-logo-row">
                     <div class="first-page-logo">
-                        @if ($authUser->locality->hasMedia('localityGallery'))
-                            <img src="{{ $authUser->locality->getFirstMediaUrl('localityGallery') }}">
-                        @else
-                            <img src="{{ public_path('img/localityDefault.png') }}">
-                        @endif
+                        @php
+                            $locality = $authUser->locality ?? null;
+                            $logoPath = $locality && $locality->hasMedia('localityGallery')
+                                ? $locality->getFirstMediaUrl('localityGallery')
+                                : public_path('img/localityDefault.png');
+                        @endphp
+                        <img src="{{ $logoPath }}">
                     </div>
                 </div>
                 <div class="first-page-title-block">

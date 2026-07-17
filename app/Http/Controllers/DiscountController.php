@@ -145,7 +145,8 @@ class DiscountController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
     }
-    public function pdfDiscounts(Request $request)
+
+    public function generatePdfDiscounts(Request $request)
     {
         $authUser = auth()->user();
 
