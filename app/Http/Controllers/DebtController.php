@@ -112,8 +112,7 @@ class DebtController extends Controller
             'end_date' => ['required', 'regex:/^\d{4}-\d{2}$/'],
             'amount' => 'required|numeric|min:0',
             'note' => 'nullable|string',
-            'has_discount' => 'nullable|boolean',
-            'discount_id' => 'nullable|exists:discounts,id',
+            'has_discount' => 'nullable|boolean'
         ]);
 
         if ($request->boolean('has_discount') && !$request->filled('discount_id')) {
