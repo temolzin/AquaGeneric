@@ -42,6 +42,6 @@ class Discount extends Model
 
     public function hasDependencies()
     {
-        return $this->payments()->exists();
+        return $this->payments()->exists() || $this->debts()->exists();
     }
 }
