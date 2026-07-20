@@ -84,12 +84,17 @@
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
                                                             @endcan
+                                                            @if ($discount->hasDependencies())
+                                                                <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen pagos asociados con este descuento." disabled>
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
 
-                                                            @can('deleteDiscount')
-                                                            <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" data-toggle="modal" data-target="#delete{{ $discount->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
-                                                            @endcan
+                                                            @if (! $discount->hasDependencies())
+                                                                <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" data-toggle="modal" data-target="#deleteDiscount{{ $discount->id }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endif
                                                         @endif
                                                     </div>
                                                 </td>

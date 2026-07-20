@@ -230,6 +230,12 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                             @break
                     @endswitch
                 </p>
+                @if($payment->discount)
+                    <p>
+                        <strong>Descuento aplicado:</strong>
+                        {{ $payment->discount->name }} - {{ $payment->discount->percentage }}%
+                    </p>
+                @endif
                 @if($payment->isOpenPayPayment())
                     <p><strong>ID de Transacción: </strong>{{ $payment->openpay_transaction_id }}</p>
                 @endif
