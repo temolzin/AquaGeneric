@@ -116,6 +116,10 @@ class DebtController extends Controller
             'discount_id' => 'nullable|exists:discounts,id',
         ]);
 
+        if ($request->boolean('has_discount') && !$request->filled('discount_id')) {
+            return response()->json(['error' => 'Debe seleccionar un descuento cuando aplica el check.'], 400);
+        }
+
         $waterConnection = WaterConnection::findOrFail($request->water_connection_id);
         
         $startMonth = $request->input('start_date');
@@ -149,12 +153,13 @@ class DebtController extends Controller
             return response()->json(['error' => 'Ya existe una deuda de Servicio de Agua en este rango de fechas para la toma.'], 400);
         }
 
-        $amount = $request->input('amount');
+        $amount = (float) $request->input('amount');
         $discount = null;
         $discountAmount = 0;
         $finalAmount = $amount;
+        $discountId = null;
 
-        if ($request->boolean('has_discount') && $request->filled('discount_id')) {
+        if ($request->boolean('has_discount')) {
             $discount = Discount::where('id', $request->discount_id)
                 ->where(function ($q) use ($authUser) {
                     $q->where('locality_id', $authUser->locality_id)
@@ -165,35 +170,35 @@ class DebtController extends Controller
             if ($discount) {
                 $discountAmount = $amount * ($discount->percentage / 100);
                 $finalAmount = $amount - $discountAmount;
+                $discountId = $discount->id;
             }
         }
 
-        DB::transaction(function () use ($authUser, $request, $startDate, $endDate, $categoryId, $amount, $discount, $discountAmount, $finalAmount, $waterConnection) {
-            $debt = Debt::create([
-                'locality_id' => $authUser->locality_id,
-                'created_by' => $authUser->id,
-                'water_connection_id' => $request->water_connection_id,
-                'debt_category_id' => $categoryId,
-                'start_date' => $startDate->format('Y-m-d'),
-                'end_date' => $endDate->format('Y-m-d'),
-                'amount' => $finalAmount,
-                'note' => $request->input('note'),
-            ]);
+        $debt = Debt::create([
+            'locality_id' => $authUser->locality_id,
+            'created_by' => $authUser->id,
+            'water_connection_id' => $request->water_connection_id,
+            'debt_category_id' => $categoryId,
+            'discount_id' => $discountId,
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'amount' => $finalAmount,
+            'note' => $request->input('note'),
+        ]);
 
-            if ($discount) {
-                DiscountHistory::create([
-                    'locality_id' => $authUser->locality_id,
-                    'discount_id' => $discount->id,
-                    'customer_id' => $waterConnection->customer_id ?? $request->customer_id,
-                    'module' => 'debt',
-                    'record_id' => $debt->id,
-                    'original_amount' => $amount,
-                    'discount_amount' => $discountAmount,
-                    'final_amount' => $finalAmount,
-                    'created_by' => $authUser->id,
-                ]);
-            }
-        });
+        if ($discount) {
+            DiscountHistory::create([
+                'locality_id' => $authUser->locality_id,
+                'discount_id' => $discount->id,
+                'customer_id' => $waterConnection->customer_id,
+                'module' => 'debt',
+                'record_id' => $debt->id,
+                'original_amount' => $amount,
+                'discount_amount' => $discountAmount,
+                'final_amount' => $finalAmount,
+                'created_by' => $authUser->id,
+            ]);
+        }
 
         return response()->json(['success' => 'Deuda creada exitosamente.']);
     }
