@@ -84,17 +84,18 @@
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
                                                             @endcan
+                                                            @can('deleteDiscount')
                                                             @if ($discount->hasDependencies())
                                                                 <button type="button" class="btn btn-secondary mr-2" title="Eliminación no permitida: Existen pagos asociados con este descuento." disabled>
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             @endif
-
                                                             @if (! $discount->hasDependencies())
                                                                 <button type="button" class="btn btn-danger mr-2" title="Eliminar Registro" data-toggle="modal" data-target="#deleteDiscount{{ $discount->id }}">
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             @endif
+                                                            @endcan
                                                         @endif
                                                     </div>
                                                 </td>
