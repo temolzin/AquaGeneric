@@ -12,6 +12,8 @@ use App\Models\DebtCategory;
 use App\Models\MovementHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Discount;
+use App\Models\DiscountHistory;
 
 class DebtController extends Controller
 {
@@ -70,7 +72,16 @@ class DebtController extends Controller
             }
         });
         $debtCategories = $debtCategoriesQuery->orderBy('name')->get();
-        return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts', 'debtCategories'));
+
+        $discounts = Discount::where(function ($q) use ($authUser) {
+                $q->where('locality_id', $authUser->locality_id)
+                    ->orWhereNull('locality_id');
+            })
+            ->orderByRaw('locality_id IS NULL DESC')
+            ->orderBy('name')
+            ->get();
+
+        return view('debts.index', compact('debts', 'customers', 'waterConnections', 'totalDebts', 'debtCategories', 'discounts'));
     }
 
     public function getWaterConnections(Request $request)
@@ -100,7 +111,9 @@ class DebtController extends Controller
             'start_date' => ['required', 'regex:/^\d{4}-\d{2}$/'],
             'end_date' => ['required', 'regex:/^\d{4}-\d{2}$/'],
             'amount' => 'required|numeric|min:0',
-            'note' => 'nullable|string'
+            'note' => 'nullable|string',
+            'has_discount' => 'nullable|boolean',
+            'discount_id' => 'nullable|exists:discounts,id',
         ]);
 
         $waterConnection = WaterConnection::findOrFail($request->water_connection_id);
@@ -136,16 +149,51 @@ class DebtController extends Controller
             return response()->json(['error' => 'Ya existe una deuda de Servicio de Agua en este rango de fechas para la toma.'], 400);
         }
 
-        Debt::create([
-            'locality_id' => $authUser->locality_id,
-            'created_by' => $authUser->id,
-            'water_connection_id' => $request->water_connection_id,
-            'debt_category_id' => $categoryId,
-            'start_date' => $startDate->format('Y-m-d'),
-            'end_date' => $endDate->format('Y-m-d'),
-            'amount' => $request->input('amount'),
-            'note' => $request->input('note'),
-        ]);
+        $amount = $request->input('amount');
+        $discount = null;
+        $discountAmount = 0;
+        $finalAmount = $amount;
+
+        if ($request->boolean('has_discount') && $request->filled('discount_id')) {
+            $discount = Discount::where('id', $request->discount_id)
+                ->where(function ($q) use ($authUser) {
+                    $q->where('locality_id', $authUser->locality_id)
+                        ->orWhereNull('locality_id');
+                })
+                ->first();
+
+            if ($discount) {
+                $discountAmount = $amount * ($discount->percentage / 100);
+                $finalAmount = $amount - $discountAmount;
+            }
+        }
+
+        DB::transaction(function () use ($authUser, $request, $startDate, $endDate, $categoryId, $amount, $discount, $discountAmount, $finalAmount, $waterConnection) {
+            $debt = Debt::create([
+                'locality_id' => $authUser->locality_id,
+                'created_by' => $authUser->id,
+                'water_connection_id' => $request->water_connection_id,
+                'debt_category_id' => $categoryId,
+                'start_date' => $startDate->format('Y-m-d'),
+                'end_date' => $endDate->format('Y-m-d'),
+                'amount' => $finalAmount,
+                'note' => $request->input('note'),
+            ]);
+
+            if ($discount) {
+                DiscountHistory::create([
+                    'locality_id' => $authUser->locality_id,
+                    'discount_id' => $discount->id,
+                    'customer_id' => $waterConnection->customer_id ?? $request->customer_id,
+                    'module' => 'debt',
+                    'record_id' => $debt->id,
+                    'original_amount' => $amount,
+                    'discount_amount' => $discountAmount,
+                    'final_amount' => $finalAmount,
+                    'created_by' => $authUser->id,
+                ]);
+            }
+        });
 
         return response()->json(['success' => 'Deuda creada exitosamente.']);
     }

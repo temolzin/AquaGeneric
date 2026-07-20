@@ -12,6 +12,10 @@
                 </div>
                 <form action="{{ route('debts.store') }}" method="post" enctype="multipart/form-data" id="createDebtForm">
                     @csrf
+                    <input type="hidden" name="discount_id" id="debt_discount_id_hidden">
+                    <input type="hidden" name="discount_percentage" id="debt_discount_percentage_hidden">
+                    <input type="hidden" name="discount_amount" id="debt_discount_amount_hidden">
+                    <input type="hidden" name="final_amount" id="debt_final_amount_hidden">
                     <div class="card-body">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
@@ -64,7 +68,68 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
                                                 </div>
-                                                <input type="number" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
+                                                <input type="number" class="form-control" name="amount" id="debt_amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="card border-success">
+                                            <div class="card-body">
+                                                <div class="form-group mb-3">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="hidden" name="has_discount" id="debt_has_discount_hidden" value="0">
+                                                        <input type="checkbox" class="custom-control-input" id="debt_has_discount" name="has_discount" value="1">
+                                                        <label class="custom-control-label font-weight-bold text-success" for="debt_has_discount">
+                                                            Aplicar descuento a esta deuda
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div id="debtDiscountContainer" style="display:none;">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Descuento(*)</label>
+                                                                <select class="form-control select2" id="debt_discount_id">
+                                                                    <option value="">Seleccione un descuento</option>
+                                                                    @foreach($discounts as $discount)
+                                                                        <option value="{{ $discount->id }}" data-percentage="{{ $discount->percentage }}">
+                                                                            {{ $discount->name }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Porcentaje</label>
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control" id="debt_discount_percentage" readonly>
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text">%</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Monto del Descuento</label>
+                                                                <input type="text" class="form-control bg-light text-success font-weight-bold" id="debt_discount_amount" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Monto con Descuento</label>
+                                                                <input type="text" class="form-control bg-light text-success font-weight-bold" id="debt_amount_with_discount" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 d-flex align-items-end">
+                                                            <div class="alert alert-info w-100 mb-0">
+                                                                <i class="fa fa-info-circle"></i>
+                                                                El descuento se aplicará directamente al saldo de la deuda.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

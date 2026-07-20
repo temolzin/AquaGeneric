@@ -149,10 +149,83 @@
             });
         }
         
+        function formatCurrency(amount) {
+            return '$' + Number(amount || 0).toFixed(2);
+        }
+
+        function resetDebtDiscountFields() {
+            $('#debtDiscountContainer').hide();
+            $('#debt_has_discount').prop('checked', false);
+            $('#debt_has_discount_hidden').val(0);
+            $('#debt_discount_id').prop('disabled', true).val('').trigger('change');
+            $('#debt_discount_percentage').val('');
+            $('#debt_discount_amount').val('');
+            $('#debt_amount_with_discount').val('');
+            
+            $('#debt_discount_percentage_hidden').val('');
+            $('#debt_discount_amount_hidden').val('');
+            $('#debt_final_amount_hidden').val('');
+            $('#debt_discount_id_hidden').val('');
+        }
+
+        function calculateDebtDiscount() {
+            if (!$('#debt_has_discount').is(':checked')) {
+                return;
+            }
+
+            let option = $('#debt_discount_id option:selected');
+            let percentage = parseFloat(option.data('percentage')) || 0;
+            let original = parseFloat($('#debt_amount').val()) || 0;
+
+            let discount = original * (percentage / 100);
+            let finalAmount = original - discount;
+
+            $('#debt_discount_percentage').val(percentage.toFixed(2));
+            $('#debt_discount_amount').val(formatCurrency(discount));
+            $('#debt_amount_with_discount').val(formatCurrency(finalAmount));
+
+            $('#debt_discount_percentage_hidden').val(percentage);
+            $('#debt_discount_amount_hidden').val(discount.toFixed(2));
+            $('#debt_final_amount_hidden').val(finalAmount.toFixed(2));
+            $('#debt_discount_id_hidden').val($('#debt_discount_id').val() || '');
+        }
+
         $('#createDebt').on('shown.bs.modal', function() {
             $('.select2').select2({
                 dropdownParent: $('#createDebt')
             });
+            resetDebtDiscountFields();
+        });
+
+        $('#debt_has_discount').on('change', function() {
+            let checked = $(this).is(':checked');
+
+            $('#debt_has_discount_hidden').val(checked ? 1 : 0);
+            $('#debtDiscountContainer')[checked ? 'slideDown' : 'slideUp']();
+            $('#debt_discount_id').prop('disabled', !checked).prop('required', checked);
+
+            if (!checked) {
+                $('#debt_discount_id').val('').trigger('change');
+                $('#debt_discount_id_hidden').val('');
+
+                $('#debt_discount_percentage').val('');
+                $('#debt_discount_amount').val('');
+                $('#debt_amount_with_discount').val('');
+
+                $('#debt_discount_percentage_hidden').val('');
+                $('#debt_discount_amount_hidden').val('');
+                $('#debt_final_amount_hidden').val('');
+            }
+
+            calculateDebtDiscount();
+        });
+
+        $('#debt_discount_id').on('change', function() {
+            calculateDebtDiscount();
+        });
+
+        $('#debt_amount').on('input', function() {
+            calculateDebtDiscount();
         });
 
         $('#customer_id').on('change', function() {
