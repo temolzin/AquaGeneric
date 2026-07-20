@@ -28,7 +28,7 @@
                                         <i class="fa fa-plus"></i> Registrar Descuento
                                     </button>
                                     @endcan
-                                    <a class="btn btn-secondary" target="_blank" title="Generar Lista" href="{{ route('discounts.pdfDiscounts', ['search' => request('search')]) }}">
+                                    <a class="btn btn-secondary" target="_blank" title="Generar Lista" href="{{ route('discounts.pdf', ['search' => request('search')]) }}">
                                         <i class="fas fa-file-pdf"></i> Generar Lista
                                     </a>
                                 </div>
@@ -38,7 +38,7 @@
                                         <i class="fa fa-plus"></i> Registrar
                                     </button>
                                     @endcan
-                                    <a class="btn btn-secondary btn-block mb-2" target="_blank" title="Generar Lista" href="{{ route('discounts.pdfDiscounts', ['search' => request('search')]) }}">
+                                    <a class="btn btn-secondary btn-block mb-2" target="_blank" title="Generar Lista" href="{{ route('discounts.pdf', ['search' => request('search')]) }}">
                                         <i class="fas fa-file-pdf"></i> Generar Lista
                                     </a>
                                 </div>
