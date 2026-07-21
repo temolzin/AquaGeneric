@@ -39,7 +39,7 @@
                                         <div class="form-group">
                                             <label>Porcentaje (*)</label>
                                             <div class="input-group">
-                                                <input type="number" class="form-control" name="percentage" min="1" max="100" step="0.01" value="{{ old('percentage',$discount->percentage) }}" required>
+                                                <input type="number" name="percentage" class="form-control" value="{{ old('percentage', $discount->percentage) }}" readonly>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">%</span>
                                                 </div>

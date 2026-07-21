@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Discount;
 use App\Models\MovementHistory;
+use App\Models\Payment;
+use App\Models\Debt;    
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -117,6 +119,16 @@ class DiscountController extends Controller
     public function destroy(Discount $discount)
     {
         $this->authorizeDiscount($discount);
+
+        $hasPayments = Payment::where('discount_id', $discount->id)->exists();
+        $hasDebts = Debt::where('discount_id', $discount->id)->exists();
+
+        if ($hasPayments || $hasDebts) {
+            return redirect()->back()->with(
+                'error',
+                'No es posible eliminar el descuento porque está siendo utilizado en pagos o deudas.'
+            );
+        }
 
         $before = $discount->toArray();
 
