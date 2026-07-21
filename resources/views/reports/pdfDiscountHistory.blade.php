@@ -262,7 +262,6 @@
             </div>
         </div>
     @endif
-
     @if(!isset($error) && empty($groupedByDay) && empty($groupedByModule))
         <div class="report-page">
             <div class="page-bg">
@@ -277,7 +276,6 @@
             </div>
         </div>
     @endif
-
     @if(!isset($error) && $reportType === 'all-modules-grouped' && (!empty($groupedByDay) || !empty($groupedByModule)))
         @foreach($groupedByModule as $moduleName => $days)
             <div class="report-page {{ !$loop->first ? 'page-break' : '' }}">
@@ -313,7 +311,6 @@
                                 </div>
                             </div>
                         @endif
-
                         @if(!$loop->first)
                             <div class="inner-page-header">
                                 <p class="inner-page-committee">
@@ -322,7 +319,6 @@
                                 <p class="inner-page-title">{{ $reportTitles[$reportType] ?? 'HISTORIAL DE DESCUENTOS' }}</p>
                             </div>
                         @endif
-
                         <div class="report-section">
                             <h3 class="module-title">{{ strtoupper($moduleName) }}</h3>
                             @foreach($days as $day => $histories)
@@ -372,7 +368,6 @@
             </div>
         @endforeach
     @endif
-
     @if(!isset($error) && $reportType === 'single-module' && (!empty($groupedByDay) || !empty($groupedByModule)))
         <div class="report-page">
             <div class="page-bg">
@@ -405,7 +400,6 @@
                             @endif
                         </div>
                     </div>
-
                     @foreach($groupedByDay as $day => $histories)
                         <div class="report-section">
                             <h4 class="day-title">{{ $day }}</h4>
