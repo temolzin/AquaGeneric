@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Payment;
+use App\Models\DiscountHistory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -42,6 +43,7 @@ class Discount extends Model
 
     public function hasDependencies()
     {
-        return $this->payments()->exists() || $this->debts()->exists();
+        return $this->payments()->exists();
+        return $this->payments()->exists() || DiscountHistory::where('discount_id', $this->id) ->where('module', 'debt') ->exists();
     }
 }
