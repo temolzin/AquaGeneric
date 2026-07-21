@@ -190,22 +190,15 @@ $(document).ready(function() {
     $('#createPayment').on('shown.bs.modal', function() {
         var modalElement = $(this);
         var dropdownParent = modalElement.find('.modal-body');
-        
         modalElement.find('.select2').each(function() {
-            if ($(this).hasClass('select2-hidden-accessible')) {
-                $(this).select2('destroy');
-            }
 
-            $(this).select2({
-                dropdownParent: $('#createPayment'),
-                allowClear: false,
-                width: '100%'
-            });
-        });
-        
-        modalElement.on('keydown', function(e) {
-            if ($('.select2-container--open').length && e.keyCode === 27) {
-                e.stopPropagation();
+            if (!$(this).data('select2')) {
+
+                $(this).select2({
+                    dropdownParent: $('#createPayment')
+                    allowClear: false,
+                    width: '100%'
+                });
             }
         });
         resetDiscountFields();
@@ -219,13 +212,19 @@ $(document).ready(function() {
                 data: { waterCustomerId: customerId },
                 success: function(data) {
                     var waterConnectionSelect = $('#water_connection_id');
-                    waterConnectionSelect.empty().append('<option value="">Selecciona una toma</option>');
+                    waterConnectionSelect.empty();
+                    waterConnectionSelect.append('<option value="">Selecciona una toma</option>');
+
                     $.each(data.waterConnections, function(index, connection) {
-                        waterConnectionSelect.append('<option value="' + connection.id + '">' + 
-                            connection.name + '</option>');
+                        waterConnectionSelect.append(
+                            '<option value="' + connection.id + '">' +
+                            connection.name +
+                            '</option>'
+                        );
                     });
+
                     // Trigger change to update Select2
-                    waterConnectionSelect.trigger('change');
+                    waterConnectionSelect.val(null).trigger('change.select2');
                     $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>').trigger('change');
                     $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
                     $('#is_future_payment').prop('checked', false);
@@ -340,7 +339,7 @@ $(document).ready(function() {
 
         $('#paymentDiscountContainer').hide();
         $('#payment_has_discount').prop('checked', false);
-        $('#payment_discount_id').prop('required', false).val('').trigger('change');
+        $('#payment_discount_id').prop('required', false).val('');
         $('#payment_discount_percentage').val('');
         $('#payment_discount_amount').val('');
         $('#payment_amount_with_discount').val('');
