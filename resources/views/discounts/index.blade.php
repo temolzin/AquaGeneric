@@ -23,6 +23,9 @@
                                     </div>
                                 </form>
                                 <div class="btn-group d-none d-md-flex" role="group">
+                                    <button class="btn btn-info mr-2" data-toggle="modal" data-target="#discountHistoryModal">
+                                        <i class="fa fa-history"></i> Historial de Descuentos
+                                    </button>
                                     @can('createDiscount')
                                     <button class="btn btn-success mr-2" data-toggle="modal" data-target="#create">
                                         <i class="fa fa-plus"></i> Registrar Descuento
@@ -33,6 +36,9 @@
                                     </a>
                                 </div>
                                 <div class="d-md-none w-100">
+                                    <button class="btn btn-info btn-block mb-2" data-toggle="modal" data-target="#discountHistoryModal">
+                                        <i class="fa fa-history"></i> Historial
+                                    </button>
                                     @can('createDiscount')
                                     <button class="btn btn-success btn-block" data-toggle="modal" data-target="#create">
                                         <i class="fa fa-plus"></i> Registrar
@@ -115,6 +121,7 @@
                                     </tbody>
                                 </table>
                                 @include('discounts.create')
+                                @include('discounts.discountHistoryModal')
                                 <div class="d-flex justify-content-center">
                                     {!! $discounts->links('pagination::bootstrap-4') !!}
                                 </div>
