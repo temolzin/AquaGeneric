@@ -190,7 +190,7 @@ $(document).ready(function() {
     $('#createPayment').on('shown.bs.modal', function() {
         var modalElement = $(this);
         var dropdownParent = modalElement.find('.modal-body');
-        modalElement.find('.select2').each(function () {
+        modalElement.find('.select2').each(function() {
 
             if (!$(this).data('select2')) {
 
@@ -223,6 +223,7 @@ $(document).ready(function() {
                         );
                     });
 
+                    // Trigger change to update Select2
                     waterConnectionSelect.val(null).trigger('change.select2');
                     $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>').trigger('change');
                     $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
