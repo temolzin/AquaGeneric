@@ -99,7 +99,6 @@
             filter: brightness(0) saturate(100%) invert(5%) sepia(100%) saturate(10000%) hue-rotate(200deg);
         }
 
-        /* Primera página */
         .first-page-header {
             margin-top: 0;
             margin-bottom: 12px;
