@@ -36,6 +36,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\MovementHistoryController;
+use App\Http\Controllers\DiscountHistoryController;
 use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\EarningTypeController;
 use App\Http\Controllers\GeneralEarningController;
@@ -115,6 +116,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('discounts', DiscountController::class);
         Route::get('/discounts', [DiscountController::class, 'index'])->name('discounts.index');
         Route::get('/reports/generateDiscountListReport', [DiscountController::class, 'generateDiscountListReport'])->name('report.generateDiscountListReport');
+        Route::get('/reports/discount-history/generate', [DiscountHistoryController::class, 'generatePDF'])->name('discounts.generateHistoryPdf');
     });
 
     Route::group(['middleware' => ['can:viewDebts']], function () {

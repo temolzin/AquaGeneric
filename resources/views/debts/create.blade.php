@@ -26,7 +26,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
