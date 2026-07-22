@@ -210,6 +210,12 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 <p>FOLIO. {{ $payment->debt->id }}</p>
                 <p>Fecha de la deuda: {{ \Carbon\Carbon::parse($payment->debt->start_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }}</p>
                 <p>Fecha de vencimiento: {{ \Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }}</p>
+                 @if($payment->discount)
+                    <p>
+                        <strong>Descuento aplicado:</strong>
+                        {{ $payment->discount->name }} - {{ $payment->discount->percentage }}%
+                    </p>
+                @endif
             </div>
             <div class="payment-info">
                 <h4>Datos del pago</h4>

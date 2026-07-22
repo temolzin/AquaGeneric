@@ -248,6 +248,22 @@
     </style>
 </head>
 <body>
+    @php
+        $selectedModule = request('module');
+        $isGrouped = (string) request('show_module_column') === '1';
+        $reportTitle = 'HISTORIAL DE DESCUENTOS';
+        if ($selectedModule === 'todos' && $isGrouped) {
+            $reportTitle = 'HISTORIAL DE DESCUENTOS POR MÓDULO';
+        }
+        if ($selectedModule === 'todos' && !$isGrouped) {
+            $reportTitle = 'HISTORIAL DE DESCUENTOS';
+        }
+        if (!empty($selectedModule) && $selectedModule !== 'todos') {
+            $moduleNameLabel = $moduleNames[$selectedModule] ?? $selectedModule;
+            $formattedModule = mb_strtoupper($moduleNameLabel);
+            $reportTitle = "HISTORIAL DE DESCUENTOS DEL MÓDULO {$formattedModule}";
+        }
+    @endphp
     @if(isset($error))
         <div class="report-page">
             <div class="page-bg">
@@ -276,7 +292,7 @@
             </div>
         </div>
     @endif
-    @if(!isset($error) && $reportType === 'all-modules-grouped' && (!empty($groupedByDay) || !empty($groupedByModule)))
+    @if(!isset($error) && $selectedModule === 'todos' && $isGrouped && (!empty($groupedByDay) || !empty($groupedByModule)))
         @foreach($groupedByModule as $moduleName => $days)
             <div class="report-page {{ !$loop->first ? 'page-break' : '' }}">
                 <div class="page-bg">
@@ -301,7 +317,7 @@
                                         COMITÉ DEL SISTEMA DE AGUA POTABLE DE<br>
                                         {{ $authUserLocality->name ?? '-' }}, {{ $authUserLocality->municipality ?? '-' }}, {{ $authUserLocality->state ?? '-' }}
                                     </p>
-                                    <p class="first-page-subtitle">{{ $reportTitles[$reportType] ?? 'HISTORIAL DE DESCUENTOS' }}</p>
+                                    <p class="first-page-subtitle">{{ $reportTitle }}</p>
                                     @if($startDate || $endDate)
                                         <p class="date-range">
                                             @if($startDate) Desde: {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} @endif
@@ -316,7 +332,7 @@
                                 <p class="inner-page-committee">
                                     COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUserLocality->name ?? '-' }}, {{ $authUserLocality->municipality ?? '-' }}, {{ $authUserLocality->state ?? '-' }}
                                 </p>
-                                <p class="inner-page-title">{{ $reportTitles[$reportType] ?? 'HISTORIAL DE DESCUENTOS' }}</p>
+                                <p class="inner-page-title">{{ $reportTitle }}</p>
                             </div>
                         @endif
                         <div class="report-section">
@@ -368,7 +384,7 @@
             </div>
         @endforeach
     @endif
-    @if(!isset($error) && $reportType === 'single-module' && (!empty($groupedByDay) || !empty($groupedByModule)))
+    @if(!isset($error) && ($selectedModule !== 'todos' || !$isGrouped) && (!empty($groupedByDay) || !empty($groupedByModule)))
         <div class="report-page">
             <div class="page-bg">
                 <img src="file://{{ $verticalBgPath }}" alt="Background">
@@ -391,7 +407,7 @@
                                 COMITÉ DEL SISTEMA DE AGUA POTABLE DE<br>
                                 {{ $authUserLocality->name ?? '-' }}, {{ $authUserLocality->municipality ?? '-' }}, {{ $authUserLocality->state ?? '-' }}
                             </p>
-                            <p class="first-page-subtitle">{{ $reportTitles[$reportType] ?? 'HISTORIAL DE DESCUENTOS' }}</p>
+                            <p class="first-page-subtitle">{{ $reportTitle }}</p>
                             @if($startDate || $endDate)
                                 <p class="date-range">
                                     @if($startDate) Desde: {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} @endif

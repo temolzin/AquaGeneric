@@ -495,9 +495,10 @@ class PaymentController extends Controller
         $customer = Customer::with('user')->findOrFail($customerId);
         $authUser = auth()->user();
 
-        $payments = Payment::whereHas('debt.waterConnection', function ($query) use ($customerId) {
-            $query->where('customer_id', $customerId);
-        })
+        $payments = Payment::with(['debt.waterConnection', 'discount'])
+            ->whereHas('debt.waterConnection', function ($query) use ($customerId) {
+                $query->where('customer_id', $customerId);
+            })
             ->whereBetween('created_at', [$startDate, $endDate])
             ->get();
 
@@ -523,7 +524,8 @@ class PaymentController extends Controller
             ->where('customer_id', $customerId)
             ->firstOrFail();
 
-        $payments = Payment::select('id', 'debt_id', 'amount', 'created_at')
+        $payments = Payment::select('id', 'debt_id', 'amount', 'created_at', 'discount_id')
+            ->with(['debt', 'discount'])
             ->where('locality_id', $authUser->locality_id)
             ->whereHas('debt', function ($query) use ($waterConnectionId) {
                 $query->where('water_connection_id', $waterConnectionId);
