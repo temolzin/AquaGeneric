@@ -187,20 +187,7 @@
 $(document).ready(function() {
     let selectedDebtRemaining = 0;
 
-    $('#createPayment').on('shown.bs.modal', function() {
-        var modalElement = $(this);
-        var dropdownParent = modalElement.find('.modal-body');
-        modalElement.find('.select2').each(function() {
-
-            if (!$(this).data('select2')) {
-
-                $(this).select2({
-                    dropdownParent: $('#createPayment')
-                    allowClear: false,
-                    width: '100%'
-                });
-            }
-        });
+    $('#createPayment').on('shown.bs.modal', function () {
         resetDiscountFields();
     });
 
@@ -347,6 +334,7 @@ $(document).ready(function() {
         $('#payment_discount_amount_hidden').val('');
         $('#payment_final_amount_hidden').val('');
         $('#payment_discount_id_hidden').val('');
+        $('#payment_discount_id').prop('disabled', true);
     }
 
     function calculateDiscount() {
@@ -372,24 +360,28 @@ $(document).ready(function() {
     }
 
     $('#payment_has_discount').on('change', function() {
-        let checked = $(this).is(':checked');
+        const checked = $(this).is(':checked');
 
         $('#has_discount').val(checked ? 1 : 0);
-        $('#paymentDiscountContainer')[checked ? 'slideDown' : 'slideUp']();
-        $('#payment_discount_id') .prop('disabled', !checked) .prop('required', checked);
 
-        if (!checked) {
-            $('#payment_discount_id').val('').trigger('change');
-            $('input[name="amount"]').val(selectedDebtRemaining.toFixed(2));
-            $('#payment_discount_id_hidden').val('');
+        if (checked) {
+            $('#paymentDiscountContainer').stop(true, true).slideDown(300);
+            $('#payment_discount_id').prop('disabled', false).prop('required', true);
+        } else {
+            $('#paymentDiscountContainer').stop(true, true).slideUp(300);
+            $('#payment_discount_id').prop('disabled', true).prop('required', false).val('').trigger('change');
 
             $('#payment_discount_percentage').val('');
             $('#payment_discount_amount').val('');
             $('#payment_amount_with_discount').val('');
 
+            $('#payment_discount_id_hidden').val('');
             $('#payment_discount_percentage_hidden').val('');
             $('#payment_discount_amount_hidden').val('');
             $('#payment_final_amount_hidden').val('');
+            if (selectedDebtRemaining > 0) {
+                $('#payment_amount').val(selectedDebtRemaining.toFixed(2));
+            }
         }
 
         calculateDiscount();
