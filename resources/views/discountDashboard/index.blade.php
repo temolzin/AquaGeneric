@@ -37,10 +37,32 @@
                     <div class="row">
                         <div class="col-lg-6 mb-4">
                             <div class="card card-success card-outline">
-                                <div class="card-header">
+                                <div class="card-header d-flex justify-content-between align-items-center">
                                     <h3 class="card-title">
                                         Descuentos aplicados en pagos
                                     </h3>
+                                    <div class="d-flex">
+                                        <select class="form-control form-control-sm mr-2" id="paymentMonth">
+                                            <option value="">Mes</option>
+                                            <option value="1">Enero</option>
+                                            <option value="2">Febrero</option>
+                                            <option value="3">Marzo</option>
+                                            <option value="4">Abril</option>
+                                            <option value="5">Mayo</option>
+                                            <option value="6">Junio</option>
+                                            <option value="7">Julio</option>
+                                            <option value="8">Agosto</option>
+                                            <option value="9">Septiembre</option>
+                                            <option value="10">Octubre</option>
+                                            <option value="11">Noviembre</option>
+                                            <option value="12">Diciembre</option>
+                                        </select>
+                                        <select class="form-control form-control-sm" id="paymentYear">
+                                            @for($i = date('Y'); $i >= date('Y')-5; $i--)
+                                                <option value="{{ $i }}">{{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="paymentChart" height="350"></canvas>
@@ -49,10 +71,32 @@
                         </div>
                         <div class="col-lg-6 mb-4">
                             <div class="card card-danger card-outline">
-                                <div class="card-header">
+                                <div class="card-header d-flex justify-content-between align-items-center">
                                     <h3 class="card-title">
                                         Descuentos aplicados en deudas
                                     </h3>
+                                    <div class="d-flex">
+                                        <select class="form-control form-control-sm mr-2" id="debtMonth">
+                                            <option value="">Mes</option>
+                                            <option value="1">Enero</option>
+                                            <option value="2">Febrero</option>
+                                            <option value="3">Marzo</option>
+                                            <option value="4">Abril</option>
+                                            <option value="5">Mayo</option>
+                                            <option value="6">Junio</option>
+                                            <option value="7">Julio</option>
+                                            <option value="8">Agosto</option>
+                                            <option value="9">Septiembre</option>
+                                            <option value="10">Octubre</option>
+                                            <option value="11">Noviembre</option>
+                                            <option value="12">Diciembre</option>
+                                        </select>
+                                        <select class="form-control form-control-sm" id="debtYear">
+                                            @for($i = date('Y'); $i >= date('Y')-5; $i--)
+                                                <option value="{{ $i }}">{{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="debtChart" height="350"></canvas>
@@ -82,32 +126,30 @@
         '#8e44ad'
     ];
 
-    new Chart(document.getElementById('paymentChart'), {
+    const paymentChart = new Chart(document.getElementById('paymentChart'), {
+        type: 'bar',
 
-        type:'bar',
-
-        data:{
-            labels:@json($paymentLabels),
-            datasets:[{
-                label:'Pagos',
-                data:@json($paymentData),
-                backgroundColor:'#2ecc71'
+        data: {
+            labels: @json($paymentLabels),
+            datasets: [{
+                label: 'Pagos',
+                data: @json($paymentData),
+                backgroundColor: '#2ecc71'
             }]
         },
 
-        options:{
-            responsive:true,
-            maintainAspectRatio:false,
-            scales:{
-                y:{
-                    beginAtZero:true
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
         }
-
     });
 
-    new Chart(document.getElementById('debtChart'), {
+    const debtChart = new Chart(document.getElementById('debtChart'), {
 
         type:'bar',
 
@@ -178,5 +220,56 @@
 
     legend += '</ul>';
     document.getElementById('discountLegend').innerHTML = legend;
+
+    $('#paymentMonth, #paymentYear').change(function () {
+        console.log("{{ route('discountDashboard.paymentChart') }}");
+        $.ajax({
+            url: "{{ route('discountDashboard.paymentChart') }}",
+            type: "GET",
+            data: {
+                payment_month: $('#paymentMonth').val(),
+                payment_year: $('#paymentYear').val()
+            },
+
+            success: function(response) {
+
+                paymentChart.data.labels = response.labels;
+                paymentChart.data.datasets[0].data = response.data;
+                paymentChart.update();
+
+            },
+
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+
+        });
+
+    });
+
+    $('#debtMonth, #debtYear').change(function () { 
+        $.ajax({
+            url: "{{ route('discountDashboard.debtChart') }}",
+            type: "GET",
+            data: {
+                debt_month: $('#debtMonth').val(),
+                debt_year: $('#debtYear').val()
+            },
+
+            success: function(response) {
+
+                debtChart.data.labels = response.labels;
+                debtChart.data.datasets[0].data = response.data;
+                debtChart.update();
+
+            },
+
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+
+        });
+
+    });
 </script>
 @endsection

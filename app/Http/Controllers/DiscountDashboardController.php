@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DiscountHistory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class DiscountDashboardController extends Controller
@@ -34,5 +35,84 @@ class DiscountDashboardController extends Controller
             'debtLabels',
             'debtData'
         ));
+    }
+
+    public function dashboard(Request $request)
+    {
+        $month = $request->payment_month ?? date('n');
+        $year  = $request->payment_year ?? date('Y');
+
+        $paymentDiscounts = DB::table('discount_histories as dh')
+            ->join('discounts as d', 'd.id', '=', 'dh.discount_id')
+            ->select(
+                'd.name',
+                DB::raw('COUNT(*) as total')
+            )
+            ->where('dh.module', 'payment')
+            ->whereMonth('dh.created_at', $month)
+            ->whereYear('dh.created_at', $year)
+            ->groupBy('d.id', 'd.name')
+            ->orderByDesc('total')
+            ->get();
+
+        $paymentLabels = $paymentDiscounts->pluck('name');
+        $paymentData   = $paymentDiscounts->pluck('total');
+
+        return view('discounts.dashboard', compact(
+            'paymentLabels',
+            'paymentData',
+            'discountLabels',
+            'discountData',
+            'debtLabels',
+            'debtData',
+            'month',
+            'year'
+        ));
+    }
+
+    public function paymentChart(Request $request)
+    {
+        $month = $request->payment_month;
+        $year  = $request->payment_year;
+
+        $paymentDiscounts = DB::table('discount_histories as dh')->join('discounts as d', 'd.id', '=', 'dh.discount_id')
+            ->select(
+                'd.name',
+                DB::raw('COUNT(*) as total')
+            )
+            ->where('dh.module', 'payment')
+            ->whereMonth('dh.created_at', $month)
+            ->whereYear('dh.created_at', $year)
+            ->groupBy('d.id', 'd.name')
+            ->orderByDesc('total')
+            ->get();
+
+        return response()->json([
+            'labels' => $paymentDiscounts->pluck('name'),
+            'data'   => $paymentDiscounts->pluck('total')
+        ]);
+    }
+
+    public function debtChart(Request $request)
+    {
+        $month = $request->debt_month;
+        $year = $request->debt_year;
+
+        $debtDiscounts = DB::table('discount_histories as dh')->join('discounts as d', 'd.id', '=', 'dh.discount_id')
+            ->select(
+                'd.name',
+                DB::raw('COUNT(*) as total')
+            )
+            ->where('dh.module', 'debt')
+            ->whereMonth('dh.created_at', $month)
+            ->whereYear('dh.created_at', $year)
+            ->groupBy('d.id', 'd.name')
+            ->orderByDesc('total')
+            ->get();
+
+        return response()->json([
+            'labels' => $debtDiscounts->pluck('name'),
+            'data'   => $debtDiscounts->pluck('total')
+        ]);
     }
 }

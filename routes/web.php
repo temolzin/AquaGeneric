@@ -120,6 +120,9 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::get('/reports/generateDiscountListReport', [DiscountController::class, 'generateDiscountListReport'])->name('report.generateDiscountListReport');
         Route::get('/reports/discount-history/generate', [DiscountHistoryController::class, 'generatePDF'])->name('discounts.generateHistoryPdf');
         Route::get('/discount-dashboard', [DiscountDashboardController::class, 'index'])->name('discountDashboard.index');
+        Route::get('/discount-dashboard', [DiscountDashboardController::class, 'index'])->name('discountDashboard.index');
+        Route::get('/discount-dashboard/payment-chart', [DiscountDashboardController::class, 'paymentChart'])->name('discountDashboard.paymentChart');
+        Route::get('/discount-dashboard/debt-chart', [DiscountDashboardController::class, 'debtChart'])->name('discountDashboard.debtChart');
     });
 
     Route::group(['middleware' => ['can:viewDebts']], function () {
