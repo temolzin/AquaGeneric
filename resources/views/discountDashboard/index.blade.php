@@ -20,7 +20,16 @@
                                     </h3>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="discountChart" height="90"></canvas>
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 d-flex justify-content-center">
+                                            <div style="width: 350px; height: 350px;">
+                                                <canvas id="discountChart"></canvas>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div id="discountLegend"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -34,7 +43,7 @@
                                     </h3>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="paymentChart" height="140"></canvas>
+                                    <canvas id="paymentChart" height="350"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -46,7 +55,7 @@
                                     </h3>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="debtChart" height="140"></canvas>
+                                    <canvas id="debtChart" height="350"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -72,31 +81,6 @@
         '#2980b9',
         '#8e44ad'
     ];
-
-    new Chart(document.getElementById('discountChart'), {
-
-        type:'bar',
-
-        data:{
-            labels:@json($discountLabels),
-            datasets:[{
-                label:'Cantidad',
-                data:@json($discountData),
-                backgroundColor:colors
-            }]
-        },
-
-        options:{
-            responsive:true,
-            maintainAspectRatio:false,
-            scales:{
-                y:{
-                    beginAtZero:true
-                }
-            }
-        }
-
-    });
 
     new Chart(document.getElementById('paymentChart'), {
 
@@ -146,5 +130,53 @@
             }
         }
     });
+
+    const discountChart = new Chart(document.getElementById('discountChart'), {
+        type: 'pie',
+
+        data: {
+            labels: @json($discountLabels),
+            datasets: [{
+                data: @json($discountData),
+                backgroundColor: colors,
+                borderColor: '#fff',
+                borderWidth: 2
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            radius: '85%',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+
+    });
+
+    let legend = '<ul class="list-unstyled mb-0">';
+
+    discountChart.data.labels.forEach((label, index) => {
+        legend += `
+            <li class="mb-3 d-flex align-items-center">
+                <span style="
+                    width:18px;
+                    height:18px;
+                    background:${colors[index]};
+                    display:inline-block;
+                    border-radius:4px;
+                    margin-right:12px;
+                "></span>
+
+                <span style="font-size:16px;">${label}</span>
+            </li>
+        `;
+    });
+
+    legend += '</ul>';
+    document.getElementById('discountLegend').innerHTML = legend;
 </script>
 @endsection

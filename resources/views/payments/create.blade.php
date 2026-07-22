@@ -367,21 +367,29 @@ $(document).ready(function() {
         if (checked) {
             $('#paymentDiscountContainer').stop(true, true).slideDown(300);
             $('#payment_discount_id').prop('disabled', false).prop('required', true);
-        } else {
-            $('#paymentDiscountContainer').stop(true, true).slideUp(300);
-            $('#payment_discount_id').prop('disabled', true).prop('required', false).val('').trigger('change');
 
-            $('#payment_discount_percentage').val('');
-            $('#payment_discount_amount').val('');
-            $('#payment_amount_with_discount').val('');
+            calculateDiscount();
+            return;
+        }
 
-            $('#payment_discount_id_hidden').val('');
-            $('#payment_discount_percentage_hidden').val('');
-            $('#payment_discount_amount_hidden').val('');
-            $('#payment_final_amount_hidden').val('');
-            if (selectedDebtRemaining > 0) {
-                $('#payment_amount').val(selectedDebtRemaining.toFixed(2));
-            }
+        $('#paymentDiscountContainer').stop(true, true).slideUp(300);
+        $('#payment_discount_id')
+            .prop('disabled', true)
+            .prop('required', false)
+            .val('')
+            .trigger('change');
+
+        $('#payment_discount_percentage').val('');
+        $('#payment_discount_amount').val('');
+        $('#payment_amount_with_discount').val('');
+
+        $('#payment_discount_id_hidden').val('');
+        $('#payment_discount_percentage_hidden').val('');
+        $('#payment_discount_amount_hidden').val('');
+        $('#payment_final_amount_hidden').val('');
+
+        if (selectedDebtRemaining > 0) {
+            $('#payment_amount').val(selectedDebtRemaining.toFixed(2));
         }
 
         calculateDiscount();
