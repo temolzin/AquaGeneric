@@ -177,7 +177,7 @@
     }
     table#discounts th,
     table#discounts td {
-        text-align: center;
+        text-align: left !important;
         vertical-align: middle;
     }
     .dataTables_wrapper {

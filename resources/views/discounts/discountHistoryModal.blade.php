@@ -14,7 +14,7 @@
                         <label for="discount_history_module">Módulo</label>
                         <select name="module" id="discount_history_module" class="form-control" required>
                             <option value="">Selecciona un módulo</option>
-                            <option value="todos">Todos los módulos</option>
+                            <option value="all">Todos los módulos</option>
                             <option value="pagos">Pagos</option>
                             <option value="deudas">Deudas</option>
                         </select>
@@ -48,7 +48,7 @@
             const selectedValue = $(this).val();
             const $checkbox = $('#discount_history_show_module_column');
 
-            const shouldEnableGrouping = selectedValue === 'todos';
+            const shouldEnableGrouping = selectedValue === 'all';
 
             $checkbox.prop('disabled', !shouldEnableGrouping);
 
