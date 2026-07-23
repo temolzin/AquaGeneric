@@ -252,13 +252,13 @@
         $selectedModule = request('module');
         $isGrouped = (string) request('show_module_column') === '1';
         $reportTitle = 'HISTORIAL DE DESCUENTOS';
-        if ($selectedModule === 'todos' && $isGrouped) {
+        if ($selectedModule === 'all' && $isGrouped) {
             $reportTitle = 'HISTORIAL DE DESCUENTOS POR MÓDULO';
         }
-        if ($selectedModule === 'todos' && !$isGrouped) {
+        if ($selectedModule === 'all' && !$isGrouped) {
             $reportTitle = 'HISTORIAL DE DESCUENTOS';
         }
-        if (!empty($selectedModule) && $selectedModule !== 'todos') {
+        if (!empty($selectedModule) && $selectedModule !== 'all') {
             $moduleNameLabel = $moduleNames[$selectedModule] ?? $selectedModule;
             $formattedModule = mb_strtoupper($moduleNameLabel);
             $reportTitle = "HISTORIAL DE DESCUENTOS DEL MÓDULO {$formattedModule}";
@@ -292,7 +292,7 @@
             </div>
         </div>
     @endif
-    @if(!isset($error) && $selectedModule === 'todos' && $isGrouped && (!empty($groupedByDay) || !empty($groupedByModule)))
+    @if(!isset($error) && $selectedModule === 'all' && $isGrouped && (!empty($groupedByDay) || !empty($groupedByModule)))
         @foreach($groupedByModule as $moduleName => $days)
             <div class="report-page {{ !$loop->first ? 'page-break' : '' }}">
                 <div class="page-bg">
@@ -384,7 +384,7 @@
             </div>
         @endforeach
     @endif
-    @if(!isset($error) && ($selectedModule !== 'todos' || !$isGrouped) && (!empty($groupedByDay) || !empty($groupedByModule)))
+    @if(!isset($error) && ($selectedModule !== 'all' || !$isGrouped) && (!empty($groupedByDay) || !empty($groupedByModule)))
         <div class="report-page">
             <div class="page-bg">
                 <img src="file://{{ $verticalBgPath }}" alt="Background">

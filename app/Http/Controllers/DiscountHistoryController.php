@@ -18,7 +18,7 @@ class DiscountHistoryController extends Controller
         $endDate = $request->input('end_date');
         $showModuleColumn = $request->boolean('show_module_column');
         $locality = Locality::find($localityId);
-        $includeAllModules = $module === 'todos';
+        $includeAllModules = $module === 'all';
         $dbModule = $this->normalizeModuleForStorage($module);
         $moduleNames = [
             'pagos' => 'Pagos',
