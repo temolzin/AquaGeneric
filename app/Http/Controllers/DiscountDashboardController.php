@@ -35,7 +35,7 @@ class DiscountDashboardController extends Controller
         ));
     }
 
-    public function showdashboard(request $request)
+    public function showDashboard(request $request)
     {
         $month = $request->payment_month ?? date('n');
         $year  = $request->payment_year ?? date('Y');
@@ -68,7 +68,7 @@ class DiscountDashboardController extends Controller
         ));
     }
 
-    public function getpaymentchart(request $request)
+    public function getPaymentChart(request $request)
     {
         $month = $request->payment_month;
         $year  = $request->payment_year;
@@ -91,7 +91,7 @@ class DiscountDashboardController extends Controller
         ]);
     }
 
-    public function getdebtchart(request $request)
+    public function getDebtChart(request $request)
     {
         $month = $request->debt_month;
         $year = $request->debt_year;
