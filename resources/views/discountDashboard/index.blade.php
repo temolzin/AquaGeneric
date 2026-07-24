@@ -1,0 +1,269 @@
+@extends('layouts.adminlte')
+
+@section('title', config('adminlte.title') . ' | Panel de Descuentos')
+
+@section('content')
+<section class="content">
+    <div class="right_col" role="main">
+        <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Panel de Descuentos</h2>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-lg-12 mb-4">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        Uso general de descuentos
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 d-flex justify-content-center">
+                                            <div style="width: 350px; height: 350px;">
+                                                <canvas id="discountChart"></canvas>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div id="discountLegend"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card card-success card-outline">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h3 class="card-title">
+                                        Descuentos aplicados en pagos
+                                    </h3>
+                                    <div class="d-flex">
+                                        <select class="form-control form-control-sm mr-2" id="paymentMonth">
+                                            <option value="">Mes</option>
+                                            <option value="1">Enero</option>
+                                            <option value="2">Febrero</option>
+                                            <option value="3">Marzo</option>
+                                            <option value="4">Abril</option>
+                                            <option value="5">Mayo</option>
+                                            <option value="6">Junio</option>
+                                            <option value="7">Julio</option>
+                                            <option value="8">Agosto</option>
+                                            <option value="9">Septiembre</option>
+                                            <option value="10">Octubre</option>
+                                            <option value="11">Noviembre</option>
+                                            <option value="12">Diciembre</option>
+                                        </select>
+                                        <select class="form-control form-control-sm" id="paymentYear">
+                                            @for($i = date('Y'); $i >= date('Y')-5; $i--)
+                                                <option value="{{ $i }}">{{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="paymentChart" height="350"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="card card-danger card-outline">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h3 class="card-title">
+                                        Descuentos aplicados en deudas
+                                    </h3>
+                                    <div class="d-flex">
+                                        <select class="form-control form-control-sm mr-2" id="debtMonth">
+                                            <option value="">Mes</option>
+                                            <option value="1">Enero</option>
+                                            <option value="2">Febrero</option>
+                                            <option value="3">Marzo</option>
+                                            <option value="4">Abril</option>
+                                            <option value="5">Mayo</option>
+                                            <option value="6">Junio</option>
+                                            <option value="7">Julio</option>
+                                            <option value="8">Agosto</option>
+                                            <option value="9">Septiembre</option>
+                                            <option value="10">Octubre</option>
+                                            <option value="11">Noviembre</option>
+                                            <option value="12">Diciembre</option>
+                                        </select>
+                                        <select class="form-control form-control-sm" id="debtYear">
+                                            @for($i = date('Y'); $i >= date('Y')-5; $i--)
+                                                <option value="{{ $i }}">{{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="debtChart" height="350"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endsection
+@section('js')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const colors = [
+        '#3498db',
+        '#2ecc71',
+        '#f39c12',
+        '#e74c3c',
+        '#9b59b6',
+        '#1abc9c',
+        '#34495e',
+        '#16a085',
+        '#2980b9',
+        '#8e44ad'
+    ];
+
+    const paymentChart = new Chart(document.getElementById('paymentChart'), {
+        type: 'bar',
+
+        data: {
+            labels: @json($paymentLabels),
+            datasets: [{
+                label: 'Pagos',
+                data: @json($paymentData),
+                backgroundColor: '#2ecc71'
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    const debtChart = new Chart(document.getElementById('debtChart'), {
+        type:'bar',
+
+        data:{
+            labels:@json($debtLabels),
+            datasets:[{
+                label:'Deudas',
+                data:@json($debtData),
+                backgroundColor:'#e74c3c'
+            }]
+        },
+
+        options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            scales:{
+                y:{
+                    beginAtZero:true
+                }
+            }
+        }
+    });
+
+    const discountChart = new Chart(document.getElementById('discountChart'), {
+        type: 'pie',
+
+        data: {
+            labels: @json($discountLabels),
+            datasets: [{
+                data: @json($discountData),
+                backgroundColor: colors,
+                borderColor: '#fff',
+                borderWidth: 2
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            radius: '85%',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    let legend = '<ul class="list-unstyled mb-0">';
+
+    discountChart.data.labels.forEach((label, index) => {
+        legend += `
+            <li class="mb-3 d-flex align-items-center">
+                <span style="
+                    width:18px;
+                    height:18px;
+                    background:${colors[index]};
+                    display:inline-block;
+                    border-radius:4px;
+                    margin-right:12px;
+                "></span>
+
+                <span style="font-size:16px;">${label}</span>
+            </li>
+        `;
+    });
+
+    legend += '</ul>';
+    document.getElementById('discountLegend').innerHTML = legend;
+
+    $('#paymentMonth, #paymentYear').change(function () {
+        console.log("{{ route('discountDashboard.getPaymentChart') }}");
+        $.ajax({
+            url: "{{ route('discountDashboard.getPaymentChart') }}",
+            type: "GET",
+            data: {
+                payment_month: $('#paymentMonth').val(),
+                payment_year: $('#paymentYear').val()
+            },
+
+            success: function(response) {
+
+                paymentChart.data.labels = response.labels;
+                paymentChart.data.datasets[0].data = response.data;
+                paymentChart.update();
+
+            },
+
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+
+    $('#debtMonth, #debtYear').change(function () { 
+        $.ajax({
+            url: "{{ route('discountDashboard.getDebtChart') }}",
+            type: "GET",
+            data: {
+                debt_month: $('#debtMonth').val(),
+                debt_year: $('#debtYear').val()
+            },
+
+            success: function(response) {
+
+                debtChart.data.labels = response.labels;
+                debtChart.data.datasets[0].data = response.data;
+                debtChart.update();
+
+            },
+
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+</script>
+@endsection

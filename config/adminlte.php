@@ -366,6 +366,11 @@ return [
                 'icon' => 'fas fa-percentage',
                 'can' => 'viewDiscount',
             ],
+            [
+                'text' => 'Panel de Descuentos',
+                'url' => 'discount-dashboard',
+                'icon' => 'fas fa-chart-pie',
+            ],
         ],
     ],
     [

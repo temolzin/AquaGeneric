@@ -56,6 +56,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'description' => 'Permite eliminar los Descuentos.'
         ])->assignRole([$roleSupervisor]);
         Permission::firstOrCreate([
+            'name' => 'viewDiscountDashboard',
+            'description' => 'Permite ver el Panel de Descuentos.'
+        ])->assignRole([$roleSupervisor, $roleSecretariat]);
+        Permission::firstOrCreate([
             'name' => 'viewWaterConnection',
             'description' => 'Permite ver las Tomas de Agua.'
         ])->assignRole([$roleSupervisor, $roleSecretariat ]);
