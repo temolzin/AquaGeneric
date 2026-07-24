@@ -10,7 +10,6 @@ class DiscountDashboardController extends Controller
 {
     public function index()
     {
-
         $discounts = DiscountHistory::byUserLocality()->with('discount')->selectRaw('discount_id, COUNT(*) total')->groupBy('discount_id')->get();
 
         $discountLabels = $discounts->pluck('discount.name');
@@ -26,7 +25,6 @@ class DiscountDashboardController extends Controller
         $debtLabels = $debts->pluck('discount.name');
         $debtData = $debts->pluck('total');
 
-
         return view('discountDashboard.index', compact(
             'discountLabels',
             'discountData',
@@ -37,7 +35,7 @@ class DiscountDashboardController extends Controller
         ));
     }
 
-    public function dashboard(Request $request)
+    public function showdashboard(request $request)
     {
         $month = $request->payment_month ?? date('n');
         $year  = $request->payment_year ?? date('Y');
@@ -70,7 +68,7 @@ class DiscountDashboardController extends Controller
         ));
     }
 
-    public function paymentChart(Request $request)
+    public function getpaymentchart(request $request)
     {
         $month = $request->payment_month;
         $year  = $request->payment_year;
@@ -93,7 +91,7 @@ class DiscountDashboardController extends Controller
         ]);
     }
 
-    public function debtChart(Request $request)
+    public function getdebtchart(request $request)
     {
         $month = $request->debt_month;
         $year = $request->debt_year;

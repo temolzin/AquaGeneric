@@ -150,7 +150,6 @@
     });
 
     const debtChart = new Chart(document.getElementById('debtChart'), {
-
         type:'bar',
 
         data:{
@@ -196,7 +195,6 @@
                 }
             }
         }
-
     });
 
     let legend = '<ul class="list-unstyled mb-0">';
@@ -222,9 +220,9 @@
     document.getElementById('discountLegend').innerHTML = legend;
 
     $('#paymentMonth, #paymentYear').change(function () {
-        console.log("{{ route('discountDashboard.paymentChart') }}");
+        console.log("{{ route('discountDashboard.getpaymentChart') }}");
         $.ajax({
-            url: "{{ route('discountDashboard.paymentChart') }}",
+            url: "{{ route('discountDashboard.getpaymentChart') }}",
             type: "GET",
             data: {
                 payment_month: $('#paymentMonth').val(),
@@ -242,14 +240,12 @@
             error: function(xhr) {
                 console.log(xhr.responseText);
             }
-
         });
-
     });
 
     $('#debtMonth, #debtYear').change(function () { 
         $.ajax({
-            url: "{{ route('discountDashboard.debtChart') }}",
+            url: "{{ route('discountDashboard.getdebtChart') }}",
             type: "GET",
             data: {
                 debt_month: $('#debtMonth').val(),
@@ -267,9 +263,7 @@
             error: function(xhr) {
                 console.log(xhr.responseText);
             }
-
         });
-
     });
 </script>
 @endsection
