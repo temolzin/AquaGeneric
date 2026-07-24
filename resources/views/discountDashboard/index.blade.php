@@ -220,9 +220,9 @@
     document.getElementById('discountLegend').innerHTML = legend;
 
     $('#paymentMonth, #paymentYear').change(function () {
-        console.log("{{ route('discountDashboard.getpaymentChart') }}");
+        console.log("{{ route('discountDashboard.getPaymentChart') }}");
         $.ajax({
-            url: "{{ route('discountDashboard.getpaymentChart') }}",
+            url: "{{ route('discountDashboard.getPaymentChart') }}",
             type: "GET",
             data: {
                 payment_month: $('#paymentMonth').val(),
@@ -245,7 +245,7 @@
 
     $('#debtMonth, #debtYear').change(function () { 
         $.ajax({
-            url: "{{ route('discountDashboard.getdebtChart') }}",
+            url: "{{ route('discountDashboard.getDebtChart') }}",
             type: "GET",
             data: {
                 debt_month: $('#debtMonth').val(),
