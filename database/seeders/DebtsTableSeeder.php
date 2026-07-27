@@ -84,6 +84,56 @@ class DebtsTableSeeder extends Seeder
                 $debtCount++;
             }
         }
+        
+        $discounts = DB::table('discounts')->get();
+
+        if ($discounts->isNotEmpty()) {
+            $waterConnections = DB::table('water_connections')->inRandomOrder()->limit(15)->get();
+
+            foreach ($waterConnections as $waterConnection) {
+                $createdBy = $this->getUserForLocality($waterConnection->locality_id);
+                $discount = $discounts->random();
+                $amount = rand(self::MIN_AMOUNT, self::MAX_AMOUNT);
+                $discountAmount = round(
+                    $amount * ($discount->percentage / 100),
+                    2
+                );
+
+                $finalAmount = $amount - $discountAmount;
+                $createdAt = Carbon::now()->subMonths(rand(0, 12))->addDays(rand(0, 28));
+
+                $debtId = DB::table('debts')->insertGetId([
+                    'water_connection_id' => $waterConnection->id,
+                    'locality_id'         => $waterConnection->locality_id,
+                    'created_by'          => $createdBy,
+                    'debt_category_id'    => $serviceId,
+                    'discount_id'         => $discount->id,
+                    'start_date'          => $createdAt,
+                    'end_date'            => Carbon::parse($createdAt)->addMonth(),
+                    'amount'              => $finalAmount,
+                    'debt_current'        => $finalAmount,
+                    'status'              => 'pending',
+                    'note'                => 'Deuda con descuento (Seeder)',
+                    'deleted_at'          => null,
+                    'created_at'          => $createdAt,
+                    'updated_at'          => $createdAt,
+                ]);
+
+                DB::table('discount_histories')->insert([
+                    'locality_id'     => $waterConnection->locality_id,
+                    'discount_id'     => $discount->id,
+                    'customer_id'     => $waterConnection->customer_id,
+                    'created_by'      => $createdBy,
+                    'module'          => 'debt',
+                    'record_id'       => $debtId,
+                    'original_amount' => $amount,
+                    'discount_amount' => $discountAmount,
+                    'final_amount'    => $finalAmount,
+                    'created_at'      => $createdAt,
+                    'updated_at'      => $createdAt,
+                ]);
+            }
+        }
     }
 
     private function getUserForLocality(int $localityId): int

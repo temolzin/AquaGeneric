@@ -113,7 +113,7 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const colors = [
+    const baseColors = [
         '#3498db',
         '#2ecc71',
         '#f39c12',
@@ -123,8 +123,28 @@
         '#34495e',
         '#16a085',
         '#2980b9',
-        '#8e44ad'
+        '#8e44ad',
+        '#d35400',
+        '#27ae60',
+        '#c0392b',
+        '#7f8c8d',
+        '#f1c40f',
+        '#8e44ad',
+        '#2c3e50',
+        '#e67e22',
+        '#95a5a6',
+        '#ff6b6b'
     ];
+
+    function generateColors(total) {
+        let colors = [];
+
+        for (let i = 0; i < total; i++) {
+            colors.push(baseColors[i % baseColors.length]);
+        }
+
+        return colors;
+    }
 
     const paymentChart = new Chart(document.getElementById('paymentChart'), {
         type: 'bar',
@@ -134,7 +154,7 @@
             datasets: [{
                 label: 'Pagos',
                 data: @json($paymentData),
-                backgroundColor: '#2ecc71'
+                backgroundColor: generateColors(@json($paymentLabels).length)
             }]
         },
 
@@ -157,7 +177,7 @@
             datasets:[{
                 label:'Deudas',
                 data:@json($debtData),
-                backgroundColor:'#e74c3c'
+                backgroundColor: generateColors(@json($debtLabels).length)
             }]
         },
 
@@ -179,7 +199,7 @@
             labels: @json($discountLabels),
             datasets: [{
                 data: @json($discountData),
-                backgroundColor: colors,
+                backgroundColor: generateColors(@json($discountLabels).length),
                 borderColor: '#fff',
                 borderWidth: 2
             }]
@@ -197,6 +217,8 @@
         }
     });
 
+    const legendColors = generateColors(discountChart.data.labels.length);
+
     let legend = '<ul class="list-unstyled mb-0">';
 
     discountChart.data.labels.forEach((label, index) => {
@@ -205,7 +227,7 @@
                 <span style="
                     width:18px;
                     height:18px;
-                    background:${colors[index]};
+                    background:${legendColors[index]};
                     display:inline-block;
                     border-radius:4px;
                     margin-right:12px;
@@ -233,8 +255,10 @@
 
                 paymentChart.data.labels = response.labels;
                 paymentChart.data.datasets[0].data = response.data;
-                paymentChart.update();
+                paymentChart.data.datasets[0].backgroundColor = generateColors(response.labels.length);
 
+                paymentChart.update();
+                
             },
 
             error: function(xhr) {
@@ -256,8 +280,9 @@
 
                 debtChart.data.labels = response.labels;
                 debtChart.data.datasets[0].data = response.data;
-                debtChart.update();
+                debtChart.data.datasets[0].backgroundColor = generateColors(response.labels.length);
 
+                debtChart.update();                
             },
 
             error: function(xhr) {

@@ -205,8 +205,7 @@ $(document).ready(function() {
                     $.each(data.waterConnections, function(index, connection) {
                         waterConnectionSelect.append(
                             '<option value="' + connection.id + '">' +
-                            connection.name +
-                            '</option>'
+                                connection.id + ' - ' + connection.name +' </option>'
                         );
                     });
 

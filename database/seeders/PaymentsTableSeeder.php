@@ -74,6 +74,70 @@ class PaymentsTableSeeder extends Seeder
                 DB::table('payments')->insert($chunk);
             }
         }
+
+        $discounts = DB::table('discounts')->get();
+
+        if ($discounts->isNotEmpty()) {
+            $debts = DB::table('debts')->inRandomOrder()->limit(15)->get();
+            foreach ($debts as $debt) {
+                $waterConnection = DB::table('water_connections')->where('id', $debt->water_connection_id)->first();
+
+                if (!$waterConnection) {
+                    continue;
+                }
+
+                $localityUserIds = DB::table('users')->where('locality_id', $debt->locality_id)->whereIn('id', DB::table('model_has_roles')->whereIn('role_id', DB::table('roles')->whereIn('name', ['Supervisor', 'Secretaria'])->pluck('id'))->pluck('model_id'))->pluck('id')->toArray();
+
+                if (empty($localityUserIds)) {
+                    $localityUserIds = [1];
+                }
+
+                $createdBy = $localityUserIds[array_rand($localityUserIds)];
+                $discount = $discounts->random();
+                $amount = $faker->numberBetween(
+                    self::MIN_AMOUNT,
+                    $debt->amount
+                );
+
+                $discountAmount = round(
+                    $amount * ($discount->percentage / 100),
+                    2
+                );
+
+                $createdAt = $this->getRandomCreatedAt();
+
+                $paymentId = DB::table('payments')->insertGetId([
+                    'customer_id' => $waterConnection->customer_id,
+                    'debt_id' => $debt->id,
+                    'created_by' => $createdBy,
+                    'locality_id' => $debt->locality_id,
+                    'discount_id' => $discount->id,
+                    'amount' => $amount,
+                    'method' => $faker->randomElement(self::PAYMENTS_METHODS),
+                    'note' => 'Pago con descuento (Seeder)',
+                    'deleted_at' => null,
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
+                ]);
+
+                DB::table('discount_histories')->insert([
+                    'locality_id' => $debt->locality_id,
+                    'discount_id' => $discount->id,
+                    'customer_id' => $waterConnection->customer_id,
+                    'created_by' => $createdBy,
+
+                    'module' => 'payment',
+                    'record_id' => $paymentId,
+
+                    'original_amount' => $amount,
+                    'discount_amount' => $discountAmount,
+                    'final_amount' => $amount - $discountAmount,
+
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
+                ]);
+            }
+        }
     }
     private function getRandomCreatedAt(): Carbon
     {

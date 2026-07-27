@@ -10,19 +10,36 @@ class DiscountDashboardController extends Controller
 {
     public function index()
     {
-        $discounts = DiscountHistory::byUserLocality()->with('discount')->selectRaw('discount_id, COUNT(*) total')->groupBy('discount_id')->get();
+        $discounts = DiscountHistory::byUserLocality()
+            ->join('discounts', 'discount_histories.discount_id', '=', 'discounts.id')
+            ->selectRaw('discounts.name, COUNT(*) as total')
+            ->groupBy('discounts.name')
+            ->orderBy('discounts.name')
+            ->get();
 
-        $discountLabels = $discounts->pluck('discount.name');
+        $discountLabels = $discounts->pluck('name');
         $discountData = $discounts->pluck('total');
 
-        $payments = DiscountHistory::byUserLocality()->with('discount')->where('module', 'payment')->selectRaw('discount_id, COUNT(*) total')->groupBy('discount_id')->get();
+        $payments = DiscountHistory::byUserLocality()
+            ->join('discounts', 'discount_histories.discount_id', '=', 'discounts.id')
+            ->where('module', 'payment')
+            ->selectRaw('discounts.name, COUNT(*) as total')
+            ->groupBy('discounts.name')
+            ->orderBy('discounts.name')
+            ->get();
 
-        $paymentLabels = $payments->pluck('discount.name');
+        $paymentLabels = $payments->pluck('name');
         $paymentData = $payments->pluck('total');
 
-        $debts = DiscountHistory::byUserLocality()->with('discount')->where('module', 'debt')->selectRaw('discount_id, COUNT(*) total')->groupBy('discount_id')->get();
+        $debts = DiscountHistory::byUserLocality()
+            ->join('discounts', 'discount_histories.discount_id', '=', 'discounts.id')
+            ->where('module', 'debt')
+            ->selectRaw('discounts.name, COUNT(*) as total')
+            ->groupBy('discounts.name')
+            ->orderBy('discounts.name')
+            ->get();
 
-        $debtLabels = $debts->pluck('discount.name');
+        $debtLabels = $debts->pluck('name');
         $debtData = $debts->pluck('total');
 
         return view('discountDashboard.index', compact(
