@@ -125,14 +125,11 @@ class PaymentsTableSeeder extends Seeder
                     'discount_id' => $discount->id,
                     'customer_id' => $waterConnection->customer_id,
                     'created_by' => $createdBy,
-
                     'module' => 'payment',
                     'record_id' => $paymentId,
-
                     'original_amount' => $amount,
                     'discount_amount' => $discountAmount,
                     'final_amount' => $amount - $discountAmount,
-
                     'created_at' => $createdAt,
                     'updated_at' => $createdAt,
                 ]);
