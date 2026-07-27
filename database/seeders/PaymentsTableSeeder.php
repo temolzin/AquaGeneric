@@ -104,7 +104,7 @@ class PaymentsTableSeeder extends Seeder
                     2
                 );
 
-                $createdAt = $this->getRandomCreatedAt();
+                $createdAt = Carbon::create(2026, 7, 24, 0, 0, 0);
 
                 $paymentId = DB::table('payments')->insertGetId([
                     'customer_id' => $waterConnection->customer_id,

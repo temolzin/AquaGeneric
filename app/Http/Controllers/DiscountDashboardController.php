@@ -10,7 +10,7 @@ class DiscountDashboardController extends Controller
 {
     public function index()
     {
-        $discounts = DiscountHistory::byUserLocality()->join('discounts', 'discount_histories.discount_id', '=', 'discounts.id')->selectRaw('discounts.name, COUNT(*) as total')->groupBy('discounts.name')->orderBy('discounts.name')->get();
+        $discounts = DB::table('discount_histories as dh')->join('discounts as d', 'dh.discount_id', '=', 'd.id')->select('d.name',DB::raw('COUNT(*) as total'))->groupBy('d.name')->orderBy('d.name')->get();
 
         $discountLabels = $discounts->pluck('name');
         $discountData = $discounts->pluck('total');
@@ -62,7 +62,7 @@ class DiscountDashboardController extends Controller
         $month = $request->payment_month;
         $year  = $request->payment_year;
 
-        $paymentDiscounts = DB::table('discount_histories as dh')->join('discounts as d', 'd.id', '=', 'dh.discount_id')->select('d.name',DB::raw('COUNT(*) as total'))->where('dh.module', 'payment')->whereMonth('dh.created_at', $month)->whereYear('dh.created_at', $year)->groupBy('d.id', 'd.name')->orderByDesc('total')->get();
+        $paymentDiscounts = DB::table('discount_histories as dh')->join('discounts as d', 'd.id', '=', 'dh.discount_id')->select('d.name',DB::raw('COUNT(*) as total'))->where('dh.module', 'payment')->whereMonth('dh.created_at', $month)->whereYear('dh.created_at', $year)->groupBy('d.name')->orderByDesc('total')->get();
 
         return response()->json([
             'labels' => $paymentDiscounts->pluck('name'),
@@ -75,7 +75,7 @@ class DiscountDashboardController extends Controller
         $month = $request->debt_month;
         $year = $request->debt_year;
 
-        $debtDiscounts = DB::table('discount_histories as dh')->join('discounts as d', 'd.id', '=', 'dh.discount_id')->select('d.name',DB::raw('COUNT(*) as total'))->where('dh.module', 'debt')->whereMonth('dh.created_at', $month)->whereYear('dh.created_at', $year)->groupBy('d.id', 'd.name')->orderByDesc('total')->get();
+        $debtDiscounts = DB::table('discount_histories as dh')->join('discounts as d', 'd.id', '=', 'dh.discount_id')->select('d.name',DB::raw('COUNT(*) as total'))->where('dh.module', 'debt')->whereMonth('dh.created_at', $month)->whereYear('dh.created_at', $year)->groupBy('d.name')->orderByDesc('total')->get();
 
         return response()->json([
             'labels' => $debtDiscounts->pluck('name'),

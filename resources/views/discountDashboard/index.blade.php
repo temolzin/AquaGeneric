@@ -114,26 +114,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const baseColors = [
-        '#3498db',
-        '#2ecc71',
-        '#f39c12',
-        '#e74c3c',
-        '#9b59b6',
-        '#1abc9c',
-        '#34495e',
-        '#16a085',
-        '#2980b9',
-        '#8e44ad',
-        '#d35400',
-        '#27ae60',
-        '#c0392b',
-        '#7f8c8d',
-        '#f1c40f',
-        '#8e44ad',
-        '#2c3e50',
-        '#e67e22',
-        '#95a5a6',
-        '#ff6b6b'
+        @for ($i = 0; $i < count($discountLabels); $i++)
+            "{{ pdf_color(color($i)) }}",
+        @endfor
     ];
 
     function generateColors(total) {
@@ -258,7 +241,6 @@
                 paymentChart.data.datasets[0].backgroundColor = generateColors(response.labels.length);
 
                 paymentChart.update();
-                
             },
 
             error: function(xhr) {

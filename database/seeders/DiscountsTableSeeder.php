@@ -74,41 +74,34 @@ class DiscountsTableSeeder extends Seeder
                 'color' => color(14)
             ]
         ];
+        $localityId = DB::table('localities')->where('name', 'Smallville')->value('id');
 
-        foreach ($localityIds as $localityId) {
+        if (!$localityId) {
+            $this->command->error('La localidad Smallville no existe.');
+            return;
+        }
 
-            $userIds = DB::table('users')
-                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                ->whereIn('roles.name', [
-                    User::ROLE_SUPERVISOR,
-                    User::ROLE_SECRETARY
-                ])
-                ->where('users.locality_id', $localityId)
-                ->distinct()
-                ->pluck('users.id')
-                ->toArray();
+        $supervisorId = DB::table('users')->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')->join('roles', 'model_has_roles.role_id', '=', 'roles.id')->where('roles.name', User::ROLE_SUPERVISOR)->where('users.locality_id', $localityId)->value('users.id');
 
-            if (empty($userIds)) {
-                continue;
-            }
+        if (!$supervisorId) {
+            $this->command->error('No existe un Supervisor para Smallville.');
+            return;
+        }
 
-            foreach ($baseDiscounts as $discount) {
-
-                Discount::updateOrCreate(
-                    [
-                        'name' => $discount['name'],
-                        'locality_id' => $localityId
-                    ],
-                    [
-                        'description' => $discount['description'],
-                        'percentage' => $discount['percentage'],
-                        'color' => $discount['color'],
-                        'created_by' => collect($userIds)->random(),
-                        'created_at' => now(),
-                    ]
-                );
-            }
+        foreach ($baseDiscounts as $discount) {
+            Discount::updateOrCreate(
+                [
+                    'name' => $discount['name'],
+                    'locality_id' => $localityId,
+                ],
+                [
+                    'description' => $discount['description'],
+                    'percentage' => $discount['percentage'],
+                    'color' => $discount['color'],
+                    'created_by' => $supervisorId,
+                    'created_at' => now(),
+                ]
+            );
         }
     }
 }

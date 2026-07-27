@@ -100,7 +100,7 @@ class DebtsTableSeeder extends Seeder
                 );
 
                 $finalAmount = $amount - $discountAmount;
-                $createdAt = Carbon::now()->subMonths(rand(0, 12))->addDays(rand(0, 28));
+                $createdAt = Carbon::create(2026, 7, 24, 0, 0, 0);
 
                 $debtId = DB::table('debts')->insertGetId([
                     'water_connection_id' => $waterConnection->id,
