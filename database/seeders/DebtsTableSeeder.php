@@ -14,6 +14,7 @@ class DebtsTableSeeder extends Seeder
     private const MIN_AMOUNT = 100;
     private const MAX_AMOUNT = 1000;
     private const DEBT_STATUSES = ['pending', 'partial', 'paid'];
+    private const SMALLVILLE_LOCALITY_ID = 1;
 
     public function run()
     {
@@ -88,7 +89,7 @@ class DebtsTableSeeder extends Seeder
         $discounts = DB::table('discounts')->get();
 
         if ($discounts->isNotEmpty()) {
-            $waterConnections = DB::table('water_connections')->inRandomOrder()->limit(15)->get();
+            $waterConnections = DB::table('water_connections')->where('locality_id', self::SMALLVILLE_LOCALITY_ID)->inRandomOrder()->limit(15)->get();
 
             foreach ($waterConnections as $waterConnection) {
                 $createdBy = $this->getUserForLocality($waterConnection->locality_id);
@@ -104,7 +105,7 @@ class DebtsTableSeeder extends Seeder
 
                 $debtId = DB::table('debts')->insertGetId([
                     'water_connection_id' => $waterConnection->id,
-                    'locality_id' => $waterConnection->locality_id,
+                    'locality_id' => self::SMALLVILLE_LOCALITY_ID,
                     'created_by' => $createdBy,
                     'debt_category_id' => $serviceId,
                     'discount_id'=> $discount->id,
@@ -120,7 +121,7 @@ class DebtsTableSeeder extends Seeder
                 ]);
 
                 DB::table('discount_histories')->insert([
-                    'locality_id' => $waterConnection->locality_id,
+                    'locality_id' => self::SMALLVILLE_LOCALITY_ID,
                     'discount_id' => $discount->id,
                     'customer_id' => $waterConnection->customer_id,
                     'created_by' => $createdBy,

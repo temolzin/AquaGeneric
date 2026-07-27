@@ -14,6 +14,7 @@ class PaymentsTableSeeder extends Seeder
     private const MAX_MONTHS_SUBTRACT = 12;
     private const MAX_DAYS_SUBTRACT = 28;
     private const PAYMENTS_METHODS = ['cash', 'card', 'transfer'];
+    private const SMALLVILLE_LOCALITY_ID = 1;
 
     public function run()
     {
@@ -78,7 +79,7 @@ class PaymentsTableSeeder extends Seeder
         $discounts = DB::table('discounts')->get();
 
         if ($discounts->isNotEmpty()) {
-            $debts = DB::table('debts')->inRandomOrder()->limit(15)->get();
+            $debts = DB::table('debts')->where('locality_id', self::SMALLVILLE_LOCALITY_ID)->inRandomOrder()->limit(15)->get();
             foreach ($debts as $debt) {
                 $waterConnection = DB::table('water_connections')->where('id', $debt->water_connection_id)->first();
 
@@ -86,7 +87,7 @@ class PaymentsTableSeeder extends Seeder
                     continue;
                 }
 
-                $localityUserIds = DB::table('users')->where('locality_id', $debt->locality_id)->whereIn('id', DB::table('model_has_roles')->whereIn('role_id', DB::table('roles')->whereIn('name', ['Supervisor', 'Secretaria'])->pluck('id'))->pluck('model_id'))->pluck('id')->toArray();
+                $localityUserIds = DB::table('users')->where('locality_id', self::SMALLVILLE_LOCALITY_ID)->whereIn('id', DB::table('model_has_roles')->whereIn('role_id', DB::table('roles')->whereIn('name', ['Supervisor', 'Secretaria'])->pluck('id'))->pluck('model_id'))->pluck('id')->toArray();
 
                 if (empty($localityUserIds)) {
                     $localityUserIds = [1];
@@ -110,7 +111,7 @@ class PaymentsTableSeeder extends Seeder
                     'customer_id' => $waterConnection->customer_id,
                     'debt_id' => $debt->id,
                     'created_by' => $createdBy,
-                    'locality_id' => $debt->locality_id,
+                    'locality_id' => self::SMALLVILLE_LOCALITY_ID,
                     'discount_id' => $discount->id,
                     'amount' => $amount,
                     'method' => $faker->randomElement(self::PAYMENTS_METHODS),
@@ -121,7 +122,7 @@ class PaymentsTableSeeder extends Seeder
                 ]);
 
                 DB::table('discount_histories')->insert([
-                    'locality_id' => $debt->locality_id,
+                    'locality_id' => self::SMALLVILLE_LOCALITY_ID,
                     'discount_id' => $discount->id,
                     'customer_id' => $waterConnection->customer_id,
                     'created_by' => $createdBy,
