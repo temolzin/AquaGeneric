@@ -44,22 +44,13 @@
                                     <div class="d-flex">
                                         <select class="form-control form-control-sm mr-2" id="paymentMonth">
                                             <option value="">Mes</option>
-                                            <option value="1">Enero</option>
-                                            <option value="2">Febrero</option>
-                                            <option value="3">Marzo</option>
-                                            <option value="4">Abril</option>
-                                            <option value="5">Mayo</option>
-                                            <option value="6">Junio</option>
-                                            <option value="7">Julio</option>
-                                            <option value="8">Agosto</option>
-                                            <option value="9">Septiembre</option>
-                                            <option value="10">Octubre</option>
-                                            <option value="11">Noviembre</option>
-                                            <option value="12">Diciembre</option>
+                                            @foreach(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] as $number => $name)
+                                                <option value="{{ $number + 1 }}" {{ $selectedMonth === $number + 1 ? 'selected' : '' }}>{{ $name }}</option>
+                                            @endforeach
                                         </select>
                                         <select class="form-control form-control-sm" id="paymentYear">
                                             @for($i = date('Y'); $i >= date('Y')-5; $i--)
-                                                <option value="{{ $i }}">{{ $i }}</option>
+                                                <option value="{{ $i }}" {{ $selectedYear === $i ? 'selected' : '' }}>{{ $i }}</option>
                                             @endfor
                                         </select>
                                     </div>
@@ -78,22 +69,13 @@
                                     <div class="d-flex">
                                         <select class="form-control form-control-sm mr-2" id="debtMonth">
                                             <option value="">Mes</option>
-                                            <option value="1">Enero</option>
-                                            <option value="2">Febrero</option>
-                                            <option value="3">Marzo</option>
-                                            <option value="4">Abril</option>
-                                            <option value="5">Mayo</option>
-                                            <option value="6">Junio</option>
-                                            <option value="7">Julio</option>
-                                            <option value="8">Agosto</option>
-                                            <option value="9">Septiembre</option>
-                                            <option value="10">Octubre</option>
-                                            <option value="11">Noviembre</option>
-                                            <option value="12">Diciembre</option>
+                                            @foreach(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] as $number => $name)
+                                                <option value="{{ $number + 1 }}" {{ $selectedMonth === $number + 1 ? 'selected' : '' }}>{{ $name }}</option>
+                                            @endforeach
                                         </select>
                                         <select class="form-control form-control-sm" id="debtYear">
                                             @for($i = date('Y'); $i >= date('Y')-5; $i--)
-                                                <option value="{{ $i }}">{{ $i }}</option>
+                                                <option value="{{ $i }}" {{ $selectedYear === $i ? 'selected' : '' }}>{{ $i }}</option>
                                             @endfor
                                         </select>
                                     </div>

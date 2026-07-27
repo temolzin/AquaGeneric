@@ -16,14 +16,7 @@ class DiscountController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Discount::withoutGlobalScope('byUserLocality')
-            ->where(function ($q) use ($authUser) {
-                $q->where('locality_id', $authUser->locality_id)
-                  ->orWhereNull('locality_id');
-            })
-            ->with('creator')
-            ->orderByRaw('locality_id IS NULL DESC')
-            ->orderBy('created_at', 'desc');
+        $query = Discount::withoutGlobalScope('byUserLocality')->where('locality_id', $authUser->locality_id)->with('creator')->orderByRaw('locality_id IS NULL DESC')->orderBy('created_at', 'desc');
 
         if (request()->has('search') && request('search') != '') {
             $search = request('search');
@@ -198,7 +191,11 @@ class DiscountController extends Controller
     
     private function authorizeDiscount(Discount $discount)
     {
-        if (is_null($discount->locality_id)) {
+        if (auth()->user()->locality_id !== $discount->locality_id) {
+            abort(403, 'No tienes permisos para acceder a este descuento.');
+        }
+
+        if ($discount->isProtected()) {
             abort(403, 'Este descuento no puede ser modificado.');
         }
     }
