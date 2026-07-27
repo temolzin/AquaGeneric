@@ -106,17 +106,9 @@ class PaymentsTableSeeder extends Seeder
      private function seedDiscountedPayments($faker): void
     {
         DB::table('localities')->whereNull('deleted_at')->orderBy('id')->each(function ($locality) use ($faker) {
-            $debts = DB::table('debts')
-                ->join('water_connections', 'debts.water_connection_id', '=', 'water_connections.id')
-                ->where('debts.locality_id', $locality->id)
-                ->whereNull('debts.deleted_at')
-                ->whereNull('water_connections.deleted_at')
-                ->get(['debts.id', 'debts.amount', 'water_connections.customer_id']);
+            $debts = DB::table('debts')->join('water_connections', 'debts.water_connection_id', '=', 'water_connections.id')->where('debts.locality_id', $locality->id)->whereNull('debts.deleted_at')->whereNull('water_connections.deleted_at')->get(['debts.id', 'debts.amount', 'water_connections.customer_id']);
 
-            $discounts = DB::table('discounts')
-                ->where('locality_id', $locality->id)
-                ->whereNull('deleted_at')
-                ->get(['id', 'percentage']);
+            $discounts = DB::table('discounts')->where('locality_id', $locality->id)->whereNull('deleted_at')->get(['id', 'percentage']);
 
             $localityUserIds = $this->getLocalityUserIds($locality->id);
 
@@ -171,33 +163,18 @@ class PaymentsTableSeeder extends Seeder
 
     private function getLocalityUserIds(int $localityId): array
     {
-        return DB::table('users')
-            ->where('locality_id', $localityId)
-            ->whereNull('deleted_at')
-            ->whereIn('id', DB::table('model_has_roles')
-                ->whereIn('role_id', DB::table('roles')
-                    ->whereIn('name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
-                    ->pluck('id'))
-                ->pluck('model_id'))
-            ->pluck('id')
-            ->toArray();
+        return DB::table('users')->where('locality_id', $localityId)->whereNull('deleted_at')->whereIn('id', DB::table('model_has_roles')->whereIn('role_id', DB::table('roles')->whereIn('name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])->pluck('id'))->pluck('model_id'))->pluck('id')->toArray();
     }
 
     private function removeGeneratedDiscountPayments(int $localityId): void
     {
-        $paymentIds = DB::table('payments')
-            ->where('locality_id', $localityId)
-            ->where('note', 'like', '[discount-seeder] Pago con descuento%')
-            ->pluck('id');
+        $paymentIds = DB::table('payments')->where('locality_id', $localityId)->where('note', 'like', '[discount-seeder] Pago con descuento%')->pluck('id');
 
         if ($paymentIds->isEmpty()) {
             return;
         }
 
-        DB::table('discount_histories')
-            ->where('module', 'payment')
-            ->whereIn('record_id', $paymentIds)
-            ->delete();
+        DB::table('discount_histories')->where('module', 'payment')->whereIn('record_id', $paymentIds)->delete();
 
         DB::table('payments')->whereIn('id', $paymentIds)->delete();
     }

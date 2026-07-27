@@ -84,14 +84,6 @@ class DiscountDashboardController extends Controller
 
     private function getDiscountsByModule(string $module, int $month, int $year)
     {
-        return DiscountHistory::byUserLocality()
-            ->join('discounts as d', 'discount_histories.discount_id', '=', 'd.id')
-            ->where('discount_histories.module', $module)
-            ->whereMonth('discount_histories.created_at', $month)
-            ->whereYear('discount_histories.created_at', $year)
-            ->select('d.name', DB::raw('COUNT(*) as total'))
-            ->groupBy('d.name')
-            ->orderByDesc('total')
-            ->get();
+        return DiscountHistory::byUserLocality()->join('discounts as d', 'discount_histories.discount_id', '=', 'd.id')->where('discount_histories.module', $module)->whereMonth('discount_histories.created_at', $month)->whereYear('discount_histories.created_at', $year)->select('d.name', DB::raw('COUNT(*) as total'))->groupBy('d.name')->orderByDesc('total')->get();
     }
 }
