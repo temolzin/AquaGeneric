@@ -35,9 +35,12 @@ class DebtController extends Controller
                         ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$search}%"]);
                 });
             })
-            ->with(['waterConnections.debts' => function ($query) {
-                $query->where('status', '!=', 'paid');
-            }])
+            ->with([
+                'waterConnections.debts.discount',
+                'waterConnections.debts' => function ($query) {
+                    $query->where('status', '!=', 'paid');
+                }
+            ])
             ->orderByDesc(
                 Debt::select('debts.created_at')
                     ->join('water_connections', 'water_connections.id', '=', 'debts.water_connection_id')
@@ -305,9 +308,12 @@ class DebtController extends Controller
                         ->orWhere('id', 'like', "%{$search}%");
                 });
             })
-            ->with(['debts' => function ($query) {
-                $query->orderBy('created_at', 'desc');
-            }])
+            ->with([
+                'debts.discount',
+                'debts' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                }
+            ])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
         return view('viewCustomerDebts.index', compact('waterConnections', 'hasOpenPay', 'locality', 'customer'));
