@@ -2,19 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\Discount;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Discount;
+use App\Models\User;
 
 class DiscountsTableSeeder extends Seeder
 {
     public function run(): void
     {
-        $localityIds = DB::table('localities')
-            ->whereNull('deleted_at')
-            ->pluck('id')
-            ->toArray();
+        $localityIds = DB::table('localities')->whereNull('deleted_at')->pluck('id')->toArray();
 
         if (empty($localityIds)) {
             $this->command->error('No hay localidades activas. Se omitió el seeding de descuentos.');
@@ -67,15 +64,7 @@ class DiscountsTableSeeder extends Seeder
         ];
 
         foreach ($localityIds as $localityId) {
-            $userIds = DB::table('users')
-                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                ->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])
-                ->where('users.locality_id', $localityId)
-                ->whereNull('users.deleted_at')
-                ->distinct()
-                ->pluck('users.id')
-                ->toArray();
+            $userIds = DB::table('users')->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')->join('roles', 'model_has_roles.role_id', '=', 'roles.id')->whereIn('roles.name', [User::ROLE_SUPERVISOR, User::ROLE_SECRETARY])->where('users.locality_id', $localityId)->whereNull('users.deleted_at')->distinct()->pluck('users.id')->toArray();
 
             if (empty($userIds)) {
                 $this->command->warn("La localidad {$localityId} no tiene Supervisor ni Secretaria; se omitieron sus descuentos.");
