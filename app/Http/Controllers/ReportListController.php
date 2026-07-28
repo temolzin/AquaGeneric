@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use App\Models\Customer;
+use App\Models\Discount;
 
 class ReportListController extends Controller
 {
@@ -80,9 +81,17 @@ class ReportListController extends Controller
 
         $sections->withPath($request->url());
 
-        $customers = Customer::where('locality_id', auth()->user()->locality_id)->get();
+        $authUser = auth()->user();
+        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
+        $discounts = Discount::where(function ($q) use ($authUser) {
+            $q->where('locality_id', $authUser->locality_id)
+                ->orWhereNull('locality_id');
+        })
+            ->orderByRaw('locality_id IS NULL DESC')
+            ->orderBy('name')
+            ->get();
 
-        return view('reportList.index', compact('sections', 'customers'));
+        return view('reportList.index', compact('sections', 'customers', 'discounts'));
     }
 
     private function getReportsForSection($sectionText, $submenu = null)
