@@ -80,10 +80,12 @@ class DebtsTableSeeder extends Seeder
                     'deleted_at' => null,
                     'created_at' => now(),
                 ]);
-                
+
                 $debtCount++;
             }
         }
+
+        $this->seedTestDebtsByLocality($serviceId);
     }
 
     private function getUserForLocality(int $localityId): int
@@ -108,5 +110,76 @@ class DebtsTableSeeder extends Seeder
             : ($debtCurrent > 0
                 ? self::DEBT_STATUSES[1]
                 : self::DEBT_STATUSES[2]);
+    }
+
+    private function seedTestDebtsByLocality(int $serviceId): void
+    {
+        if (!DB::table('discounts')->exists()) {
+            $this->call(DiscountsTableSeeder::class);
+        }
+
+        $localities = DB::table('localities')
+            ->whereNull('deleted_at')
+            ->orderBy('id')
+            ->limit(3)
+            ->get(['id']);
+
+        foreach ($localities as $locality) {
+            $connections = DB::table('water_connections')
+                ->where('locality_id', $locality->id)
+                ->whereNull('deleted_at')
+                ->get(['id', 'customer_id']);
+            $discounts = DB::table('discounts')
+                ->where('locality_id', $locality->id)
+                ->whereNull('deleted_at')
+                ->get(['id', 'percentage']);
+
+            if ($connections->isEmpty() || $discounts->isEmpty()) {
+                continue;
+            }
+
+            $createdBy = $this->getUserForLocality($locality->id);
+
+            for ($index = 1; $index <= 15; $index++) {
+                $connection = $connections->random();
+                $discount = $discounts->random();
+                $originalAmount = rand(self::MIN_AMOUNT, self::MAX_AMOUNT);
+                $discountAmount = round($originalAmount * ((float) $discount->percentage / 100), 2);
+                $finalAmount = round($originalAmount - $discountAmount, 2);
+                $startDate = Carbon::now()->subMonths(rand(0, 2));
+
+                DB::transaction(function () use ($connection, $locality, $createdBy, $serviceId, $discount, $startDate, $finalAmount, $originalAmount, $discountAmount, $index) {
+                    $debtId = DB::table('debts')->insertGetId([
+                        'water_connection_id' => $connection->id,
+                        'locality_id' => $locality->id,
+                        'created_by' => $createdBy,
+                        'debt_category_id' => $serviceId,
+                        'discount_id' => $discount->id,
+                        'start_date' => $startDate,
+                        'end_date' => $startDate->copy()->addMonth(),
+                        'amount' => $finalAmount,
+                        'debt_current' => $finalAmount,
+                        'status' => self::DEBT_STATUSES[0],
+                        'note' => 'Deuda de prueba con descuento por localidad #' . $index,
+                        'deleted_at' => null,
+                        'created_at' => now(),
+                    ]);
+
+                    DB::table('discount_histories')->insert([
+                        'locality_id' => $locality->id,
+                        'discount_id' => $discount->id,
+                        'customer_id' => $connection->customer_id,
+                        'created_by' => $createdBy,
+                        'module' => 'debt',
+                        'record_id' => $debtId,
+                        'original_amount' => $originalAmount,
+                        'discount_amount' => $discountAmount,
+                        'final_amount' => $finalAmount,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                });
+            }
+        }
     }
 }

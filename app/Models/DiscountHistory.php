@@ -54,8 +54,7 @@ class DiscountHistory extends Model
         $user = auth()->user();
         if ($user && $user->locality_id) {
             return $query->where(function ($q) use ($user) {
-                $q->where('locality_id', $user->locality_id)
-                  ->orWhereNull('locality_id');
+                $q->where('discount_histories.locality_id', $user->locality_id)->orWhereNull('discount_histories.locality_id');
             });
         }
         return $query;

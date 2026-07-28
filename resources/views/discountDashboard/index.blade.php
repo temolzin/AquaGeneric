@@ -60,22 +60,13 @@
                                     <div class="d-flex align-items-center">
                                         <select class="form-control form-control-sm mr-2" id="paymentMonth">
                                             <option value="">Mes</option>
-                                            <option value="1">Enero</option>
-                                            <option value="2">Febrero</option>
-                                            <option value="3">Marzo</option>
-                                            <option value="4">Abril</option>
-                                            <option value="5">Mayo</option>
-                                            <option value="6">Junio</option>
-                                            <option value="7">Julio</option>
-                                            <option value="8">Agosto</option>
-                                            <option value="9">Septiembre</option>
-                                            <option value="10">Octubre</option>
-                                            <option value="11">Noviembre</option>
-                                            <option value="12">Diciembre</option>
+                                            @foreach(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] as $number => $name)
+                                                <option value="{{ $number + 1 }}" {{ $selectedMonth === $number + 1 ? 'selected' : '' }}>{{ $name }}</option>
+                                            @endforeach
                                         </select>
                                         <select class="form-control form-control-sm mr-2" id="paymentYear">
                                             @for($i = date('Y'); $i >= date('Y')-5; $i--)
-                                                <option value="{{ $i }}">{{ $i }}</option>
+                                                <option value="{{ $i }}" {{ $selectedYear === $i ? 'selected' : '' }}>{{ $i }}</option>
                                             @endfor
                                         </select>
                                         <button class="btn btn-sm btn-outline-dark download-btn" data-canvas="paymentChart">
@@ -97,22 +88,13 @@
                                     <div class="d-flex align-items-center">
                                         <select class="form-control form-control-sm mr-2" id="debtMonth">
                                             <option value="">Mes</option>
-                                            <option value="1">Enero</option>
-                                            <option value="2">Febrero</option>
-                                            <option value="3">Marzo</option>
-                                            <option value="4">Abril</option>
-                                            <option value="5">Mayo</option>
-                                            <option value="6">Junio</option>
-                                            <option value="7">Julio</option>
-                                            <option value="8">Agosto</option>
-                                            <option value="9">Septiembre</option>
-                                            <option value="10">Octubre</option>
-                                            <option value="11">Noviembre</option>
-                                            <option value="12">Diciembre</option>
+                                            @foreach(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] as $number => $name)
+                                                <option value="{{ $number + 1 }}" {{ $selectedMonth === $number + 1 ? 'selected' : '' }}>{{ $name }}</option>
+                                            @endforeach
                                         </select>
                                         <select class="form-control form-control-sm mr-2" id="debtYear">
                                             @for($i = date('Y'); $i >= date('Y')-5; $i--)
-                                                <option value="{{ $i }}">{{ $i }}</option>
+                                                <option value="{{ $i }}" {{ $selectedYear === $i ? 'selected' : '' }}>{{ $i }}</option>
                                             @endfor
                                         </select>
                                         <button class="btn btn-sm btn-outline-dark download-btn" data-canvas="debtChart">
@@ -168,18 +150,21 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const colors = [
-        '#3498db',
-        '#2ecc71',
-        '#f39c12',
-        '#e74c3c',
-        '#9b59b6',
-        '#1abc9c',
-        '#34495e',
-        '#16a085',
-        '#2980b9',
-        '#8e44ad'
+    const baseColors = [
+        @for ($i = 0; $i < count($discountLabels); $i++)
+            "{{ pdf_color(color($i)) }}",
+        @endfor
     ];
+
+    function generateColors(total) {
+        let colors = [];
+
+        for (let i = 0; i < total; i++) {
+            colors.push(baseColors[i % baseColors.length]);
+        }
+
+        return colors;
+    }
 
     const paymentChart = new Chart(document.getElementById('paymentChart'), {
         type: 'bar',
@@ -189,7 +174,7 @@
             datasets: [{
                 label: 'Pagos',
                 data: @json($paymentData),
-                backgroundColor: '#2ecc71'
+                backgroundColor: generateColors(@json($paymentLabels).length)
             }]
         },
 
@@ -212,7 +197,7 @@
             datasets:[{
                 label:'Deudas',
                 data:@json($debtData),
-                backgroundColor:'#e74c3c'
+                backgroundColor: generateColors(@json($debtLabels).length)
             }]
         },
 
@@ -234,7 +219,7 @@
             labels: @json($discountLabels),
             datasets: [{
                 data: @json($discountData),
-                backgroundColor: colors,
+                backgroundColor: generateColors(@json($discountLabels).length),
                 borderColor: '#fff',
                 borderWidth: 2
             }]
@@ -252,6 +237,8 @@
         }
     });
 
+    const legendColors = generateColors(discountChart.data.labels.length);
+
     let legend = '<ul class="list-unstyled mb-0">';
 
     discountChart.data.labels.forEach((label, index) => {
@@ -260,7 +247,7 @@
                 <span style="
                     width:18px;
                     height:18px;
-                    background:${colors[index]};
+                    background:${legendColors[index]};
                     display:inline-block;
                     border-radius:4px;
                     margin-right:12px;
@@ -288,8 +275,9 @@
 
                 paymentChart.data.labels = response.labels;
                 paymentChart.data.datasets[0].data = response.data;
-                paymentChart.update();
+                paymentChart.data.datasets[0].backgroundColor = generateColors(response.labels.length);
 
+                paymentChart.update();
             },
 
             error: function(xhr) {
@@ -311,8 +299,9 @@
 
                 debtChart.data.labels = response.labels;
                 debtChart.data.datasets[0].data = response.data;
-                debtChart.update();
+                debtChart.data.datasets[0].backgroundColor = generateColors(response.labels.length);
 
+                debtChart.update();                
             },
 
             error: function(xhr) {
