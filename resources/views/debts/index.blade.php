@@ -86,7 +86,7 @@
                                             @include('debts.showDebts', ['debt' => (object)['waterConnection' => (object)['customer' => $customer]]])
                                         @empty
                                             <tr>
-                                                <td colspan="5">No hay deudas registradas.</td>
+                                                <td colspan="4">No hay deudas registradas.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -122,13 +122,7 @@
     });
 
     $(document).ready(function() {
-        $('#debts').DataTable({
-            responsive: true,
-            paging: false,
-            info: false,
-            searching: false
-        });
-
+        console.log('Debts JS cargado');
         var successMessage = "{{ session('success') }}";
         var errorMessage = "{{ session('error') }}";
         if (successMessage) {
