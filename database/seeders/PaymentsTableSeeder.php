@@ -103,6 +103,7 @@ class PaymentsTableSeeder extends Seeder
             'created_at' => $createdAt,
         ];
     }
+    
      private function seedDiscountedPayments($faker): void
     {
         DB::table('localities')->whereNull('deleted_at')->orderBy('id')->each(function ($locality) use ($faker) {
