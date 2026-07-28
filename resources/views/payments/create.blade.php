@@ -301,18 +301,6 @@ $(document).ready(function() {
             var debtDate = new Date(startDate);
             var debtMonthYear = debtDate.getFullYear() * 100 + debtDate.getMonth() + 1;
             var todayMonthYear = today.getFullYear() * 100 + today.getMonth() + 1;
-
-            if (debtMonthYear > todayMonthYear && !isFuturePayment) {
-                e.preventDefault();
-                alert('Error: La deuda seleccionada es de un periodo futuro. Debe marcar "¿El cliente va a pagar por adelantado?".');
-                return false;
-            }
-
-            if (isFuturePayment && debtMonthYear <= todayMonthYear) {
-                e.preventDefault();
-                alert('Error: La deuda seleccionada no es de un periodo futuro.');
-                return false;
-            }
         }
     });
 
