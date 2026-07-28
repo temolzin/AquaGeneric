@@ -150,8 +150,8 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
         }
 
         h4 {
-            margin-bottom: 5px;
-            font-size: 16px;
+            margin: 8px 0 2px 0;
+            font-size: 15px;
             text-decoration: underline;
         }
 
