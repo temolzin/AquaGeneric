@@ -97,9 +97,15 @@ class DiscountDashboardController extends Controller
                       ->orWhereNull('discounts.locality_id');
                 }
             })
-            ->leftJoin('discount_histories as dh', function ($join) {
+            ->leftJoin('discount_histories as dh', function ($join) use ($authUser) {
                 $join->on('discounts.id', '=', 'dh.discount_id')
                      ->whereNull('dh.deleted_at');
+                if ($authUser && $authUser->locality_id) {
+                    $join->where(function ($q) use ($authUser) {
+                        $q->where('dh.locality_id', $authUser->locality_id)
+                          ->orWhereNull('dh.locality_id');
+                    });
+                }
             })
             ->select(
                 'discounts.id',
