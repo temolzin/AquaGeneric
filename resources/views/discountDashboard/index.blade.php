@@ -7,17 +7,33 @@
     <div class="right_col" role="main">
         <div class="col-md-12 col-sm-12">
             <div class="x_panel">
-                <div class="x_title">
+                <div class="x_title mb-3">
                     <h2>Panel de Descuentos</h2>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="d-flex justify-content-end align-items-center flex-wrap">
+                                <div class="responsive-actions">
+                                    <button class="btn btn-primary" id="btnGenerateReport" title="Generar reporte">
+                                        <i class="fa fa-chart-pie mr-1"></i>
+                                        <span class="d-none d-md-inline">Generar reporte</span>
+                                        <span class="d-inline d-md-none">Reporte</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="x_content">
                     <div class="row">
                         <div class="col-lg-12 mb-4">
                             <div class="card card-primary card-outline">
-                                <div class="card-header">
+                                <div class="card-header d-flex justify-content-between align-items-center">
                                     <h3 class="card-title">
                                         Uso general de descuentos
                                     </h3>
+                                    <button class="btn btn-sm btn-outline-dark download-btn" data-canvas="discountChart">
+                                        <i class="fas fa-download"></i> Descargar
+                                    </button>
                                 </div>
                                 <div class="card-body">
                                     <div class="row align-items-center">
@@ -41,7 +57,7 @@
                                     <h3 class="card-title">
                                         Descuentos aplicados en pagos
                                     </h3>
-                                    <div class="d-flex">
+                                    <div class="d-flex align-items-center">
                                         <select class="form-control form-control-sm mr-2" id="paymentMonth">
                                             <option value="">Mes</option>
                                             <option value="1">Enero</option>
@@ -57,11 +73,14 @@
                                             <option value="11">Noviembre</option>
                                             <option value="12">Diciembre</option>
                                         </select>
-                                        <select class="form-control form-control-sm" id="paymentYear">
+                                        <select class="form-control form-control-sm mr-2" id="paymentYear">
                                             @for($i = date('Y'); $i >= date('Y')-5; $i--)
                                                 <option value="{{ $i }}">{{ $i }}</option>
                                             @endfor
                                         </select>
+                                        <button class="btn btn-sm btn-outline-dark download-btn" data-canvas="paymentChart">
+                                            <i class="fas fa-download"></i> Descargar
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -75,7 +94,7 @@
                                     <h3 class="card-title">
                                         Descuentos aplicados en deudas
                                     </h3>
-                                    <div class="d-flex">
+                                    <div class="d-flex align-items-center">
                                         <select class="form-control form-control-sm mr-2" id="debtMonth">
                                             <option value="">Mes</option>
                                             <option value="1">Enero</option>
@@ -91,11 +110,14 @@
                                             <option value="11">Noviembre</option>
                                             <option value="12">Diciembre</option>
                                         </select>
-                                        <select class="form-control form-control-sm" id="debtYear">
+                                        <select class="form-control form-control-sm mr-2" id="debtYear">
                                             @for($i = date('Y'); $i >= date('Y')-5; $i--)
                                                 <option value="{{ $i }}">{{ $i }}</option>
                                             @endfor
                                         </select>
+                                        <button class="btn btn-sm btn-outline-dark download-btn" data-canvas="debtChart">
+                                            <i class="fas fa-download"></i> Descargar
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -109,6 +131,39 @@
         </div>
     </div>
 </section>
+<style>
+    #btnGenerateReport:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    @media (max-width: 767.98px) {
+        .responsive-actions{
+            display: flex !important;
+            flex-direction: column;
+            width: 100%;
+            gap: .5rem;
+            margin-top: .5rem;
+        }
+        .responsive-actions .btn{
+            width: 100%;
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+        }
+    }
+    @media (min-width: 768px) {
+        .responsive-actions{
+            display: flex !important;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: .5rem;
+        }
+        .responsive-actions .btn{
+            width: auto;
+        }   
+    }
+</style>
 @endsection
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -264,6 +319,62 @@
                 console.log(xhr.responseText);
             }
         });
+    });
+    document.querySelectorAll('.download-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const canvasId = this.dataset.canvas;
+            const canvas = document.getElementById(canvasId);
+            if (canvas) {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `${canvasId}.png`;
+                link.click();
+            }
+        });
+    });
+    document.getElementById('btnGenerateReport')?.addEventListener('click', () => {
+        const chartImages = {
+            discountChart: document.getElementById('discountChart')?.toDataURL('image/png') || '',
+            paymentChart: document.getElementById('paymentChart')?.toDataURL('image/png') || '',
+            debtChart: document.getElementById('debtChart')?.toDataURL('image/png') || ''
+        };
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route('discountDashboard.generateReport') }}';
+        form.target = '_blank';
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '_token';
+        tokenInput.value = '{{ csrf_token() }}';
+        form.appendChild(tokenInput);
+        const chartsInput = document.createElement('input');
+        chartsInput.type = 'hidden';
+        chartsInput.name = 'charts';
+        chartsInput.value = JSON.stringify(chartImages);
+        form.appendChild(chartsInput);
+        const paymentMonthInput = document.createElement('input');
+        paymentMonthInput.type = 'hidden';
+        paymentMonthInput.name = 'payment_month';
+        paymentMonthInput.value = $('#paymentMonth').val() || '';
+        form.appendChild(paymentMonthInput);
+        const paymentYearInput = document.createElement('input');
+        paymentYearInput.type = 'hidden';
+        paymentYearInput.name = 'payment_year';
+        paymentYearInput.value = $('#paymentYear').val() || '';
+        form.appendChild(paymentYearInput);
+        const debtMonthInput = document.createElement('input');
+        debtMonthInput.type = 'hidden';
+        debtMonthInput.name = 'debt_month';
+        debtMonthInput.value = $('#debtMonth').val() || '';
+        form.appendChild(debtMonthInput);
+        const debtYearInput = document.createElement('input');
+        debtYearInput.type = 'hidden';
+        debtYearInput.name = 'debt_year';
+        debtYearInput.value = $('#debtYear').val() || '';
+        form.appendChild(debtYearInput);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
     });
 </script>
 @endsection
