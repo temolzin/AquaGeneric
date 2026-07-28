@@ -216,13 +216,30 @@ class DiscountDashboardController extends Controller
             ->orderByDesc('total')
             ->get();
 
+        $itemsFirstPage = 8;
+        $itemsNextPages = 20;
+        $firstPageSummary = $discountsSummary->take($itemsFirstPage);
+        $otherPagesSummary = $discountsSummary->slice($itemsFirstPage)->chunk($itemsNextPages);
+        $pagesSummary = 1 + (int) ceil(max(0, $discountsSummary->count() - $itemsFirstPage) / $itemsNextPages);
+        $firstPagePayments = $paymentDiscounts->take($itemsFirstPage);
+        $otherPagesPayments = $paymentDiscounts->slice($itemsFirstPage)->chunk($itemsNextPages);
+        $pagesPayments = 1 + (int) ceil(max(0, $paymentDiscounts->count() - $itemsFirstPage) / $itemsNextPages);
+        $firstPageDebts = $debtDiscounts->take($itemsFirstPage);
+        $otherPagesDebts = $debtDiscounts->slice($itemsFirstPage)->chunk($itemsNextPages);
+        $pagesDebts = 1 + (int) ceil(max(0, $debtDiscounts->count() - $itemsFirstPage) / $itemsNextPages);
+        $totalPages = $pagesSummary + $pagesPayments + $pagesDebts;
+
         $pdf = Pdf::loadView('reports.discountDashboardReport', compact(
             'authUser',
             'locality',
             'chartImages',
-            'discountsSummary',
-            'paymentDiscounts',
-            'debtDiscounts',
+            'firstPageSummary',
+            'otherPagesSummary',
+            'firstPagePayments',
+            'otherPagesPayments',
+            'firstPageDebts',
+            'otherPagesDebts',
+            'totalPages',
             'paymentMonthLabel',
             'paymentYear',
             'debtMonthLabel',

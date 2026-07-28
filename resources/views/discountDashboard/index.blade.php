@@ -320,6 +320,7 @@
             }
         });
     });
+
     document.querySelectorAll('.download-btn').forEach(button => {
         button.addEventListener('click', function () {
             const canvasId = this.dataset.canvas;
@@ -332,6 +333,7 @@
             }
         });
     });
+    
     document.getElementById('btnGenerateReport')?.addEventListener('click', () => {
         const chartImages = {
             discountChart: document.getElementById('discountChart')?.toDataURL('image/png') || '',

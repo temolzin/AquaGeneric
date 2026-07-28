@@ -3,7 +3,7 @@
     $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
         ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
         : public_path('img/backgroundReport.png');
-    $totalPages = 3;
+    $currentPage = 0;
 @endphp
 <!DOCTYPE html>
 <html>
@@ -216,6 +216,7 @@
         </style>
     </head>
     <body>
+        @php $currentPage++; @endphp
         <div class="report-page">
             <div class="page-bg">
                 <img src="file://{{ $verticalBgPath }}" alt="Background">
@@ -226,8 +227,7 @@
                         <div class="first-page-logo-row">
                             <div class="first-page-logo">
                                 @if ($locality && $locality->hasMedia('localityGallery'))
-                                    <img src="{{ $locality->getFirstMediaUrl('localityGallery') }}"
-                                        alt="Photo of {{ $locality->name }}">
+                                    <img src="{{ $locality->getFirstMediaUrl('localityGallery') }}" alt="Photo of {{ $locality->name }}">
                                 @endif
                                 @if (!$locality || !$locality->hasMedia('localityGallery'))
                                     <img src="{{ public_path('img/localityDefault.png') }}" alt="Default Photo">
@@ -257,8 +257,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (!empty($discountsSummary) && count($discountsSummary) > 0)
-                                @foreach ($discountsSummary as $item)
+                            @if ($firstPageSummary->isNotEmpty())
+                                @foreach ($firstPageSummary as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->name }}</td>
@@ -267,7 +267,7 @@
                                     </tr>
                                 @endforeach
                             @endif
-                            @if (empty($discountsSummary) || count($discountsSummary) === 0)
+                            @if ($firstPageSummary->isEmpty())
                                 <tr>
                                     <td colspan="4">No hay datos de descuentos registrados.</td>
                                 </tr>
@@ -279,12 +279,59 @@
             <div class="report-footer">
                 <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
                 <span class="text_infoE"> | </span>
-                <span class="text_infoE page-number">Página 1 de {{ $totalPages }}</span>
+                <span class="text_infoE page-number">Página {{ $currentPage }} de {{ $totalPages }}</span>
                 <span class="text_infoE"> | </span>
                 <a class="text_infoE footer-branding" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
                 <img src="{{ public_path('img/rootheim.png') }}" width="20" height="15" alt="Root Heim" class="footer-branding">
             </div>
         </div>
+        @foreach ($otherPagesSummary as $chunk)
+            @php $currentPage++; @endphp
+            <div class="report-page page-break">
+                <div class="page-bg">
+                    <img src="file://{{ $verticalBgPath }}" alt="Background">
+                </div>
+                <div class="page-content">
+                    <div class="page-inner">
+                        <div class="inner-page-header">
+                            <p class="inner-page-committee">
+                                COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ mb_strtoupper($locality->name ?? '') }}, {{ mb_strtoupper($locality->municipality ?? '') }}, {{ mb_strtoupper($locality->state ?? '') }}
+                            </p>
+                            <p class="inner-page-title">PANEL DE DESCUENTOS</p>
+                        </div>
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%;">ID</th>
+                                    <th style="width: 35%;">DESCUENTO</th>
+                                    <th style="width: 20%;">PORCENTAJE</th>
+                                    <th style="width: 30%;">TOTAL DE USOS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($chunk as $item)
+                                    <tr>
+                                        <td>{{ $item->id }}</td>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ $item->percentage }}%</td>
+                                        <td>{{ $item->total_uses }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="report-footer">
+                    <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+                    <span class="text_infoE"> | </span>
+                    <span class="text_infoE page-number">Página {{ $currentPage }} de {{ $totalPages }}</span>
+                    <span class="text_infoE"> | </span>
+                    <a class="text_infoE footer-branding" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
+                    <img src="{{ public_path('img/rootheim.png') }}" width="20" height="15" alt="Root Heim" class="footer-branding">
+                </div>
+            </div>
+        @endforeach
+        @php $currentPage++; @endphp
         <div class="report-page page-break">
             <div class="page-bg">
                 <img src="file://{{ $verticalBgPath }}" alt="Background">
@@ -317,8 +364,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (!empty($paymentDiscounts) && count($paymentDiscounts) > 0)
-                                @foreach ($paymentDiscounts as $item)
+                            @if ($firstPagePayments->isNotEmpty())
+                                @foreach ($firstPagePayments as $item)
                                     <tr>
                                         <td>{{ $item->name }}</td>
                                         <td>{{ $item->percentage }}%</td>
@@ -326,7 +373,7 @@
                                     </tr>
                                 @endforeach
                             @endif
-                            @if (empty($paymentDiscounts) || count($paymentDiscounts) === 0)
+                            @if ($firstPagePayments->isEmpty())
                                 <tr>
                                     <td colspan="3">No hay pagos registrados con descuentos para el periodo seleccionado.</td>
                                 </tr>
@@ -338,12 +385,57 @@
             <div class="report-footer">
                 <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
                 <span class="text_infoE"> | </span>
-                <span class="text_infoE page-number">Página 2 de {{ $totalPages }}</span>
+                <span class="text_infoE page-number">Página {{ $currentPage }} de {{ $totalPages }}</span>
                 <span class="text_infoE"> | </span>
                 <a class="text_infoE footer-branding" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
                 <img src="{{ public_path('img/rootheim.png') }}" width="20" height="15" alt="Root Heim" class="footer-branding">
             </div>
         </div>
+        @foreach ($otherPagesPayments as $chunk)
+            @php $currentPage++; @endphp
+            <div class="report-page page-break">
+                <div class="page-bg">
+                    <img src="file://{{ $verticalBgPath }}" alt="Background">
+                </div>
+                <div class="page-content">
+                    <div class="page-inner">
+                        <div class="inner-page-header">
+                            <p class="inner-page-committee">
+                                COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ mb_strtoupper($locality->name ?? '') }}, {{ mb_strtoupper($locality->municipality ?? '') }}, {{ mb_strtoupper($locality->state ?? '') }}
+                            </p>
+                            <p class="inner-page-title">PANEL DE DESCUENTOS</p>
+                        </div>
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%;">DESCUENTO</th>
+                                    <th style="width: 25%;">PORCENTAJE</th>
+                                    <th style="width: 35%;">PAGOS APLICADOS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($chunk as $item)
+                                    <tr>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ $item->percentage }}%</td>
+                                        <td>{{ $item->total }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="report-footer">
+                    <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+                    <span class="text_infoE"> | </span>
+                    <span class="text_infoE page-number">Página {{ $currentPage }} de {{ $totalPages }}</span>
+                    <span class="text_infoE"> | </span>
+                    <a class="text_infoE footer-branding" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
+                    <img src="{{ public_path('img/rootheim.png') }}" width="20" height="15" alt="Root Heim" class="footer-branding">
+                </div>
+            </div>
+        @endforeach
+        @php $currentPage++; @endphp
         <div class="report-page page-break">
             <div class="page-bg">
                 <img src="file://{{ $verticalBgPath }}" alt="Background">
@@ -376,8 +468,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (!empty($debtDiscounts) && count($debtDiscounts) > 0)
-                                @foreach ($debtDiscounts as $item)
+                            @if ($firstPageDebts->isNotEmpty())
+                                @foreach ($firstPageDebts as $item)
                                     <tr>
                                         <td>{{ $item->name }}</td>
                                         <td>{{ $item->percentage }}%</td>
@@ -385,7 +477,7 @@
                                     </tr>
                                 @endforeach
                             @endif
-                            @if (empty($debtDiscounts) || count($debtDiscounts) === 0)
+                            @if ($firstPageDebts->isEmpty())
                                 <tr>
                                     <td colspan="3">No hay deudas registradas con descuentos para el periodo seleccionado.</td>
                                 </tr>
@@ -397,11 +489,55 @@
             <div class="report-footer">
                 <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
                 <span class="text_infoE"> | </span>
-                <span class="text_infoE page-number">Página 3 de {{ $totalPages }}</span>
+                <span class="text_infoE page-number">Página {{ $currentPage }} de {{ $totalPages }}</span>
                 <span class="text_infoE"> | </span>
                 <a class="text_infoE footer-branding" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
                 <img src="{{ public_path('img/rootheim.png') }}" width="20" height="15" alt="Root Heim" class="footer-branding">
             </div>
         </div>
+        @foreach ($otherPagesDebts as $chunk)
+            @php $currentPage++; @endphp
+            <div class="report-page page-break">
+                <div class="page-bg">
+                    <img src="file://{{ $verticalBgPath }}" alt="Background">
+                </div>
+                <div class="page-content">
+                    <div class="page-inner">
+                        <div class="inner-page-header">
+                            <p class="inner-page-committee">
+                                COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ mb_strtoupper($locality->name ?? '') }}, {{ mb_strtoupper($locality->municipality ?? '') }}, {{ mb_strtoupper($locality->state ?? '') }}
+                            </p>
+                            <p class="inner-page-title">PANEL DE DESCUENTOS</p>
+                        </div>
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%;">DESCUENTO</th>
+                                    <th style="width: 25%;">PORCENTAJE</th>
+                                    <th style="width: 35%;">DEUDAS APLICADAS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($chunk as $item)
+                                    <tr>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ $item->percentage }}%</td>
+                                        <td>{{ $item->total }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="report-footer">
+                    <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
+                    <span class="text_infoE"> | </span>
+                    <span class="text_infoE page-number">Página {{ $currentPage }} de {{ $totalPages }}</span>
+                    <span class="text_infoE"> | </span>
+                    <a class="text_infoE footer-branding" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
+                    <img src="{{ public_path('img/rootheim.png') }}" width="20" height="15" alt="Root Heim" class="footer-branding">
+                </div>
+            </div>
+        @endforeach
     </body>
 </html>
