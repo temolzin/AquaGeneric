@@ -96,6 +96,12 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Descuento</label>
+                                                <inputtype="text"class="form-control"value="{{ $waterConnectionDebt->discount ? $waterConnectionDebt->discount->name . ' - ' . $waterConnectionDebt->discount->percentage . '%' : 'Sin descuento' }}"readonly>
+                                            </div>
+                                        </div>
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label>Fecha de Inicio</label>
