@@ -43,7 +43,11 @@ class Discount extends Model
 
     public function hasDependencies()
     {
-        return $this->payments()->exists();
         return $this->payments()->exists() || DiscountHistory::where('discount_id', $this->id) ->where('module', 'debt') ->exists();
+    }
+
+    public function isProtected(): bool
+    {
+        return $this->name === 'Adulto Mayor' || is_null($this->locality_id);
     }
 }

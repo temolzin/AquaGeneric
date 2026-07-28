@@ -12,7 +12,7 @@
                     <div class="row mb-2">
                         <div class="col-lg-12">
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                <form method="GET" action="{{ route('discounts.index') }}" class="mb-3 mb-lg-0 mr-lg-3" style="min-width:380px;">
+                                <form method="GET" action="{{ route('discounts.index') }}" class="mb-3 mb-lg-0 mr-lg-3" style="min-width: 380px;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre o Porcentaje" value="{{ request('search') }}">
                                         <div class="input-group-append">
@@ -72,7 +72,7 @@
                                             <tr>
                                                 <td>{{ $discount->id }}</td>
                                                 <td>
-                                                    <span class="badge {{ $discount->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
+                                                    <span class="badge color-badge {{ $discount->color ?? 'bg-secondary' }} text-white" style="color: #fff !important;">
                                                         {{ $discount->name }}
                                                     </span>
                                                 </td>
@@ -84,7 +84,7 @@
                                                             <i class="fas fa-eye"></i>
                                                         </button>
 
-                                                        @if (!is_null($discount->locality_id))
+                                                        @if (!$discount->isProtected())
                                                             @can('editDiscount')
                                                             <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Registro" data-target="#edit{{ $discount->id }}">
                                                                 <i class="fas fa-edit"></i>
@@ -137,54 +137,31 @@
 
 @section('css')
 <style>
-    .color-badge{
-        display:inline-block;
-        padding:8px 16px;
-        border-radius:20px;
-        font-weight:600;
-        color:#fff!important;
-        opacity:1!important;
-        box-shadow:0 2px 5px rgba(0,0,0,.25);
+    .color-badge {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
     }
-    .color-badge:hover{
-        transform:translateY(-2px);
-        box-shadow:0 4px 8px rgba(0,0,0,.25);
+    .color-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    @media(max-width:767px){
+    .table-dark .color-badge {
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    @media (max-width:767px){
         .table-responsive{
             overflow-x:auto;
             -webkit-overflow-scrolling:touch;
         }
         table.dataTable th,
         table.dataTable td{
-            white-space:nowrap;
+            white-space: nowrap;
         }
         td .btn-group{
             display:flex;
             flex-wrap:wrap;
             gap:3px;
         }
-    }
-    .card-box.table-responsive {
-        width: 100%;
-        margin: 0 auto;
-        padding-right: 0;
-    }
-    table#discounts {
-        width: 100% !important;
-        table-layout: auto;
-        white-space: normal;
-    }
-    table#discounts th,
-    table#discounts td {
-        text-align: left !important;
-        vertical-align: middle;
-    }
-    .dataTables_wrapper {
-        overflow-x: hidden !important;
-    }
-    table#discounts td:last-child {
-        text-align: left !important;
     }
 </style>
 @endsection
