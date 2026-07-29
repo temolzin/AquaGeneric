@@ -29,10 +29,41 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $validationRules = [
             'email' => 'required|email',
             'password' => 'required',
-        ]);
+        ];
+
+        $validationMessages = [];
+
+        if (config('services.recaptcha.site_key') && config('services.recaptcha.secret')) {
+            $validationRules['g-recaptcha-response'] = 'required|string';
+            $validationMessages['g-recaptcha-response.required'] = 'Por favor completa el captcha.';
+        }
+
+        $request->validate($validationRules, $validationMessages);
+
+        if (config('services.recaptcha.site_key') && config('services.recaptcha.secret')) {
+            $response = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret'   => config('services.recaptcha.secret'),
+                'response' => $request->input('g-recaptcha-response'),
+                'remoteip' => $request->ip(),
+            ]);
+
+            $recaptchaBody = $response->json();
+
+            if (!($recaptchaBody['success'] ?? false)) {
+                \Illuminate\Support\Facades\Log::warning('reCAPTCHA verification failed in LoginController', [
+                    'success' => $recaptchaBody['success'] ?? false,
+                    'response' => $recaptchaBody,
+                    'remoteip' => $request->ip(),
+                ]);
+
+                return back()->withErrors([
+                    'g-recaptcha-response' => 'La verificación de reCAPTCHA falló. Por favor inténtalo de nuevo.',
+                ])->withInput($request->only('email'));
+            }
+        }
 
         $key = $this->throttleKey($request);
 

@@ -48,11 +48,28 @@
                 </span>
             @enderror
         </div>
+        @if(config('services.recaptcha.site_key'))
+        <div class="d-flex justify-content-center mb-3 flex-column align-items-center">
+            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+            @error('g-recaptcha-response')
+                <span class="invalid-feedback d-block text-center" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+            @error('captcha')
+                <span class="invalid-feedback d-block text-center" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+        @endif
         <button type="submit" id="btn-submit" class="btn-login" {{ $isLocked ? 'disabled' : '' }}>
             <i class="fas fa-sign-in-alt"></i> Acceder
         </button>
     </form>
-
+    @if(config('services.recaptcha.site_key'))
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @endif
     @if ($isLocked)
         <div id="lockout-timer" class="alert alert-danger text-center mt-3">
             <i class="fas fa-user-lock mr-2"></i>
