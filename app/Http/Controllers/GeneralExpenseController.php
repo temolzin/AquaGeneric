@@ -278,7 +278,7 @@ class GeneralExpenseController extends Controller
                 'start' => $currentStart->toDateString(),
                 'end' => $currentEnd->toDateString(),
                 'dailyGains' => $dailyGains,
-                'weekTotal' => $weekTotal
+                'weekTotal' => $weekGains
             ];
 
             $currentStart = $currentEnd->copy()->addDay();
