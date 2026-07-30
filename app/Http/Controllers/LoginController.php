@@ -55,10 +55,10 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $validationRules = [
+        $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-        ];
+        ]);
 
         $validationMessages = [];
 
