@@ -22,6 +22,32 @@ class LoginController extends Controller
         return 'login_attempts_' . md5($request->ip() . '|' . strtolower($request->input('email', '')));
     }
 
+    private function validateRecaptcha(Request $request): bool
+    {
+        if (!config('services.recaptcha.site_key') || !config('services.recaptcha.secret')) {
+            return true;
+        }
+
+        $response = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret'   => config('services.recaptcha.secret'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        $recaptchaBody = $response->json();
+        $success = $recaptchaBody['success'] ?? false;
+
+        if (!$success) {
+            \Illuminate\Support\Facades\Log::warning('reCAPTCHA verification failed in LoginController', [
+                'success' => $success,
+                'response' => $recaptchaBody,
+                'remoteip' => $request->ip(),
+            ]);
+        }
+
+        return $success;
+    }
+
     public function showLoginForm()
     {
         return view('auth.login');
@@ -33,6 +59,21 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
+
+        $validationMessages = [];
+
+        if (config('services.recaptcha.site_key') && config('services.recaptcha.secret')) {
+            $validationRules['g-recaptcha-response'] = 'required|string';
+            $validationMessages['g-recaptcha-response.required'] = 'Por favor completa el captcha.';
+        }
+
+        $request->validate($validationRules, $validationMessages);
+
+        if (!$this->validateRecaptcha($request)) {
+            return back()->withErrors([
+                'g-recaptcha-response' => 'La verificación de reCAPTCHA falló. Por favor inténtalo de nuevo.',
+            ])->withInput($request->only('email'));
+        }
 
         $key = $this->throttleKey($request);
 

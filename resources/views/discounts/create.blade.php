@@ -62,8 +62,8 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="description" class="form-label">Descripción</label>
-                                            <textarea class="form-control" name="description" rows="3" maxlength="255" placeholder="Ingrese una descripción">{{ old('description') }}</textarea>
+                                            <label for="description" class="form-label">Descripción(*)</label>
+                                            <textarea class="form-control" name="description" rows="3" maxlength="255" placeholder="Ingrese una descripción" required>{{ old('description') }}</textarea>
                                         </div>
                                     </div>
                                 </div>
