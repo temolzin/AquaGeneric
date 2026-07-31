@@ -42,11 +42,6 @@
                     <span class="fas fa-lock"></span>
                 </div>
             </div>
-            @error('password')
-                <span class="invalid-feedback d-block w-100" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
         </div>
         @if(config('services.recaptcha.site_key'))
         <div class="d-flex justify-content-center mb-3 flex-column align-items-center">
@@ -63,6 +58,13 @@
             @enderror
         </div>
         @endif
+
+        @error('password')
+            <span class="invalid-feedback d-block w-100 text-center mb-3" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
+
         <button type="submit" id="btn-submit" class="btn-login" {{ $isLocked ? 'disabled' : '' }}>
             <i class="fas fa-sign-in-alt"></i> Acceder
         </button>
