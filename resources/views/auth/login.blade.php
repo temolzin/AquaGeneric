@@ -31,9 +31,12 @@
                 </div>
             </div>
         </div>
-        @if(config('services.recaptcha.site_key'))
+        @php
+            $recaptchaSiteKey = config('services.recaptcha.site_key', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');
+        @endphp
+        @if($recaptchaSiteKey)
         <div class="d-flex justify-content-center mb-3 flex-column align-items-center">
-            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+            <div class="g-recaptcha" data-sitekey="{{ $recaptchaSiteKey }}"></div>
             @error('g-recaptcha-response')
                 <span class="invalid-feedback d-block text-center" role="alert">
                     <strong>{{ $message }}</strong>

@@ -60,6 +60,7 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
+        $validationRules = [];
         $validationMessages = [];
 
         if (config('services.recaptcha.site_key') && config('services.recaptcha.secret')) {
