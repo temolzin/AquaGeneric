@@ -9,9 +9,8 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Departamentos de Empleados</h2>
-                    <div class="row mb-2">
-                        <div class="col-lg-12">
-                            <div class="col-12 col-lg-8 mb-3">
+                    <div class="row mb-3 align-items-center">
+                            <div class="col-12 col-md-8 col-lg-8 mb-2 mb-md-0">
                                 <form method="GET" action="{{ route('employeePositions.index') }}">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción" value="{{ request('search') }}">
@@ -23,7 +22,7 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="col-12 col-lg-4 mb-3 text-lg-right">
+                            <div class="col-12 col-md-4 mb-3 d-flex justify-content-md-end justify-content-center">
                                 <button type="button" class="btn btn-success btn-block btn-lg-inline" data-toggle="modal" data-target="#createPositionModal">
                                     <i class="fa fa-plus"></i>
                                     <span class="d-none d-md-inline">
