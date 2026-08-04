@@ -85,12 +85,12 @@
                                                             </label>
                                                         </div>
                                                     </div>
-                                                    <div id="debtDiscountContainer" style="display:none;">
+                                                    <div id="debtDiscountContainer">
                                                         <div class="row">
                                                             <div class="col-md-4">
                                                                 <div class="form-group">
                                                                     <label>Descuento(*)</label>
-                                                                    <select class="form-control select2" id="debt_discount_id">
+                                                                    <select class="form-control select2" id="debt_discount_id" style="width: 100%;">
                                                                         <option value="">Seleccione un descuento</option>
                                                                         @foreach($discounts as $discount)
                                                                             <option value="{{ $discount->id }}" data-percentage="{{ $discount->percentage }}">
@@ -165,8 +165,6 @@
         </div>
     </div>
 </div>
-
-</style>
 
 <script>
     document.getElementById('createDebtForm').addEventListener('submit', async function (e) {
