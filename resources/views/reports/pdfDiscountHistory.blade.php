@@ -3,6 +3,22 @@
     $verticalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundVertical')
         ? $locality->getFirstMedia('pdfBackgroundVertical')->getPath()
         : public_path('img/backgroundReport.png');
+    $selectedModule = request('module');
+    $isGrouped = (string) request('show_module_column') === '1';
+    
+    $reportTitle = 'HISTORIAL DE DESCUENTOS';
+    if ($selectedModule === 'all' && $isGrouped) {
+        $reportTitle = 'HISTORIAL DE DESCUENTOS POR MÓDULO';
+    }
+    if ($selectedModule === 'all' && !$isGrouped) {
+        $reportTitle = 'HISTORIAL DE DESCUENTOS';
+    }
+    if (!empty($selectedModule) && $selectedModule !== 'all') {
+        $moduleNameLabel = $moduleNames[$selectedModule] ?? $selectedModule;
+        $formattedModule = mb_strtoupper($moduleNameLabel);
+        $reportTitle = "HISTORIAL DE DESCUENTOS DEL MÓDULO {$formattedModule}";
+    }
+    $maxRowsPerPage = 18; 
 @endphp
 <!DOCTYPE html>
 <html lang="es">
@@ -57,22 +73,21 @@
         .page-content {
             position: absolute;
             top: 24px;
-            left: 18px;
-            right: 18px;
+            left: 15px;
+            right: 15px;
             bottom: 42px;
             z-index: 2;
         }
 
         .page-inner {
-            width: 89%;
-            margin-left: 3%;
-            margin-right: 11%;
+            width: 100%;
+            margin: 0;
         }
 
         .report-footer {
             position: absolute;
-            left: 16px;
-            right: 16px;
+            left: 0;
+            right: 0;
             bottom: 8px;
             text-align: center;
             z-index: 3;
@@ -112,7 +127,7 @@
 
         .first-page-logo {
             text-align: left;
-            padding-left: 74px;
+            padding-left: 15px;
         }
 
         .first-page-logo img {
@@ -248,22 +263,6 @@
     </style>
 </head>
 <body>
-    @php
-        $selectedModule = request('module');
-        $isGrouped = (string) request('show_module_column') === '1';
-        $reportTitle = 'HISTORIAL DE DESCUENTOS';
-        if ($selectedModule === 'all' && $isGrouped) {
-            $reportTitle = 'HISTORIAL DE DESCUENTOS POR MÓDULO';
-        }
-        if ($selectedModule === 'all' && !$isGrouped) {
-            $reportTitle = 'HISTORIAL DE DESCUENTOS';
-        }
-        if (!empty($selectedModule) && $selectedModule !== 'all') {
-            $moduleNameLabel = $moduleNames[$selectedModule] ?? $selectedModule;
-            $formattedModule = mb_strtoupper($moduleNameLabel);
-            $reportTitle = "HISTORIAL DE DESCUENTOS DEL MÓDULO {$formattedModule}";
-        }
-    @endphp
     @if(isset($error))
         <div class="report-page">
             <div class="page-bg">
@@ -292,22 +291,55 @@
             </div>
         </div>
     @endif
-    @if(!isset($error) && $selectedModule === 'all' && $isGrouped && (!empty($groupedByDay) || !empty($groupedByModule)))
-        @foreach($groupedByModule as $moduleName => $days)
-            <div class="report-page {{ !$loop->first ? 'page-break' : '' }}">
+    @if(!isset($error) && (!empty($groupedByDay) || !empty($groupedByModule)))
+        @php
+            $flattenedItems = [];
+            if ($selectedModule === 'all' && $isGrouped) {
+                foreach($groupedByModule as $moduleName => $days) {
+                    foreach($days as $day => $histories) {
+                        foreach($histories as $history) {
+                            $flattenedItems[] = [
+                                'type' => 'grouped',
+                                'module' => $moduleName,
+                                'day' => $day,
+                                'data' => $history
+                            ];
+                        }
+                    }
+                }
+            }
+            if (!($selectedModule === 'all' && $isGrouped)) {
+                foreach($groupedByDay as $day => $histories) {
+                    foreach($histories as $history) {
+                        $flattenedItems[] = [
+                            'type' => 'day',
+                            'day' => $day,
+                            'data' => $history
+                        ];
+                    }
+                }
+            }
+            $chunks = array_chunk($flattenedItems, $maxRowsPerPage);
+            $totalPages = count($chunks);
+        @endphp
+        @foreach($chunks as $chunk)
+            @php
+                $isFirstPage = $loop->first;
+            @endphp
+            <div class="report-page {{ !$isFirstPage ? 'page-break' : '' }}">
                 <div class="page-bg">
                     <img src="file://{{ $verticalBgPath }}" alt="Background">
                 </div>
                 <div class="page-content">
                     <div class="page-inner">
-                        @if($loop->first)
+                        @if($isFirstPage)
                             <div class="first-page-header">
                                 <div class="first-page-logo-row">
                                     <div class="first-page-logo">
                                         @if ($authUserLocality && $authUserLocality->hasMedia('localityGallery'))
                                             <img src="{{ $authUserLocality->getFirstMediaUrl('localityGallery') }}" alt="Logo">
                                         @endif
-                                        @if (!$authUserLocality || !$authUserLocality->hasMedia('localityGallery'))
+                                        @if (!($authUserLocality && $authUserLocality->hasMedia('localityGallery')))
                                             <img src="{{ public_path('img/localityDefault.png') }}" alt="Default Photo">
                                         @endif
                                     </div>
@@ -318,16 +350,16 @@
                                         {{ $authUserLocality->name ?? '-' }}, {{ $authUserLocality->municipality ?? '-' }}, {{ $authUserLocality->state ?? '-' }}
                                     </p>
                                     <p class="first-page-subtitle">{{ $reportTitle }}</p>
-                                    @if($startDate || $endDate)
+                                    @if(!empty($startDate) || !empty($endDate))
                                         <p class="date-range">
-                                            @if($startDate) Desde: {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} @endif
-                                            @if($endDate) Hasta: {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }} @endif
+                                            @if(!empty($startDate)) Desde: {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} @endif
+                                            @if(!empty($endDate)) Hasta: {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }} @endif
                                         </p>
                                     @endif
                                 </div>
                             </div>
                         @endif
-                        @if(!$loop->first)
+                        @if(!$isFirstPage)
                             <div class="inner-page-header">
                                 <p class="inner-page-committee">
                                     COMITÉ DEL SISTEMA DE AGUA POTABLE DE {{ $authUserLocality->name ?? '-' }}, {{ $authUserLocality->municipality ?? '-' }}, {{ $authUserLocality->state ?? '-' }}
@@ -335,90 +367,11 @@
                                 <p class="inner-page-title">{{ $reportTitle }}</p>
                             </div>
                         @endif
+                        @php
+                            $currentDay = null;
+                            $currentModule = null;
+                        @endphp
                         <div class="report-section">
-                            <h3 class="module-title">{{ strtoupper($moduleName) }}</h3>
-                            @foreach($days as $day => $histories)
-                                <h4 class="day-title">{{ $day }}</h4>
-                                <table class="report-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Módulo</th>
-                                            <th>Descuento</th>
-                                            <th>Cliente</th>
-                                            <th>ID Registro</th>
-                                            <th>Monto Original</th>
-                                            <th>Monto Descontado</th>
-                                            <th>Monto Final</th>
-                                            <th>Creado Por</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($histories as $history)
-                                            <tr>
-                                                <td>{{ \Carbon\Carbon::parse($history->created_at)->format('d/m/Y H:i') }}</td>
-                                                <td>{{ $moduleNames[$history->module] ?? $history->module }}</td>
-                                                <td>{{ $history->discount?->name ?? '-' }}</td>
-                                                <td>{{ $history->customer ? trim($history->customer->name . ' ' . $history->customer->last_name) : '-' }}</td>
-                                                <td>{{ $history->record_id }}</td>
-                                                <td>${{ number_format($history->original_amount, 2, '.', ',') }}</td>
-                                                <td>${{ number_format($history->discount_amount, 2, '.', ',') }}</td>
-                                                <td>${{ number_format($history->final_amount, 2, '.', ',') }}</td>
-                                                <td>{{ $history->creator ? trim($history->creator->name . ' ' . $history->creator->last_name) : '-' }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-                <div class="report-footer">
-                    <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
-                    <span class="text_infoE"> | </span>
-                    <span class="text_infoE page-number">Página {{ $loop->iteration }}</span>
-                    <span class="text_infoE"> | </span>
-                    <a class="text_infoE footer-branding" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
-                    <img src="{{ public_path('img/rootheim.png') }}" width="20" height="15" alt="Root Heim" class="footer-branding">
-                </div>
-            </div>
-        @endforeach
-    @endif
-    @if(!isset($error) && ($selectedModule !== 'all' || !$isGrouped) && (!empty($groupedByDay) || !empty($groupedByModule)))
-        <div class="report-page">
-            <div class="page-bg">
-                <img src="file://{{ $verticalBgPath }}" alt="Background">
-            </div>
-            <div class="page-content">
-                <div class="page-inner">
-                    <div class="first-page-header">
-                        <div class="first-page-logo-row">
-                            <div class="first-page-logo">
-                                @if ($authUserLocality && $authUserLocality->hasMedia('localityGallery'))
-                                    <img src="{{ $authUserLocality->getFirstMediaUrl('localityGallery') }}" alt="Logo">
-                                @endif
-                                @if (!$authUserLocality || !$authUserLocality->hasMedia('localityGallery'))
-                                    <img src="{{ public_path('img/localityDefault.png') }}" alt="Default Photo">
-                                @endif
-                            </div>
-                        </div>
-                        <div class="first-page-title-block">
-                            <p class="first-page-title">
-                                COMITÉ DEL SISTEMA DE AGUA POTABLE DE<br>
-                                {{ $authUserLocality->name ?? '-' }}, {{ $authUserLocality->municipality ?? '-' }}, {{ $authUserLocality->state ?? '-' }}
-                            </p>
-                            <p class="first-page-subtitle">{{ $reportTitle }}</p>
-                            @if($startDate || $endDate)
-                                <p class="date-range">
-                                    @if($startDate) Desde: {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} @endif
-                                    @if($endDate) Hasta: {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }} @endif
-                                </p>
-                            @endif
-                        </div>
-                    </div>
-                    @foreach($groupedByDay as $day => $histories)
-                        <div class="report-section">
-                            <h4 class="day-title">{{ $day }}</h4>
                             <table class="report-table">
                                 <thead>
                                     <tr>
@@ -434,7 +387,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($histories as $history)
+                                    @foreach($chunk as $item)
+                                        @php $history = $item['data']; @endphp
+                                        @if($item['type'] === 'grouped' && $currentModule !== $item['module'])
+                                            @php 
+                                                $currentModule = $item['module'];
+                                                $currentDay = null;
+                                                $moduleLabel = $moduleNames[$currentModule] ?? $currentModule;
+                                            @endphp
+                                            <tr>
+                                                <td colspan="9" style="text-align: center; font-weight: bold; background-color: #0B1C80; color: #ffffff; padding: 6px; text-transform: uppercase; font-size: 9pt;">
+                                                    MÓDULO: {{ mb_strtoupper($moduleLabel) }}
+                                                </td>
+                                            </tr>
+                                        @endif
+                                        @if($currentDay !== $item['day'])
+                                            @php $currentDay = $item['day']; @endphp
+                                            <tr>
+                                                <td colspan="9" style="text-align: left; font-weight: bold; background-color: #f0f3ff; color: #0B1C80; padding: 4px 6px;">
+                                                    {{ $currentDay }}
+                                                </td>
+                                            </tr>
+                                        @endif
                                         <tr>
                                             <td>{{ \Carbon\Carbon::parse($history->created_at)->format('d/m/Y H:i') }}</td>
                                             <td>{{ $moduleNames[$history->module] ?? $history->module }}</td>
@@ -450,18 +424,18 @@
                                 </tbody>
                             </table>
                         </div>
-                    @endforeach
                 </div>
             </div>
             <div class="report-footer">
                 <a class="text_infoE" href="https://aquacontrol.rootheim.com/"><strong>AquaControl</strong></a>
                 <span class="text_infoE"> | </span>
-                <span class="text_infoE page-number">Página 1</span>
+                <span class="text_infoE page-number">Página {{ $loop->iteration }} de {{ $totalPages }}</span>
                 <span class="text_infoE"> | </span>
                 <a class="text_infoE footer-branding" href="https://rootheim.com/">powered by<strong> Root Heim Company </strong></a>
                 <img src="{{ public_path('img/rootheim.png') }}" width="20" height="15" alt="Root Heim" class="footer-branding">
             </div>
         </div>
+        @endforeach
     @endif
 </body>
 </html>
