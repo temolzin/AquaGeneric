@@ -206,6 +206,8 @@
         min-height: 58px;
         padding: 8px 6px;
         border-radius: 8px;
+        border: none !important;
+        outline: none !important;
         background-color: #6c757d !important;
         color: white !important;
         font-size: 0.82rem;
@@ -225,6 +227,13 @@
     .report-btn:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.22) !important;
+    }
+
+    .report-btn:focus,
+    .report-btn:active {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
     }
 
     .report-btn i {
