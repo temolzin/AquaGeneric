@@ -331,7 +331,7 @@
                     <img src="file://{{ $verticalBgPath }}" alt="Background">
                 </div>
                 <div class="page-content">
-                    <div class="page-inner">                  
+                    <div class="page-inner">
                         @if($isFirstPage)
                             <div class="first-page-header">
                                 <div class="first-page-logo-row">
