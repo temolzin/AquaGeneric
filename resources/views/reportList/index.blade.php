@@ -100,6 +100,7 @@
         @include('generalExpenses.weeklyExpenses')
         @include('generalExpenses.annualGains')
         @include('generalExpenses.weeklyGains')
+        @include('discounts.discountHistoryModal')
     </section>
 @endsection
 
