@@ -167,7 +167,7 @@ class ReportListController extends Controller
                         'type' => 'link',
                         'button_class' => 'btn btn-warning report-btn',
                         'icon' => '<i class="fa fa-file-pdf"></i>',
-                        'url' => route('discountDashboard.generateReport'),
+                        'url' => route('discountDashboard.report'),
                         'target' => '_blank',
                         'title' => 'Reporte del Panel de Descuentos',
                         'label' => 'Reporte del Panel de Descuentos'
