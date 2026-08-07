@@ -68,6 +68,14 @@
                                                                         {!! $report['icon'] ?? '' !!}
                                                                         <span>{{ $report['label'] ?? $report['text'] }}</span>
                                                                     </a>
+                                                                @elseif (isset($report['type']) && $report['type'] === 'post')
+                                                                    <form method="POST" action="{{ $report['url'] }}" target="{{ $report['target'] ?? '_blank' }}" class="report-post-form">
+                                                                        @csrf
+                                                                        <button type="submit" class="{{ $report['button_class'] ?? 'btn btn-secondary' }}" title="{{ $report['title'] ?? $report['text'] }}">
+                                                                            {!! $report['icon'] ?? '' !!}
+                                                                            <span>{{ $report['label'] ?? $report['text'] }}</span>
+                                                                        </button>
+                                                                    </form>
                                                                 @endif
                                                             @endforeach
                                                         </div>
@@ -222,6 +230,14 @@
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         white-space: normal !important;
         line-height: 1.3;
+    }
+
+    .report-post-form {
+        width: 100%;
+    }
+
+    .report-post-form .report-btn {
+        min-height: 68px;
     }
 
     .report-btn:hover {

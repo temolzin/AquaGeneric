@@ -203,6 +203,16 @@ class DiscountDashboardController extends Controller
         $pagesDebts = 1 + (int) ceil(max(0, $debtDiscounts->count() - $itemsFirstPage) / $itemsNextPages);
         $totalPages = $pagesSummary + $pagesPayments + $pagesDebts;
 
+        if (empty($chartImages['discountChart'])) {
+            $chartImages['discountChart'] = $this->createPieChart($discountsSummary, 'total_uses');
+        }
+        if (empty($chartImages['paymentChart'])) {
+            $chartImages['paymentChart'] = $this->createPieChart($paymentDiscounts, 'total');
+        }
+        if (empty($chartImages['debtChart'])) {
+            $chartImages['debtChart'] = $this->createPieChart($debtDiscounts, 'total');
+        }
+
         $pdf = Pdf::loadView('reports.discountDashboardReport', compact(
             'authUser',
             'locality',
@@ -226,5 +236,77 @@ class DiscountDashboardController extends Controller
     private function getDiscountsByModule(string $module, int $month, int $year)
     {
         return DiscountHistory::byUserLocality()->join('discounts as d', 'discount_histories.discount_id', '=', 'd.id')->where('discount_histories.module', $module)->whereMonth('discount_histories.created_at', $month)->whereYear('discount_histories.created_at', $year)->select('d.name', DB::raw('COUNT(*) as total'))->groupBy('d.name')->orderByDesc('total')->get();
+    }
+
+    private function createPieChart($items, string $valueKey): string
+    {
+        $width = 350;
+        $height = 350;
+        $image = imagecreatetruecolor($width, $height);
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $text = imagecolorallocate($image, 45, 55, 72);
+        imagefill($image, 0, 0, $white);
+
+        $items = $items->filter(function ($item) use ($valueKey) {
+            return (int) $item->{$valueKey} > 0;
+        })->values();
+
+        if ($items->isNotEmpty()) {
+            $total = $items->sum($valueKey);
+            $center = 175;
+            $diameter = 255;
+            $radius = $diameter / 2;
+            $palette = ['#0d6efd', '#6f42c1', '#d63384', '#ffc107', '#fd7e14', '#84cc16', '#20c997', '#0dcaf0'];
+
+            $startAngle = 270;
+            $separator = imagecolorallocate($image, 255, 255, 255);
+
+            foreach ($items as $index => $item) {
+                $color = $palette[$index % count($palette)];
+                $rgb = sscanf($color, '#%02x%02x%02x');
+                $sliceColor = imagecolorallocate($image, $rgb[0], $rgb[1], $rgb[2]);
+                $endAngle = $startAngle + ((int) $item->{$valueKey} / $total * 360);
+                if (($endAngle - $startAngle) >= 360) {
+                    imagefilledellipse($image, $center, $center, $diameter, $diameter, $sliceColor);
+                }
+                if (($endAngle - $startAngle) < 360) {
+                    imagefilledarc(
+                        $image,
+                        $center,
+                        $center,
+                        $diameter,
+                        $diameter,
+                        (int) fmod($startAngle, 360),
+                        (int) fmod($endAngle, 360),
+                        $sliceColor,
+                        IMG_ARC_PIE
+                    );
+                }
+
+                $radians = deg2rad($endAngle);
+                imageline(
+                    $image,
+                    $center,
+                    $center,
+                    (int) round($center + ($radius * cos($radians))),
+                    (int) round($center + ($radius * sin($radians))),
+                    $separator
+                );
+                $startAngle = $endAngle;
+            }
+            
+            imageellipse($image, $center, $center, $diameter, $diameter, $separator);
+        }
+
+        if ($items->isEmpty()) {
+            imagestring($image, 5, 85, 170, 'No hay datos para mostrar', $text);
+        }
+
+        ob_start();
+        imagepng($image);
+        $png = ob_get_clean();
+        imagedestroy($image);
+
+        return 'data:image/png;base64,' . base64_encode($png);
     }
 } 
