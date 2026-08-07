@@ -247,9 +247,7 @@ class DiscountDashboardController extends Controller
         $text = imagecolorallocate($image, 45, 55, 72);
         imagefill($image, 0, 0, $white);
 
-        $items = $items->filter(function ($item) use ($valueKey) {
-            return (int) $item->{$valueKey} > 0;
-        })->values();
+        $items = $items->filter(function ($item) use ($valueKey) { return (int) $item->{$valueKey} > 0; })->values();
 
         if ($items->isNotEmpty()) {
             $total = $items->sum($valueKey);
@@ -270,31 +268,13 @@ class DiscountDashboardController extends Controller
                     imagefilledellipse($image, $center, $center, $diameter, $diameter, $sliceColor);
                 }
                 if (($endAngle - $startAngle) < 360) {
-                    imagefilledarc(
-                        $image,
-                        $center,
-                        $center,
-                        $diameter,
-                        $diameter,
-                        (int) fmod($startAngle, 360),
-                        (int) fmod($endAngle, 360),
-                        $sliceColor,
-                        IMG_ARC_PIE
-                    );
+                    imagefilledarc($image, $center, $center, $diameter, $diameter, (int) fmod($startAngle, 360), (int) fmod($endAngle, 360), $sliceColor, IMG_ARC_PIE );
                 }
 
                 $radians = deg2rad($endAngle);
-                imageline(
-                    $image,
-                    $center,
-                    $center,
-                    (int) round($center + ($radius * cos($radians))),
-                    (int) round($center + ($radius * sin($radians))),
-                    $separator
-                );
+                imageline( $image, $center, $center, (int) round($center + ($radius * cos($radians))), (int) round($center + ($radius * sin($radians))), $separator );
                 $startAngle = $endAngle;
             }
-            
             imageellipse($image, $center, $center, $diameter, $diameter, $separator);
         }
 
