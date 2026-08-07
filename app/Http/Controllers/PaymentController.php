@@ -490,8 +490,8 @@ class PaymentController extends Controller
     public function clientPaymentReport(Request $request)
     {
         $customerId = $request->input('customerId');
-        $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
+        $startDate = \Carbon\Carbon::parse($request->input('startDate'))->startOfDay();
+        $endDate = \Carbon\Carbon::parse($request->input('endDate'))->endOfDay();
         $customer = Customer::with('user')->findOrFail($customerId);
         $authUser = auth()->user();
 
@@ -514,8 +514,8 @@ class PaymentController extends Controller
     {
         $customerId = $request->input('waterCustomerId');
         $waterConnectionId = $request->input('waterConnectionId');
-        $startDate = $request->input('waterStartDate');
-        $endDate = $request->input('waterEndDate');
+        $startDate = \Carbon\Carbon::parse($request->input('waterStartDate'))->startOfDay();
+        $endDate = \Carbon\Carbon::parse($request->input('waterEndDate'))->endOfDay();
 
         $customer = Customer::with('user')->findOrFail($customerId);
         $authUser = auth()->user();
