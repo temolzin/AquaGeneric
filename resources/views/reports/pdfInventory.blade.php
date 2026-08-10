@@ -185,11 +185,18 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
             </thead>
             <tbody id="detalle_inventario">
                 @foreach ($components as $component)
+                    @php
+                        $categoryColor = $component->category ? ($component->category->color ?? 'bg-secondary') : 'bg-secondary';
+                    @endphp
                     <tr>
                         <td class="textcenter">{{ $component->id }}</td>
                         <td class="textcenter">{{ $component->name }}</td>
                         <td class="textcenter">{{ $component->amount }}</td>
-                        <td class="textcenter">{{ $component->category->name }}</td>
+                        <td class="textcenter">
+                            <span style="display:inline-block; background-color: {{ pdf_color($categoryColor) }}; color: #fff; padding: 5px 7px; border-radius: 999px; font-weight: bold; line-height: 1.2;">
+                                {{ $component->category?->name ?? 'Sin categoría' }}
+                            </span>
+                        </td>
                         <td class="textcenter">{{ $component->material ?? 'N/A' }}</td>
                         <td class="textcenter">{{ $component->dimensions ?? 'N/A' }}</td>
                     </tr>
