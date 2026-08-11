@@ -37,6 +37,7 @@ class ReportListController extends Controller
             'Panel',
             'Gestión de Tomas de Agua',
             'Gestión de Pagos',
+            'Gestión de Descuentos',
             'Gestión de Incidencias',
             'Clientes',
             'Gestión de Deudas',
@@ -143,6 +144,35 @@ class ReportListController extends Controller
                         }
                     }
                 }
+                break;
+
+            case 'Gestión de Descuentos':
+                $reports = [
+                    [
+                        'text' => 'Lista de Descuentos',
+                        'url' => route('discounts.pdf'),
+                        'type' => 'pdf',
+                    ],
+                    [
+                        'text' => 'Historial de Descuentos',
+                        'type' => 'button',
+                        'button_class' => 'btn bg-info report-btn',
+                        'icon' => '<i class="fa fa-history"></i>',
+                        'modal' => '#discountHistoryModal',
+                        'title' => 'Historial de Descuentos',
+                        'label' => ['d-none d-md-inline' => 'Historial de Descuentos', 'd-inline d-md-none' => '']
+                    ],
+                    [
+                        'text' => 'Reporte del Panel de Descuentos',
+                        'type' => 'post',
+                        'button_class' => 'btn btn-warning report-btn',
+                        'icon' => '<i class="fa fa-file-pdf"></i>',
+                        'url' => route('discountDashboard.generateReport'),
+                        'target' => '_blank',
+                        'title' => 'Reporte del Panel de Descuentos',
+                        'label' => 'Reporte del Panel de Descuentos'
+                    ],
+                ];
                 break;
 
             case 'Gestión de Deudas':
