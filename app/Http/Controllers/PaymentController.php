@@ -481,7 +481,9 @@ class PaymentController extends Controller
             ". Nota: " . $note
             : null;
 
-        $pdf = PDF::loadView('reports.receiptPayment', compact('payment', 'months', 'message'))
+        $view = $payment->locality->getReportViewName('receiptPayment');
+
+        $pdf = PDF::loadView($view, compact('payment', 'months', 'message'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('comprobante_de_pago.pdf');
