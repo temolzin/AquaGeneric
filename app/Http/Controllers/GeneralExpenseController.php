@@ -248,6 +248,8 @@ class GeneralExpenseController extends Controller
 
             $day = $currentStart->copy();
             while ($day->lte($currentEnd)) {
+                $gains = null;
+
                 if ($day->between($startDate, $endDate)) {
                     $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
                         ->whereDate('expense_date', $day->toDateString())
@@ -260,8 +262,6 @@ class GeneralExpenseController extends Controller
                         ->sum('amount');
                     $earnings = $payments + $generalEarnings;
                     $gains = $earnings - $expenses;
-                } else {
-                    $gains = null;
                 }
 
                 $dailyGains[] = [
@@ -271,14 +271,18 @@ class GeneralExpenseController extends Controller
                 $day->addDay();
             }
 
-            $weekGains = array_sum(array_filter($dailyGains, 'is_numeric'));
+            $weekGains = collect($dailyGains)
+                ->filter(function ($item) use ($startDate, $endDate) {
+                    return $item['date']->between($startDate, $endDate) && $item['amount'] !== null;
+                })->sum('amount');
+
             $totalPeriodGains += $weekGains;
 
             $weeks[] = [
                 'start' => $currentStart->toDateString(),
                 'end' => $currentEnd->toDateString(),
                 'dailyGains' => $dailyGains,
-                'weekTotal' => $weekTotal
+                'weekTotal' => $weekGains
             ];
 
             $currentStart = $currentEnd->copy()->addDay();

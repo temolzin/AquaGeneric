@@ -150,8 +150,8 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
         }
 
         h4 {
-            margin-bottom: 5px;
-            font-size: 16px;
+            margin: 8px 0 2px 0;
+            font-size: 15px;
             text-decoration: underline;
         }
 
@@ -210,6 +210,12 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                 <p>FOLIO. {{ $payment->debt->id }}</p>
                 <p>Fecha de la deuda: {{ \Carbon\Carbon::parse($payment->debt->start_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }}</p>
                 <p>Fecha de vencimiento: {{ \Carbon\Carbon::parse($payment->debt->end_date)->locale('es')->isoFormat('D [de ]MMMM [del] YYYY') }}</p>
+                @if($payment->debt->discount)
+                    <p>
+                        <strong>Descuento aplicado:</strong>
+                        {{ $payment->debt->discount->name }} - {{ $payment->debt->discount->percentage }}%
+                    </p>
+                @endif
             </div>
             <div class="payment-info">
                 <h4>Datos del pago</h4>
@@ -230,6 +236,12 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                             @break
                     @endswitch
                 </p>
+                @if($payment->discount)
+                    <p>
+                        <strong>Descuento aplicado:</strong>
+                        {{ $payment->discount->name }} - {{ $payment->discount->percentage }}%
+                    </p>
+                @endif
                 @if($payment->isOpenPayPayment())
                     <p><strong>ID de Transacción: </strong>{{ $payment->openpay_transaction_id }}</p>
                 @endif

@@ -323,9 +323,7 @@
                                 </div>
                                 <div class="col-12 col-md-auto mt-2 mt-md-0 ms-md-auto d-flex align-items-center">
                                     @if($remindersSentToday)
-                                        <div class="text-warning d-flex align-items-center" title="Los recordatorios ya fueron enviados el día de hoy">
-                                            <i class="fas fa-exclamation-circle fa-lg mr-2"></i>
-                                            <span class="font-weight-bold">Ya se enviaron recordatorios</span>
+                                        <div class="text-warning d-flex align-items-center" title="Los recordatorios ya fueron enviados el día de hoy">      
                                         </div>
                                     @else
                                         <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100" id="sendRemindersForm">
@@ -337,6 +335,12 @@
                                         </form>
                                     @endif
                                 </div>
+                                @if($remindersSentToday)
+                                <div class="col-12 text-left text-warning mt-1">
+                                    <i class="fas fa-exclamation-circle fa-lg mr-2"></i>
+                                    <span class="font-weight-bold">Puedes enviar mensajes después de 24 horas. Ya se enviaron recordatorios.</span>
+                                </div>
+                                @endif
                             </div>
                         </div>
                         <div class="card-box table-responsive">

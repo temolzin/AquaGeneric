@@ -7,6 +7,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CostController;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\DiscountDashboardController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
@@ -35,6 +37,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\MovementHistoryController;
+use App\Http\Controllers\DiscountHistoryController;
 use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\EarningTypeController;
 use App\Http\Controllers\GeneralEarningController;
@@ -108,6 +111,18 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('costs', CostController::class);
         Route::get('/costs', [CostController::class, 'index'])->name('costs.index');
         Route::get('/reports/generateCostListReport', [CostController::class, 'generateCostListReport'])->name('report.generateCostListReport');
+    });
+    
+    Route::group(['middleware' => ['can:viewDiscount']], function () {
+        Route::get('/discounts/pdf', [DiscountController::class, 'generatePdfDiscounts'])->name('discounts.pdf');
+        Route::resource('discounts', DiscountController::class);
+        Route::get('/discounts', [DiscountController::class, 'index'])->name('discounts.index');
+        Route::get('/reports/generateDiscountListReport', [DiscountController::class, 'generateDiscountListReport'])->name('report.generateDiscountListReport');
+        Route::get('/reports/discount-history/generate', [DiscountHistoryController::class, 'generatePDF'])->name('discounts.generateHistoryPdf');
+        Route::get('/discount-dashboard', [DiscountDashboardController::class, 'index'])->name('discountDashboard.index');
+        Route::get('/discount-dashboard/payment-chart', [DiscountDashboardController::class, 'getPaymentChart'])->name('discountDashboard.getPaymentChart');
+        Route::get('/discount-dashboard/debt-chart', [DiscountDashboardController::class, 'getDebtChart'])->name('discountDashboard.getDebtChart');
+        Route::post('/discount-dashboard/report', [DiscountDashboardController::class, 'generateReport'])->name('discountDashboard.generateReport');
     });
 
     Route::group(['middleware' => ['can:viewDebts']], function () {

@@ -10,6 +10,8 @@ use App\Models\GeneralExpense;
 use App\Models\User;
 use App\Models\WaterConnection;
 use App\Models\MovementHistory;
+use App\Models\Discount;
+use App\Models\DiscountHistory;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
@@ -21,7 +23,7 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         $authUser = auth()->user();
-        $query = Payment::with(['debt.customer', 'creator'])
+        $query = Payment::with(['debt.customer', 'creator','discountHistory'])
             ->where('locality_id', $authUser->locality_id)
             ->whereHas('creator', function ($q) use ($authUser) {
                 $q->where('locality_id', $authUser->locality_id);
@@ -77,7 +79,15 @@ class PaymentController extends Controller
             })
             ->get();
 
-        return view('payments.index', compact('payments', 'customers'));
+        $discounts = Discount::where(function ($q) use ($authUser) {
+                $q->where('locality_id', $authUser->locality_id)
+                    ->orWhereNull('locality_id');
+            })
+            ->orderByRaw('locality_id IS NULL DESC')
+            ->orderBy('name')
+            ->get();
+
+        return view('payments.index', compact('payments', 'customers', 'discounts'));
     }
 
     public function getWaterConnectionsByCustomer(Request $request)
@@ -150,27 +160,62 @@ class PaymentController extends Controller
                 ->with('error', 'El monto del pago supera la cantidad restante de la deuda.');
         }
 
+        $discount = null;
+        $discountAmount = 0;
+        $finalAmount = 0;
+
+        if ($request->filled('discount_id') && $request->boolean('has_discount')) {
+            $discount = Discount::find($request->discount_id);
+
+            if ($discount) {
+                $originalAmount = $request->amount;
+                $discountAmount = $originalAmount * ($discount->percentage / 100);
+                $finalAmount = $originalAmount - $discountAmount;
+            }
+        }
+
         $payment = Payment::create([
             'customer_id' => $request->customer_id,
             'locality_id' => $authUser->locality_id,
             'created_by' => $authUser->id,
             'debt_id' => $request->debt_id,
+            'discount_id' => $discount?->id,
             'method' => $request->method,
-            'amount' => $request->amount,
+            'amount' => $discount ? $finalAmount : $request->amount,
             'note' => $request->note,
             'is_future_payment' => $isFuturePayment,
         ]);
 
+        if ($discount) {
+            DiscountHistory::create([
+                'locality_id' => $authUser->locality_id,
+                'discount_id' => $discount->id,
+                'customer_id' => $request->customer_id,
+                'module' => 'payment',
+                'record_id' => $payment->id,
+                'original_amount' => $request->amount,
+                'discount_amount' => $discountAmount,
+                'final_amount' => $finalAmount,
+                'created_by' => $authUser->id,
+            ]);
+        }
+
         \Log::info('Payment created:', ['id' => $payment->id, 'is_future_payment' => $payment->is_future_payment]);
 
-        $debt->debt_current += $request->amount;
+        if ($discount) {
+            $debt->debt_current += ($request->amount + $discountAmount);
+        }
+
+        if (!$discount) {
+            $debt->debt_current += $request->amount;
+        }
+
+        if ($debt->debt_current > 0) {
+            $debt->status = 'partial';
+        }
 
         if ($debt->debt_current >= $debt->amount) {
             $debt->status = 'paid';
-        } elseif ($debt->debt_current > 0) {
-            $debt->status = 'partial';
-        } else {
-            $debt->status = 'pending';
         }
 
         $debt->save();
@@ -197,12 +242,25 @@ class PaymentController extends Controller
         }
 
         $debt->debt_current -= $previousAmount;
+        $discountId = $request->boolean('has_discount')
+            ? $request->discount_id
+            : null;
+        $discountAmount = 0;
+
+        if ($discountId) {
+            $discount = Discount::find($discountId);
+            if ($discount) {
+                $discountAmount = $remainingAmount - $request->amount;
+            }
+        }
+
         $payment->update([
             'amount' => $request->amount,
             'note' => $request->note,
+            'discount_id' => $discountId,
         ]);
 
-        $debt->debt_current += $request->amount;
+        $debt->debt_current += ($request->amount + $discountAmount);
 
         if ($debt->debt_current >= $debt->amount) {
             $debt->status = 'paid';
@@ -213,6 +271,38 @@ class PaymentController extends Controller
         }
 
         $debt->save();
+
+        if (!$discountId) {
+            DiscountHistory::where('module', 'payment')
+                ->where('record_id', $payment->id)
+                ->delete();
+
+            return redirect()->route('payments.index')
+                ->with('success', 'Pago actualizado exitosamente.');
+        }
+
+        $discount = Discount::find($discountId);
+
+        if (!$discount) {
+            return redirect()->route('payments.index')
+                ->with('error', 'El descuento seleccionado no existe.');
+        }
+
+        DiscountHistory::updateOrCreate(
+            [
+                'module' => 'payment',
+                'record_id' => $payment->id,
+            ],
+            [
+                'locality_id' => $payment->locality_id,
+                'discount_id' => $discount->id,
+                'customer_id' => $payment->customer_id,
+                'original_amount' => $previousAmount,
+                'final_amount' => $request->amount,
+                'created_by' => Auth::id(),
+            ]
+        );
+
         $after = $payment->fresh()->toArray();
 
         MovementHistory::create([
@@ -400,14 +490,15 @@ class PaymentController extends Controller
     public function clientPaymentReport(Request $request)
     {
         $customerId = $request->input('customerId');
-        $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
+        $startDate = \Carbon\Carbon::parse($request->input('startDate'))->startOfDay();
+        $endDate = \Carbon\Carbon::parse($request->input('endDate'))->endOfDay();
         $customer = Customer::with('user')->findOrFail($customerId);
         $authUser = auth()->user();
 
-        $payments = Payment::whereHas('debt.waterConnection', function ($query) use ($customerId) {
-            $query->where('customer_id', $customerId);
-        })
+        $payments = Payment::with(['debt.waterConnection', 'discount'])
+            ->whereHas('debt.waterConnection', function ($query) use ($customerId) {
+                $query->where('customer_id', $customerId);
+            })
             ->whereBetween('created_at', [$startDate, $endDate])
             ->get();
 
@@ -423,8 +514,8 @@ class PaymentController extends Controller
     {
         $customerId = $request->input('waterCustomerId');
         $waterConnectionId = $request->input('waterConnectionId');
-        $startDate = $request->input('waterStartDate');
-        $endDate = $request->input('waterEndDate');
+        $startDate = \Carbon\Carbon::parse($request->input('waterStartDate'))->startOfDay();
+        $endDate = \Carbon\Carbon::parse($request->input('waterEndDate'))->endOfDay();
 
         $customer = Customer::with('user')->findOrFail($customerId);
         $authUser = auth()->user();
@@ -433,7 +524,8 @@ class PaymentController extends Controller
             ->where('customer_id', $customerId)
             ->firstOrFail();
 
-        $payments = Payment::select('id', 'debt_id', 'amount', 'created_at')
+        $payments = Payment::select('id', 'debt_id', 'amount', 'created_at', 'discount_id')
+            ->with(['debt', 'discount'])
             ->where('locality_id', $authUser->locality_id)
             ->whereHas('debt', function ($query) use ($waterConnectionId) {
                 $query->where('water_connection_id', $waterConnectionId);

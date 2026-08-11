@@ -356,6 +356,24 @@ return [
         ],
     ],
     [
+        'text' => 'Gestión de Descuentos',
+        'icon' => 'fas fa-tags',
+        'can' => 'viewDiscount',
+        'submenu' => [
+            [
+                'text' => 'Descuentos',
+                'route' => 'discounts.index',
+                'icon' => 'fas fa-percentage',
+                'can' => 'viewDiscount',
+            ],
+            [
+                'text' => 'Panel de Descuentos',
+                'url' => 'discount-dashboard',
+                'icon' => 'fas fa-chart-pie',
+            ],
+        ],
+    ],
+    [
         'text' => 'Gestión de Gastos',
         'icon' => 'fas fa-fw fa-cogs',
         'submenu' => [
