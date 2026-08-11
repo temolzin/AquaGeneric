@@ -1,7 +1,7 @@
 <div class="modal fade" id="editReportDesign{{ $locality->id }}" tabindex="-1" role="dialog" aria-labelledby="editReportDesignLabel{{ $locality->id }}" aria-hidden="true">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
-            <div class="card-header" style="background-color: #4169E1; color: #ffffff; border-radius: 4px 4px 0 0;">
+            <div class="card-header bg-primary text-white">
                 <div class="d-sm-flex align-items-center justify-content-between">
                     <h4 class="card-title mb-0">Diseño de Reportes <small> &nbsp;</small></h4>
                     <button type="button" class="close d-sm-inline-block text-white" data-dismiss="modal" aria-label="Close">
@@ -28,7 +28,7 @@
                 </div>
                 <div class="modal-footer justify-content-end">
                     <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" id="report-submit-{{ $locality->id }}" class="btn" style="background-color: #4169E1; color: #fff; border: none;">
+                    <button type="submit" id="report-submit-{{ $locality->id }}" class="btn btn-primary">
                         Guardar
                     </button>
                 </div>
@@ -65,7 +65,7 @@
   border-radius: 50%;
 }
 
-input:checked + .slider { background-color: #4169E1; }
+input:checked + .slider { background-color: #007bff; }
 input:checked + .slider:before { transform: translateX(26px); }
 </style>
 

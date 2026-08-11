@@ -111,10 +111,9 @@
                                                     <button type="button" class="btn bg-navy mr-2" data-toggle="modal" title="Fondo de reporte" data-target="#editPdfBackground{{$locality->id}}">
                                                             <i class="fas fa-fill-drip"></i>
                                                     </button>
-                                                    <button type="button" class="btn mr-2 "data-toggle="modal"  title="Diseño de reporte" data-target="#editReportDesign{{$locality->id}}"
-                                                           style="{{ $locality->use_new_report_design ? 'background-color: #4169E1; color: #fff; border: 1px solid #4169E1;' : 'background-color: transparent; color: #4169E1; border: 1px solid #4169E1;' }}">
+                                                       <button type="button" class="btn mr-2 {{ $locality->use_new_report_design ? 'bg-primary text-white' : 'btn-outline-primary text-primary' }}" data-toggle="modal" title="Diseño de reporte" data-target="#editReportDesign{{$locality->id}}">
                                                            <i class="fas fa-sliders-h"></i>
-                                                    </button>
+                                                       </button>
                                                     <button type="button" class="btn {{ $locality->hasOpenPayEnabled() ? 'btn-success' : 'btn-outline-success' }} mr-2"
                                                             data-toggle="modal"
                                                             title="{{ $locality->hasOpenPayEnabled() ? 'OpenPay configurado' : 'Configurar OpenPay' }}"
