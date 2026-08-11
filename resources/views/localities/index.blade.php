@@ -111,6 +111,9 @@
                                                     <button type="button" class="btn bg-navy mr-2" data-toggle="modal" title="Fondo de reporte" data-target="#editPdfBackground{{$locality->id}}">
                                                             <i class="fas fa-fill-drip"></i>
                                                     </button>
+                                                       <button type="button" class="btn mr-2 {{ $locality->use_new_report_design ? 'bg-primary text-white' : 'btn-outline-primary text-primary' }}" data-toggle="modal" title="Diseño de reporte" data-target="#editReportDesign{{$locality->id}}">
+                                                           <i class="fas fa-sliders-h"></i>
+                                                       </button>
                                                     <button type="button" class="btn {{ $locality->hasOpenPayEnabled() ? 'btn-success' : 'btn-outline-success' }} mr-2"
                                                             data-toggle="modal"
                                                             title="{{ $locality->hasOpenPayEnabled() ? 'OpenPay configurado' : 'Configurar OpenPay' }}"
@@ -144,6 +147,7 @@
                                             @include('localities.editLogo')
                                             @include('localities.mailConfiguration')
                                             @include('localities.editPdfBackground')
+                                            @include('localities.editReportDesign')
                                             @include('localities.tokenModal')
                                             @include('localities.historyModal')
                                             @include('localities.openpayConfig')

@@ -151,6 +151,24 @@ class LocalityController extends Controller
         return redirect()->back()->with('error', 'Localidad no encontrada.');
     }
 
+    public function updateReportDesign(Request $request, $id)
+    {
+        $locality = Locality::find($id);
+
+        if (!$locality) {
+            return redirect()->back()->with('error', 'Localidad no encontrada.');
+        }
+
+        $request->validate([
+            'use_new_report_design' => 'nullable|boolean',
+        ]);
+
+        $locality->use_new_report_design = $request->boolean('use_new_report_design');
+        $locality->save();
+
+        return redirect()->route('localities.index')->with('success', 'Configuración de diseño de reportes actualizada.');
+    }
+
     public function generateToken(Request $request)
     {
         $request->validate([
