@@ -287,7 +287,7 @@ class CustomerController extends Controller
         return redirect()->route('customers.index')->with('success', 'Cliente eliminado correctamente.');
     }
 
-    public function pdfCustomers(request $request)
+    public function pdfCustomers()
     {
         $authUser = auth()->user();
 
@@ -305,19 +305,7 @@ class CustomerController extends Controller
 
         $totalPages = 1 + ceil(max(0, $customers->count() - $customersPerFirstPage) / $customersPerNextPages);
 
-        $reportLayout = strtolower((string) $request->query('report_layout', 'standard'));
-
-        $viewName = match ($reportLayout) {
-            'legacy' => 'reports.pdfCustomersLegacy',
-            'standard', 'informal' => 'reports.pdfCustomers',
-            default => 'reports.pdfCustomers',
-        };
-
-        if (!view()->exists($viewName)) {
-            $viewName = 'reports.pdfCustomers';
-        }
-
-        $pdf = PDF::loadView($viewName, compact(
+        $pdf = PDF::loadView('reports.pdfCustomers', compact(
             'authUser',
             'firstPageCustomers',
             'otherPagesCustomers',

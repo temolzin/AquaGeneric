@@ -2,7 +2,7 @@
     <table style="width:100%; border-collapse:collapse; border:1px solid #666; background:#fff; margin:0 auto;">
         <tr>
             <td style="vertical-align:middle; text-align:left; padding:12px 16px 10px 16px;">
-                <div style="font-weight:bold; font-size:14px; color:#111; text-transform:uppercase; line-height:1.2; text-align:left;">
+                <div style="font-weight:bold; font-size:18px; color:#111; text-transform:uppercase; line-height:1.2; text-align:left;">
                     COMITÉ DEL SISTEMA DE AGUA POTABLE
                 </div>
 

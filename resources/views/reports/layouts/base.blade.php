@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $reportTitle ?? 'Reporte' }}</title>
-    @include('reports.informalReports.styles')
+    @include('reports.formalReports.styles')
     @stack('styles')
 </head>
 <body>
-    @include('reports.informalReports.header', [
+    @include('reports.formalReports.header', [
         'reportTitle'  => $reportTitle ?? null,
         'generatedAt'  => $generatedAt ?? null,
         'generatedBy'  => $generatedBy ?? null,
@@ -24,6 +24,6 @@
         @yield('content')
     </main>
 
-    @include('reports.informalReports.footer')
+    @include('reports.formalReports.footer')
 </body>
 </html>
