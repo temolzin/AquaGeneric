@@ -562,6 +562,7 @@ class PaymentController extends Controller
 
         $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
             ->whereDate('expense_date', $today)
+            ->orderBy('expense_date')
             ->get();
 
         $totalPayments = $payments->sum('amount');
@@ -582,7 +583,11 @@ class PaymentController extends Controller
             'total_expenses' => $totalExpenses,
         ];
 
-        $pdf = PDF::loadView('reports.pdfCashClosures', [
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.pdfCashClousuresFormal'
+            : 'reports.pdfCashClosures';
+
+        $pdf = PDF::loadView($view, [
             'closures' => collect([$latestClosure]),
             'payments' => $payments,
             'earnings' => $earnings,
