@@ -203,7 +203,9 @@ class Locality extends Model implements HasMedia
 
     public function getReportViewName(string $name): string
     {
-        return 'reports.' . $name . ($this->use_new_report_design ? 'New' : '');
+        return $this->use_new_report_design
+            ? 'reports.formalReports.' . $name
+            : 'reports.' . $name;
     }
 
     public function registerMediaCollections(): void
