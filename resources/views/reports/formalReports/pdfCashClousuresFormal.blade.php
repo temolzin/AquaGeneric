@@ -112,7 +112,6 @@
             </table>
         </div>
     @endif
-
     <div style="margin-bottom: 15px;">
         <table class="report-table">
             <thead>
@@ -153,7 +152,6 @@
             </tbody>
         </table>
     </div>
-
     <div class="net-box">
         TOTAL NETO DEL CORTE: ${{ number_format(($totalIncome ?? $totalPayments) - $totalExpenses, 2) }}
     </div>
