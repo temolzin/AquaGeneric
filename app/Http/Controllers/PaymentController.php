@@ -376,7 +376,11 @@ class PaymentController extends Controller
             ->where('locality_id', $authUser->locality_id)
             ->get();
 
-        $pdf = PDF::loadView('reports.annualEarnings', compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser', 'payments'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.annualEarningsFormal'
+            : 'reports.annualEarnings';
+
+        $pdf = PDF::loadView($view, compact('monthlyEarnings', 'totalEarnings', 'year', 'authUser', 'payments'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_earnings_' . $year . '.pdf');

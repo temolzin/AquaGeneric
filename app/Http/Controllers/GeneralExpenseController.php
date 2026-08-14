@@ -229,7 +229,11 @@ class GeneralExpenseController extends Controller
             $totalExpenses += $expenses;
         }
 
-        $pdf = PDF::loadView('reports.annualExpenses', compact('monthlyExpenses', 'totalExpenses', 'year', 'authUser'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.annualExpensesFormal'
+            : 'reports.annualExpenses';
+
+        $pdf = PDF::loadView($view, compact('monthlyExpenses', 'totalExpenses', 'year', 'authUser'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_expenses_' . $year . '.pdf');
