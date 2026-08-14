@@ -296,7 +296,11 @@ class GeneralExpenseController extends Controller
             ? 'reports.formalReports.weeklyGainsFormal'
             : 'reports.weeklyGains';
 
-        $pdf = PDF::loadView($view, compact('authUser', 'weeks', 'totalPeriodGains', 'startDate', 'endDate'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.annualGainsFormal'
+            : 'reports.annualGains';
+
+        $pdf = PDF::loadView($view, compact('monthlyEarnings', 'monthlyExpenses', 'monthlyGains', 'totalEarnings', 'totalExpenses', 'totalGains', 'yearGains', 'authUser'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_gains_' . now()->format('Ymd') . '.pdf');
@@ -340,7 +344,11 @@ class GeneralExpenseController extends Controller
             $totalGains += $gains;
         }
 
-        $pdf = PDF::loadView('reports.annualGains', compact('monthlyEarnings', 'monthlyExpenses', 'monthlyGains', 'totalEarnings', 'totalExpenses', 'totalGains', 'yearGains', 'authUser'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.annualGainsFormal'
+            : 'reports.annualGains';
+
+        $pdf = PDF::loadView($view, compact('monthlyEarnings', 'monthlyExpenses', 'monthlyGains', 'totalEarnings', 'totalExpenses', 'totalGains', 'yearGains', 'authUser'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_gains_' . $yearGains . '.pdf');
