@@ -201,7 +201,11 @@ class GeneralExpenseController extends Controller
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyExpenses', compact('authUser', 'weeks', 'totalPeriodExpenses', 'startDate', 'endDate'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.weeklyExpensesformal'
+            : 'reports.weeklyExpenses';
+
+        $pdf = PDF::loadView($view, compact('authUser', 'weeks', 'totalPeriodExpenses', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_expenses_' . now()->format('Ymd') . '.pdf');
@@ -288,7 +292,11 @@ class GeneralExpenseController extends Controller
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyGains', compact('authUser', 'weeks', 'totalPeriodGains', 'startDate', 'endDate'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.weeklyGainsFormal'
+            : 'reports.weeklyGains';
+
+        $pdf = PDF::loadView($view, compact('authUser', 'weeks', 'totalPeriodGains', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_gains_' . now()->format('Ymd') . '.pdf');
