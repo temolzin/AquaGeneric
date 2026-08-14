@@ -436,7 +436,11 @@ class PaymentController extends Controller
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyEarnings', compact('authUser', 'weeks', 'totalPeriodEarnings', 'startDate', 'endDate'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.weeklyEarnigsFormal'
+            : 'reports.weeklyEarnings';
+
+        $pdf = PDF::loadView($view, compact('authUser', 'weeks', 'totalPeriodEarnings', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_earnings_' . now()->format('Ymd') . '.pdf');
