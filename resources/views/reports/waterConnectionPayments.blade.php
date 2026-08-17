@@ -273,22 +273,30 @@ $horizontalBgPath = $locality && $locality->getFirstMedia('pdfBackgroundHorizont
                         <th class="textable">Folio</th>
                         <th class="textable">Fecha del Pago</th>
                         <th class="textable">Folio Deuda</th>
+                        <th class="textable">Descuento aplicado</th>
                         <th class="textable">Cantidad</th>
                     </tr>
                 </thead>
                 <tbody id="detalle_productos">'
                     @foreach($payments as $debtId => $debtPayments)
                         @foreach($debtPayments as $payment)
+                            @php
+                                $discountText = 'No aplica';
+                                if ($payment->discount) {
+                                    $discountText = $payment->discount->name . ' (' . number_format($payment->discount->percentage, 2) . '%)';
+                                }
+                            @endphp
                             <tr>
                                 <td class="textcenter">{{ $payment->id }}</td>
                                 <td class="textcenter">{{ \Carbon\Carbon::parse($payment->created_at)->translatedFormat('j \d\e F \d\e Y') }}</td>
                                 <td class="textcenter">{{ $payment->debt->id }}</td>
+                                <td class="textcenter">{{ $discountText }}</td>
                                 <td class="textcenter">$ {{ $payment->amount }}</td>
                             </tr>
                         @endforeach
                     @endforeach
                     <tr>
-                        <td colspan="3" class="total_payment"><strong>Total:</strong></td>
+                        <td colspan="4" class="total_payment"><strong>Total:</strong></td>
                         <td class="textcenter"><strong>$ {{ number_format($totalPayments, 2) }}</strong></td>
                     </tr>
                 </tbody>

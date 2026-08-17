@@ -46,6 +46,7 @@ class InventoryController extends Controller
                 return $query->where('locality_id', $userLocalityId);
             })
             ->whereNull('deleted_at')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         $localities = Locality::select('id', 'name')->get();

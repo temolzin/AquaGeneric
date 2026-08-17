@@ -1,6 +1,6 @@
 @extends('layouts.adminlte')
 
-@section('title', config('adminlte.title') . ' | Cargos de Empleados')
+@section('title', config('adminlte.title') . ' | Departamentos de Empleados')
 
 @section('content')
 <section class="content">
@@ -8,11 +8,10 @@
         <div class="col-md-12 col-sm-12">
             <div class="x_panel">
                 <div class="x_title">
-                    <h2>Cargos de Empleados</h2>
-                    <div class="row mb-2">
-                        <div class="col-lg-12">
-                            <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                <form method="GET" action="{{ route('employeePositions.index') }}" class="flex-grow-1 mt-2" style="min-width: 300px; max-width: 40%;">
+                    <h2>Departamentos de Empleados</h2>
+                    <div class="row mb-3 align-items-center">
+                            <div class="col-12 col-md-8 col-lg-8 mb-2 mb-md-0">
+                                <form method="GET" action="{{ route('employeePositions.index') }}">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por Nombre, Descripción" value="{{ request('search') }}">
                                         <div class="input-group-append">
@@ -22,14 +21,17 @@
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap justify-content-md-end justify-content-start flex-grow-1 mt-2 mt-lg-0">
-                                    <button type="button" class="btn btn-success"
-                                            data-toggle="modal" data-target="#createPositionModal" title="Registrar Posición">
-                                        <i class="fa fa-plus"></i>
-                                        <span class="d-none d-md-inline">Registrar Posición</span>
-                                        <span class="d-inline d-md-none">Posición</span>
-                                    </button>
-                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 mb-3 d-flex justify-content-md-end justify-content-center">
+                                <button type="button" class="btn btn-success btn-block btn-lg-inline" data-toggle="modal" data-target="#createPositionModal">
+                                    <i class="fa fa-plus"></i>
+                                    <span class="d-none d-md-inline">
+                                        Registrar Posición
+                                    </span>
+                                    <span class="d-inline d-md-none">
+                                        Posición
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -104,7 +106,27 @@
     </div>
 </section>
 @endsection
+@push('css')
+<style>
+    @media (max-width: 767px){
+        .btn-lg-inline{
+            width:100%;
+        }
+        .dataTables_filter{
+            width:100%;
+        }
+        .dataTables_filter input{
+            width:100% !important;
+        }
 
+    }
+    @media (min-width:768px){
+        .btn-lg-inline{
+            width:auto;
+        }
+    }
+</style>
+@endpush
 @push('js')
 <script>
     $(document).ready(function() {

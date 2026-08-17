@@ -16,7 +16,7 @@ class UserController extends Controller
     {
         $currentUserId = auth()->id();
 
-        $roles = Role::whereIn('name', ['Supervisor', 'Secretaria'])->get();
+        $roles = Role::where('name', '!=', User::ROLE_CUSTOMER)->get();
 
         $localities = Locality::all();
 
@@ -123,7 +123,7 @@ class UserController extends Controller
         $userId = Crypt::decrypt($encryptedUserId);
         $user = User::findOrFail($userId);
 
-        $roles = Role::whereIn('name', ['Supervisor', 'Secretaria'])->get();
+        $roles = Role::where('name', '!=', User::ROLE_CUSTOMER)->get();
 
         return view('users.assignRole', compact('user', 'roles'));
     }

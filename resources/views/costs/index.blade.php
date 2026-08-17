@@ -12,25 +12,23 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                <form method="GET" action="{{ route('costs.index') }}" class="flex-grow-1 mt-2" style="min-width: 328px; max-width: 40%;">
+                                <form method="GET"action="{{ route('costs.index') }}" class="mb-2 mb-lg-0" style="min-width:250px; max-width:420px; width:100%;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Buscar por Categoría, Precio" value="{{ request('search') }}">
                                         <div class="input-group-append">
-                                            <button type="submit" class="btn btn-primary" title="Buscar Costos">
+                                            <button type="submit" class="btn btn-primary">
                                                 <i class="fa fa-search"></i> Buscar
                                             </button>
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-success flex-grow-1 flex-md-grow-0 mr-1 mt-1" data-toggle="modal"
-                                        data-target="#create" title="Registrar Costo">
+                                <div class="responsive-actions mt-2">
+                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create" title="Registrar Costo">
                                         <i class="fa fa-plus"></i>
                                         <span class="d-none d-md-inline">Registrar Costo</span>
                                         <span class="d-inline d-md-none">Registrar Costo</span>
                                     </button>
-                                    <a type="button" class="btn btn-secondary flex-grow-1 flex-md-grow-0 ml-1 mt-1" target="_blank"
-                                        title="Generar Lista" href="{{ route('report.generateCostListReport') }}">
+                                    <a class="btn btn-secondary" target="_blank" title="Generar Lista" href="{{ route('report.generateCostListReport') }}">
                                         <i class="fas fa-file-pdf"></i>
                                         <span class="d-none d-md-inline">Generar Lista</span>
                                         <span class="d-inline d-md-none">Generar Lista</span>
@@ -109,7 +107,33 @@
     </div>
 </section>
 @endsection
-
+@section('css')
+<style>
+    div.dt-buttons{
+        margin-top:1rem;
+    }
+    @media (min-width:992px){
+        .responsive-actions{
+            display:flex;
+            justify-content:flex-end;
+            align-items:center;
+            gap:.5rem;
+        }
+    }
+    @media (max-width:991.98px){
+        .responsive-actions{
+            display:flex;
+            flex-direction:column;
+            gap:.5rem;
+            width:100%;
+            margin-top:.75rem;
+        }
+        .responsive-actions .btn{
+            width:100%;
+        }
+    }
+</style>
+@endsection
 @section('js')
 <script>
     $(document).ready(function() {

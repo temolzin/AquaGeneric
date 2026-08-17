@@ -12,7 +12,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="d-lg-flex justify-content-between align-items-center flex-wrap">
-                                <form method="GET" action="{{ route('sections.index') }}" class="mb-3 mb-lg-0" style="min-width: 300px;">
+                                <form method="GET" action="{{ route('sections.index') }}" class="mb-3 mb-lg-0" style="min-width:300px;">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control"
                                                placeholder="Buscar por ID o Nombre" value="{{ request('search') }}">
@@ -26,14 +26,11 @@
                                         <i class="fa fa-plus"></i> Registrar Sección
                                     </button>
                                 </div>
-                                <div class="d-md-none w-100">
-                                    <div class="row g-2">
-                                        <div class="col-6 pe-1">
-                                            <button class="btn btn-success w-100 py-2" data-toggle='modal' data-target="#createSection" title="Registrar Sección">
-                                                <i class="fa fa-plus"></i> Registrar
-                                            </button>
-                                        </div>
-                                    </div>
+                                <div class="d-block d-md-none w-100 mb-3">
+                                    <button class="btn btn-success btn-block" data-toggle="modal" data-target="#createSection">
+                                        <i class="fa fa-plus"></i>
+                                        Registrar
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -111,6 +108,47 @@
     @include('sections.edit', ['section' => $section])
     @include('sections.delete', ['section' => $section])
 @endforeach
+@endsection
+@section('css')
+<style>
+@media (max-width: 767px){
+    .x_title h2{
+        width:100%;
+        text-align:center;
+        margin-bottom:15px;
+    }
+    form.w-100{
+        margin-bottom:15px !important;
+    }
+    .input-group{
+        width:100%;
+    }
+    .btn-block{
+        width:100%;
+    }
+    .table-responsive{
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+    }
+    table.dataTable{
+        width:100% !important;
+    }
+    table.dataTable td,
+    table.dataTable th{
+        white-space:nowrap;
+        vertical-align:middle;
+    }
+    td .btn-group{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:4px;
+    }
+    td .btn-group .btn{
+        margin:0;
+    }
+}
+</style>
 @endsection
 @section('js')
 <script>

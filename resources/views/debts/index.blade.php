@@ -22,24 +22,19 @@
                                         </div>
                                     </div>
                                 </form>
-                                <div class="d-flex flex-wrap justify-content-end mb-2 mt-2 mt-lg-0">
-                                    <button type="button" class="btn btn-primary mx-1" data-toggle="modal"
-                                            title="Asignar Deuda a Todos" data-target="#assignDebtModal">
+                                <div class="d-flex flex-column flex-lg-row justify-content-end mb-2 mt-2 mt-lg-0">
+                                    <button type="button" class="btn btn-primary mb-2 mb-lg-0 mr-lg-2 w-100 w-lg-auto" data-toggle="modal" title="Asignar Deuda a Todos" data-target="#assignDebtModal">
                                         <i class="fa fa-plus"></i>
-                                        <span class="d-none d-lg-inline">Asignar Deuda a Todos</span>
-                                        <span class="d-inline d-lg-none">Asignar a Todos</span>
+                                        Asignar a Todos
                                     </button>
-                                    <button type="button" class="btn btn-success mx-1" data-toggle="modal"
-                                            title="Crear Deuda" data-target="#createDebt">
+                                    <button type="button" class="btn btn-success mb-2 mb-lg-0 mr-lg-2 w-100 w-lg-auto" data-toggle="modal" title="Registrar Deuda" data-target="#createDebt">
                                         <i class="fa fa-plus"></i>
-                                        <span class="d-none d-lg-inline">Crear Deuda</span>
+                                        <span class="d-none d-lg-inline">Registrar Deuda</span>
                                         <span class="d-inline d-lg-none">Crear Deuda</span>
                                     </button>
-                                    <a type="button" class="btn btn-secondary mx-1" target="_blank"
-                                    title="Clientes con deudas" href="{{ route('report.with-debts') }}">
+                                    <a class="btn btn-secondary mb-2 mb-lg-0 w-100 w-lg-auto" target="_blank" title="Clientes con deudas" href="{{ route('report.with-debts') }}">
                                         <i class="fas fa-file-pdf"></i>
-                                        <span class="d-none d-lg-inline">Clientes con deudas</span>
-                                        <span class="d-inline d-lg-none">Clientes con deudas</span>
+                                        Clientes con deudas
                                     </a>
                                 </div>
                             </div>
@@ -87,7 +82,7 @@
                                             @include('debts.showDebts', ['debt' => (object)['waterConnection' => (object)['customer' => $customer]]])
                                         @empty
                                             <tr>
-                                                <td colspan="5">No hay deudas registradas.</td>
+                                                <td colspan="4">No hay deudas registradas.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -104,7 +99,15 @@
     </div>
 </section>
 @endsection
-
+@section('css')
+<style>
+    @media (min-width: 992px) {
+        .w-lg-auto {
+            width: auto !important;
+        }
+    }
+</style>
+@endsection
 @section('js')
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -115,13 +118,7 @@
     });
 
     $(document).ready(function() {
-        $('#debts').DataTable({
-            responsive: true,
-            paging: false,
-            info: false,
-            searching: false
-        });
-
+        console.log('Debts JS cargado');
         var successMessage = "{{ session('success') }}";
         var errorMessage = "{{ session('error') }}";
         if (successMessage) {
@@ -142,10 +139,88 @@
             });
         }
         
+        function formatCurrency(amount) {
+            return '$' + Number(amount || 0).toFixed(2);
+        }
+
+        function resetDebtDiscountFields() {
+            $('#debtDiscountContainer').hide();
+            $('#debt_has_discount').prop('checked', false);
+            $('#debt_has_discount_hidden').val(0);
+            $('#debt_discount_id').prop('disabled', true).val('').trigger('change');
+            $('#debt_discount_percentage').val('');
+            $('#debt_discount_amount').val('');
+            $('#debt_amount_with_discount').val('');
+            
+            $('#debt_discount_percentage_hidden').val('');
+            $('#debt_discount_amount_hidden').val('');
+            $('#debt_final_amount_hidden').val('');
+            $('#debt_discount_id_hidden').val('');
+        }
+
+        function calculateDebtDiscount() {
+            if (!$('#debt_has_discount').is(':checked')) {
+                return;
+            }
+
+            let option = $('#debt_discount_id option:selected');
+            let percentage = parseFloat(option.data('percentage')) || 0;
+            let original = parseFloat($('#debt_amount').val()) || 0;
+
+            let discount = original * (percentage / 100);
+            let finalAmount = original - discount;
+
+            $('#debt_discount_percentage').val(percentage.toFixed(2));
+            $('#debt_discount_amount').val(formatCurrency(discount));
+            $('#debt_amount_with_discount').val(formatCurrency(finalAmount));
+
+            $('#debt_discount_percentage_hidden').val(percentage);
+            $('#debt_discount_amount_hidden').val(discount.toFixed(2));
+            $('#debt_final_amount_hidden').val(finalAmount.toFixed(2));
+            $('#debt_discount_id_hidden').val($('#debt_discount_id').val() || '');
+        }
+
         $('#createDebt').on('shown.bs.modal', function() {
-            $('.select2').select2({
-                dropdownParent: $('#createDebt')
-            });
+            const $modal = $(this);
+
+            setTimeout(function() {
+                $modal.find('.select2').select2({
+                    dropdownParent: $modal.find('.modal-content')
+                });
+            }, 0);
+
+            resetDebtDiscountFields();
+        });
+
+        $('#debt_has_discount').on('change', function() {
+            let checked = $(this).is(':checked');
+
+            $('#debt_has_discount_hidden').val(checked ? 1 : 0);
+            $('#debtDiscountContainer')[checked ? 'slideDown' : 'slideUp']();
+            $('#debt_discount_id').prop('disabled', !checked).prop('required', checked);
+
+            if (!checked) {
+                $('#debt_discount_id').val('').trigger('change');
+                $('#debt_discount_id_hidden').val('');
+
+                $('#debt_discount_percentage').val('');
+                $('#debt_discount_amount').val('');
+                $('#debt_amount_with_discount').val('');
+
+                $('#debt_discount_percentage_hidden').val('');
+                $('#debt_discount_amount_hidden').val('');
+                $('#debt_final_amount_hidden').val('');
+            }
+
+            calculateDebtDiscount();
+        });
+
+        $('#debt_discount_id').on('change', function() {
+            calculateDebtDiscount();
+        });
+
+        $('#debt_amount').on('input', function() {
+            calculateDebtDiscount();
         });
 
         $('#customer_id').on('change', function() {

@@ -297,7 +297,7 @@ class CustomerController extends Controller
             ->get();
 
         $customersPerFirstPage = 26;
-        $customersPerNextPages = 40;
+        $customersPerNextPages = 30;
 
         $firstPageCustomers = $customers->take($customersPerFirstPage);
         $remainingCustomers = $customers->slice($customersPerFirstPage);
@@ -305,7 +305,11 @@ class CustomerController extends Controller
 
         $totalPages = 1 + ceil(max(0, $customers->count() - $customersPerFirstPage) / $customersPerNextPages);
 
-        $pdf = PDF::loadView('reports.pdfCustomers', compact(
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.customersFormal'
+            : 'reports.pdfCustomers';
+
+        $pdf = PDF::loadView($view, compact(
             'authUser',
             'firstPageCustomers',
             'otherPagesCustomers',

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use App\Models\Customer;
+use App\Models\Discount;
 
 class ReportListController extends Controller
 {
@@ -36,6 +37,7 @@ class ReportListController extends Controller
             'Panel',
             'Gestión de Tomas de Agua',
             'Gestión de Pagos',
+            'Gestión de Descuentos',
             'Gestión de Incidencias',
             'Clientes',
             'Gestión de Deudas',
@@ -80,9 +82,17 @@ class ReportListController extends Controller
 
         $sections->withPath($request->url());
 
-        $customers = Customer::where('locality_id', auth()->user()->locality_id)->get();
+        $authUser = auth()->user();
+        $customers = Customer::where('locality_id', $authUser->locality_id)->get();
+        $discounts = Discount::where(function ($q) use ($authUser) {
+            $q->where('locality_id', $authUser->locality_id)
+                ->orWhereNull('locality_id');
+        })
+            ->orderByRaw('locality_id IS NULL DESC')
+            ->orderBy('name')
+            ->get();
 
-        return view('reportList.index', compact('sections', 'customers'));
+        return view('reportList.index', compact('sections', 'customers', 'discounts'));
     }
 
     private function getReportsForSection($sectionText, $submenu = null)
@@ -134,6 +144,35 @@ class ReportListController extends Controller
                         }
                     }
                 }
+                break;
+
+            case 'Gestión de Descuentos':
+                $reports = [
+                    [
+                        'text' => 'Lista de Descuentos',
+                        'url' => route('discounts.pdf'),
+                        'type' => 'pdf',
+                    ],
+                    [
+                        'text' => 'Historial de Descuentos',
+                        'type' => 'button',
+                        'button_class' => 'btn bg-info report-btn',
+                        'icon' => '<i class="fa fa-history"></i>',
+                        'modal' => '#discountHistoryModal',
+                        'title' => 'Historial de Descuentos',
+                        'label' => ['d-none d-md-inline' => 'Historial de Descuentos', 'd-inline d-md-none' => '']
+                    ],
+                    [
+                        'text' => 'Reporte del Panel de Descuentos',
+                        'type' => 'post',
+                        'button_class' => 'btn btn-warning report-btn',
+                        'icon' => '<i class="fa fa-file-pdf"></i>',
+                        'url' => route('discountDashboard.generateReport'),
+                        'target' => '_blank',
+                        'title' => 'Reporte del Panel de Descuentos',
+                        'label' => 'Reporte del Panel de Descuentos'
+                    ],
+                ];
                 break;
 
             case 'Gestión de Deudas':

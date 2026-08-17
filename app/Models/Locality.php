@@ -35,12 +35,14 @@ class Locality extends Model implements HasMedia
         'openpay_webhook_user',
         'openpay_webhook_password',
         'openpay_sandbox',
-        'openpay_enabled'
+        'openpay_enabled',
+        'use_new_report_design'
     ];
 
     protected $casts = [
         'openpay_sandbox' => 'boolean',
         'openpay_enabled' => 'boolean',
+        'use_new_report_design' => 'boolean',
         'last_reminder_sent_at' => 'datetime',
     ];
 
@@ -197,6 +199,13 @@ class Locality extends Model implements HasMedia
             $this->membership_assigned_at = null;
             $this->save();
         }
+    }
+
+    public function getReportViewName(string $name): string
+    {
+        return $this->use_new_report_design
+            ? 'reports.formalReports.' . $name
+            : 'reports.' . $name;
     }
 
     public function registerMediaCollections(): void

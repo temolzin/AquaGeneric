@@ -22,6 +22,32 @@ class LoginController extends Controller
         return 'login_attempts_' . md5($request->ip() . '|' . strtolower($request->input('email', '')));
     }
 
+    private function validateRecaptcha(Request $request): bool
+    {
+        if (!config('services.recaptcha.site_key') || !config('services.recaptcha.secret')) {
+            return true;
+        }
+
+        $response = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret'   => config('services.recaptcha.secret'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        $recaptchaBody = $response->json();
+        $success = $recaptchaBody['success'] ?? false;
+
+        if (!$success) {
+            \Illuminate\Support\Facades\Log::warning('reCAPTCHA verification failed in LoginController', [
+                'success' => $success,
+                'response' => $recaptchaBody,
+                'remoteip' => $request->ip(),
+            ]);
+        }
+
+        return $success;
+    }
+
     public function showLoginForm()
     {
         return view('auth.login');
@@ -34,13 +60,29 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
+        $validationRules = [];
+        $validationMessages = [];
+
+        if (config('services.recaptcha.site_key') && config('services.recaptcha.secret')) {
+            $validationRules['g-recaptcha-response'] = 'required|string';
+            $validationMessages['g-recaptcha-response.required'] = 'Por favor completa el captcha.';
+        }
+
+        $request->validate($validationRules, $validationMessages);
+
+        if (!$this->validateRecaptcha($request)) {
+            return back()->withErrors([
+                'g-recaptcha-response' => 'La verificación de reCAPTCHA falló. Por favor inténtalo de nuevo.',
+            ])->withInput($request->only('email'));
+        }
+
         $key = $this->throttleKey($request);
 
         if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
             $secondsLeft = RateLimiter::availableIn($key);
             session()->flash('lockout_seconds', $secondsLeft);
             return back()->withErrors([
-                'email' => "Demasiados intentos fallidos. Por favor espera {$secondsLeft} segundos antes de intentarlo de nuevo.",
+                'password' => "Demasiados intentos fallidos. Por favor espera {$secondsLeft} segundos antes de intentarlo de nuevo.",
             ])->withInput($request->only('email'));
         }
 
@@ -79,7 +121,7 @@ class LoginController extends Controller
         if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
             session()->flash('lockout_seconds', self::LOCKOUT_SECONDS);
             return back()->withErrors([
-                'email' => 'Demasiados intentos fallidos. Por favor espera ' . self::LOCKOUT_SECONDS . ' segundos antes de intentarlo de nuevo.',
+                'password' => 'Demasiados intentos fallidos. Por favor espera ' . self::LOCKOUT_SECONDS . ' segundos antes de intentarlo de nuevo.',
             ])->withInput($request->only('email'));
         }
 
@@ -87,7 +129,7 @@ class LoginController extends Controller
         $remaining = self::MAX_ATTEMPTS - $attempts;
 
         return back()->withErrors([
-            'email' => "Las credenciales proporcionadas no coinciden con nuestros registros. Te queda(n) {$remaining} intento(s).",
+            'password' => "Las credenciales proporcionadas no coinciden con nuestros registros. Te queda(n) {$remaining} intento(s).",
         ])->withInput($request->only('email'));
     }
 
