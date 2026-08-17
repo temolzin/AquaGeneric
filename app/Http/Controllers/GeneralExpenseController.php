@@ -300,11 +300,7 @@ class GeneralExpenseController extends Controller
             ? 'reports.formalReports.weeklyGainsFormal'
             : 'reports.weeklyGains';
 
-        $view = $authUser->locality && $authUser->locality->use_new_report_design
-            ? 'reports.formalReports.annualGainsFormal'
-            : 'reports.annualGains';
-
-        $pdf = PDF::loadView($view, compact('monthlyEarnings', 'monthlyExpenses', 'monthlyGains', 'totalEarnings', 'totalExpenses', 'totalGains', 'yearGains', 'authUser'))
+        $pdf = PDF::loadView($view, compact('authUser', 'weeks', 'totalPeriodGains', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_gains_' . now()->format('Ymd') . '.pdf');
