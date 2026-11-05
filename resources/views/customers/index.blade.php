@@ -99,7 +99,7 @@
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                     @can('editCustomer')
-                                                    <button type="button" class="btn btn-warning mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{$customer->id}}">
+                                                    <button type="button" class="btn btn-success mr-2" data-toggle="modal" title="Editar Datos" data-target="#edit{{$customer->id}}">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
                                                     @endcan
