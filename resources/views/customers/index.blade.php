@@ -21,7 +21,7 @@
                                         </div>
                                     </form>
                                     <div class="d-none d-md-flex flex-wrap justify-content-end align-items-center mt-2 mt-md-0">
-                                        <button class="btn btn-success mx-1" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
+                                        <button class="btn btn-primary mx-1" data-toggle='modal' data-target="#createCustomer" title="Registrar Cliente">
                                             <i class="fa fa-plus"></i>
                                             <span class="d-none d-md-inline">Registrar Cliente</span>
                                             <span class="d-inline d-md-none">Registrar</span>
@@ -39,7 +39,7 @@
                                         </a>
                                     </div>
                                     <div class="d-md-none w-100 mt-2">
-                                        <button class="btn btn-success btn-block mb-2" data-toggle="modal" data-target="#createCustomer" title="Registrar Cliente">
+                                        <button class="btn btn-primary btn-block mb-2" data-toggle="modal" data-target="#createCustomer" title="Registrar Cliente">
                                             <i class="fa fa-plus"></i> Registrar
                                         </button>
                                         <button class="btn bg-purple btn-block mb-2" data-toggle="modal" data-target="#importData" title="Importar Datos">
