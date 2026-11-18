@@ -1,4 +1,4 @@
-## Welcome to the AquaControl Repository ðŸ’§
+## Welcome to the AquaControl Repository 💧 ðŸ’§
 ![Logo](public/img/logo.png)
 
 ## AquaControl
@@ -15,7 +15,7 @@ To run this project, you will need:
 - **Visual Studio Code** text editor (optional)
 - [Composer](https://getcomposer.org/) (dependency manager for PHP)
 
-### Local Installation ðŸ”§ðŸ’»
+### Local Installation 🔧💻 ðŸ”§ðŸ’»
 1. Go to the GitHub repository: [AquaControl on GitHub](https://github.com/temolzin/AquaGeneric/)
 
 2. Click the **Code** button and copy the link to clone the repository.
@@ -114,7 +114,7 @@ To ensure the system works correctly, you must configure the following variables
     php artisan queue:work
     ```
 
-## Running the Tests ðŸ§ª
+## Running the Tests 🧪 ðŸ§ª
 
 The project uses PHPUnit on a **dedicated MySQL test database** (`aquacontrol_testing`), so your development data is never touched.
 
