@@ -113,3 +113,37 @@ To ensure the system works correctly, you must configure the following variables
     ```bash
     php artisan queue:work
     ```
+
+## Running the Tests 🧪
+
+The project uses PHPUnit on a **dedicated MySQL test database** (`aquacontrol_testing`), so your development data is never touched.
+
+1. Start MySQL (for example, from the XAMPP control panel).
+2. Create the test database once:
+    ```sql
+    CREATE DATABASE aquacontrol_testing CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    ```
+3. Run the suite:
+    ```bash
+    php artisan test
+    ```
+    You can also run a specific suite or file:
+    ```bash
+    php artisan test --testsuite=Unit
+    php artisan test --testsuite=Feature
+    php artisan test tests/Feature/PaymentTest.php
+    ```
+
+The connection is configured in `phpunit.xml` (`DB_DATABASE=aquacontrol_testing`, user `root` with an empty password by default). Adjust `DB_USERNAME` / `DB_PASSWORD` there if your local MySQL uses different credentials.
+
+> Each test run refreshes the test database (`RefreshDatabase`). Never point `DB_DATABASE` in `phpunit.xml` to the database that contains real data.
+
+The current suite covers:
+
+- Debt balances and `debt_current` reconciliation.
+- Water connection statuses (`Pagado`, `Adeudo`, `Adelantado`, `Cancelado`).
+- Automatic debt assignment (`DebtController::assignAll`) and duplicate prevention.
+- Payments: partial/full payments, overpayment rejection and advance payments.
+- Debt deletion audit trail.
+- Multi-locality data isolation.
+- Membership tokens (active, expired, tampered and from another locality).
