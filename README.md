@@ -138,12 +138,8 @@ The connection is configured in `phpunit.xml` (`DB_DATABASE=aquacontrol_testing`
 
 > Each test run refreshes the test database (`RefreshDatabase`). Never point `DB_DATABASE` in `phpunit.xml` to the database that contains real data.
 
-The current suite covers:
+The current suite covers the three most relevant flows:
 
 - Debt balances and `debt_current` reconciliation.
-- Water connection statuses (`Pagado`, `Adeudo`, `Adelantado`, `Cancelado`).
-- Automatic debt assignment (`DebtController::assignAll`) and duplicate prevention.
-- Payments: partial/full payments, overpayment rejection and advance payments.
-- Debt deletion audit trail.
+- Payment registration rules (partial payments).
 - Multi-locality data isolation.
-- Membership tokens (active, expired, tampered and from another locality).
