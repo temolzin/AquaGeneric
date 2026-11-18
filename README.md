@@ -8,7 +8,7 @@ A system for water management in a community that helps maintain customer contro
 ![Preview 2](public/img/preview2.jpg)
 ![Preview 1](public/img/preview1.jpg)
 
-### Prerequisites 📋 ðŸ“‹
+### Prerequisites ðŸ“‹
 To run this project, you will need:
 
 - PHP server (XAMPP, WAMP, LAMP)
