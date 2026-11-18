@@ -1,4 +1,4 @@
-## Welcome to the AquaControl Repository 💧
+## Welcome to the AquaControl Repository ðŸ’§
 ![Logo](public/img/logo.png)
 
 ## AquaControl
@@ -8,14 +8,14 @@ A system for water management in a community that helps maintain customer contro
 ![Preview 2](public/img/preview2.jpg)
 ![Preview 1](public/img/preview1.jpg)
 
-### Prerequisites 📋
+### Prerequisites ðŸ“‹
 To run this project, you will need:
 
 - PHP server (XAMPP, WAMP, LAMP)
 - **Visual Studio Code** text editor (optional)
 - [Composer](https://getcomposer.org/) (dependency manager for PHP)
 
-### Local Installation 🔧💻
+### Local Installation ðŸ”§ðŸ’»
 1. Go to the GitHub repository: [AquaControl on GitHub](https://github.com/temolzin/AquaGeneric/)
 
 2. Click the **Code** button and copy the link to clone the repository.
@@ -113,3 +113,33 @@ To ensure the system works correctly, you must configure the following variables
     ```bash
     php artisan queue:work
     ```
+
+## Running the Tests ðŸ§ª
+
+The project uses PHPUnit on a **dedicated MySQL test database** (`aquacontrol_testing`), so your development data is never touched.
+
+1. Start MySQL (for example, from the XAMPP control panel).
+2. Create the test database once:
+    ```sql
+    CREATE DATABASE aquacontrol_testing CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    ```
+3. Run the suite:
+    ```bash
+    php artisan test
+    ```
+    You can also run a specific suite or file:
+    ```bash
+    php artisan test --testsuite=Unit
+    php artisan test --testsuite=Feature
+    php artisan test tests/Feature/PaymentTest.php
+    ```
+
+The connection is configured in `phpunit.xml` (`DB_DATABASE=aquacontrol_testing`, user `root` with an empty password by default). Adjust `DB_USERNAME` / `DB_PASSWORD` there if your local MySQL uses different credentials.
+
+> Each test run refreshes the test database (`RefreshDatabase`). Never point `DB_DATABASE` in `phpunit.xml` to the database that contains real data.
+
+The current suite covers the three most relevant flows:
+
+- Debt balances and `debt_current` reconciliation.
+- Payment registration rules (partial payments).
+- Multi-locality data isolation.
