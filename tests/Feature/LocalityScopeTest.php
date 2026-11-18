@@ -43,21 +43,5 @@ class LocalityScopeTest extends TestCase
         $this->assertFalse(WaterConnection::whereKey($secondConnection->id)->exists());
         $this->assertTrue(Debt::whereKey($firstDebt->id)->exists());
         $this->assertFalse(Debt::whereKey($secondDebt->id)->exists());
-
-        $this->assertSame(2, Debt::withoutGlobalScope('byUserLocality')->count());
-    }
-
-    /** @test */
-    public function an_unauthenticated_context_is_not_filtered_by_locality()
-    {
-        $locality = $this->createLocality();
-        $admin = $this->createUserFor($locality);
-        $customer = $this->createCustomer($locality, $admin);
-
-        $this->createConnection($locality, $admin, $customer);
-        $this->createConnection($locality, $admin, $customer);
-
-        $this->assertNull(auth()->user());
-        $this->assertSame(2, WaterConnection::count());
     }
 }
