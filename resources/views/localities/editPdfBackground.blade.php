@@ -16,14 +16,15 @@
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Fondo Reporte Vertical</h3><br>
                                 <small class="text-light">Peso máximo: 2MB<br>
-                            Dimensiones máximas: No mayor a 1600 x 2000
+                            Dimensiones máximas: No mayor a 1600 x 2000<br>
+                            Formato permitido: JPG o JPEG
                                 </small>
                             </div>
                             <div class="card-body text-center">
                                 <img id="preview-vertical-{{ $locality->id }}"
-                                    src="{{ $locality->getFirstMediaUrl('pdfBackgroundVertical') ?: asset('img/backgroundReport.png') }}"
+                                    src="{{ $locality->getFirstMediaUrl('pdfBackgroundVertical') ? $locality->getFirstMediaUrl('pdfBackgroundVertical') . '?t=' . time() : asset('img/backgroundReport.png') }}"
                                     alt="Fondo Vertical" style="width: 200px; height: 280px; border-radius: 10px; margin-bottom: 10px;">
-                                <input type="file" accept="image/*" name="pdf_background_vertical"
+                                <input type="file" accept=".jpg,.jpeg" name="pdf_background_vertical"
                                     class="form-control" onchange="previewImageEdit(event, 'vertical', {{ $locality->id }})">
                                 @if($locality->getFirstMediaUrl('pdfBackgroundVertical'))
                                     <button type="button" class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('reset-vertical-form-{{ $locality->id }}').submit();">
@@ -36,14 +37,15 @@
                             <div class="card-header py-2 bg-secondary">
                                 <h3 class="card-title">Fondo Reporte Horizontal </h3><br>
                                 <small class="text-light">Peso máximo: 2MB<br>
-                            Dimensiones máximas: No mayor a 2000 x 1600
+                            Dimensiones máximas: No mayor a 2000 x 1600<br>
+                            Formato permitido: JPG o JPEG
                                 </small>
                             </div>
                             <div class="card-body text-center">
                                 <img id="preview-horizontal-{{ $locality->id }}"
-                                    src="{{ $locality->getFirstMediaUrl('pdfBackgroundHorizontal') ?: asset('img/customersBackgroundHorizontal.png') }}"
+                                    src="{{ $locality->getFirstMediaUrl('pdfBackgroundHorizontal') ? $locality->getFirstMediaUrl('pdfBackgroundHorizontal') . '?t=' . time() : asset('img/customersBackgroundHorizontal.png') }}"
                                     alt="Fondo Horizontal" style="width: 280px; height: 200px; border-radius: 10px; margin-bottom: 10px;">
-                                <input type="file" accept="image/*" name="pdf_background_horizontal"
+                                <input type="file" accept=".jpg,.jpeg" name="pdf_background_horizontal"
                                     class="form-control" onchange="previewImageEdit(event, 'horizontal', {{ $locality->id }})">
                                 @if($locality->getFirstMediaUrl('pdfBackgroundHorizontal'))
                                     <button type="button" class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('reset-horizontal-form-{{ $locality->id }}').submit();">
@@ -81,11 +83,11 @@ function previewImageEdit(event, type, id) {
     const maxVertical = { width: 1600, height: 2000 };
     const maxHorizontal = { width: 2000, height: 1600 };
 
-    if (!file.type.startsWith('image/')) {
+    if (file.type !== 'image/jpeg') {
         Swal.fire({
             icon: 'error',
             title: 'Archivo no válido',
-            text: 'Por favor, sube un archivo de imagen (JPG, PNG, etc.)',
+            text: 'Por favor, sube un archivo de imagen JPG.',
             confirmButtonText: 'Aceptar'
         });
         input.value = '';

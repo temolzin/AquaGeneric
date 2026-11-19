@@ -68,6 +68,14 @@
                                                                         {!! $report['icon'] ?? '' !!}
                                                                         <span>{{ $report['label'] ?? $report['text'] }}</span>
                                                                     </a>
+                                                                @elseif (isset($report['type']) && $report['type'] === 'post')
+                                                                    <form method="POST" action="{{ $report['url'] }}" target="{{ $report['target'] ?? '_blank' }}" class="report-post-form">
+                                                                        @csrf
+                                                                        <button type="submit" class="{{ $report['button_class'] ?? 'btn btn-secondary' }}" title="{{ $report['title'] ?? $report['text'] }}">
+                                                                            {!! $report['icon'] ?? '' !!}
+                                                                            <span>{{ $report['label'] ?? $report['text'] }}</span>
+                                                                        </button>
+                                                                    </form>
                                                                 @endif
                                                             @endforeach
                                                         </div>
@@ -100,6 +108,7 @@
         @include('generalExpenses.weeklyExpenses')
         @include('generalExpenses.annualGains')
         @include('generalExpenses.weeklyGains')
+        @include('discounts.discountHistoryModal')
     </section>
 @endsection
 
@@ -205,6 +214,8 @@
         min-height: 58px;
         padding: 8px 6px;
         border-radius: 8px;
+        border: none !important;
+        outline: none !important;
         background-color: #6c757d !important;
         color: white !important;
         font-size: 0.82rem;
@@ -221,9 +232,24 @@
         line-height: 1.3;
     }
 
+    .report-post-form {
+        width: 100%;
+    }
+
+    .report-post-form .report-btn {
+        min-height: 68px;
+    }
+
     .report-btn:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.22) !important;
+    }
+
+    .report-btn:focus,
+    .report-btn:active {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
     }
 
     .report-btn i {

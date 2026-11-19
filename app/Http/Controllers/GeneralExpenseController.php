@@ -201,7 +201,11 @@ class GeneralExpenseController extends Controller
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyExpenses', compact('authUser', 'weeks', 'totalPeriodExpenses', 'startDate', 'endDate'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.weeklyExpensesformal'
+            : 'reports.weeklyExpenses';
+
+        $pdf = PDF::loadView($view, compact('authUser', 'weeks', 'totalPeriodExpenses', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_expenses_' . now()->format('Ymd') . '.pdf');
@@ -225,7 +229,11 @@ class GeneralExpenseController extends Controller
             $totalExpenses += $expenses;
         }
 
-        $pdf = PDF::loadView('reports.annualExpenses', compact('monthlyExpenses', 'totalExpenses', 'year', 'authUser'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.annualExpensesFormal'
+            : 'reports.annualExpenses';
+
+        $pdf = PDF::loadView($view, compact('monthlyExpenses', 'totalExpenses', 'year', 'authUser'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_expenses_' . $year . '.pdf');
@@ -248,6 +256,8 @@ class GeneralExpenseController extends Controller
 
             $day = $currentStart->copy();
             while ($day->lte($currentEnd)) {
+                $gains = null;
+
                 if ($day->between($startDate, $endDate)) {
                     $expenses = GeneralExpense::where('locality_id', $authUser->locality_id)
                         ->whereDate('expense_date', $day->toDateString())
@@ -260,8 +270,6 @@ class GeneralExpenseController extends Controller
                         ->sum('amount');
                     $earnings = $payments + $generalEarnings;
                     $gains = $earnings - $expenses;
-                } else {
-                    $gains = null;
                 }
 
                 $dailyGains[] = [
@@ -271,20 +279,28 @@ class GeneralExpenseController extends Controller
                 $day->addDay();
             }
 
-            $weekGains = array_sum(array_filter($dailyGains, 'is_numeric'));
+            $weekGains = collect($dailyGains)
+                ->filter(function ($item) use ($startDate, $endDate) {
+                    return $item['date']->between($startDate, $endDate) && $item['amount'] !== null;
+                })->sum('amount');
+
             $totalPeriodGains += $weekGains;
 
             $weeks[] = [
                 'start' => $currentStart->toDateString(),
                 'end' => $currentEnd->toDateString(),
                 'dailyGains' => $dailyGains,
-                'weekTotal' => $weekTotal
+                'weekTotal' => $weekGains
             ];
 
             $currentStart = $currentEnd->copy()->addDay();
         }
 
-        $pdf = PDF::loadView('reports.weeklyGains', compact('authUser', 'weeks', 'totalPeriodGains', 'startDate', 'endDate'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.weeklyGainsFormal'
+            : 'reports.weeklyGains';
+
+        $pdf = PDF::loadView($view, compact('authUser', 'weeks', 'totalPeriodGains', 'startDate', 'endDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('weekly_gains_' . now()->format('Ymd') . '.pdf');
@@ -328,7 +344,11 @@ class GeneralExpenseController extends Controller
             $totalGains += $gains;
         }
 
-        $pdf = PDF::loadView('reports.annualGains', compact('monthlyEarnings', 'monthlyExpenses', 'monthlyGains', 'totalEarnings', 'totalExpenses', 'totalGains', 'yearGains', 'authUser'))
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.annualGainsFormal'
+            : 'reports.annualGains';
+
+        $pdf = PDF::loadView($view, compact('monthlyEarnings', 'monthlyExpenses', 'monthlyGains', 'totalEarnings', 'totalExpenses', 'totalGains', 'yearGains', 'authUser'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream('annual_gains_' . $yearGains . '.pdf');

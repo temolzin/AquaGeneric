@@ -17,6 +17,7 @@ class Payment extends Model
         'locality_id',
         'created_by',
         'debt_id',
+        'discount_id',
         'method',
         'amount',
         'note',
@@ -54,6 +55,17 @@ class Payment extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class);
+    }
+
+    public function discountHistory()
+    {
+        return $this->hasOne(DiscountHistory::class, 'record_id')
+            ->where('module', 'payment');
     }
 
     public function openPayLogs()

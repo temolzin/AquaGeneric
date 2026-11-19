@@ -13,115 +13,159 @@
                 <div class="modal-body">
                     <div class="card">
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>ID</label>
-                                        <input type="text" disabled class="form-control" value="{{ $waterConnectionDebt->id }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Estado</label>
-                                        <p class="form-control">
-                                            @if ($waterConnectionDebt->status === 'pending')
-                                                <button class="badge badge-danger">No pagada</button>
-                                            @elseif ($waterConnectionDebt->status === 'partial')
-                                                <button class="badge badge-warning">Abonada</button>
-                                            @elseif ($waterConnectionDebt->status === 'paid')
-                                                <button class="badge badge-success">Pagada</button>
-                                            @endif
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Monto de la Deuda</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
+                            <ul class="nav nav-tabs mb-3" id="debtTabs{{ $waterConnectionDebt->id }}" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="general-tab{{ $waterConnectionDebt->id }}" data-toggle="tab" href="#general{{ $waterConnectionDebt->id }}" role="tab">
+                                        Información General
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="payments-tab{{ $waterConnectionDebt->id }}" data-toggle="tab" href="#payments{{ $waterConnectionDebt->id }}" role="tab">
+                                        Historial de Pagos
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content pt-3">
+                                <div class="tab-pane fade show active" id="general{{ $waterConnectionDebt->id }}" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>ID</label>
+                                                <input type="text" disabled class="form-control" value="{{ $waterConnectionDebt->id }}">
                                             </div>
-                                            <input type="text" disabled class="form-control" value="{{ number_format($waterConnectionDebt->amount, 2) }}" />
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Cantidad Pagada</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Estado</label>
+                                                <p class="form-control">
+                                                    @switch($waterConnectionDebt->status)
+                                                        @case('pending')
+                                                            <span class="badge badge-danger">No pagada</span>
+                                                            @break
+                                                        @case('partial')
+                                                            <span class="badge badge-warning">Abonada</span>
+                                                            @break
+                                                        @case('paid')
+                                                            <span class="badge badge-success">Pagada</span>
+                                                            @break
+                                                        @default
+                                                            <span class="badge badge-secondary">Desconocido</span>
+                                                    @endswitch
+                                                </p>
                                             </div>
-                                            <input type="text" disabled class="form-control" value="{{ number_format($waterConnectionDebt->debt_current, 2) }}" />
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label>Saldo pendiente</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
-                                            </div>
-                                            @php
-                                                $remainingAmount = $waterConnectionDebt->amount - $waterConnectionDebt->debt_current;
-                                            @endphp
-                                            <input type="text" disabled class="form-control" value="{{ number_format($remainingAmount , 2) }}" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Fecha de Inicio</label>
-                                        <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Fecha de Fin</label>
-                                        <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label>Observación</label>
-                                        <textarea disabled class="form-control">{{ $waterConnectionDebt->note }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label>Registrada por</label>
-                                        <input type="text" disabled class="form-control" value="{{ $waterConnectionDebt->creator->name ?? 'Desconocido' }} {{ $waterConnectionDebt->creator->last_name ?? '' }}" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 mt-4">
-                                    <label>Historial de Pagos</label>
-                                    <div class="payment-history" style="max-height: 110px; overflow-y: auto;">                                        <ul class="list-group">
-                                            @forelse ($waterConnectionDebt->payments as $payment)
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <strong>Monto:</strong> ${{ number_format($payment->amount, 2) }} <br>
-                                                        @switch($payment->method)
-                                                            @case('cash')
-                                                                <strong>Método:</strong> Efectivo <br>
-                                                                @break
-                                                            @case('card')
-                                                            <strong>Método:</strong> Tarjeta <br>
-                                                                @break
-                                                            @case('transfer')
-                                                            <strong>Método:</strong> Transferencia <br>
-                                                                @break
-                                                            @default
-                                                                <strong>Método:</strong> Desconocido <br>
-                                                        @endswitch
-                                                        @if ($payment->note)
-                                                            <strong>Nota:</strong> {{ $payment->note }} <br>
-                                                        @endif
-                                                        <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Monto de la Deuda</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-dollar-sign"></i>
+                                                        </span>
                                                     </div>
+                                                    <input type="text" disabled class="form-control" value="{{ number_format($waterConnectionDebt->amount, 2) }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Cantidad Pagada</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-dollar-sign"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" disabled class="form-control" value="{{ number_format($waterConnectionDebt->debt_current, 2) }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>Saldo pendiente</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-dollar-sign"></i>
+                                                        </span>
+                                                    </div>
+                                                    @php
+                                                        $remainingAmount = $waterConnectionDebt->amount - $waterConnectionDebt->debt_current;
+                                                    @endphp
+                                                    <input type="text" disabled class="form-control" value="{{ number_format($remainingAmount, 2) }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Descuento</label>
+                                                <input type="text"class="form-control"value="{{ $waterConnectionDebt->discount ? $waterConnectionDebt->discount->name . ' - ' . $waterConnectionDebt->discount->percentage . '%' : 'Sin descuento' }}"readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Fecha de Inicio</label>
+                                                <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($waterConnectionDebt->start_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Fecha de Fin</label>
+                                                <input type="text" disabled class="form-control" value="{{ \Carbon\Carbon::parse($waterConnectionDebt->end_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>Observación</label>
+                                                <textarea disabled class="form-control">{{ $waterConnectionDebt->note }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>Registrada por</label>
+                                                <input type="text" disabled class="form-control"
+                                                    value="{{ $waterConnectionDebt->creator->name ?? 'Desconocido' }} {{ $waterConnectionDebt->creator->last_name ?? '' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="payments{{ $waterConnectionDebt->id }}" role="tabpanel">
+                                    <div class="payment-history" style="max-height: 350px; overflow-y: auto;">
+                                        <ul class="list-group">
+                                            @forelse ($waterConnectionDebt->payments as $payment)
+                                                <li class="list-group-item">
+                                                    <strong>Monto:</strong>
+                                                    ${{ number_format($payment->amount, 2) }}
+                                                    <br>
+                                                    @switch($payment->method)
+                                                        @case('cash')
+                                                            <strong>Método:</strong> Efectivo
+                                                            <br>
+                                                        @break
+                                                        @case('card')
+                                                            <strong>Método:</strong> Tarjeta
+                                                            <br>
+                                                        @break
+                                                        @case('transfer')
+                                                            <strong>Método:</strong> Transferencia
+                                                            <br>
+                                                        @break
+                                                        @default
+                                                            <strong>Método:</strong> Desconocido
+                                                            <br>
+                                                    @endswitch
+                                                    @if ($payment->note)
+                                                        <strong>Nota:</strong>
+                                                        {{ $payment->note }}
+                                                        <br>
+                                                    @endif
+                                                    <strong>Fecha:</strong>
+                                                    {{ \Carbon\Carbon::parse($payment->created_at)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
                                                 </li>
                                             @empty
-                                                <li class="list-group-item">No hay pagos registrados para esta deuda.</li>
+                                                <li class="list-group-item">
+                                                    No hay pagos registrados para esta deuda.
+                                                </li>
                                             @endforelse
                                         </ul>
                                     </div>

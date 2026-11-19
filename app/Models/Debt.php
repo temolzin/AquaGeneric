@@ -23,7 +23,8 @@ class Debt extends Model
         'end_date',
         'amount',
         'note',
-        'debt_category_id'
+        'debt_category_id',
+        'discount_id'
     ];
 
     protected static function booted()
@@ -77,6 +78,11 @@ class Debt extends Model
     public function debtCategory()
     {
         return $this->belongsTo(DebtCategory::class, 'debt_category_id');
+    }
+
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class, 'discount_id');
     }
 
     public function scopeByUserLocality($query)

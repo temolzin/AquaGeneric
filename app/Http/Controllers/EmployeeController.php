@@ -386,11 +386,42 @@ class EmployeeController extends Controller
 
             $validRoles = ['Administrativo', 'Supervisor', 'Operativo', 'Gerente'];
             $roleInput = trim($rowData[12] ?? '');
-            if (!in_array($roleInput, $validRoles)) {
-                return [
-                    'success' => false,
-                    'error' => "Fila $rowNumber: Rol '$roleInput' inválido. Solo se permiten: " . implode(', ', $validRoles)
-                ];
+
+            $description = EmployeePosition::where('name', $roleInput)
+                ->whereNotNull('description')
+                ->where('description', '!=', '')
+                ->value('description') ?: 'Cargo de ' . $roleInput;
+
+            $usedColors = EmployeePosition::where('locality_id', $authUser->locality_id)
+                ->pluck('color')
+                ->toArray();
+
+            $allColors = [
+                'bg-blue', 'bg-purple', 'bg-pink', 'bg-yellow', 'bg-orange',
+                'bg-lime', 'bg-teal', 'bg-cyan', 'bg-navy', 'bg-primary',
+                'bg-success', 'bg-info', 'bg-warning', 'bg-danger',
+                'bg-secondary', 'bg-dark', 'bg-fuchsia', 'bg-violet',
+                'bg-rose', 'bg-emerald'
+            ];
+
+            $availableColors = array_diff($allColors, $usedColors);
+            $finalColors = empty($availableColors) ? $allColors : $availableColors;
+            $chosenColor = collect($finalColors)->random();
+
+            $position = EmployeePosition::firstOrCreate(
+                [
+                    'name' => $roleInput,
+                    'locality_id' => $authUser->locality_id,
+                ],
+                [
+                    'description' => $description,
+                    'color' => $chosenColor,
+                    'created_by' => $authUser->id,
+                ]
+            );
+
+            if (empty($position->description) && !empty($description)) {
+                $position->update(['description' => $description]);
             }
 
             $zipCode = trim($rowData[3] ?? '');
@@ -415,6 +446,7 @@ class EmployeeController extends Controller
                 'phone_number' => $cleanPhone,
                 'salary' => $salary,
                 'rol' => $roleInput,
+                'position_id' => $position->id,
                 'locality_id' => $authUser->locality_id,
                 'created_by' => $authUser->id,
             ];

@@ -12,6 +12,10 @@
                 </div>
                 <form action="{{ route('payments.store') }}" method="post" enctype="multipart/form-data" id="paymentForm">
                     @csrf
+                    <input type="hidden" name="discount_id" id="payment_discount_id_hidden">
+                    <input type="hidden" name="discount_percentage" id="payment_discount_percentage_hidden">
+                    <input type="hidden" name="discount_amount" id="payment_discount_amount_hidden">
+                    <input type="hidden" name="final_amount" id="payment_final_amount_hidden">
                     <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="card">
                             <div class="card-header py-2 bg-secondary">
@@ -77,7 +81,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa fa-dollar-sign"></i></span>
                                                 </div>
-                                                <input type="number" min="1" class="form-control" name="amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required />
+                                                <input type="number" min="1" class="form-control" name="amount" id="payment_amount" placeholder="Ingresa el monto" value="{{ old('amount') }}" required/>
                                             </div>
                                         </div>
                                     </div>
@@ -105,6 +109,67 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <div class="form-group mb-3">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="hidden" name="has_discount" id="has_discount" value="0">
+                                                    <input type="checkbox" class="custom-control-input" id="payment_has_discount" name="has_discount" value="1">
+                                                    <label class="custom-control-label font-weight-bold text-success" for="payment_has_discount">
+                                                        Aplicar descuento a este pago
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div id="paymentDiscountContainer" style="display:none;">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Descuento(*)</label>
+                                                            <select class="form-control select2"  id="payment_discount_id">
+                                                                <option value="">Seleccione un descuento</option>
+                                                                @foreach($discounts as $discount)
+                                                                    <option value="{{ $discount->id }}" data-percentage="{{ $discount->percentage }}">
+                                                                        {{ $discount->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Porcentaje</label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="payment_discount_percentage" readonly>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">%</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Monto del Descuento</label>
+                                                            <input type="text" class="form-control bg-light text-success font-weight-bold" id="payment_discount_amount" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Monto con Descuento</label>
+                                                            <input type="text" class="form-control bg-light text-success font-weight-bold" id="payment_amount_with_discount" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 d-flex align-items-end">
+                                                        <div class="alert alert-info w-100 mb-0">
+                                                            <i class="fa fa-info-circle"></i>
+                                                            El descuento se aplicará directamente al saldo de la deuda.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -117,28 +182,13 @@
         </div>
     </div>
 </div>
-
+@push('js')
 <script>
 $(document).ready(function() {
-    $('#createPayment').on('shown.bs.modal', function() {
-        var modalElement = $(this);
-        var dropdownParent = modalElement.find('.modal-body');
-        
-        modalElement.find('.select2').each(function() {
-            if (!$(this).data('select2')) {
-                $(this).select2({
-                    dropdownParent: dropdownParent,
-                    allowClear: false,
-                    width: '100%'
-                });
-            }
-        });
-        
-        modalElement.on('keydown', function(e) {
-            if ($('.select2-container--open').length && e.keyCode === 27) {
-                e.stopPropagation();
-            }
-        });
+    let selectedDebtRemaining = 0;
+
+    $('#createPayment').on('shown.bs.modal', function () {
+        resetDiscountFields();
     });
 
     $('#customer_id').on('change', function() {
@@ -149,13 +199,18 @@ $(document).ready(function() {
                 data: { waterCustomerId: customerId },
                 success: function(data) {
                     var waterConnectionSelect = $('#water_connection_id');
-                    waterConnectionSelect.empty().append('<option value="">Selecciona una toma</option>');
+                    waterConnectionSelect.empty();
+                    waterConnectionSelect.append('<option value="">Selecciona una toma</option>');
+
                     $.each(data.waterConnections, function(index, connection) {
-                        waterConnectionSelect.append('<option value="' + connection.id + '">' + 
-                            connection.name + '</option>');
+                        waterConnectionSelect.append(
+                            '<option value="' + connection.id + '">' +
+                                connection.id + ' - ' + connection.name +' </option>'
+                        );
                     });
+
                     // Trigger change to update Select2
-                    waterConnectionSelect.trigger('change');
+                    waterConnectionSelect.val(null).trigger('change.select2');
                     $('#debt_id').empty().append('<option value="">Selecciona una deuda</option>').trigger('change');
                     $('#suggested_amount').text('Selecciona una deuda para ver el saldo pendiente.');
                     $('#is_future_payment').prop('checked', false);
@@ -212,7 +267,11 @@ $(document).ready(function() {
                 success: function(data) {
                     var debt = data.debts.find(d => d.id == debtId);
                     if (debt) {
-                        $('#suggested_amount').text('$' + debt.remaining_amount);
+                        $('#suggested_amount').text('Saldo pendiente: $' + parseFloat(debt.remaining_amount).toFixed(2));
+                        selectedDebtRemaining = parseFloat(debt.remaining_amount) || 0;
+                        $('input[name="amount"]').val(selectedDebtRemaining.toFixed(2));
+                        calculateDiscount();
+
                         $('#debt_start_date').remove();
                         $('<input>').attr({type: 'hidden', id: 'debt_start_date', value: debt.start_date}).appendTo('#paymentForm');
 
@@ -242,19 +301,90 @@ $(document).ready(function() {
             var debtDate = new Date(startDate);
             var debtMonthYear = debtDate.getFullYear() * 100 + debtDate.getMonth() + 1;
             var todayMonthYear = today.getFullYear() * 100 + today.getMonth() + 1;
-
-            if (debtMonthYear > todayMonthYear && !isFuturePayment) {
-                e.preventDefault();
-                alert('Error: La deuda seleccionada es de un periodo futuro. Debe marcar "¿El cliente va a pagar por adelantado?".');
-                return false;
-            }
-
-            if (isFuturePayment && debtMonthYear <= todayMonthYear) {
-                e.preventDefault();
-                alert('Error: La deuda seleccionada no es de un periodo futuro.');
-                return false;
-            }
         }
+    });
+
+    function formatCurrency(amount) {
+        return '$' + Number(amount || 0).toFixed(2);
+    }
+
+    function resetDiscountFields() {
+        selectedDebtRemaining = 0;
+
+        $('#paymentDiscountContainer').hide();
+        $('#payment_has_discount').prop('checked', false);
+        $('#payment_discount_id').prop('required', false).val('');
+        $('#payment_discount_percentage').val('');
+        $('#payment_discount_amount').val('');
+        $('#payment_amount_with_discount').val('');
+        $('#payment_discount_percentage_hidden').val('');
+        $('#payment_discount_amount_hidden').val('');
+        $('#payment_final_amount_hidden').val('');
+        $('#payment_discount_id_hidden').val('');
+        $('#payment_discount_id').prop('disabled', true);
+    }
+
+    function calculateDiscount() {
+        if (!$('#payment_has_discount').is(':checked')) {
+            return;
+        }
+
+        let option = $('#payment_discount_id option:selected');
+        let percentage = parseFloat(option.data('percentage')) || 0;
+        let original = parseFloat($('input[name="amount"]').val()) || 0;
+
+        let discount = original * (percentage / 100);
+        let finalAmount = original - discount;
+
+        $('#payment_discount_percentage').val(percentage.toFixed(2));
+        $('#payment_discount_amount').val(formatCurrency(discount));
+        $('#payment_amount_with_discount').val(formatCurrency(finalAmount));
+
+        $('#payment_discount_percentage_hidden').val(percentage);
+        $('#payment_discount_amount_hidden').val(discount.toFixed(2));
+        $('#payment_final_amount_hidden').val(finalAmount.toFixed(2));
+        $('#payment_discount_id_hidden').val($('#payment_discount_id').val() || '');
+    }
+
+    $('#payment_has_discount').on('change', function() {
+        const checked = $(this).is(':checked');
+
+        $('#has_discount').val(checked ? 1 : 0);
+
+        if (checked) {
+            $('#paymentDiscountContainer').stop(true, true).slideDown(300);
+            $('#payment_discount_id').prop('disabled', false).prop('required', true);
+
+            calculateDiscount();
+            return;
+        }
+
+        $('#paymentDiscountContainer').stop(true, true).slideUp(300);
+        $('#payment_discount_id')
+            .prop('disabled', true)
+            .prop('required', false)
+            .val('')
+            .trigger('change');
+
+        $('#payment_discount_percentage').val('');
+        $('#payment_discount_amount').val('');
+        $('#payment_amount_with_discount').val('');
+
+        $('#payment_discount_id_hidden').val('');
+        $('#payment_discount_percentage_hidden').val('');
+        $('#payment_discount_amount_hidden').val('');
+        $('#payment_final_amount_hidden').val('');
+
+        if (selectedDebtRemaining > 0) {
+            $('#payment_amount').val(selectedDebtRemaining.toFixed(2));
+        }
+
+        calculateDiscount();
+    });
+
+    $('#payment_discount_id').on('change', function() {
+        calculateDiscount();
     });
 });
 </script>
+@endpush

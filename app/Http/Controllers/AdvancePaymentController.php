@@ -18,12 +18,14 @@ class AdvancePaymentController extends Controller
     public function index(Request $request)
     {
         $chartData = $this->getChartData();
+        $hasChartData = collect($chartData['totals'])->sum() > 0;
 
         return view('advancePayments.index', [
             'payments' => $this->getAdvancePayments($request),
             'customers' => Customer::where('locality_id', auth()->user()->locality_id)->get(),
             'months' => $chartData['months'],
             'totals' => $chartData['totals'],
+            'hasChartData' => $hasChartData,
         ]);
     }
 
@@ -135,13 +137,18 @@ class AdvancePaymentController extends Controller
 
         $totalPayments = $payments->flatten()->sum('amount');
 
-        $pdf = Pdf::loadView('reports.advancedPayments', [
+        $authUser = auth()->user();
+        $view = $authUser->locality && $authUser->locality->use_new_report_design
+            ? 'reports.formalReports.advancedPaymentsFormal'
+            : 'reports.advancedPayments';
+
+        $pdf = Pdf::loadView($view, [
             'customer' => $customer,
             'waterConnection' => $customer->waterConnections->first(),
             'payments' => $payments,
             'totalPayments' => $totalPayments,
-            'authUser' => auth()->user(),
-        ]);
+            'authUser' => $authUser,
+        ])->setPaper('A4', 'portrait');
 
         $fileName = $this->generateReportFileName($customer, $customer->waterConnections->first());
 

@@ -285,7 +285,12 @@
                     </div>
                     @endcan
                     @if(Auth::user()->hasRole('Admin'))
-                        <div class="col-md-12">
+                    <div class="dashboard-divider">
+                        <h3 class="divider-title">Sección de Análisis de Membresías</h3>
+                        <p class="divider-subtitle">Resumen de los niveles y el estado de activación de todas tus suscripciones.</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">
@@ -297,7 +302,18 @@
                                 </div>
                             </div>
                         </div>
-                        @endif
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Estatus de Membresías</h3>
+                                </div>
+                                <div class="card-body chart-card-body">
+                                    <canvas id="membershipStatusChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     @can('viewDashboardCards')
                     <div class="card">
                         <div class="card-header">
@@ -305,15 +321,26 @@
                                 <div class="col-12 col-md-10">
                                     <h3 class="card-title m-0">Períodos Próximos a Vencer</h3>
                                 </div>
-                                <div class="col-12 col-md-auto mt-2 mt-md-0 ms-md-auto">
-                                    <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100">
-                                        @csrf
-                                        <button type="submit" class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm w-100 w-md-auto" title="{{ $hasMailConfig
-                                                ? 'Enviar correos de recordatorio' : 'Para enviar recordatorios configura tu correo, contáctanos' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
-                                            <i class="fas fa-envelope"></i> Enviar recordatorios
-                                        </button>
-                                    </form>
+                                <div class="col-12 col-md-auto mt-2 mt-md-0 ms-md-auto d-flex align-items-center">
+                                    @if($remindersSentToday)
+                                        <div class="text-warning d-flex align-items-center" title="Los recordatorios ya fueron enviados el día de hoy">      
+                                        </div>
+                                    @else
+                                        <form action="{{ route('dashboard.sendEmailsForDebtsExpiringSoon') }}" method="POST" class="w-100" id="sendRemindersForm">
+                                            @csrf
+                                            <button type="submit" class="btn {{ $hasMailConfig ? 'btn-primary' : 'btn-secondary disabled' }} btn-sm w-100 w-md-auto" title="{{ $hasMailConfig
+                                                    ? 'Enviar correos de recordatorio' : 'Para enviar recordatorios configura tu correo, contáctanos' }}" {{ $hasMailConfig ? '' : 'disabled' }}>
+                                                <i class="fas fa-envelope"></i> Enviar recordatorios
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
+                                @if($remindersSentToday)
+                                <div class="col-12 text-left text-warning mt-1">
+                                    <i class="fas fa-exclamation-circle fa-lg mr-2"></i>
+                                    <span class="font-weight-bold">Puedes enviar mensajes después de 24 horas. Ya se enviaron recordatorios.</span>
+                                </div>
+                                @endif
                             </div>
                         </div>
                         <div class="card-box table-responsive">
@@ -534,7 +561,45 @@
             return colors;
         }
         var colors = generateChartColors(membershipData.length);
-
+        const membershipStatusData = @json($membershipStatusChart);
+        const statusCtx = document.getElementById('membershipStatusChart').getContext('2d');
+        if (statusCtx) {
+            new Chart(statusCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(membershipStatusData),
+                    datasets: [{
+                        label: 'Localidades',
+                        data: Object.values(membershipStatusData),
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.35)',
+                            'rgba(220, 53, 69, 0.30)',
+                            'rgba(111, 66, 193, 0.35)'
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(111, 66, 193, 1)'
+                        ],
+                        borderWidth: 2,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false 
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
         new Chart(pieCtx, {
             type: 'doughnut',
             data: {

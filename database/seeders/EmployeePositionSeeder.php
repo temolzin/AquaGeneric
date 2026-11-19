@@ -14,7 +14,7 @@ class EmployeePositionSeeder extends Seeder
         $localityIds = DB::table('localities')->pluck('id')->toArray();
 
         if (empty($localityIds)) {
-            $this->command->error('No se encontraron localidades. Se omitirá la siembra de cargos de empleados.');
+            $this->command->error('No se encontraron localidades. Se omitirá la siembra de departamento de empleados.');
             return;
         }
 

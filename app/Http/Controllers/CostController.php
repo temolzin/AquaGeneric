@@ -16,7 +16,7 @@ class CostController extends Controller
         $query = Cost::withoutGlobalScope('byUserLocality')
             ->where(function($q) use ($authUser) {
                 $q->where('locality_id', $authUser->locality_id)
-                  ->orWhereNull('locality_id');
+                    ->orWhereNull('locality_id');
             })
             ->with('creator')
             ->orderByRaw('locality_id IS NULL DESC')

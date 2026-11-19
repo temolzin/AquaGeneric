@@ -65,7 +65,13 @@
                                         @endswitch
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Descuento</label>
+                                        <input type="text" class="form-control" value="{{ $payment->discount ? $payment->discount->name.' - '.$payment->discount->percentage.'%' : 'Sin descuento' }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Registrado por</label>
                                         <input type="text" disabled class="form-control" value="{{ $payment->creator->name ?? 'Desconocido' }} {{ $payment->creator->last_name ?? '' }}" />

@@ -7,6 +7,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CostController;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\DiscountDashboardController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
@@ -35,6 +37,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\MovementHistoryController;
+use App\Http\Controllers\DiscountHistoryController;
 use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\EarningTypeController;
 use App\Http\Controllers\GeneralEarningController;
@@ -90,6 +93,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('customers', CustomerController::class);
         Route::get('/customers-with-debts', [CustomerController::class, 'customersWithDebts'])->name('report.with-debts');
         Route::get('/report/pdfCustomers', [CustomerController::class, 'pdfCustomers'])->name('customers.pdfCustomers');
+        Route::get('/report/customers-formal', [CustomerController::class, 'pdfCustomersFormal'])->name('customers.pdfCustomersFormal');
         Route::get('/report/pdfCustomersSummary', [CustomerController::class, 'generateCustomerSummaryPdf'])->name('customers.pdfCustomersSummary');
         Route::get('/report/current-customers', [CustomerController::class, 'reportCurrentCustomers'])->name('report.current-customers');
         Route::get('/payment-history/{id}', [CustomerController::class, 'generatePaymentHistoryReport'])->name('reports.paymentHistoryReport');
@@ -108,6 +112,18 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::resource('costs', CostController::class);
         Route::get('/costs', [CostController::class, 'index'])->name('costs.index');
         Route::get('/reports/generateCostListReport', [CostController::class, 'generateCostListReport'])->name('report.generateCostListReport');
+    });
+    
+    Route::group(['middleware' => ['can:viewDiscount']], function () {
+        Route::get('/discounts/pdf', [DiscountController::class, 'generatePdfDiscounts'])->name('discounts.pdf');
+        Route::resource('discounts', DiscountController::class);
+        Route::get('/discounts', [DiscountController::class, 'index'])->name('discounts.index');
+        Route::get('/reports/generateDiscountListReport', [DiscountController::class, 'generateDiscountListReport'])->name('report.generateDiscountListReport');
+        Route::get('/reports/discount-history/generate', [DiscountHistoryController::class, 'generatePDF'])->name('discounts.generateHistoryPdf');
+        Route::get('/discount-dashboard', [DiscountDashboardController::class, 'index'])->name('discountDashboard.index');
+        Route::get('/discount-dashboard/payment-chart', [DiscountDashboardController::class, 'getPaymentChart'])->name('discountDashboard.getPaymentChart');
+        Route::get('/discount-dashboard/debt-chart', [DiscountDashboardController::class, 'getDebtChart'])->name('discountDashboard.getDebtChart');
+        Route::post('/discount-dashboard/report', [DiscountDashboardController::class, 'generateReport'])->name('discountDashboard.generateReport');
     });
 
     Route::group(['middleware' => ['can:viewDebts']], function () {
@@ -139,6 +155,7 @@ Route::group(['middleware' => ['auth', CheckSubscription::class]], function () {
         Route::put('/localities/{locality}/mailConfiguration', [MailConfigurationController::class, 'createOrUpdateMailConfigurations'])->name('mailConfigurations.createOrUpdate');
         Route::post('/localities/generateTeoken', [LocalityController::class, 'generateToken'])->name('localities.generateToken');
         Route::post('/localities/{locality}/update-pdf-background', [LocalityController::class, 'updatePdfBackground'])->name('localities.updatePdfBackground');
+        Route::post('/localities/{locality}/update-report-design', [LocalityController::class, 'updateReportDesign'])->name('localities.updateReportDesign');
         Route::post('/localities/{locality}/reset-pdf-background', [LocalityController::class, 'resetPdfBackground'])->name('localities.resetPdfBackground');
         Route::get('/reports/movements/generate', [MovementHistoryController::class, 'generatePDF'])->name('reports.generatePdfMovementsHistory');
         

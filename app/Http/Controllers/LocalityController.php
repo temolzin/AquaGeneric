@@ -151,6 +151,24 @@ class LocalityController extends Controller
         return redirect()->back()->with('error', 'Localidad no encontrada.');
     }
 
+    public function updateReportDesign(Request $request, $id)
+    {
+        $locality = Locality::find($id);
+
+        if (!$locality) {
+            return redirect()->back()->with('error', 'Localidad no encontrada.');
+        }
+
+        $request->validate([
+            'use_new_report_design' => 'nullable|boolean',
+        ]);
+
+        $locality->use_new_report_design = $request->boolean('use_new_report_design');
+        $locality->save();
+
+        return redirect()->route('localities.index')->with('success', 'Configuración de diseño de reportes actualizada.');
+    }
+
     public function generateToken(Request $request)
     {
         $request->validate([
@@ -182,14 +200,14 @@ class LocalityController extends Controller
         }
 
         $request->validate([
-            'pdf_background_vertical' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-            'pdf_background_horizontal' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pdf_background_vertical' => 'nullable|image|mimes:jpg,jpeg|max:5120',
+            'pdf_background_horizontal' => 'nullable|image|mimes:jpg,jpeg|max:5120',
         ], [
             'pdf_background_vertical.image' => 'El archivo debe ser una imagen.',
-            'pdf_background_vertical.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'pdf_background_vertical.mimes' => 'Solo se permiten imágenes JPG.',
             'pdf_background_vertical.max' => 'La imagen no puede superar los 5MB.',
             'pdf_background_horizontal.image' => 'El archivo debe ser una imagen.',
-            'pdf_background_horizontal.mimes' => 'Solo se permiten imágenes jpg, jpeg, png.',
+            'pdf_background_horizontal.mimes' => 'Solo se permiten imágenes JPG.',
             'pdf_background_horizontal.max' => 'La imagen no puede superar los 5MB.',
         ]);
 

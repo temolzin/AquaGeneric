@@ -47,7 +47,9 @@ class RoleController extends Controller
             'Graficsearningsannual' => 'Gráficas de ingresos',
             'Debtcategorie' => 'Categorías de Deuda',
             'Customerincident' => 'Incidentes de Clientes',
-            'Employeeposition' => 'Puestos de Empleados',
+            'Employeeposition' => 'Departamento de Empleados',
+            'Discount' => 'Descuentos',
+            'Discountdashboard' => 'Panel de Descuentos',
         ];
     }
 

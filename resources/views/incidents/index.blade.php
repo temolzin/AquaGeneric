@@ -93,7 +93,7 @@
                                                             <span class="text-muted">Sin asignar</span>
                                                         @else
                                                             <div class="d-flex align-items-center">
-                                                                @foreach ($incident->responsible_employees->take(5) as $employee)
+                                                                @foreach ($incident->responsible_employees->take( 4 ) as $employee)
                                                                     @php
                                                                         $employeePhoto = $employee->getFirstMedia('employeeGallery');
 
@@ -103,11 +103,11 @@
                                                                             : asset('img/userDefault.png');
                                                                     @endphp
                                                                     <img src="{{ $employeePhotoUrl }}" alt="Empleado" title="{{ $employee->name }} {{ $employee->last_name }}" 
-                                                                        class="img-thumbnail mr-1" style="width:32px; height:32px; object-fit:cover; border-radius:50%;">
+                                                                        class="img-thumbnail mr-1" style="width:30px; height:30px; object-fit:cover; border-radius:50%;">
                                                                 @endforeach
-                                                                @if($incident->responsible_employees->count() > 5)
+                                                                @if($incident->responsible_employees->count() > 4)
                                                                     <span class="badge badge-secondary ml-1">
-                                                                        +{{ $incident->responsible_employees->count() - 5 }}
+                                                                        +{{ $incident->responsible_employees->count() - 4 }}
                                                                     </span>
                                                                 @endif
                                                             </div>

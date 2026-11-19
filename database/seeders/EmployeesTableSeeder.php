@@ -42,7 +42,7 @@ class EmployeesTableSeeder extends Seeder
                 'name' => $faker->firstName,
                 'last_name' => $faker->lastName,
                 'email' => $faker->unique()->safeEmail,
-                'phone_number' => $faker->phoneNumber,
+                'phone_number' => $faker->numerify('##########'),
                 'salary' => $faker->numberBetween(10000, 50000),
                 'rol' => $faker->randomElement($roles),
                 'locality' => $faker->city,

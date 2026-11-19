@@ -11,14 +11,7 @@
     <form action="{{ route('login') }}" method="post" id="login-form">
         @csrf
         <div class="input-group mb-3">
-            <input type="email"
-                   name="email"
-                   id="input-email"
-                   class="form-control @error('email') is-invalid @enderror"
-                   placeholder="Email"
-                   value="{{ old('email') }}"
-                   {{ $isLocked ? 'readonly' : '' }}
-                   autofocus>
+            <input type="email" name="email" id="input-email" class="form-control @error('email') is-invalid @enderror" placeholder="Email" value="{{ old('email') }}" {{ $isLocked ? 'readonly' : '' }} autofocus>
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-envelope"></span>
@@ -31,28 +24,40 @@
             @enderror
         </div>
         <div class="input-group mb-3">
-            <input type="password"
-                   name="password"
-                   id="input-password"
-                   class="form-control @error('password') is-invalid @enderror"
-                   placeholder="Contraseña"
-                   {{ $isLocked ? 'readonly' : '' }}>
+            <input type="password" name="password" id="input-password" class="form-control @error('password') is-invalid @enderror" placeholder="Contraseña" {{ $isLocked ? 'readonly' : '' }}>
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-lock"></span>
                 </div>
             </div>
-            @error('password')
-                <span class="invalid-feedback d-block w-100" role="alert">
+        </div>
+        @if(config('services.recaptcha.site_key'))
+        <div class="d-flex justify-content-center mb-3 flex-column align-items-center">
+            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+            @error('g-recaptcha-response')
+                <span class="invalid-feedback d-block text-center" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+            @error('captcha')
+                <span class="invalid-feedback d-block text-center" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
             @enderror
         </div>
+        @endif
+        @error('password')
+            <span class="invalid-feedback d-block w-100 text-center mb-3" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
         <button type="submit" id="btn-submit" class="btn-login" {{ $isLocked ? 'disabled' : '' }}>
             <i class="fas fa-sign-in-alt"></i> Acceder
         </button>
     </form>
-
+    @if(config('services.recaptcha.site_key'))
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @endif
     @if ($isLocked)
         <div id="lockout-timer" class="alert alert-danger text-center mt-3">
             <i class="fas fa-user-lock mr-2"></i>

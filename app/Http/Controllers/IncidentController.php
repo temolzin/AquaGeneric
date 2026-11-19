@@ -19,7 +19,7 @@ class IncidentController extends Controller
     {
         $authUser = auth()->user();
 
-        $query = Incident::with('incidentCategory', 'status', 'getstatusChangeLogs.employee', 'creator');
+        $query = Incident::with( 'incidentCategory', 'status', 'getstatusChangeLogs.employee', 'creator' )->orderBy('created_at', 'desc');
 
         $query->when($authUser->hasRole(User::ROLE_CUSTOMER), fn($q) => $q->where('created_by', $authUser->id));
         $query->when(!$authUser->hasRole(User::ROLE_CUSTOMER), fn($q) => $q->where('locality_id', $authUser->locality_id));

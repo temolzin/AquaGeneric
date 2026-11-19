@@ -24,9 +24,9 @@
     @endphp
     <section class="content">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row d-flex align-items-stretch">
                 <div class="col-md-3">
-                    <div class="card card-primary">
+                    <div class="card card-primary h-100 mb-0">
                         <div class="card-header">
                             <h3 class="card-title">Foto de perfil</h3>
                         </div>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
                 <div class="col-md-9">
-                    <div class="card card-primary">
+                    <div class="card card-primary h-100 mb-0">
                         <div class="card-header">
                             <h3 class="card-title">Editar perfil</h3>
                         </div>
@@ -140,7 +140,7 @@
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editPassword">
                                             Cambiar contraseña
                                         </button>
-                                        @if($authUser->hasRole(['Supervisor', 'Secretaria', 'Admin']))
+                                        @if($authUser->hasRole(['Supervisor', 'Secretaria']))
                                         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#editPaymentConfig">
                                             <i class="fas fa-credit-card mr-1"></i>Configurar Pagos
                                         </button>
@@ -150,8 +150,11 @@
                             </div>
                         </div>
                     </div>
-                    @can('viewDashboardCards')
-                    <div class="col-md-12">
+                </div>
+            </div>                        
+            @can('viewDashboardCards')
+            <div class="row mt-3">
+                <div class="col-md-12">
                         <div class="card card-info">
                             <div class="card-header">
                                 <h3 class="card-title">Información de Membresía</h3>
@@ -266,9 +269,8 @@
                             </div>
                         </div>
                     </div>
-                    @endcan
-                </div>
             </div>
+            @endcan
         </div>
     </section>
     @include('profile.editImage')
